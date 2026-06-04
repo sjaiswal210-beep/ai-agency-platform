@@ -1,0 +1,35 @@
+{
+  "name": "Follow-up Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": { "interval": [{ "field": "hours", "hoursInterval": 24 }] }
+      },
+      "name": "Daily Check",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{$env.BACKEND_URL}}/api/leads/?status=outreach_sent&limit=50",
+        "method": "GET"
+      },
+      "name": "Get Outreach Leads",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{$env.BACKEND_URL}}/api/outreach/followup/{{$json.id}}",
+        "method": "POST"
+      },
+      "name": "Send Follow-up",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [650, 300]
+    }
+  ],
+  "connections": {
+    "Daily Check": { "main": [[{ "node": "Get Outreach Leads" }]] },
+    "Get Outreach Leads": { "main": [[{ "node": "Send Follow-up" }]] }
+  }
+}

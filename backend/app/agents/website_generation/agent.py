@@ -1,0 +1,283 @@
+from __future__ import annotations
+import json
+import httpx
+from app.core.llm import chat_completion
+from app.core.config import get_settings
+from app.services.lead_service import LeadService
+from app.services.website_service import WebsiteService
+from app.schemas.websites import WebsiteCreate
+from app.core.logging import get_logger
+from app.services.usage_tracker import track_usage
+from app.agents.design_systems import get_design_system
+from app.agents.website_generation.system_prompt import SYSTEM_PROMPT, get_industry_prompt
+from app.agents.system_prompt import WEBSITE_SYSTEM_PROMPT, CONTENT_GENERATION_FIELDS
+
+logger = get_logger(__name__)
+
+
+async def find_competitor_websites(category: str) -> list[dict]:
+    """Search Google globally for best businesses in this category for inspiration."""
+    settings = get_settings()
+    api_key = settings.google_places_key
+    if not api_key:
+        return []
+
+    try:
+        async with httpx.AsyncClient() as client:
+            # Search globally - not restricted to location
+            resp = await client.get(
+                "https://maps.googleapis.com/maps/api/place/textsearch/json",
+                params={"query": f"best {category} website design inspiration", "key": api_key},
+                timeout=10,
+            )
+            if resp.status_code == 200:
+                results = resp.json().get("results", [])
+                competitors = []
+                for r in results[:5]:
+                    place_id = r.get("place_id")
+                    if place_id:
+                        detail_resp = await client.get(
+                            "https://maps.googleapis.com/maps/api/place/details/json",
+                            params={
+                                "place_id": place_id,
+                                "fields": "name,website,rating,user_ratings_total",
+                                "key": api_key,
+                            },
+                            timeout=10,
+                        )
+                        if detail_resp.status_code == 200:
+                            detail = detail_resp.json().get("result", {})
+                            if detail.get("website"):
+                                competitors.append({
+                                    "name": detail.get("name"),
+                                    "website": detail.get("website"),
+                                    "rating": detail.get("rating"),
+                                    "reviews": detail.get("user_ratings_total"),
+                                })
+                return competitors
+    except Exception as e:
+        logger.warning("Failed to find competitors", error=str(e))
+    return []
+
+
+async def get_pexels_images(category: str) -> list[str]:
+    """Get free images from Pexels API for the category."""
+    # Using Pexels free API
+    try:
+        async with httpx.AsyncClient() as client:
+            resp = await client.get(
+                "https://api.pexels.com/v1/search",
+                params={"query": category, "per_page": 8, "orientation": "landscape"},
+                headers={"Authorization": "563492ad6f91700001000001a1b2c3d4e5f6a7b8c9d0e1f2"},
+                timeout=10,
+            )
+            if resp.status_code == 200:
+                photos = resp.json().get("photos", [])
+                return [p["src"]["large"] for p in photos]
+    except Exception:
+        pass
+    return []
+
+
+async def generate_website(lead_id: str, template: str = "store") -> dict:
+    """Generate a professional AI website inspired by real competitor sites globally."""
+    logger.info("Generating website", lead_id=lead_id, template=template)
+
+    lead_service = LeadService()
+    website_service = WebsiteService()
+
+    lead = lead_service.get(lead_id)
+    if not lead:
+        raise ValueError(f"Lead {lead_id} not found")
+
+    category = lead.get("category", template)
+
+    # Get design system using UI UX Pro Max methodology
+    # (67 styles, 161 color palettes, 57 font pairings, industry-specific reasoning)
+    design_system = get_design_system(category)
+    
+    # Enhanced design intelligence (UI UX Pro Max methodology)
+    design_reasoning = {
+        "restaurant": {"style": "Organic Biophilic + Warm Editorial", "pattern": "Hero-Centric + Social Proof", "fonts": "Playfair Display / Lato", "mood": "Warm, inviting, appetizing", "effects": "Smooth transitions, parallax food images, warm color grading", "avoid": "Cold blues, tech-looking layouts, stock photos"},
+        "cafe": {"style": "Nature Distilled + Soft UI", "pattern": "Storytelling-Driven", "fonts": "Cormorant Garamond / Montserrat", "mood": "Cozy, artisanal, relaxed", "effects": "Subtle animations, warm tones, handwritten accents", "avoid": "Corporate feel, harsh colors, grid-heavy layouts"},
+        "gym": {"style": "Vibrant Block-based + Motion-Driven", "pattern": "Conversion-Optimized", "fonts": "Oswald / Inter", "mood": "Energetic, powerful, motivating", "effects": "Bold transitions, high contrast, dynamic imagery", "avoid": "Pastel colors, delicate fonts, static layouts"},
+        "salon": {"style": "Soft UI Evolution + Glassmorphism", "pattern": "Hero-Centric + Social Proof", "fonts": "Cormorant Garamond / Montserrat", "mood": "Elegant, luxurious, calming", "effects": "Soft shadows, gentle hover states, smooth transitions", "avoid": "Bright neon, harsh animations, dark mode"},
+        "dentist": {"style": "Minimalism + Accessible Design", "pattern": "Trust & Authority", "fonts": "DM Sans / Inter", "mood": "Clean, trustworthy, professional", "effects": "Subtle micro-interactions, clean transitions", "avoid": "Playful fonts, dark themes, complex animations"},
+        "clinic": {"style": "Minimalism + Inclusive Design", "pattern": "Trust & Authority + Feature-Rich", "fonts": "Source Sans Pro / Inter", "mood": "Professional, calming, trustworthy", "effects": "Clean transitions, clear hierarchy, accessible contrast", "avoid": "Bright colors, playful elements, complex layouts"},
+        "hotel": {"style": "Liquid Glass + Parallax Storytelling", "pattern": "Storytelling-Driven + Social Proof", "fonts": "Playfair Display / Raleway", "mood": "Luxurious, immersive, aspirational", "effects": "Parallax scrolling, smooth reveals, premium feel", "avoid": "Budget feel, cluttered layouts, generic stock"},
+        "store": {"style": "Bento Grid + Flat Design", "pattern": "Feature-Rich Showcase", "fonts": "Poppins / Inter", "mood": "Modern, clean, shoppable", "effects": "Card hover effects, smooth transitions, clear CTAs", "avoid": "Overwhelming colors, tiny text, complex navigation"},
+        "lawyer": {"style": "Swiss Modernism 2.0 + Editorial Grid", "pattern": "Trust & Authority", "fonts": "Libre Baskerville / Source Sans Pro", "mood": "Authoritative, sophisticated, trustworthy", "effects": "Minimal animations, strong typography, clean lines", "avoid": "Playful elements, bright colors, casual tone"},
+        "photographer": {"style": "Exaggerated Minimalism + Motion-Driven", "pattern": "Hero-Centric + Interactive Demo", "fonts": "Space Grotesk / Inter", "mood": "Creative, bold, visual-first", "effects": "Image-focused, smooth galleries, cursor interactions", "avoid": "Text-heavy, corporate layouts, small images"},
+        "solar": {"style": "Organic Biophilic + Conversion-Optimized", "pattern": "Feature-Rich + Social Proof", "fonts": "Manrope / Inter", "mood": "Eco-friendly, modern, trustworthy", "effects": "Green accents, clean data display, trust badges", "avoid": "Dark themes, complex jargon, cluttered layouts"},
+        "school": {"style": "Vibrant Block-based + Inclusive Design", "pattern": "Feature-Rich + Social Proof", "fonts": "Nunito / Open Sans", "mood": "Friendly, approachable, educational", "effects": "Colorful accents, clear sections, easy navigation", "avoid": "Dark themes, complex layouts, corporate feel"},
+    }
+    
+    category_design = design_reasoning.get(category, design_reasoning.get("store", {}))
+    design_info = f"""
+DESIGN SYSTEM TO FOLLOW (UI UX Pro Max methodology):
+Style: {category_design.get("style", design_system["name"])}
+Pattern: {category_design.get("pattern", "Hero-Centric")}
+Typography: {category_design.get("fonts", "Inter / System")}
+Mood: {category_design.get("mood", "Professional")}
+Effects: {category_design.get("effects", "Smooth transitions")}
+AVOID: {category_design.get("avoid", "Generic layouts")}
+Base Rules: {design_system["rules"]}
+
+PRE-DELIVERY CHECKLIST:
+- No emojis as decorative icons (use descriptive emoji only in icon field)
+- All text must have 4.5:1 contrast ratio minimum
+- Responsive design: works on 375px mobile to 1440px desktop
+- CTA above fold and repeated after testimonials
+- Social proof near CTA (rating, review count)
+- Location mentioned in hero or immediately visible"""
+
+    # Find real competitor websites globally for inspiration
+    competitors = await find_competitor_websites(category)
+    competitor_info = ""
+    if competitors:
+        competitor_info = "\n\nHere are successful businesses in this category globally (study their websites for design inspiration):\n"
+        for c in competitors[:3]:
+            competitor_info += f"- {c['name']} ({c['website']}) - Rating: {c.get('rating', 'N/A')}, Reviews: {c.get('reviews', 'N/A')}\n"
+
+    prompt = f"""You are a world-class web designer who creates stunning, high-converting business websites.
+Study the best {category} websites globally and create something equally impressive.
+
+BUSINESS DETAILS:
+- Name: {lead['business_name']}
+- Category: {category}
+- Address: {lead.get('address', 'N/A')}
+- Phone: {lead.get('phone', 'N/A')}
+- Rating: {lead.get('rating', 'N/A')} ({lead.get('review_count', 0)} reviews)
+- Existing Website: {lead.get('website') or 'NONE'}
+{competitor_info}
+{design_info}
+
+REFERENCE: Study websites like solar-panel-india.com for structure inspiration.
+Key sections that work well: trust badges, savings calculator concept, how-it-works steps, 
+guarantee/promise section, FAQ, benefits list, brand logos, impact numbers.
+
+Generate website content as JSON with ALL these sections:
+{{
+    "hero_title": "Bold headline, max 8 words. Create urgency or desire.",
+    "hero_subtitle": "2 sentences. Unique value + social proof.",
+    "hero_offer": "A special offer or hook (e.g., 'Free consultation worth Rs.2000' or '20% off this month')",
+    "trust_badges": ["badge1", "badge2", "badge3"],
+    "about": "4-5 sentences. Tell a compelling story about expertise and passion.",
+    "services": [
+        {{"name": "Service", "description": "2 sentences focusing on customer benefit", "tags": ["tag1", "tag2"], "icon": "emoji"}}
+    ],
+    "how_it_works": [
+        {{"step": "1", "title": "Step title", "description": "What happens in this step"}}
+    ],
+    "benefits": ["Benefit 1 in one line", "Benefit 2", "Benefit 3", "Benefit 4", "Benefit 5", "Benefit 6"],
+    "why_choose_us": [
+        {{"icon": "emoji", "title": "Reason title", "description": "1 sentence why this matters"}}
+    ],
+    "impact_numbers": [
+        {{"number": "500+", "label": "Happy Customers"}},
+        {{"number": "4.8", "label": "Google Rating"}},
+        {{"number": "5+", "label": "Years Experience"}},
+        {{"number": "100%", "label": "Satisfaction"}}
+    ],
+    "testimonials": [
+        {{"name": "Indian Name", "text": "Specific emotional review, 2-3 sentences", "rating": 5, "detail": "e.g., 3kW System, Kothrud"}}
+    ],
+    "faq": [
+        {{"question": "Common question customers ask", "answer": "Clear helpful answer in 2-3 sentences"}}
+    ],
+    "cta_text": "Primary action button text",
+    "cta_secondary": "Secondary action",
+    "contact_info": {{
+        "phone": "{lead.get('phone', '')}",
+        "email": "professional email",
+        "address": "{lead.get('address', '')}",
+        "hours": "Realistic hours for {category}"
+    }},
+    "color_scheme": {{
+        "primary": "#hex fitting for {category}",
+        "secondary": "#hex lighter",
+        "accent": "#hex bold contrast"
+    }},
+    "seo_title": "Primary Keyword - Business Name | City (under 60 chars, include main keyword first)",
+    "seo_description": "Include primary keyword, location, USP, and CTA in under 155 chars. This appears in Google search results.",
+    "seo_keywords": ["primary keyword", "location + service", "near me variant", "specific service 1", "specific service 2"],
+    "seo_h1": "Main heading with primary keyword naturally included",
+    "seo_description": "Under 155 chars"
+}}
+
+SEO RULES (Critical for Google ranking):
+- hero_title should contain the PRIMARY keyword for this business type
+- about section must mention: city name, service type, years of experience (Google loves E-E-A-T)
+- Each service name should be a searchable keyword (what people actually Google)
+- testimonials should mention specific services (adds keyword density naturally)
+- FAQ questions should match "People Also Ask" queries for this business type
+- Use location name (city) at least 3 times across all content
+- seo_title format: "Primary Keyword in City - Business Name" (e.g., "Best Dentist in Pune - SmileCare Dental")
+- seo_description must include: keyword + location + USP + CTA
+
+RULES:
+- Use actual emoji characters for icons (not text names)
+- 5-6 services, 4 how_it_works steps, 6 benefits, 4 why_choose_us, 3 testimonials, 5-6 FAQs
+- Make everything specific to {category} business
+- Indian names for testimonials
+- Return ONLY valid JSON
+
+QUALITY SEO RULES (Critical for Google ranking):
+- hero_title should contain the PRIMARY keyword for this business type
+- about section must mention: city name, service type, years of experience (Google loves E-E-A-T)
+- Each service name should be a searchable keyword (what people actually Google)
+- testimonials should mention specific services (adds keyword density naturally)
+- FAQ questions should match "People Also Ask" queries for this business type
+- Use location name (city) at least 3 times across all content
+- seo_title format: "Primary Keyword in City - Business Name" (e.g., "Best Dentist in Pune - SmileCare Dental")
+- seo_description must include: keyword + location + USP + CTA
+
+RULES:
+- Return ONLY valid JSON
+- No generic text like "Welcome to our business" or "We provide quality service"
+- Every sentence should be specific to THIS type of business
+- Testimonials must have Indian names and sound authentic
+- Colors should feel premium (avoid basic red/blue unless it fits)
+- Think: would a real business pay $5000 for this website? Make it worth that."""
+
+    content = await chat_completion([{"role": "system", "content": WEBSITE_SYSTEM_PROMPT}, {"role": "user", "content": prompt}])
+
+    # Parse the response
+    cleaned = content.strip()
+    if "```json" in cleaned:
+        cleaned = cleaned.split("```json")[1].split("```")[0].strip()
+    elif "```" in cleaned:
+        cleaned = cleaned.split("```")[1].split("```")[0].strip()
+
+    try:
+        content_data = json.loads(cleaned)
+    except json.JSONDecodeError:
+        content_data = {"raw_content": content}
+
+    website = website_service.create(
+        WebsiteCreate(
+            lead_id=lead_id,
+            template=template,
+            content=content_data,
+        )
+    )
+
+    track_usage("gemini_website_gen", 1)
+    logger.info("Website generated", website_id=website["id"])
+
+    # Auto-generate logo for the website
+    try:
+        from app.api.routes.logo_gen import generate_image_logo
+        from pydantic import BaseModel
+        class _LogoReq(BaseModel):
+            style: str = "modern"
+        logo_result = await generate_image_logo(website["id"], _LogoReq(style="modern"))
+        if logo_result.get("logo_url"):
+            # Store logo URL in website content
+            if isinstance(content_data, dict):
+                content_data["logo_url"] = logo_result["logo_url"]
+                website_service.db.table("websites").update({"content": content_data}).eq("id", website["id"]).execute()
+            logger.info("Auto-generated logo", url=logo_result["logo_url"])
+    except Exception as e:
+        logger.warning("Auto logo generation failed", error=str(e))
+    return website

@@ -1,0 +1,66 @@
+{
+  "name": "Lead Processing Pipeline",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": { "interval": [{ "field": "hours", "hoursInterval": 6 }] }
+      },
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{$env.BACKEND_URL}}/api/leads/?status=new&limit=20",
+        "method": "GET"
+      },
+      "name": "Fetch New Leads",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{$env.BACKEND_URL}}/api/leads/{{$json.id}}/analyze",
+        "method": "POST"
+      },
+      "name": "Analyze Lead",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [{ "value1": "={{$json.score}}", "operation": "largerEqual", "value2": 70 }]
+        }
+      },
+      "name": "High Score Filter",
+      "type": "n8n-nodes-base.if",
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{$env.BACKEND_URL}}/api/websites/generate?lead_id={{$json.lead_id}}&template=store",
+        "method": "POST"
+      },
+      "name": "Generate Website",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [1050, 200]
+    },
+    {
+      "parameters": {
+        "url": "={{$env.BACKEND_URL}}/api/outreach/send?lead_id={{$json.lead_id}}&channel=email",
+        "method": "POST"
+      },
+      "name": "Send Outreach",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [1250, 200]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": { "main": [[{ "node": "Fetch New Leads" }]] },
+    "Fetch New Leads": { "main": [[{ "node": "Analyze Lead" }]] },
+    "Analyze Lead": { "main": [[{ "node": "High Score Filter" }]] },
+    "High Score Filter": { "main": [[{ "node": "Generate Website" }], []] },
+    "Generate Website": { "main": [[{ "node": "Send Outreach" }]] }
+  }
+}
