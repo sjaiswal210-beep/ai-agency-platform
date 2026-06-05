@@ -1,5 +1,5 @@
-import os
 from __future__ import annotations
+import os
 import replicate
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import HTMLResponse
@@ -136,12 +136,12 @@ h1{{font-size:1.5rem;margin-bottom:8px}}
 <p class="subtitle">{business_name}</p>
 
 <div class="styles" id="styles">
-<div class="style-btn active" data-style="modern"><span>🎯</span><p>Modern</p></div>
-<div class="style-btn" data-style="minimal"><span>◻️</span><p>Minimal</p></div>
-<div class="style-btn" data-style="vintage"><span>🏛️</span><p>Vintage</p></div>
-<div class="style-btn" data-style="playful"><span>🎨</span><p>Playful</p></div>
-<div class="style-btn" data-style="luxury"><span>👑</span><p>Luxury</p></div>
-<div class="style-btn" data-style="bold"><span>💪</span><p>Bold</p></div>
+<div class="style-btn active" data-style="modern"><span>ðŸŽ¯</span><p>Modern</p></div>
+<div class="style-btn" data-style="minimal"><span>â—»ï¸</span><p>Minimal</p></div>
+<div class="style-btn" data-style="vintage"><span>ðŸ›ï¸</span><p>Vintage</p></div>
+<div class="style-btn" data-style="playful"><span>ðŸŽ¨</span><p>Playful</p></div>
+<div class="style-btn" data-style="luxury"><span>ðŸ‘‘</span><p>Luxury</p></div>
+<div class="style-btn" data-style="bold"><span>ðŸ’ª</span><p>Bold</p></div>
 </div>
 
 <button class="generate-btn" id="genBtn" onclick="generateLogo()">Generate Logo (~5 seconds)</button>
@@ -190,7 +190,7 @@ async function generateLogo() {{
 }}
 </script>
 </body></html>"""
-    return HTMLResponse(content=html)
+    return HTMLResponse(content=html)
 
 
 @router.post("/{website_id}/set-logo")
@@ -219,4 +219,5 @@ def get_current_logo(website_id: str):
 
     content = website.get("content", {})
     logo_url = content.get("logo_url", "") if isinstance(content, dict) else ""
-    return {"logo_url": logo_url, "has_logo": bool(logo_url)}
+    return {"logo_url": logo_url, "has_logo": bool(logo_url)}
+

@@ -1,5 +1,5 @@
-import os
 from __future__ import annotations
+import os
 import os
 import tempfile
 import replicate
@@ -320,5 +320,6 @@ Format as a numbered list. Return ONLY the list."""
         "business": business_name,
         "category": category,
         "suggestions": suggestions,
-    }
-
+    }
+
+
