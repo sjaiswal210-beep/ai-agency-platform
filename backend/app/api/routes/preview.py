@@ -7,6 +7,8 @@ import json
 import urllib.parse
 import asyncio
 
+import re
+
 def _get_real_photos(business_name: str, address: str) -> list:
     """Sync wrapper to get real Google Maps photos."""
     try:
@@ -673,6 +675,40 @@ body{{font-family:Inter,sans-serif;color:#1e293b;line-height:1.7;-webkit-font-sm
         '</body></html>'
     )
     return html
+
+
+
+def _generate_slug(business_name: str) -> str:
+    """Generate a URL-friendly slug from business name."""
+    slug = business_name.lower().strip()
+    slug = re.sub(r'[^a-z0-9\s-]', '', slug)
+    slug = re.sub(r'[\s_]+', '-', slug)
+    slug = re.sub(r'-+', '-', slug)
+    slug = slug.strip('-')
+    return slug[:60] if slug else 'business'
+
+
+@router.get("/by-slug/{slug}", response_class=HTMLResponse)
+def preview_by_slug(slug: str):
+    """Preview a website by its slug (for city-maps.online/slug)."""
+    from app.core.config import get_settings
+    from supabase import create_client
+    settings = get_settings()
+    sb = create_client(settings.supabase_url, settings.supabase_service_key)
+
+    result = sb.table("websites").select("*").eq("slug", slug).limit(1).execute()
+    if not result.data:
+        raise HTTPException(404, "Website not found")
+
+    website = result.data[0]
+    content_data = website.get("content", {})
+    if not content_data:
+        raise HTTPException(404, "No content generated")
+
+    lead_service = LeadService()
+    lead = lead_service.get(website["lead_id"]) if website.get("lead_id") else None
+    html = generate_html(content_data, website.get("template", "store"), lead)
+    return HTMLResponse(content=html)
 
 
 @router.get("/{website_id}", response_class=HTMLResponse)

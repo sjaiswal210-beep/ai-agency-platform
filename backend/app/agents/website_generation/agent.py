@@ -263,6 +263,35 @@ RULES:
     )
 
     track_usage("gemini_website_gen", 1)
+
+    # Auto-assign slug for public URL
+    try:
+        import re as _re
+        def _make_slug(name):
+            s = name.lower().strip()
+            s = _re.sub(r'[^a-z0-9\s-]', '', s)
+            s = _re.sub(r'[\s_]+', '-', s)
+            s = _re.sub(r'-+', '-', s).strip('-')
+            return s[:60] if s else 'business'
+        
+        base_slug = _make_slug(lead.get("business_name", "business"))
+        slug = base_slug
+        # Check uniqueness
+        from app.core.config import get_settings as _gs
+        from supabase import create_client as _sc
+        _settings = _gs()
+        _sb = _sc(_settings.supabase_url, _settings.supabase_service_key)
+        counter = 1
+        while True:
+            existing = _sb.table("websites").select("id").eq("slug", slug).execute()
+            if not existing.data:
+                break
+            slug = f"{base_slug}-{counter}"
+            counter += 1
+        _sb.table("websites").update({"slug": slug}).eq("id", website["id"]).execute()
+        logger.info("Auto-assigned slug", slug=slug, website_id=website["id"])
+    except Exception as e:
+        logger.warning("Failed to assign slug", error=str(e))
     logger.info("Website generated", website_id=website["id"])
 
     # Auto-generate logo for the website
