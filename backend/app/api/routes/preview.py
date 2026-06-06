@@ -721,7 +721,7 @@ def _generate_slug(business_name: str) -> str:
 
 
 @router.get("/by-slug/{slug}", response_class=HTMLResponse)
-def preview_by_slug(slug: str):
+def preview_by_slug(slug: str, lang: str = ""):
     """Preview a website by its slug (for city-maps.online/slug)."""
     from app.core.config import get_settings
     from supabase import create_client
@@ -739,6 +739,16 @@ def preview_by_slug(slug: str):
 
     lead_service = LeadService()
     lead = lead_service.get(website["lead_id"]) if website.get("lead_id") else None
+    # Apply translation if requested
+    if lang and lang != "en":
+        try:
+            from app.core.supabase import get_supabase
+            _db = get_supabase()
+            cached = _db.table("translations").select("translated_content").eq("website_id", website["id"]).eq("language", lang).limit(1).execute()
+            if cached.data and cached.data[0].get("translated_content"):
+                content_data = cached.data[0]["translated_content"]
+        except Exception:
+            pass
     html = generate_html(content_data, website.get("template", "store"), lead)
     return HTMLResponse(content=html)
 
