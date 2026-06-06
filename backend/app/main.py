@@ -27,6 +27,7 @@ from app.api.routes.owner_analytics import router as owner_analytics_router
 from app.api.routes.blog import router as blog_router
 from app.api.routes.translate import router as translate_router
 from app.api.routes.seo_pages import router as seo_pages_router
+from app.api.routes.growth_agent import router as growth_agent_router
 from app.automation.scheduler import start_scheduler, stop_scheduler
 from app.core.logging import setup_logging
 
@@ -87,6 +88,7 @@ app.include_router(owner_analytics_router, prefix="/api")
 app.include_router(blog_router, prefix="/api")
 app.include_router(translate_router, prefix="/api")
 app.include_router(seo_pages_router, prefix="/api")
+app.include_router(growth_agent_router, prefix="/api")
 
 
 static_dir = os.path.join(os.path.dirname(__file__), "..", "static", "videos")
