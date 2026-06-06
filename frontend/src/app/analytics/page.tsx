@@ -1,6 +1,6 @@
 "use client";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "${API_BASE}";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 import { useEffect, useState } from "react";
 import { api, DashboardStats } from "@/lib/api";

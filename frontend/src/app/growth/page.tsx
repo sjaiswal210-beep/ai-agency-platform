@@ -1,6 +1,6 @@
 "use client";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "${API_BASE}";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 import { useEffect, useState } from "react";
 import { api, Lead } from "@/lib/api";
 import { Bot, ArrowLeft, Search, TrendingUp, Mail, Calendar, Target, Star, BarChart3, Copy, Check } from "lucide-react";
