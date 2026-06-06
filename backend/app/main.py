@@ -23,6 +23,7 @@ from app.api.routes.owner_daily import router as daily_router
 from app.api.routes.creatives import router as creatives_router
 from app.api.routes.logo_gen import router as logo_gen_router
 from app.api.routes.website_analytics import router as analytics_router
+from app.api.routes.owner_analytics import router as owner_analytics_router
 from app.automation.scheduler import start_scheduler, stop_scheduler
 from app.core.logging import setup_logging
 
@@ -79,6 +80,7 @@ app.include_router(daily_router, prefix="/api")
 app.include_router(creatives_router, prefix="/api")
 app.include_router(logo_gen_router, prefix="/api")
 app.include_router(analytics_router, prefix="/api")
+app.include_router(owner_analytics_router, prefix="/api")
 
 
 static_dir = os.path.join(os.path.dirname(__file__), "..", "static", "videos")
