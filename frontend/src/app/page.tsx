@@ -10,6 +10,7 @@ export default function Dashboard() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [recentLeads, setRecentLeads] = useState<Lead[]>([]);
   const [collapsed, setCollapsed] = useState(false);
+  const [agentStatus, setAgentStatus] = useState<any>(null);
   const [showDiscover, setShowDiscover] = useState(false);
   const [location, setLocation] = useState("");
   const [keyword, setKeyword] = useState("");
@@ -106,6 +107,7 @@ export default function Dashboard() {
   useEffect(() => {
     api.dashboard.stats().then(setStats).catch(console.error);
     api.leads.list().then((leads) => setRecentLeads(leads.slice(0, 5))).catch(console.error);
+    fetch(\`\${API_BASE}/api/agent-status/\`).then(r => r.json()).then(setAgentStatus).catch(console.error);
   }, []);
 
   const navItems = [
@@ -215,6 +217,26 @@ export default function Dashboard() {
           </div>
 
           {/* Quick Actions */}
+          {/* Agent Status */}
+          {agentStatus && (
+            <div className="glass-card-solid p-4 mb-6">
+              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">AI Agents</h3>
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
+                {Object.entries(agentStatus.agents || {}).map(([key, agent]: [string, any]) => (
+                  <div key={key} className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg">
+                    <span className="text-lg">{agent.icon}</span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-medium truncate">{agent.name}</p>
+                      <p className={`text-[10px] ${agent.status === "active" ? "text-green-600" : "text-gray-400"}`}>
+                        {agent.status === "active" ? "\u25cf Working" : "\u25cb Idle"}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Quick Actions</p>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6 stagger-children">
             <button onClick={() => setShowDiscover(true)} className="flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white py-3 rounded-xl text-sm font-medium hover:shadow-lg hover:shadow-indigo-500/25 transition-all">

@@ -43,6 +43,14 @@ export default function LeadsPage() {
     }
   };
 
+  const handleDelete = async (lead: Lead) => {
+    if (!confirm(\`Delete \${lead.business_name}? This also removes its website.\`)) return;
+    try {
+      await fetch(\`\${API_BASE}/api/leads/\${lead.id}\`, { method: "DELETE" });
+      setLeads(leads.filter(l => l.id !== lead.id));
+    } catch (err) { console.error(err); }
+  };
+
   const handleAction = async (lead: Lead, action: string) => {
     try {
       switch (action) {
@@ -179,6 +187,12 @@ export default function LeadsPage() {
                             </button>
                           </>
                         )}
+                        <button
+                              onClick={() => handleDelete(lead)}
+                              className="text-xs px-2 py-1 bg-red-50 text-red-600 rounded hover:bg-red-100"
+                            >
+                              Del
+                            </button>
                       </div>
                     </td>
                   </tr>

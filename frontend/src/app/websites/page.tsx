@@ -28,6 +28,14 @@ export default function WebsitesPage() {
   const [websites, setWebsites] = useState<WebsiteItem[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const handleDelete = async (id: string, name: string) => {
+    if (!confirm(\`Delete website for \${name}?\`)) return;
+    try {
+      await fetch(\`\${API_BASE}/api/leads/website/\${id}\`, { method: "DELETE" });
+      setWebsites(websites.filter(w => w.id !== id));
+    } catch (err) { console.error(err); }
+  };
+
   useEffect(() => {
     fetch(`${API_BASE}/api/websites/`)
       .then((r) => r.json())
@@ -124,6 +132,12 @@ export default function WebsitesPage() {
                     >
                       Panel
                     </a>
+                    <button
+                      onClick={() => handleDelete(site.id, site.business_name || "this site")}
+                      className="px-3 py-2 bg-red-50 text-red-600 text-xs rounded-lg hover:bg-red-100 transition"
+                    >
+                      Del
+                    </button>
                   </div>
 
                   <p className="text-xs text-gray-400 mt-2">

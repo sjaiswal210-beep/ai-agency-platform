@@ -1,5 +1,5 @@
 from __future__ import annotations
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, BackgroundTasks, HTTPException, Query
 from app.schemas.leads import LeadCreate, LeadResponse, LeadUpdate
 from app.services.lead_service import LeadService
 
@@ -56,6 +56,15 @@ async def discover_leads(
         except Exception:
             pass
 
+
+    # Auto-generate websites for first few leads
+    import asyncio
+    try:
+        lead_ids = [l["id"] for l in result.get("leads", []) if l.get("id")][:3]
+        if lead_ids:
+            asyncio.ensure_future(_auto_generate_websites(lead_ids))
+    except Exception:
+        pass
     return {"discovered": len(leads), "leads": leads, "auto_processed": auto_processed}
 
 
@@ -261,3 +270,38 @@ async def scrape_area(location: str = Query(..., description="Area to scrape all
         stored = service.bulk_create(leads_to_create)
 
     return {"discovered": len(stored), "leads": stored}
+
+async def _auto_generate_websites(lead_ids: list):
+    """Background task: auto-generate websites for discovered leads."""
+    from app.agents.website_generation.agent import generate_website
+    from app.core.logging import get_logger
+    logger = get_logger(__name__)
+    for lead_id in lead_ids[:5]:  # Limit to 5 per batch to avoid rate limits
+        try:
+            await generate_website(lead_id)
+            logger.info("Auto-generated website", lead_id=lead_id)
+        except Exception as e:
+            logger.warning("Auto-gen failed", lead_id=lead_id, error=str(e))
+
+
+@router.delete("/{lead_id}")
+def delete_lead(lead_id: str):
+    """Delete a lead and its associated websites."""
+    from app.core.supabase import get_supabase
+    db = get_supabase()
+    
+    # Delete associated websites first
+    db.table("websites").delete().eq("lead_id", lead_id).execute()
+    # Delete the lead
+    db.table("leads").delete().eq("id", lead_id).execute()
+    
+    return {"deleted": True, "lead_id": lead_id}
+
+
+@router.delete("/website/{website_id}")
+def delete_website(website_id: str):
+    """Delete a specific website."""
+    from app.core.supabase import get_supabase
+    db = get_supabase()
+    db.table("websites").delete().eq("id", website_id).execute()
+    return {"deleted": True, "website_id": website_id}
