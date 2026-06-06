@@ -347,6 +347,7 @@ def generate_html(content: dict, template: str, lead: dict = None) -> str:
     features = content.get("features", [])
     primary = colors.get("primary", "#6366f1")
     secondary = colors.get("secondary", "#e0e7ff")
+    accent = colors.get("accent", "#F59E0B")
 
     category = (lead.get("category", "") if lead else "") or template
     logo_url = content.get("logo_url", "") if isinstance(content, dict) else ""
@@ -366,13 +367,14 @@ def generate_html(content: dict, template: str, lead: dict = None) -> str:
     hours = contact.get("hours", "Mon-Sat: 9 AM - 8 PM")
     business_name = lead.get("business_name", hero_title) if lead else hero_title
     whatsapp_num = phone.replace("-", "").replace(" ", "").replace("+", "") if phone else ""
+    short_name = business_name.split()[0] if business_name else "Biz"
     maps_url = get_maps_embed(address)
 
     svc_cards = []
     for i, svc in enumerate(services):
         img = gallery[i % len(gallery)]
         svc_cards.append(
-            '<div class="service-card">'
+            '<article class="service-card" data-aos="fade-up">'
             f'<div class="service-img" style="background-image:url({img})"></div>'
             f'<div class="service-content"><h3>{svc.get("name","")}</h3>'
             f'<p>{svc.get("description","")}</p></div></div>'
@@ -383,7 +385,7 @@ def generate_html(content: dict, template: str, lead: dict = None) -> str:
     for t in testimonials:
         stars = "&#9733;" * t.get("rating", 5)
         test_cards.append(
-            '<div class="testimonial-card">'
+            '<div class="testimonial-card" data-aos="fade-up">'
             f'<div class="testimonial-avatar">{t.get("name","A")[0]}</div>'
             f'<div class="stars">{stars}</div>'
             f'<blockquote>{t.get("text","")}</blockquote>'
@@ -395,7 +397,7 @@ def generate_html(content: dict, template: str, lead: dict = None) -> str:
     gallery_images = real_photos if real_photos else gallery
     gal_items = []
     for img_url in gallery_images:
-        gal_items.append(f'<div class="gallery-item"><img src="{img_url}" alt="Gallery" loading="lazy"></div>')
+        gal_items.append(f'<figure class="gallery-item" data-aos="zoom-in"><img src="{img_url}" alt="Gallery" loading="lazy"></figure>')
     gallery_html = "".join(gal_items)
 
     # Icon to emoji mapping
@@ -436,7 +438,7 @@ def generate_html(content: dict, template: str, lead: dict = None) -> str:
     for f in features:
         emoji = icon_to_emoji(f.get("icon", ""))
         feat_items.append(
-            '<div class="feature-item">'
+            '<div class="feature-item" data-aos="fade-up">'
             f'<div class="feature-icon">{emoji}</div>'
             f'<h3>{f.get("title","")}</h3>'
             f'<p>{f.get("description","")}</p></div>'
@@ -500,120 +502,149 @@ def generate_html(content: dict, template: str, lead: dict = None) -> str:
         wa_link = f'<a href="https://wa.me/{whatsapp_num}?text={wa_encoded}" target="_blank" class="whatsapp-float"><svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492l4.625-1.476A11.929 11.929 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.75c-2.115 0-4.09-.57-5.793-1.564l-.415-.248-2.74.875.876-2.672-.27-.43A9.71 9.71 0 012.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75z"/></svg></a>'
 
     css = f"""<style>
-:root{{--primary:{primary};--secondary:{secondary}}}
-*{{margin:0;padding:0;box-sizing:border-box}}html{{scroll-behavior:smooth}}
-body{{font-family:Inter,sans-serif;color:#1e293b;line-height:1.7;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}}
-.nav{{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(255,255,255,.95);backdrop-filter:blur(20px);border-bottom:1px solid rgba(0,0,0,.05);padding:16px 40px;display:flex;justify-content:space-between;align-items:center}}
-.nav-brand{{font-family:Playfair Display,serif;font-weight:800;font-size:1.4rem;color:var(--primary);display:flex;align-items:center}}
-.nav-links{{display:flex;gap:32px}}.nav-links a{{text-decoration:none;color:#64748b;font-weight:500;font-size:.9rem}}.nav-links a:hover{{color:var(--primary)}}
-.nav-cta{{background:linear-gradient(135deg,var(--primary),#000);color:#fff;padding:10px 20px;border-radius:50px;text-decoration:none;font-weight:600;font-size:.8rem;transition:all .3s;box-shadow:0 4px 15px rgba(0,0,0,.2);display:flex;align-items:center;gap:6px}}.nav-cta:hover{{transform:translateY(-2px);box-shadow:0 6px 25px rgba(0,0,0,.3)}}
-.hero{{min-height:85vh;display:flex;align-items:center;position:relative;overflow:hidden}}
-.hero-bg{{position:absolute;inset:0;background:url('{real_photos[0] if real_photos else hero_img}') center/cover no-repeat}}
-.hero-overlay{{position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,0,0,.7) 0%,rgba(0,0,0,.3) 50%,rgba(0,0,0,.5) 100%)}}.hero-bg{{filter:brightness(1.05) contrast(1.1) saturate(1.2);animation:slowZoom 20s ease-in-out infinite alternate}}@keyframes slowZoom{{0%{{transform:scale(1)}}100%{{transform:scale(1.05)}}}}
-.hero-content{{position:relative;z-index:1;max-width:700px;padding:120px 60px;color:#fff}}
-.hero h1{{font-family:Playfair Display,serif;font-size:clamp(2.8rem,5vw,4.5rem);font-weight:900;margin-bottom:20px;line-height:1.1;text-shadow:0 2px 20px rgba(0,0,0,.3)}}
-.hero p{{font-size:1.2rem;opacity:.9;margin-bottom:36px}}
-.btn{{display:inline-flex;padding:16px 32px;border-radius:12px;text-decoration:none;font-weight:700;font-size:1rem;transition:all .3s;letter-spacing:.5px}}
-.btn-white{{background:#fff;color:var(--primary);box-shadow:0 4px 20px rgba(0,0,0,.3);font-size:1.05rem;padding:18px 36px}}.btn-white:hover{{transform:translateY(-3px);box-shadow:0 8px 30px rgba(0,0,0,.4)}}.btn-glass{{background:rgba(255,255,255,.2);color:#fff;border:2px solid rgba(255,255,255,.5);backdrop-filter:blur(4px);padding:16px 32px;font-size:1rem}}.btn-glass:hover{{background:rgba(255,255,255,.35);border-color:#fff}}.hero-badge{{display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);padding:8px 16px;border-radius:50px;font-size:.85rem;margin-bottom:24px;backdrop-filter:blur(4px)}}
-.section{{padding:60px 24px;max-width:1100px;margin:0 auto}}
-.section-header{{text-align:center;margin-bottom:48px}}
-.section-header h2{{font-family:Playfair Display,serif;font-size:2.2rem;font-weight:800;margin-bottom:12px}}
-.section-header p{{color:#64748b;font-size:1.05rem}}
-.about-grid{{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}}
-.about-img img{{width:100%;height:400px;object-fit:cover;border-radius:16px;box-shadow:0 20px 40px rgba(0,0,0,.1);filter:brightness(1.05) contrast(1.08) saturate(1.15)}}
-.about-text{{font-size:1.1rem;color:#64748b;line-height:1.9}}
-.services-grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px}}
-.service-card{{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.06);transition:all .4s cubic-bezier(.4,0,.2,1)}}
-.service-card:hover{{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.12)}}.service-card::after{{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--primary),var(--secondary));transform:scaleX(0);transition:transform .3s}}.service-card:hover::after{{transform:scaleX(1)}}.service-card{{position:relative}}
-.service-img{{height:180px;background-size:cover;background-position:center;filter:brightness(1.05) contrast(1.1) saturate(1.15)}}
-.service-content{{padding:24px}}.service-content h3{{font-size:1.1rem;font-weight:700;margin-bottom:8px}}.service-content p{{color:#64748b;font-size:.9rem}}
-.gallery-grid{{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}}
-.gallery-item{{border-radius:12px;overflow:hidden;aspect-ratio:1}}.gallery-item img{{width:100%;height:100%;object-fit:cover;transition:transform .4s;filter:brightness(1.05) contrast(1.08) saturate(1.15)}}.gallery-item:hover img{{transform:scale(1.05);filter:brightness(1.1) contrast(1.1) saturate(1.2)}}
-.features-grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:32px}}
-.feature-item{{text-align:center;padding:28px 16px;border-radius:16px;background:#f8fafc;transition:all .3s}}.feature-item:hover{{background:#fff;box-shadow:0 8px 24px rgba(0,0,0,.06)}}
-.feature-icon{{font-size:2.5rem;margin-bottom:12px}}.feature-item h3{{font-size:1rem;font-weight:700;margin-bottom:6px}}.feature-item p{{color:#64748b;font-size:.9rem}}
-.testimonials-grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px}}
-.testimonial-card{{background:#fff;border-radius:16px;padding:32px;box-shadow:0 4px 16px rgba(0,0,0,.05)}}
-.testimonial-avatar{{width:44px;height:44px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;margin-bottom:12px}}
-.stars{{color:#f59e0b;font-size:1.1rem;margin-bottom:10px}}.testimonial-card blockquote{{color:#64748b;font-style:italic;margin-bottom:12px;font-size:.95rem}}.testimonial-card cite{{font-weight:600;font-style:normal;font-size:.9rem}}
-.contact-section{{background:#111827;color:#fff;padding:60px 24px}}
-.contact-container{{max-width:900px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}}
-.contact-left h2{{font-size:1.5rem;margin-bottom:16px}}
-.contact-subtitle{{color:#9ca3af;font-size:.9rem;margin-bottom:0}}
+:root{{--p:{primary};--ps:{secondary};--ac:{accent};--ink:#0f172a;--mute:#64748b;--line:#e2e8f0;--bg:#fff;--soft:#f8fafc}}
+*{{margin:0;padding:0;box-sizing:border-box}}
+html{{scroll-behavior:smooth}}
+body{{font-family:'Plus Jakarta Sans',Inter,system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.7;-webkit-font-smoothing:antialiased;overflow-x:hidden}}
+h1,h2,h3{{line-height:1.15;letter-spacing:-.02em}}
+a{{text-decoration:none;color:inherit}}
+.wrap{{max-width:1180px;margin:0 auto;padding:0 24px}}
+.tag{{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--p);background:color-mix(in srgb,var(--p) 8%,transparent);padding:6px 14px;border-radius:50px;margin-bottom:14px}}
+
+/* NAV */
+.nav{{position:fixed;top:0;left:0;right:0;z-index:1000;padding:18px 32px;display:flex;align-items:center;justify-content:space-between;transition:all .4s}}
+.nav.solid{{background:rgba(255,255,255,.92);backdrop-filter:saturate(180%) blur(20px);box-shadow:0 1px 3px rgba(0,0,0,.06);padding:13px 32px}}
+.nav.solid .nav-brand,.nav.solid .nav-links a{{color:var(--ink)}}
+.nav-brand{{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:1.15rem;color:#fff;display:flex;align-items:center;gap:10px}}
+.nav-brand .logo{{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--p),var(--ps));display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px color-mix(in srgb,var(--p) 40%,transparent)}}
+.nav-links{{display:flex;gap:28px}}.nav-links a{{font-size:.88rem;font-weight:600;color:rgba(255,255,255,.85);transition:color .2s}}.nav-links a:hover{{color:#fff}}.nav.solid .nav-links a:hover{{color:var(--p)}}
+.nav-cta{{background:var(--p);color:#fff!important;padding:10px 20px;border-radius:50px;font-weight:700;font-size:.85rem;display:flex;align-items:center;gap:6px;box-shadow:0 6px 20px color-mix(in srgb,var(--p) 40%,transparent);transition:transform .25s}}.nav-cta:hover{{transform:translateY(-2px)}}
+
+/* HERO */
+.hero{{position:relative;min-height:100vh;display:flex;align-items:center;overflow:hidden}}
+.hero-bg{{position:absolute;inset:0;background:url('{real_photos[0] if real_photos else hero_img}') center/cover no-repeat;transform:scale(1.05);animation:heroZ 20s ease-in-out infinite alternate}}
+@keyframes heroZ{{to{{transform:scale(1)}}}}
+.hero-overlay{{position:absolute;inset:0;background:linear-gradient(125deg,rgba(5,5,20,.84) 0%,rgba(5,5,20,.5) 50%,rgba(5,5,20,.3) 100%)}}
+.hero-glow{{position:absolute;top:-20%;right:-10%;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--p) 40%,transparent),transparent 65%);filter:blur(40px);opacity:.6}}
+.hero-content{{position:relative;z-index:2;max-width:720px;padding:140px 24px 100px;margin-left:5%}}
+.hero-pill{{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);backdrop-filter:blur(6px);padding:8px 16px;border-radius:50px;font-size:.82rem;font-weight:600;color:#fff;margin-bottom:20px}}
+.hero h1{{font-size:clamp(2.6rem,5.5vw,4.4rem);font-weight:800;color:#fff;margin-bottom:18px;text-shadow:0 2px 20px rgba(0,0,0,.3)}}
+.hero p{{font-size:clamp(1rem,2vw,1.2rem);color:rgba(255,255,255,.88);max-width:560px;margin-bottom:14px}}
+.offer-pill{{display:inline-block;background:var(--ac);color:#fff;font-weight:700;font-size:.88rem;padding:9px 18px;border-radius:10px;margin-bottom:22px;box-shadow:0 8px 24px color-mix(in srgb,var(--ac) 40%,transparent)}}
+.hero-btns{{display:flex;flex-wrap:wrap;gap:12px;margin-top:6px}}
+.btn{{display:inline-flex;align-items:center;gap:8px;padding:14px 26px;border-radius:12px;font-weight:700;font-size:.95rem;transition:transform .25s,box-shadow .25s;border:none;cursor:pointer}}
+.btn-main{{background:#fff;color:var(--p);box-shadow:0 10px 30px rgba(0,0,0,.25)}}.btn-main:hover{{transform:translateY(-3px);box-shadow:0 16px 40px rgba(0,0,0,.35)}}
+.btn-wa{{background:#25D366;color:#fff;box-shadow:0 8px 24px rgba(37,211,102,.4)}}.btn-wa:hover{{transform:translateY(-2px)}}
+.btn-outline{{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.4)}}.btn-outline:hover{{background:rgba(255,255,255,.15)}}
+.badges{{display:flex;flex-wrap:wrap;gap:8px;margin-top:28px}}.badge-item{{font-size:.78rem;font-weight:600;color:rgba(255,255,255,.9);background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);padding:6px 13px;border-radius:50px}}
+.hero-badge{{display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);padding:8px 16px;border-radius:50px;font-size:.85rem;margin-bottom:24px;backdrop-filter:blur(4px)}}
+
+/* STATS */
+.stats-section{{background:linear-gradient(135deg,var(--p),var(--ps));padding:48px 24px;position:relative;overflow:hidden}}.stats-section::before{{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 70% 20%,rgba(255,255,255,.12),transparent 55%)}}
+.stats-grid{{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:16px;max-width:1000px;margin:0 auto;text-align:center}}.stat-item{{color:#fff}}.stat-number{{font-size:clamp(1.8rem,3.5vw,2.6rem);font-weight:800}}.stat-label{{font-size:.82rem;opacity:.75;margin-top:4px;font-weight:500}}
+
+/* SECTIONS */
+.section{{padding:100px 24px;max-width:1180px;margin:0 auto}}
+.section-alt{{background:var(--soft);max-width:100%;padding:100px 24px}}.section-alt .section-inner{{max-width:1180px;margin:0 auto}}
+.section-header{{text-align:center;margin-bottom:52px}}
+.section-header h2{{font-size:clamp(2rem,4vw,2.8rem);font-weight:800}}.section-header p{{color:var(--mute);margin-top:12px;font-size:1.05rem}}
+
+/* ABOUT */
+.about-grid{{display:grid;grid-template-columns:1.1fr 1fr;gap:56px;align-items:center}}
+.about-img{{position:relative}}.about-img img{{width:100%;height:480px;object-fit:cover;border-radius:20px;box-shadow:0 32px 64px rgba(15,23,42,.16);filter:brightness(1.05) contrast(1.05) saturate(1.1)}}
+.about-badge{{position:absolute;bottom:-20px;left:-16px;background:#fff;border-radius:16px;padding:18px 22px;box-shadow:0 16px 40px rgba(15,23,42,.12);display:flex;align-items:center;gap:12px}}
+.about-badge .big{{font-size:1.7rem;font-weight:800;color:var(--p)}}.about-badge .sm{{font-size:.75rem;color:var(--mute);font-weight:600}}
+.about-text h2{{font-size:clamp(1.8rem,3.5vw,2.6rem);font-weight:800;margin-bottom:16px}}.about-text p{{color:var(--mute);font-size:1.05rem;line-height:1.85}}
+
+/* SERVICES */
+.services-grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px}}
+.service-card{{background:#fff;border-radius:20px;overflow:hidden;border:1px solid var(--line);transition:transform .4s cubic-bezier(.16,1,.3,1),box-shadow .4s}}
+.service-card:hover{{transform:translateY(-8px);box-shadow:0 24px 48px rgba(15,23,42,.12)}}
+.service-img{{height:200px;background-size:cover;background-position:center;position:relative}}.service-img::after{{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.5),transparent 60%)}}
+.service-emoji{{position:absolute;bottom:12px;left:14px;z-index:1;width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,.95);display:flex;align-items:center;justify-content:center;font-size:1.4rem;box-shadow:0 6px 16px rgba(0,0,0,.15)}}
+.service-content{{padding:22px 20px}}.service-content h3{{font-size:1.15rem;font-weight:700;margin-bottom:8px}}.service-content p{{color:var(--mute);font-size:.92rem}}
+.chips{{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}}.chip{{font-size:.72rem;font-weight:600;color:var(--p);background:color-mix(in srgb,var(--p) 8%,transparent);padding:4px 10px;border-radius:50px}}
+
+/* FEATURES */
+.features-grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:22px}}
+.feature-item{{background:#fff;border:1px solid var(--line);border-radius:18px;padding:30px 24px;transition:transform .35s,box-shadow .35s}}
+.feature-item:hover{{transform:translateY(-6px);box-shadow:0 20px 44px rgba(15,23,42,.09)}}
+.feature-icon{{width:54px;height:54px;border-radius:14px;background:linear-gradient(135deg,color-mix(in srgb,var(--p) 12%,#fff),color-mix(in srgb,var(--ps) 12%,#fff));display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:16px}}
+.feature-item h3{{font-size:1.05rem;font-weight:700;margin-bottom:6px}}.feature-item p{{color:var(--mute);font-size:.9rem}}
+
+/* GALLERY */
+.gallery-grid{{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}}
+.gallery-item{{border-radius:16px;overflow:hidden;aspect-ratio:4/3}}.gallery-item img{{width:100%;height:100%;object-fit:cover;transition:transform .5s cubic-bezier(.16,1,.3,1);filter:brightness(1.05) contrast(1.05) saturate(1.1)}}.gallery-item:hover img{{transform:scale(1.06)}}
+
+/* TESTIMONIALS */
+.testimonials-grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px}}
+.testimonial-card{{background:#fff;border:1px solid var(--line);border-radius:18px;padding:30px 26px;transition:transform .35s,box-shadow .35s}}
+.testimonial-card:hover{{transform:translateY(-5px);box-shadow:0 20px 44px rgba(15,23,42,.09)}}
+.testimonial-avatar{{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--p),var(--ps));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1rem;margin-bottom:14px}}
+.stars{{color:#f59e0b;font-size:1.05rem;margin-bottom:14px;letter-spacing:2px}}
+.testimonial-card blockquote{{color:var(--ink);font-size:1rem;line-height:1.7;margin-bottom:18px;font-style:italic}}
+.testimonial-card cite{{font-weight:700;font-style:normal;font-size:.92rem}}
+
+/* HOW IT WORKS */
+.hiw-grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:24px}}
+.hiw-item{{text-align:center}}.hiw-number{{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--p),var(--ps));color:#fff;font-size:1.3rem;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 10px 24px color-mix(in srgb,var(--p) 35%,transparent)}}
+.hiw-item h3{{font-size:1.05rem;font-weight:700;margin-bottom:6px}}.hiw-item p{{color:var(--mute);font-size:.88rem}}
+
+/* BENEFITS */
+.benefits-grid{{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;max-width:900px;margin:0 auto;padding:0}}
+.benefit-item{{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px;font-weight:600;font-size:.95rem}}
+.benefit-check{{flex-shrink:0;width:26px;height:26px;border-radius:50%;background:color-mix(in srgb,var(--p) 12%,#fff);color:var(--p);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem}}
+
+/* FAQ */
+.faq-item{{background:#fff;border:1px solid var(--line);border-radius:14px;margin-bottom:12px;overflow:hidden;transition:box-shadow .3s}}
+.faq-item[open]{{box-shadow:0 12px 32px rgba(15,23,42,.07)}}
+.faq-item summary{{display:flex;justify-content:space-between;align-items:center;padding:20px 22px;cursor:pointer;font-weight:700;font-size:.98rem;list-style:none}}
+.faq-item summary::-webkit-details-marker{{display:none}}.faq-item p{{padding:0 22px 20px;color:var(--mute);font-size:.94rem;line-height:1.8}}
+
+/* CONTACT */
+.contact-section{{background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;padding:100px 24px}}
+.contact-container{{max-width:1000px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:start}}
+.contact-left h2{{font-size:clamp(1.8rem,3.5vw,2.5rem);font-weight:800;margin-bottom:12px}}.contact-left .sub{{color:#94a3b8;font-size:1rem;margin-bottom:28px}}
 .contact-cards{{display:flex;flex-direction:column;gap:12px}}
-.contact-card{{display:flex;align-items:center;gap:12px;text-decoration:none;color:#fff;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06)}}
-.contact-card:last-child{{border:none}}
-.contact-card-icon{{font-size:1.2rem;width:32px}}
-.contact-card-label{{display:none}}
-.contact-card-value{{font-size:.9rem;color:#d1d5db}}
-.contact-right{{text-align:center}}
-.contact-cta-box{{background:var(--primary);border-radius:12px;padding:28px}}
-.contact-cta-box h3{{font-size:1.1rem;margin-bottom:6px}}
-.contact-cta-box p{{opacity:.8;margin-bottom:16px;font-size:.85rem}}
-.contact-cta-btn{{display:inline-block;background:#fff;color:var(--primary);padding:10px 24px;border-radius:8px;text-decoration:none;font-weight:600;font-size:.9rem}}
-.whatsapp-float{{position:fixed;bottom:24px;right:24px;z-index:999;background:#25D366;color:#fff;width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;box-shadow:0 4px 16px rgba(37,211,102,.4);transition:all .3s;animation:pulse-wa 2s infinite}}.whatsapp-float:hover{{transform:scale(1.1);box-shadow:0 6px 24px rgba(37,211,102,.6)}}@keyframes pulse-wa{{0%,100%{{box-shadow:0 4px 16px rgba(37,211,102,.4)}}50%{{box-shadow:0 4px 24px rgba(37,211,102,.7)}}}}
-.stats-section{{background:var(--primary);padding:40px 24px;position:relative;overflow:hidden}}.stats-section::before{{content:'';position:absolute;top:-50%;right:-20%;width:60%;height:200%;background:radial-gradient(circle,rgba(255,255,255,.1),transparent);border-radius:50%}}.stats-grid{{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;max-width:800px;margin:0 auto;text-align:center}}.stat-item{{color:#fff}}.stat-number{{font-size:1.8rem;font-weight:800}}.stat-label{{font-size:.75rem;opacity:.7;margin-top:2px}}.footer{{background:#030712;color:#6b7280;padding:24px;text-align:center;font-size:.8rem}}
-.footer-inner{{max-width:900px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}}
-.footer-brand{{font-weight:600;font-size:.85rem;color:#9ca3af;display:flex;align-items:center}}
-.footer-links{{display:flex;gap:16px}}.footer-links a{{color:#6b7280;text-decoration:none;font-size:.8rem}}.footer-links a:hover{{color:#fff}}
-.footer-copy{{font-size:.75rem;color:#4b5563}}
-.hiw-grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:24px;counter-reset:step}}
-.hiw-item{{text-align:center;padding:24px 16px}}
-.hiw-number{{width:40px;height:40px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;margin:0 auto 12px;font-size:1.1rem}}
-.hiw-item h3{{font-size:1rem;font-weight:700;margin-bottom:6px}}.hiw-item p{{color:#64748b;font-size:.85rem}}
-.benefits-grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}}
-.benefit-item{{padding:12px 16px;background:#f0fdf4;border-radius:8px;font-size:.9rem;color:#166534;font-weight:500}}
-.why-grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px}}
-.why-item{{text-align:center;padding:24px 16px}}.why-icon{{font-size:2rem;margin-bottom:8px}}.why-item h3{{font-size:1rem;font-weight:700;margin-bottom:4px}}.why-item p{{color:#64748b;font-size:.85rem}}
-.faq-list{{max-width:800px;margin:0 auto}}
-.faq-item{{border-bottom:1px solid #e5e7eb;padding:16px 0}}
-.faq-item summary{{font-weight:600;cursor:pointer;font-size:.95rem;padding:4px 0}}
-.faq-item p{{color:#64748b;font-size:.9rem;margin-top:8px;line-height:1.7}}
-.hero-offer{{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);display:inline-block;padding:8px 16px;border-radius:8px;font-size:.9rem;margin-bottom:20px}}
+.contact-card{{display:flex;align-items:center;gap:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);padding:16px 18px;border-radius:14px;color:#fff;transition:background .25s}}.contact-card:hover{{background:rgba(255,255,255,.08)}}
+.contact-card-icon{{width:42px;height:42px;border-radius:11px;background:linear-gradient(135deg,var(--p),var(--ps));display:flex;align-items:center;justify-content:center;font-size:1.15rem;flex-shrink:0}}
+.contact-card-label{{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:#64748b}}.contact-card-value{{font-size:.92rem;font-weight:600;margin-top:2px;color:#e2e8f0}}
+.contact-form{{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:28px}}
+.contact-form h3{{font-size:1.2rem;margin-bottom:4px}}.contact-form .fsub{{color:#94a3b8;font-size:.85rem;margin-bottom:18px}}
+.contact-form input,.contact-form textarea{{width:100%;padding:13px 15px;margin-bottom:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;font-size:.92rem;font-family:inherit;outline:none;transition:border .2s}}
+.contact-form input:focus,.contact-form textarea:focus{{border-color:var(--p)}}.contact-form input::placeholder,.contact-form textarea::placeholder{{color:#6b7280}}
+.contact-form button{{width:100%;background:var(--p);color:#fff;padding:14px;border:none;border-radius:10px;font-weight:700;font-size:.95rem;cursor:pointer;transition:transform .2s,box-shadow .2s}}.contact-form button:hover{{transform:translateY(-2px);box-shadow:0 10px 28px color-mix(in srgb,var(--p) 45%,transparent)}}
 
-/* Premium 3D Effects */
-.service-card{{perspective:1000px}}
-.service-card:hover .service-img{{transform:scale(1.05)}}
-.service-card:hover{{transform:translateY(-8px) rotateX(2deg);box-shadow:0 20px 60px rgba(0,0,0,.15)}}
+/* FOOTER */
+.footer{{background:#070a13;color:#94a3b8;padding:48px 24px 28px}}
+.footer-inner{{max-width:1000px;margin:0 auto}}
+.footer-top{{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:20px;padding-bottom:24px;border-bottom:1px solid rgba(255,255,255,.06)}}
+.footer-brand{{display:flex;align-items:center;gap:10px;color:#fff;font-weight:800;font-size:1.1rem}}
+.footer-links{{display:flex;gap:22px;flex-wrap:wrap}}.footer-links a{{color:#94a3b8;font-size:.88rem;font-weight:500;transition:color .2s}}.footer-links a:hover{{color:#fff}}
+.footer-bottom{{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;padding-top:20px;font-size:.82rem}}.footer-bottom .kd{{color:#e2e8f0;font-weight:600}}
 
-/* Floating animation */
-@keyframes float{{0%,100%{{transform:translateY(0)}}50%{{transform:translateY(-8px)}}}}
-.hero-badge{{animation:float 3s ease-in-out infinite}}
+/* WHATSAPP FLOAT */
+.whatsapp-float{{position:fixed;bottom:24px;right:24px;z-index:998;width:58px;height:58px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 26px rgba(37,211,102,.45);animation:waPulse 2.2s infinite;transition:transform .2s}}.whatsapp-float:hover{{transform:scale(1.08)}}
+@keyframes waPulse{{0%,100%{{box-shadow:0 8px 26px rgba(37,211,102,.45)}}50%{{box-shadow:0 8px 36px rgba(37,211,102,.75)}}}}
 
-/* Gradient mesh background */
-@keyframes gradientMove{{0%{{background-position:0% 50%}}50%{{background-position:100% 50%}}100%{{background-position:0% 50%}}}}
+/* CHAT */
+.chat-btn{{position:fixed;bottom:24px;left:24px;z-index:998;width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,var(--p),var(--ps));display:flex;align-items:center;justify-content:center;font-size:1.4rem;cursor:pointer;box-shadow:0 8px 26px color-mix(in srgb,var(--p) 45%,transparent);transition:transform .2s;border:none;color:#fff}}.chat-btn:hover{{transform:scale(1.08)}}
+.chat-panel{{position:fixed;bottom:94px;left:24px;z-index:999;width:340px;max-width:calc(100vw - 48px);background:#fff;border-radius:18px;box-shadow:0 24px 60px rgba(15,23,42,.25);overflow:hidden;display:none;flex-direction:column;border:1px solid var(--line)}}
+.chat-panel.open{{display:flex;animation:chatIn .3s ease}}
+@keyframes chatIn{{from{{opacity:0;transform:translateY(16px)}}to{{opacity:1;transform:translateY(0)}}}}
+.chat-hd{{background:linear-gradient(135deg,var(--p),var(--ps));color:#fff;padding:16px 18px;font-weight:700;font-size:.95rem;display:flex;align-items:center;gap:9px}}
+.chat-hd .dot{{width:8px;height:8px;border-radius:50%;background:#4ade80;animation:dotP 2s infinite}}
+@keyframes dotP{{0%,100%{{opacity:1}}50%{{opacity:.4}}}}
+.chat-msgs{{height:260px;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;background:var(--soft)}}
+.chat-msg{{max-width:82%;padding:10px 14px;border-radius:12px;font-size:.88rem;line-height:1.5}}
+.chat-msg.bot{{background:#fff;border:1px solid var(--line);align-self:flex-start;border-bottom-left-radius:3px}}
+.chat-msg.user{{background:var(--p);color:#fff;align-self:flex-end;border-bottom-right-radius:3px}}
+.chat-input{{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line);background:#fff}}.chat-input input{{flex:1;padding:10px 14px;border:1px solid var(--line);border-radius:50px;outline:none;font-size:.88rem}}.chat-input button{{background:var(--p);color:#fff;border:none;width:38px;height:38px;border-radius:50%;cursor:pointer;font-size:1rem;flex-shrink:0;display:flex;align-items:center;justify-content:center}}
 
-/* 3D tilt on gallery items */
-.gallery-item{{transition:all .4s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}}
-.gallery-item:hover{{transform:scale(1.05) rotateY(3deg) rotateX(2deg);box-shadow:0 20px 40px rgba(0,0,0,.2);z-index:2}}
+/* AOS */
+[data-aos]{{transition-timing-function:cubic-bezier(.16,1,.3,1)}}
 
-/* Testimonial card 3D */
-.testimonial-card{{transition:all .4s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}}
-.testimonial-card:hover{{transform:translateY(-4px) rotateX(2deg);box-shadow:0 16px 40px rgba(0,0,0,.1)}}
-
-/* Feature items float on hover */
-.feature-item{{transition:all .4s cubic-bezier(.4,0,.2,1)}}
-.feature-item:hover{{transform:translateY(-6px) scale(1.02);box-shadow:0 16px 40px rgba(0,0,0,.08)}}
-
-/* Smooth gradient border on nav */
-.nav{{background:rgba(255,255,255,.92);box-shadow:0 1px 20px rgba(0,0,0,.06)}}
-
-/* Hero parallax depth */
-.hero-bg{{transition:transform .3s}}
-.hero::after{{content:'';position:absolute;bottom:0;left:0;right:0;height:120px;background:linear-gradient(to top,var(--bg,#fff),transparent);z-index:1}}
-
-/* Glowing CTA button */
-.btn-white{{position:relative;overflow:hidden}}
-.btn-white::after{{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle,rgba(255,255,255,.3),transparent 60%);opacity:0;transition:opacity .3s}}
-.btn-white:hover::after{{opacity:1}}
-
-/* Section divider wave */
-.section::before{{content:'';display:block;height:1px;background:linear-gradient(90deg,transparent,rgba(0,0,0,.06),transparent);margin-bottom:40px}}
-
-/* Smooth reveal on scroll (works with AOS) */
-[data-aos]{{transition-timing-function:cubic-bezier(.4,0,.2,1)}}
-
-@media(max-width:768px){{.nav-links{{display:none}}.hero-content{{padding:80px 20px}}.about-grid{{grid-template-columns:1fr}}.gallery-grid{{grid-template-columns:repeat(2,1fr)}}.stats-grid{{grid-template-columns:repeat(2,1fr)}}.stat-number{{font-size:1.8rem}}.contact-container{{grid-template-columns:1fr}}.footer-inner{{flex-direction:column;text-align:center}}.footer-links{{justify-content:center}}}}
+@media(max-width:860px){{.nav-links{{display:none}}.hero-content{{padding:120px 20px 80px;margin:0}}.about-grid,.contact-container{{grid-template-columns:1fr;gap:32px}}.about-img img{{height:320px}}.stats-grid{{grid-template-columns:repeat(2,1fr);gap:24px 12px}}.section,.section-alt{{padding:72px 24px}}.about-badge{{left:12px;bottom:-16px}}.gallery-grid{{grid-template-columns:repeat(2,1fr)}}}}
 </style>"""
 
     html = (
@@ -623,23 +654,23 @@ body{{font-family:Inter,sans-serif;color:#1e293b;line-height:1.7;-webkit-font-sm
         f'<meta property="og:image" content="{hero_img}">'
         '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">'
         f'{css}</head><body>'
-        f'<nav class="nav"><div class="nav-brand"><svg width="36" height="36" viewBox="0 0 36 36" style="margin-right:8px;vertical-align:middle"><rect width="36" height="36" rx="8" fill="{primary}"/><text x="18" y="24" text-anchor="middle" fill="white" font-size="18" font-weight="bold" font-family="Playfair Display,serif">{business_name[0]}</text></svg>{business_name}</div>'
+        f'<nav class="nav" id="mainNav"><div class="nav-brand"><svg width="36" height="36" viewBox="0 0 36 36" style="margin-right:8px;vertical-align:middle"><rect width="36" height="36" rx="8" fill="{primary}"/><text x="18" y="24" text-anchor="middle" fill="white" font-size="18" font-weight="bold" font-family="Playfair Display,serif">{business_name[0]}</text></svg>{business_name}</div>'
         '<div class="nav-links"><a href="#about">About</a><a href="#services">Services</a><a href="#gallery">Gallery</a><a href="#contact">Contact</a></div>'
         f'<a href="tel:{phone}" class="nav-cta">&#128222; Call</a></nav>'
-        '<section class="hero"><div class="hero-bg"></div><div class="hero-overlay"></div>'
-        f'<div class="hero-content"><div class="hero-badge">&#9733; Trusted by {lead.get("review_count", 100) if lead else 100}+ customers</div><h1>{hero_title}</h1><p>{hero_subtitle}</p>' + (f'<div class="hero-offer">{hero_offer}</div>' if hero_offer else '') +
+        '<section class="hero"><div class="hero-bg"></div><div class="hero-overlay"></div><div class="hero-glow"></div>'
+        f'<div class="hero-content"><div class="hero-pill">&#9733; Trusted by {lead.get("review_count", 100) if lead else 100}+ customers</div><h1>{hero_title}</h1><p>{hero_subtitle}</p>' + (f'<div class="hero-offer">{hero_offer}</div>' if hero_offer else '') +
         f'<div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center"><a href="#contact" class="btn btn-white">{cta_text}</a><a href="https://www.google.com/maps/dir/?api=1&destination={address.replace(" ", "+")}" target="_blank" class="btn btn-glass">&#128205; Get Directions</a></div></div></section>'
         '<section class="section" id="about"><div class="about-grid">'
         f'<div class="about-img"><img src="{real_photos[1] if len(real_photos) > 1 else about_img}" alt="About"></div>'
         '<div><div class="section-header" style="text-align:left;margin-bottom:20px"><h2>About Us</h2></div>'
         f'<p class="about-text">{about}</p></div></div></section>'
-        '<section class="stats-section"><div class="stats-grid">'
+        '<section class="stats-section"><div class="wrap"><div class="stats-grid">'
         f'<div class="stat-item"><div class="stat-number">{lead.get("review_count", 100) if lead else 100}+</div><div class="stat-label">Happy Customers</div></div>'
         f'<div class="stat-item"><div class="stat-number">{lead.get("rating", 4.8) if lead else 4.8}</div><div class="stat-label">Average Rating</div></div>'
         '<div class="stat-item"><div class="stat-number">5+</div><div class="stat-label">Years Experience</div></div>'
         '<div class="stat-item"><div class="stat-number">100%</div><div class="stat-label">Satisfaction</div></div>'
-        '</div></section>'
-        '<section class="section" id="services"><div class="section-header"><h2>Our Services</h2></div>'
+        '</div></div></section>'
+        '<section class="section sec section-alt" id="services"><div class="section-header"><h2>Our Services</h2></div>'
         f'<div class="services-grid">{services_html}</div></section>'
         '<section class="section" id="gallery"><div class="section-header"><h2>Gallery</h2></div>'
         f'<div class="gallery-grid">{gallery_html}</div></section>'
@@ -671,7 +702,7 @@ body{{font-family:Inter,sans-serif;color:#1e293b;line-height:1.7;-webkit-font-sm
         f'<footer class="footer"><div style="max-width:900px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:16px"><div style="font-weight:700;font-size:1rem;color:#fff">{business_name}</div><div style="font-size:.8rem;color:#64748b">Made with &#10084;&#65039; by Kalpdev Digitals</div><div style="display:flex;gap:16px;margin-top:4px"><a href="https://wa.me/{whatsapp_num}" target="_blank" style="color:#25D366;text-decoration:none;font-size:.85rem">WhatsApp</a><a href="#contact" style="color:#94a3b8;text-decoration:none;font-size:.85rem">Contact</a><a href="#dashboard" target="_blank" style="color:#94a3b8;text-decoration:none;font-size:.85rem">Dashboard</a><a href="#services" style="color:#94a3b8;text-decoration:none;font-size:.85rem">Services</a></div></div></footer>'
         f'<script type="application/ld+json">{{"@context":"https://schema.org","@type":"LocalBusiness","name":"{business_name}","telephone":"{phone}","email":"{email}","address":{{"@type":"PostalAddress","streetAddress":"{address}"}},"aggregateRating":{{"@type":"AggregateRating","ratingValue":"{lead.get("rating", 4.5) if lead else 4.5}","reviewCount":"{lead.get("review_count", 50) if lead else 50}"}}}}</script>'
         '<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>'
-        '<script>AOS.init({duration:800,once:true,offset:100});</script>'
+        '<script>AOS.init({duration:650,once:true,offset:60});const nav=document.getElementById("mainNav");window.addEventListener("scroll",()=>{nav.classList.toggle("solid",scrollY>60)});</script>'
         '</body></html>'
     )
     return html
