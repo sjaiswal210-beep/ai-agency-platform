@@ -535,7 +535,7 @@ a{{text-decoration:none;color:inherit}}
 .btn{{display:inline-flex;align-items:center;gap:8px;padding:14px 26px;border-radius:12px;font-weight:700;font-size:.95rem;transition:transform .25s,box-shadow .25s;border:none;cursor:pointer}}
 .btn-main{{background:#fff;color:var(--p);box-shadow:0 10px 30px rgba(0,0,0,.25)}}.btn-main:hover{{transform:translateY(-3px);box-shadow:0 16px 40px rgba(0,0,0,.35)}}
 .btn-wa{{background:#25D366;color:#fff;box-shadow:0 8px 24px rgba(37,211,102,.4)}}.btn-wa:hover{{transform:translateY(-2px)}}
-.btn-outline{{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.4)}}.btn-outline:hover{{background:rgba(255,255,255,.15)}}
+.btn-outline{{background:rgba(255,255,255,.18);color:#fff;border:1.5px solid rgba(255,255,255,.5);backdrop-filter:blur(4px)}}.btn-outline:hover{{background:rgba(255,255,255,.3)}}
 .badges{{display:flex;flex-wrap:wrap;gap:8px;margin-top:28px}}.badge-item{{font-size:.78rem;font-weight:600;color:rgba(255,255,255,.9);background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);padding:6px 13px;border-radius:50px}}
 .hero-badge{{display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);padding:8px 16px;border-radius:50px;font-size:.85rem;margin-bottom:24px;backdrop-filter:blur(4px)}}
 
@@ -682,7 +682,7 @@ a{{text-decoration:none;color:inherit}}
         f'<section style="background:linear-gradient(135deg, #0f172a, #1e293b);padding:80px 24px" id="contact">'
         '<div style="max-width:1000px;margin:0 auto">'
         '<div style="text-align:center;margin-bottom:48px"><h2 style="font-family:Playfair Display,serif;font-size:2rem;font-weight:800;margin-bottom:8px;color:#fff">Get In Touch</h2><p style="color:#94a3b8;font-size:.95rem">Interested? Have questions? Reach out to us anytime.</p></div>'
-        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:32px">'
+        '<div class="contact-container">'
         '<div style="display:flex;flex-direction:column;gap:16px">'
         f'<div style="display:flex;align-items:center;gap:16px;background:rgba(255,255,255,0.05);padding:20px;border-radius:12px;border:1px solid rgba(255,255,255,0.1)"><div style="width:44px;height:44px;background:rgba(255,255,255,0.1);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.2rem">&#128205;</div><div><div style="font-size:.75rem;color:#64748b;text-transform:uppercase;letter-spacing:1px">Address</div><div style="font-size:.9rem;color:#e2e8f0;font-weight:500;margin-top:2px">{address}</div></div></div>'
         f'<a href="tel:{phone}" style="display:flex;align-items:center;gap:16px;background:rgba(255,255,255,0.05);padding:20px;border-radius:12px;border:1px solid rgba(255,255,255,0.1);text-decoration:none"><div style="width:44px;height:44px;background:rgba(255,255,255,0.1);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.2rem">&#128222;</div><div><div style="font-size:.75rem;color:#64748b;text-transform:uppercase;letter-spacing:1px">Phone</div><div style="font-size:.9rem;color:#e2e8f0;font-weight:500;margin-top:2px">{phone}</div></div></a>'
