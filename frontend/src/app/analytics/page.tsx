@@ -1,5 +1,7 @@
 "use client";
 
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "${API_BASE}";
+
 import { useEffect, useState } from "react";
 import { api, DashboardStats } from "@/lib/api";
 import { ArrowLeft, Bot, DollarSign, Zap, Search, RefreshCw } from "lucide-react";
@@ -26,7 +28,7 @@ export default function AnalyticsPage() {
 
   const fetchData = () => {
     api.dashboard.stats().then(setStats).catch(console.error);
-    fetch("http://localhost:8000/api/dashboard/usage").then(r => r.json()).then(setUsage).catch(console.error);
+    fetch("${API_BASE}/api/dashboard/usage").then(r => r.json()).then(setUsage).catch(console.error);
   };
 
   useEffect(() => { fetchData(); }, []);
@@ -36,7 +38,7 @@ export default function AnalyticsPage() {
   const totalOutreach = stats?.total_outreach ?? 0;
 
   const resetUsage = async () => {
-    await fetch("http://localhost:8000/api/dashboard/usage/reset", { method: "POST" });
+    await fetch("${API_BASE}/api/dashboard/usage/reset", { method: "POST" });
     fetchData();
   };
 

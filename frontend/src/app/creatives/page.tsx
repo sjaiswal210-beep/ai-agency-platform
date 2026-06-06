@@ -1,4 +1,6 @@
 "use client";
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "${API_BASE}";
 import { useEffect, useState } from "react";
 import { api, Website } from "@/lib/api";
 import { Bot, ArrowLeft, Image, RefreshCw } from "lucide-react";
@@ -35,7 +37,7 @@ export default function CreativesPage() {
   const generate = () => {
     if (!selected) return;
     setLoading(true);
-    const url = `http://localhost:8000/api/creatives/${selected}/generate?type=${template}&platform=${platform}&custom_text=${encodeURIComponent(customText)}`;
+    const url = `${API_BASE}/api/creatives/${selected}/generate?type=${template}&platform=${platform}&custom_text=${encodeURIComponent(customText)}`;
     setPreviewUrl(url + "&t=" + Date.now());
     setTimeout(() => setLoading(false), 2000);
   };

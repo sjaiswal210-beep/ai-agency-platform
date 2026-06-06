@@ -1,5 +1,7 @@
 "use client";
 
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "${API_BASE}";
+
 import { useEffect, useState } from "react";
 import { api, DashboardStats, Lead } from "@/lib/api";
 import { Users, MessageSquare, TrendingUp, Globe, Search, Mail, PlusCircle, LayoutGrid, Zap, Settings, BarChart3, Bot, ChevronLeft, Bell } from "lucide-react";
@@ -55,7 +57,7 @@ export default function Dashboard() {
     setSpecificResult(null);
     try {
       const query = specificPincode ? `${specificName} ${specificPincode}` : specificName;
-      const res = await fetch(`http://localhost:8000/api/leads/search-specific?query=${encodeURIComponent(query)}`, { method: "POST" });
+      const res = await fetch(`${API_BASE}/api/leads/search-specific?query=${encodeURIComponent(query)}`, { method: "POST" });
       const data = await res.json();
       setSpecificResult(data);
       if (data.lead) {
@@ -73,7 +75,7 @@ export default function Dashboard() {
     setAreaScraping(true);
     setAreaResult(null);
     try {
-      const res = await fetch(`http://localhost:8000/api/leads/scrape-area?location=${encodeURIComponent(areaLocation)}`, { method: "POST" });
+      const res = await fetch(`${API_BASE}/api/leads/scrape-area?location=${encodeURIComponent(areaLocation)}`, { method: "POST" });
       const data = await res.json();
       setAreaResult(data.discovered);
       const updated = await api.dashboard.stats();
@@ -94,7 +96,7 @@ export default function Dashboard() {
   const sendWhatsApp = async (lead: Lead) => {
     setWaSending(lead.id);
     try {
-      const res = await fetch(`http://localhost:8000/api/whatsapp/outreach/${lead.id}`, { method: "POST" });
+      const res = await fetch(`${API_BASE}/api/whatsapp/outreach/${lead.id}`, { method: "POST" });
       const data = await res.json();
       setWaResult({ business: data.business_name, message: data.message, link: data.whatsapp_link });
     } catch (err) { console.error(err); }
@@ -322,7 +324,7 @@ export default function Dashboard() {
                       <p className="text-sm text-green-700 font-medium">{specificResult.lead.business_name}</p>
                       <p className="text-xs text-green-600 mt-1">{specificResult.lead.phone} | {specificResult.lead.address?.split(",").slice(0,2).join(",")}</p>
                       {specificResult.website_id && (
-                        <a href={`http://localhost:8000/api/preview/${specificResult.website_id}`} target="_blank" rel="noopener noreferrer"
+                        <a href={`${API_BASE}/api/preview/${specificResult.website_id}`} target="_blank" rel="noopener noreferrer"
                           className="inline-block mt-2 text-xs bg-green-600 text-white px-3 py-1 rounded-lg">View Generated Website</a>
                       )}
                     </div>

@@ -1,5 +1,7 @@
 "use client";
 
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "${API_BASE}";
+
 import { useEffect, useState } from "react";
 import { api, Lead } from "@/lib/api";
 import { Bot, Globe, Mail, Star, ArrowLeft, Phone } from "lucide-react";
@@ -33,7 +35,7 @@ export default function LeadsPage() {
 
   const handleWhatsApp = async (lead: Lead) => {
     try {
-      const res = await fetch(`http://localhost:8000/api/whatsapp/outreach/${lead.id}`, { method: "POST" });
+      const res = await fetch(`${API_BASE}/api/whatsapp/outreach/${lead.id}`, { method: "POST" });
       const data = await res.json();
       setWaMessage({ link: data.whatsapp_link, message: data.message, business: data.business_name });
     } catch (err) {

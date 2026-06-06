@@ -1,5 +1,7 @@
 "use client";
 
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "${API_BASE}";
+
 import { useEffect, useState } from "react";
 import { api, Website } from "@/lib/api";
 import { Bot, ArrowLeft, Send, RefreshCw, ExternalLink, Palette, Image, MessageSquare } from "lucide-react";
@@ -33,7 +35,7 @@ export default function EditorPage() {
 
   useEffect(() => {
     if (selected) {
-      setPreviewUrl(`http://localhost:8000/api/preview/${selected}`);
+      setPreviewUrl(`${API_BASE}/api/preview/${selected}`);
     }
   }, [selected, refreshKey]);
 
@@ -42,7 +44,7 @@ export default function EditorPage() {
     setLoading(true);
     setMessage("");
     try {
-      const res = await fetch(`http://localhost:8000/api/editor/${selected}/edit`, {
+      const res = await fetch(`${API_BASE}/api/editor/${selected}/edit`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ prompt: prompt.trim() }),
@@ -62,7 +64,7 @@ export default function EditorPage() {
   const handleLogo = async () => {
     if (!selected) return;
     setLoading(true);
-    setPreviewUrl(`http://localhost:8000/api/branding/${selected}/logo/preview?style=${logoStyle}&t=${Date.now()}`);
+    setPreviewUrl(`${API_BASE}/api/branding/${selected}/logo/preview?style=${logoStyle}&t=${Date.now()}`);
     setLoading(false);
     setMessage("Logo generated! See preview.");
   };
@@ -73,7 +75,7 @@ export default function EditorPage() {
     setVideoUrl("");
     setMessage("");
     try {
-      const res = await fetch(`http://localhost:8000/api/video/${selected}/generate-long`, {
+      const res = await fetch(`${API_BASE}/api/video/${selected}/generate-long`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ prompt: videoPrompt, clips: numClips }),
@@ -94,7 +96,7 @@ export default function EditorPage() {
     if (!selected || !videoIdea.trim()) return;
     setGeneratingPrompt(true);
     try {
-      const res = await fetch(`http://localhost:8000/api/video/${selected}/detailed-prompt`, {
+      const res = await fetch(`${API_BASE}/api/video/${selected}/detailed-prompt`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ idea: videoIdea }),
@@ -109,7 +111,7 @@ export default function EditorPage() {
   const handleSocial = async () => {
     if (!selected) return;
     setLoading(true);
-    setPreviewUrl(`http://localhost:8000/api/branding/${selected}/social-post/preview?platform=${socialPlatform}&purpose=${socialPurpose}&t=${Date.now()}`);
+    setPreviewUrl(`${API_BASE}/api/branding/${selected}/social-post/preview?platform=${socialPlatform}&purpose=${socialPurpose}&t=${Date.now()}`);
     setLoading(false);
     setMessage("Social post generated! See preview.");
   };
@@ -125,7 +127,7 @@ export default function EditorPage() {
           </div>
           <div className="flex items-center gap-2">
             {selected && (
-              <a href={`http://localhost:8000/api/preview/${selected}`} target="_blank" rel="noopener noreferrer"
+              <a href={`${API_BASE}/api/preview/${selected}`} target="_blank" rel="noopener noreferrer"
                 className="flex items-center gap-1 px-3 py-1.5 bg-primary text-white rounded-lg text-xs hover:bg-primary-dark">
                 <ExternalLink className="w-3 h-3" /> Full Preview
               </a>
@@ -139,7 +141,7 @@ export default function EditorPage() {
           {/* Left panel */}
           <div className="flex flex-col gap-3">
             {/* Website selector */}
-            <select value={selected} onChange={(e) => { setSelected(e.target.value); setRefreshKey((k) => k + 1); setPreviewUrl(`http://localhost:8000/api/preview/${e.target.value}`); }}
+            <select value={selected} onChange={(e) => { setSelected(e.target.value); setRefreshKey((k) => k + 1); setPreviewUrl(`${API_BASE}/api/preview/${e.target.value}`); }}
               className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white">
               <option value="">Select website...</option>
               {websites.map((w) => (
@@ -149,7 +151,7 @@ export default function EditorPage() {
 
             {/* Tabs */}
             <div className="flex gap-1 bg-gray-100 p-1 rounded-lg">
-              <button onClick={() => { setTab("edit"); if(selected) setPreviewUrl(`http://localhost:8000/api/preview/${selected}`); }}
+              <button onClick={() => { setTab("edit"); if(selected) setPreviewUrl(`${API_BASE}/api/preview/${selected}`); }}
                 className={`flex-1 flex items-center justify-center gap-1 py-2 rounded-md text-xs font-medium transition ${tab === "edit" ? "bg-white shadow text-primary" : "text-gray-500"}`}>
                 <Send className="w-3 h-3" /> Edit
               </button>

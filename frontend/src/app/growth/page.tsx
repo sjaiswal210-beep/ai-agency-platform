@@ -1,4 +1,6 @@
 "use client";
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "${API_BASE}";
 import { useEffect, useState } from "react";
 import { api, Lead } from "@/lib/api";
 import { Bot, ArrowLeft, Search, TrendingUp, Mail, Calendar, Target, Star, BarChart3, Copy, Check } from "lucide-react";
@@ -31,7 +33,7 @@ export default function GrowthPage() {
     setResult("");
     setActiveTool(toolEndpoint);
     try {
-      const res = await fetch(`http://localhost:8000/api/growth/${selectedLead}/${toolEndpoint}`, { method: "POST" });
+      const res = await fetch(`${API_BASE}/api/growth/${selectedLead}/${toolEndpoint}`, { method: "POST" });
       const data = await res.json();
       setResult(data.keywords || data.ads || data.calendar || data.analysis || data.emails || data.plan || data.strategy || JSON.stringify(data, null, 2));
     } catch { setResult("Error: Could not generate"); }

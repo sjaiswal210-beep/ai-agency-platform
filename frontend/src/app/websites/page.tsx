@@ -1,5 +1,7 @@
 "use client";
 
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "${API_BASE}";
+
 import { useEffect, useState } from "react";
 import { Bot, Globe, ExternalLink, ArrowLeft, Phone, MapPin } from "lucide-react";
 
@@ -27,7 +29,7 @@ export default function WebsitesPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/websites/")
+    fetch("${API_BASE}/api/websites/")
       .then((r) => r.json())
       .then(setWebsites)
       .catch(console.error)
@@ -61,7 +63,7 @@ export default function WebsitesPage() {
                 {/* Preview thumbnail */}
                 <div className="relative h-40 bg-gray-100 overflow-hidden border-b">
                   <iframe
-                    src={`http://localhost:8000/api/preview/${site.id}`}
+                    src={`${API_BASE}/api/preview/${site.id}`}
                     className="w-full h-full border-0 pointer-events-none"
                     style={{ transform: "scale(0.4)", transformOrigin: "top left", width: "250%", height: "250%" }}
                     title={site.business_name || site.template}
@@ -97,7 +99,7 @@ export default function WebsitesPage() {
                   {/* Actions */}
                   <div className="flex gap-2">
                     <a
-                      href={`http://localhost:8000/api/preview/${site.id}`}
+                      href={`${API_BASE}/api/preview/${site.id}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-primary text-white text-xs font-medium rounded-lg hover:bg-primary-dark transition"
@@ -105,7 +107,7 @@ export default function WebsitesPage() {
                       <ExternalLink className="w-3 h-3" /> View Site
                     </a>
                     <a
-                      href={`http://localhost:8000/api/logo-gen/${site.id}/preview`}
+                      href={`${API_BASE}/api/logo-gen/${site.id}/preview`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="px-3 py-2 bg-gray-100 text-gray-600 text-xs rounded-lg hover:bg-gray-200 transition"
@@ -114,7 +116,7 @@ export default function WebsitesPage() {
                       Logo
                     </a>
                     <a
-                      href={`http://localhost:8000/api/panel/${site.id}`}
+                      href={`${API_BASE}/api/panel/${site.id}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="px-3 py-2 bg-gray-100 text-gray-600 text-xs rounded-lg hover:bg-gray-200 transition"

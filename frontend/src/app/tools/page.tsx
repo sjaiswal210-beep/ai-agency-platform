@@ -1,5 +1,7 @@
 "use client";
 
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "${API_BASE}";
+
 import { useEffect, useState } from "react";
 import { api, Website } from "@/lib/api";
 import { Bot, ArrowLeft, Wrench, Send, Copy, Check } from "lucide-react";
@@ -28,7 +30,7 @@ export default function ToolsPage() {
 
   useEffect(() => {
     if (selected) {
-      fetch(`http://localhost:8000/api/toolkit/${selected}/tools`)
+      fetch(`${API_BASE}/api/toolkit/${selected}/tools`)
         .then((r) => r.json())
         .then((data) => {
           setTools(data.tools);
@@ -43,7 +45,7 @@ export default function ToolsPage() {
     setLoading(true);
     setResult("");
     try {
-      const res = await fetch(`http://localhost:8000/api/toolkit/${selected}/tools/run`, {
+      const res = await fetch(`${API_BASE}/api/toolkit/${selected}/tools/run`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ tool_id: activeTool.id, context }),
