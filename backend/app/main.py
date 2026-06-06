@@ -33,6 +33,7 @@ from app.api.routes.bookings import router as bookings_router
 from app.api.routes.review_manager import router as review_manager_router
 from app.api.routes.qr_code import router as qr_router
 from app.api.routes.health_score import router as health_score_router
+from app.api.routes.scraper import router as scraper_router
 from app.api.routes.sitemap import router as sitemap_router
 from app.automation.scheduler import start_scheduler, stop_scheduler
 from app.core.logging import setup_logging
@@ -100,6 +101,7 @@ app.include_router(bookings_router, prefix="/api")
 app.include_router(review_manager_router, prefix="/api")
 app.include_router(qr_router, prefix="/api")
 app.include_router(health_score_router, prefix="/api")
+app.include_router(scraper_router, prefix="/api")
 app.include_router(sitemap_router, prefix="")
 
 
