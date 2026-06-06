@@ -29,6 +29,7 @@ from app.api.routes.translate import router as translate_router
 from app.api.routes.seo_pages import router as seo_pages_router
 from app.api.routes.growth_agent import router as growth_agent_router
 from app.api.routes.campaigns import router as campaigns_router
+from app.api.routes.bookings import router as bookings_router
 from app.automation.scheduler import start_scheduler, stop_scheduler
 from app.core.logging import setup_logging
 
@@ -91,6 +92,7 @@ app.include_router(translate_router, prefix="/api")
 app.include_router(seo_pages_router, prefix="/api")
 app.include_router(growth_agent_router, prefix="/api")
 app.include_router(campaigns_router, prefix="/api")
+app.include_router(bookings_router, prefix="/api")
 
 
 static_dir = os.path.join(os.path.dirname(__file__), "..", "static", "videos")
