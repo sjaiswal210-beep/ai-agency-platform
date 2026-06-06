@@ -154,7 +154,7 @@ export default function LeadsPage() {
                             Analyze
                           </button>
                         )}
-                        {(lead.status === "analyzed" || lead.status === "outreach_sent") && (
+                        {(lead.status === "new" || lead.status === "analyzed" || lead.status === "outreach_sent") && (
                           <>
                             <button
                               onClick={() => handleWhatsApp(lead)}

@@ -85,6 +85,15 @@ async def followup_automation():
     logger.info("Follow-up automation complete", followups_sent=followups_sent)
 
 
+
+def keep_alive_ping():
+    """Ping self to prevent Render free tier from sleeping."""
+    import httpx
+    try:
+        httpx.get("https://ai-agency-platform.onrender.com/health", timeout=10)
+    except Exception:
+        pass
+
 def start_scheduler():
     """Start the automation scheduler."""
     # Lead Processing Pipeline - every 6 hours
@@ -104,6 +113,8 @@ def start_scheduler():
         name="Follow-up Automation",
         replace_existing=True,
     )
+
+    scheduler.add_job(keep_alive_ping, "interval", minutes=10, id="keep_alive", replace_existing=True)
 
     scheduler.start()
     logger.info("Automation scheduler started", jobs=["lead_processing (6h)", "followup (24h)"])

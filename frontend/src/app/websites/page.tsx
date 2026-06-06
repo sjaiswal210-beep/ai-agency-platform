@@ -29,7 +29,7 @@ export default function WebsitesPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("${API_BASE}/api/websites/")
+    fetch(`${API_BASE}/api/websites/`)
       .then((r) => r.json())
       .then(setWebsites)
       .catch(console.error)

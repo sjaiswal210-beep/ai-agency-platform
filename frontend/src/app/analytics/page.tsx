@@ -28,7 +28,7 @@ export default function AnalyticsPage() {
 
   const fetchData = () => {
     api.dashboard.stats().then(setStats).catch(console.error);
-    fetch("${API_BASE}/api/dashboard/usage").then(r => r.json()).then(setUsage).catch(console.error);
+    fetch(`${API_BASE}/api/dashboard/usage`).then(r => r.json()).then(setUsage).catch(console.error);
   };
 
   useEffect(() => { fetchData(); }, []);
@@ -38,7 +38,7 @@ export default function AnalyticsPage() {
   const totalOutreach = stats?.total_outreach ?? 0;
 
   const resetUsage = async () => {
-    await fetch("${API_BASE}/api/dashboard/usage/reset", { method: "POST" });
+    await fetch(`${API_BASE}/api/dashboard/usage/reset`, { method: "POST" });
     fetchData();
   };
 
