@@ -36,11 +36,23 @@ export default function WebsitesPage() {
     } catch (err) { console.error(err); }
   };
 
+  const [error, setError] = useState("");
+
   useEffect(() => {
+    setLoading(true);
+    setError("");
     fetch(`${API_BASE}/api/websites/`)
-      .then((r) => r.json())
-      .then(setWebsites)
-      .catch(console.error)
+      .then((r) => {
+        if (!r.ok) throw new Error(`Server error: ${r.status}`);
+        return r.json();
+      })
+      .then((data) => {
+        setWebsites(Array.isArray(data) ? data : []);
+      })
+      .catch((err) => {
+        console.error(err);
+        setError("Could not load websites. The server may be starting up — try refreshing in 30 seconds.");
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -62,8 +74,13 @@ export default function WebsitesPage() {
       <main className="max-w-7xl mx-auto px-6 py-6">
         {loading ? (
           <p className="text-center py-20 text-gray-400">Loading...</p>
+        ) : error ? (
+          <div className="text-center py-20">
+            <p className="text-red-500 text-sm mb-2">{error}</p>
+            <button onClick={() => window.location.reload()} className="px-4 py-2 bg-primary text-white rounded-lg text-sm">Retry</button>
+          </div>
         ) : websites.length === 0 ? (
-          <p className="text-center py-20 text-gray-400">No websites generated yet.</p>
+          <p className="text-center py-20 text-gray-400">No websites generated yet. Go to Leads and click "Site" to create one.</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {websites.map((site) => (
