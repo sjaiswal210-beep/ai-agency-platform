@@ -648,7 +648,7 @@ a{{text-decoration:none;color:inherit}}
 
 /* CONTACT */
 .contact-section{{background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;padding:100px 24px}}
-.contact-container{{max-width:1000px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:start}}
+.contact-container{{max-width:1000px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:start;overflow-x:hidden}}
 .contact-left h2{{font-size:clamp(1.8rem,3.5vw,2.5rem);font-weight:800;margin-bottom:12px}}.contact-left .sub{{color:#94a3b8;font-size:1rem;margin-bottom:28px}}
 .contact-cards{{display:flex;flex-direction:column;gap:12px}}
 .contact-card{{display:flex;align-items:center;gap:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);padding:16px 18px;border-radius:14px;color:#fff;transition:background .25s}}.contact-card:hover{{background:rgba(255,255,255,.08)}}
@@ -689,7 +689,8 @@ a{{text-decoration:none;color:inherit}}
 /* AOS */
 [data-aos]{{transition-timing-function:cubic-bezier(.16,1,.3,1)}}
 
-@media(max-width:860px){{.bottom-nav{{display:block}}.whatsapp-float{{display:none}}.chat-btn{{bottom:80px}}body{{padding-bottom:70px}}.nav-links{{display:none}}.hero-content{{padding:120px 20px 80px;margin:0}}.about-grid,.contact-container{{grid-template-columns:1fr;gap:32px}}.about-img img{{height:320px}}.stats-grid{{grid-template-columns:repeat(2,1fr);gap:24px 12px}}.section,.section-alt{{padding:72px 24px}}.about-badge{{left:12px;bottom:-16px}}.gallery-grid{{grid-template-columns:repeat(2,1fr)}}}}
+.contact-section input,.contact-section textarea{{max-width:100%!important;width:100%!important}}
+@media(max-width:860px){{.bottom-nav{{display:block}}.whatsapp-float{{display:none}}.chat-btn{{bottom:80px}}body{{padding-bottom:70px}}.nav-links{{display:none}}.hero-content{{padding:120px 20px 80px;margin:0}}.about-grid,.contact-container{{grid-template-columns:1fr;gap:32px}}.about-img img{{height:320px}}.stats-grid{{grid-template-columns:repeat(2,1fr);gap:24px 12px}}.section,.section-alt{{padding:72px 24px}}.about-badge{{left:12px;bottom:-16px}}.gallery-grid{{grid-template-columns:repeat(2,1fr)}}.footer{{padding-bottom:80px!important}}.contact-container{{padding:0 8px}}.contact-section{{padding:60px 16px!important}}footer div[style*='display:flex']{{flex-wrap:wrap;justify-content:center}}}}
 
 /* STICKY BOTTOM NAV (Mobile) */
 .bottom-nav{{display:none;position:fixed;bottom:0;left:0;right:0;z-index:1000;background:var(--p);padding:10px 0;border-top:none;box-shadow:0 -4px 20px rgba(0,0,0,.2)}}
