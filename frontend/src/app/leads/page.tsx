@@ -20,6 +20,7 @@ export default function LeadsPage() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [filter, setFilter] = useState<string>("");
   const [loading, setLoading] = useState(true);
+  const [generating, setGenerating] = useState<string>("");
   
 
   useEffect(() => {
@@ -53,12 +54,16 @@ export default function LeadsPage() {
 
   const handleAction = async (lead: Lead, action: string) => {
     try {
+      if (action === "generate") {
+        setGenerating(lead.id);
+      }
       switch (action) {
         case "analyze":
           await api.leads.analyze(lead.id);
           break;
         case "generate":
           await api.websites.generate(lead.id, lead.category || "store");
+          alert(`Website created for ${lead.business_name}! Check the Websites page.`);
           break;
         case "outreach":
           await api.outreach.send(lead.id, lead.email ? "email" : "whatsapp");
@@ -68,6 +73,9 @@ export default function LeadsPage() {
       setLeads(updated);
     } catch (err) {
       console.error(`Action ${action} failed:`, err);
+      if (action === "generate") alert("Website generation failed. Try again.");
+    } finally {
+      setGenerating("");
     }
   };
 
@@ -173,10 +181,14 @@ export default function LeadsPage() {
                             </button>
                             <button
                               onClick={() => handleAction(lead, "generate")}
-                              className="text-xs px-2 py-1 bg-blue-50 text-blue-600 rounded hover:bg-blue-100"
+                              disabled={generating === lead.id}
+                              className={`text-xs px-2 py-1 rounded ${generating === lead.id ? "bg-blue-200 text-blue-400 cursor-wait" : "bg-blue-50 text-blue-600 hover:bg-blue-100"}`}
                             >
-                              <Globe className="w-3 h-3 inline mr-1" />
-                              Site
+                              {generating === lead.id ? (
+                                <span className="flex items-center gap-1"><span className="animate-spin inline-block w-3 h-3 border-2 border-blue-400 border-t-transparent rounded-full"></span>Building...</span>
+                              ) : (
+                                <><Globe className="w-3 h-3 inline mr-1" />Site</>
+                              )}
                             </button>
                             <button
                               onClick={() => handleAction(lead, "outreach")}
