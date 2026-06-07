@@ -656,10 +656,7 @@ a{{text-decoration:none;color:inherit}}
 /* AOS */
 [data-aos]{{transition-timing-function:cubic-bezier(.16,1,.3,1)}}
 
-@media(max-width:860px){{.bottom-nav{{display:block}}.addr-bar{{display:block}}.nav{{top:32px!important}}.whatsapp-float{{bottom:80px}}.chat-btn{{bottom:80px}}body{{padding-bottom:70px}}.nav-links{{display:none}}.hero-content{{padding:120px 20px 80px;margin:0}}.about-grid,.contact-container{{grid-template-columns:1fr;gap:32px}}.about-img img{{height:320px}}.stats-grid{{grid-template-columns:repeat(2,1fr);gap:24px 12px}}.section,.section-alt{{padding:72px 24px}}.about-badge{{left:12px;bottom:-16px}}.gallery-grid{{grid-template-columns:repeat(2,1fr)}}}}
-
-/* ADDRESS BAR */
-.addr-bar{{display:none;background:var(--p);color:#fff;font-size:.7rem;text-align:center;padding:8px 16px;position:fixed;top:0;left:0;right:0;z-index:1001}}
+@media(max-width:860px){{.bottom-nav{{display:block}}.whatsapp-float{{display:none}}.chat-btn{{bottom:80px}}body{{padding-bottom:70px}}.nav-links{{display:none}}.hero-content{{padding:120px 20px 80px;margin:0}}.about-grid,.contact-container{{grid-template-columns:1fr;gap:32px}}.about-img img{{height:320px}}.stats-grid{{grid-template-columns:repeat(2,1fr);gap:24px 12px}}.section,.section-alt{{padding:72px 24px}}.about-badge{{left:12px;bottom:-16px}}.gallery-grid{{grid-template-columns:repeat(2,1fr)}}}}
 
 /* STICKY BOTTOM NAV (Mobile) */
 .bottom-nav{{display:none;position:fixed;bottom:0;left:0;right:0;z-index:1000;background:#fff;box-shadow:0 -4px 20px rgba(0,0,0,.08);padding:8px 0;border-top:1px solid rgba(0,0,0,.06)}}
@@ -708,7 +705,6 @@ body{{padding-bottom:70px}}
         f'<meta property="og:image" content="{hero_img}">'
         '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">'
         f'{css}</head><body>'
-        f'<div class="addr-bar">{address}</div>'
         f'<nav class="nav" id="mainNav"><div class="nav-brand"><svg width="36" height="36" viewBox="0 0 36 36" style="margin-right:8px;vertical-align:middle"><rect width="36" height="36" rx="8" fill="{primary}"/><text x="18" y="24" text-anchor="middle" fill="white" font-size="18" font-weight="bold" font-family="Playfair Display,serif">{business_name[0]}</text></svg>{business_name}</div>'
         '<div class="nav-links"><a href="#about">About</a><a href="#services">Services</a><a href="#gallery">Gallery</a><a href="#contact">Contact</a></div>'
         f'<a href="tel:{phone}" class="nav-cta">&#128222; Call</a></nav>'
