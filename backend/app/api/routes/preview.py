@@ -659,10 +659,10 @@ a{{text-decoration:none;color:inherit}}
 @media(max-width:860px){{.bottom-nav{{display:block}}.whatsapp-float{{display:none}}.chat-btn{{bottom:80px}}body{{padding-bottom:70px}}.nav-links{{display:none}}.hero-content{{padding:120px 20px 80px;margin:0}}.about-grid,.contact-container{{grid-template-columns:1fr;gap:32px}}.about-img img{{height:320px}}.stats-grid{{grid-template-columns:repeat(2,1fr);gap:24px 12px}}.section,.section-alt{{padding:72px 24px}}.about-badge{{left:12px;bottom:-16px}}.gallery-grid{{grid-template-columns:repeat(2,1fr)}}}}
 
 /* STICKY BOTTOM NAV (Mobile) */
-.bottom-nav{{display:none;position:fixed;bottom:0;left:0;right:0;z-index:1000;background:#fff;box-shadow:0 -4px 20px rgba(0,0,0,.08);padding:8px 0;border-top:1px solid rgba(0,0,0,.06)}}
+.bottom-nav{{display:none;position:fixed;bottom:0;left:0;right:0;z-index:1000;background:var(--p);padding:10px 0;border-top:none;box-shadow:0 -4px 20px rgba(0,0,0,.2)}}
 .bottom-nav-grid{{display:grid;grid-template-columns:repeat(4,1fr);text-align:center}}
-.bottom-nav a{{display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;color:#64748b;font-size:.65rem;font-weight:600;padding:6px 0;transition:color .2s}}
-.bottom-nav a:nth-child(1){{color:var(--p)}}
+.bottom-nav a{{display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;color:rgba(255,255,255,.85);font-size:.65rem;font-weight:600;padding:6px 0;transition:color .2s}}
+.bottom-nav a:nth-child(1){{color:#fff}}
 .bottom-nav a span.bn-icon{{font-size:1.3rem}}
 
 /* Improved Buttons */
