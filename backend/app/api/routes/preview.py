@@ -580,7 +580,7 @@ a{{text-decoration:none;color:inherit}}
 .btn{{display:inline-flex;align-items:center;gap:8px;padding:14px 26px;border-radius:12px;font-weight:700;font-size:.95rem;transition:transform .25s,box-shadow .25s;border:none;cursor:pointer}}
 .btn-main{{background:#fff;color:var(--p);box-shadow:0 10px 30px rgba(0,0,0,.25)}}.btn-main:hover{{transform:translateY(-3px);box-shadow:0 16px 40px rgba(0,0,0,.35)}}
 .btn-wa{{background:#25D366;color:#fff;box-shadow:0 8px 24px rgba(37,211,102,.4)}}.btn-wa:hover{{transform:translateY(-2px)}}
-.btn-outline{{background:rgba(255,255,255,.18);color:#fff;border:1.5px solid rgba(255,255,255,.5);backdrop-filter:blur(4px)}}.btn-outline:hover{{background:rgba(255,255,255,.3)}}
+.btn-outline{{background:rgba(255,255,255,.92);color:var(--p);border:1.5px solid #fff;font-weight:700}}.btn-outline:hover{{background:#fff;transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,255,255,.3)}}
 .badges{{display:flex;flex-wrap:wrap;gap:8px;margin-top:28px}}.badge-item{{font-size:.78rem;font-weight:600;color:rgba(255,255,255,.9);background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);padding:6px 13px;border-radius:50px}}
 .hero-badge{{display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);padding:8px 16px;border-radius:50px;font-size:.85rem;margin-bottom:24px;backdrop-filter:blur(4px)}}
 
@@ -700,7 +700,7 @@ a{{text-decoration:none;color:inherit}}
 .bottom-nav a span.bn-icon{{font-size:1.3rem}}
 
 /* Improved Buttons */
-.btn-main,.btn-white{{border-radius:50px;font-size:.95rem;padding:14px 28px;font-weight:700}}
+.btn-main,.btn-white{{background:#fff;color:var(--p);border-radius:50px;font-size:.95rem;padding:14px 28px;font-weight:700;box-shadow:0 4px 20px rgba(0,0,0,.25);transition:all .3s}}.btn-white:hover{{transform:translateY(-3px);box-shadow:0 8px 30px rgba(0,0,0,.35)}}.btn-glass{{background:rgba(255,255,255,.92);color:var(--p);border-radius:50px;font-size:.95rem;padding:14px 28px;font-weight:700;border:2px solid #fff;transition:all .3s}}.btn-glass:hover{{background:#fff;transform:translateY(-2px)}}
 .btn-wa{{border-radius:50px;padding:14px 28px}}
 .btn-outline{{border-radius:50px;padding:12px 24px;font-weight:600}}
 
