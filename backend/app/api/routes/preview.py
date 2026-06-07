@@ -322,6 +322,39 @@ def get_maps_embed(address: str) -> str:
     return f"https://www.google.com/maps?q={encoded}&output=embed"
 
 
+
+def _get_design_css(category: str) -> str:
+    """Get category-specific CSS overrides for professional look."""
+    cat = category.lower().strip()
+    
+    # Gym / Fitness - bold, dark, energetic
+    if any(k in cat for k in ["gym", "fitness", "crossfit", "workout", "sports"]):
+        return "body{background:#0a0a0a;color:#fff}.sec{color:#fff}.sec-head h2{color:#fff}.svc-body h3,.feat-card h3,.about-text h2{color:#fff}.svc-body p,.feat-card p,.about-text p{color:#a0a0a0}.sec-alt,.sec-tint{background:#111!important}.feature-item,.svc-card,.t-card,.faq-item,.ben-list li{background:#1a1a1a!important;border-color:#2a2a2a!important;color:#fff}.feature-item h3,.t-card blockquote,.faq-item summary{color:#fff}.t-card cite,.feature-item p,.faq-item p,.ben-list li{color:#a0a0a0}.contact-section{background:#000!important}.footer{background:#000!important}"
+    
+    # Salon / Spa / Beauty - glass, soft, elegant
+    if any(k in cat for k in ["salon", "beauty", "spa", "yoga", "wellness", "parlour"]):
+        return "body{background:#fafaff}.section,.sec{background:#fafaff}.sec-alt,.sec-tint{background:rgba(255,255,255,.6)!important}.service-card,.feature-item,.t-card,.faq-item{backdrop-filter:blur(8px);background:rgba(255,255,255,.7)!important;border:1px solid rgba(255,255,255,.5)!important;box-shadow:0 8px 32px rgba(0,0,0,.04)!important}"
+    
+    # Restaurant / Cafe / Food - warm, inviting
+    if any(k in cat for k in ["restaurant", "food", "cafe", "bakery", "pizza", "dhaba"]):
+        return "body{background:#fffbf5}.sec-alt,.sec-tint{background:#fff8f0!important}.section-header h2,.sec-head h2,.about-text h2{font-family:'Playfair Display',serif!important}"
+    
+    # Medical / Dental / Clinic - clean, trust
+    if any(k in cat for k in ["clinic", "dentist", "doctor", "hospital", "medical", "health"]):
+        return "body{background:#fff}.sec-alt,.sec-tint{background:#f0f9ff!important}.service-card,.feature-item,.t-card{border-color:#e2e8f0!important}"
+    
+    # School / Education - vibrant, friendly
+    if any(k in cat for k in ["school", "coaching", "academy", "institute", "tuition"]):
+        return ".feature-item{border-radius:20px!important}.service-card{border-radius:20px!important}"
+    
+    # Hotel / Resort - luxury, immersive
+    if any(k in cat for k in ["hotel", "resort", "lodge"]):
+        return ".section-header h2,.sec-head h2,.about-text h2,.hero h1{font-family:'Playfair Display',serif!important;letter-spacing:-.03em}"
+    
+    # Default professional
+    return ""
+
+
 def generate_html(content: dict, template: str, lead: dict = None) -> str:
     if "raw_content" in content:
         raw = content["raw_content"]
@@ -704,7 +737,7 @@ body{{padding-bottom:70px}}
         f'<title>{seo_title}</title><meta name="description" content="{seo_desc}">'
         f'<meta property="og:image" content="{hero_img}">'
         '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">'
-        f'{css}</head><body>'
+        f'{css}<style>{_get_design_css(category)}</style></head><body>'
         f'<nav class="nav" id="mainNav"><div class="nav-brand"><svg width="36" height="36" viewBox="0 0 36 36" style="margin-right:8px;vertical-align:middle"><rect width="36" height="36" rx="8" fill="{primary}"/><text x="18" y="24" text-anchor="middle" fill="white" font-size="18" font-weight="bold" font-family="Playfair Display,serif">{business_name[0]}</text></svg>{business_name}</div>'
         '<div class="nav-links"><a href="#about">About</a><a href="#services">Services</a><a href="#gallery">Gallery</a><a href="#contact">Contact</a></div>'
         f'<a href="tel:{phone}" class="nav-cta">&#128222; Call</a></nav>'
