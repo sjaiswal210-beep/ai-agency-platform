@@ -482,7 +482,7 @@ def generate_html(content: dict, template: str, lead: dict = None) -> str:
             '<article class="service-card" data-aos="fade-up">'
             f'<div class="service-img" style="background-image:url({img})"></div>'
             f'<div class="service-content"><h3>{svc.get("name","")}</h3>'
-            f'<p>{svc.get("description","")}</p></div></div>'
+            f'<p>{svc.get("description","")}</p></div></article>'
         )
     services_html = "".join(svc_cards)
 
