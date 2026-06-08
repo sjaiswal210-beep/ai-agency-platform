@@ -482,7 +482,7 @@ def generate_html(content: dict, template: str, lead: dict = None) -> str:
             '<article class="service-card" data-aos="fade-up">'
             f'<div class="service-img" style="background-image:url({img})"></div>'
             f'<div class="service-content"><h3>{svc.get("name","")}</h3>'
-            f'<p>{svc.get("description","")}</p></div></article>'
+            f'<p>{svc.get("description","")}</p><a href="#contact" style="display:inline-block;margin-top:10px;padding:6px 14px;background:var(--p);color:#fff;border-radius:6px;font-size:.72rem;font-weight:600;text-decoration:none">Explore &rarr;</a></div></article>'
         )
     services_html = "".join(svc_cards)
 
@@ -640,7 +640,7 @@ a{{text-decoration:none;color:inherit}}
 .hero{{position:relative;min-height:100vh;display:flex;align-items:center;overflow:hidden}}
 .hero-bg{{position:absolute;inset:0;background:url('{real_photos[0] if real_photos else hero_img}') center/cover no-repeat;transform:scale(1.05);animation:heroZ 20s ease-in-out infinite alternate}}
 @keyframes heroZ{{to{{transform:scale(1)}}}}
-.hero-overlay{{position:absolute;inset:0;background:linear-gradient(125deg,rgba(5,5,20,.84) 0%,rgba(5,5,20,.5) 50%,rgba(5,5,20,.3) 100%)}}
+.hero-overlay{{position:absolute;inset:0;background:linear-gradient(125deg,rgba(5,5,20,.84) 0%,rgba(5,5,20,.5) 50%,rgba(5,5,20,.3) 100%)}}.hero::after{{content:'';position:absolute;bottom:0;left:0;right:0;height:5px;background:linear-gradient(90deg,var(--p),var(--ps),var(--ac));z-index:3}}
 .hero-glow{{position:absolute;top:-20%;right:-10%;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--p) 40%,transparent),transparent 65%);filter:blur(40px);opacity:.6}}
 .hero-content{{position:relative;z-index:2;max-width:720px;padding:140px 24px 100px;margin-left:5%}}
 .hero-pill{{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);backdrop-filter:blur(6px);padding:8px 16px;border-radius:50px;font-size:.82rem;font-weight:600;color:#fff;margin-bottom:20px}}
@@ -675,7 +675,7 @@ a{{text-decoration:none;color:inherit}}
 /* SERVICES */
 .services-grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px}}
 .service-card{{background:#fff;border-radius:20px;overflow:hidden;border:1px solid var(--line);transition:transform .4s cubic-bezier(.16,1,.3,1),box-shadow .4s}}
-.service-card:hover{{transform:translateY(-8px);box-shadow:0 24px 48px rgba(15,23,42,.12)}}
+.service-card:hover{{transform:translateY(-8px);box-shadow:0 24px 48px rgba(15,23,42,.12)}}.service-card::after{{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--p),var(--ps));opacity:0;transition:opacity .3s}}.service-card:hover::after{{opacity:1}}
 .service-img{{height:200px;background-size:cover;background-position:center;position:relative}}.service-img::after{{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.5),transparent 60%)}}
 .service-emoji{{position:absolute;bottom:12px;left:14px;z-index:1;width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,.95);display:flex;align-items:center;justify-content:center;font-size:1.4rem;box-shadow:0 6px 16px rgba(0,0,0,.15)}}
 .service-content{{padding:22px 20px}}.service-content h3{{font-size:1.15rem;font-weight:700;margin-bottom:8px}}.service-content p{{color:var(--mute);font-size:.92rem}}
@@ -685,7 +685,7 @@ a{{text-decoration:none;color:inherit}}
 .features-grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:22px}}
 .feature-item{{background:#fff;border:1px solid var(--line);border-radius:18px;padding:30px 24px;transition:transform .35s,box-shadow .35s}}
 .feature-item:hover{{transform:translateY(-6px);box-shadow:0 20px 44px rgba(15,23,42,.09)}}
-.feature-icon{{width:54px;height:54px;border-radius:14px;background:linear-gradient(135deg,color-mix(in srgb,var(--p) 12%,#fff),color-mix(in srgb,var(--ps) 12%,#fff));display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:16px}}
+.feature-icon{{width:54px;height:54px;border-radius:50%;background:color-mix(in srgb,var(--p) 8%,#fff);border:2px solid color-mix(in srgb,var(--p) 25%,transparent);display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:16px}}
 .feature-item h3{{font-size:1.05rem;font-weight:700;margin-bottom:6px}}.feature-item p{{color:var(--mute);font-size:.9rem}}
 
 /* GALLERY */
@@ -695,7 +695,7 @@ a{{text-decoration:none;color:inherit}}
 /* TESTIMONIALS */
 .testimonials-grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px}}
 .testimonial-card{{background:#fff;border:1px solid var(--line);border-radius:18px;padding:30px 26px;transition:transform .35s,box-shadow .35s}}
-.testimonial-card:hover{{transform:translateY(-5px);box-shadow:0 20px 44px rgba(15,23,42,.09)}}
+.testimonial-card:hover{{transform:translateY(-5px);box-shadow:0 20px 44px rgba(15,23,42,.09)}}.testimonial-card::before{{content:'\201C';position:absolute;top:14px;right:18px;font-size:2.5rem;color:color-mix(in srgb,var(--p) 12%,transparent);font-family:serif;line-height:1}}
 .testimonial-avatar{{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--p),var(--ps));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1rem;margin-bottom:14px}}
 .stars{{color:#f59e0b;font-size:1.05rem;margin-bottom:14px;letter-spacing:2px}}
 .testimonial-card blockquote{{color:var(--ink);font-size:1rem;line-height:1.7;margin-bottom:18px;font-style:italic}}
