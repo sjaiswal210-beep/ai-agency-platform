@@ -66,7 +66,7 @@ async def discover_leads(
 
 
 
-        lead_ids = [l.get("id") or l["id"] for l in (result.get("leads") or discovered_leads or []) if isinstance(l, dict) and l.get("id")][:3]
+        lead_ids = [l.get("id") or l["id"] for l in (result.get("leads") or discovered_leads or []) if isinstance(l, dict) and l.get("id")]
 
 
 
@@ -286,20 +286,36 @@ async def scrape_area(location: str = Query(..., description="Area to scrape all
     return {"discovered": len(stored), "leads": stored}
 
 def _auto_generate_websites_sync(lead_ids: list):
-    """Background task: auto-generate websites for discovered leads."""
+    """Background task: auto-generate websites for ALL leads in batches of 3."""
     import asyncio
+    import time
     from app.agents.website_generation.agent import generate_website
     from app.core.logging import get_logger
     logger = get_logger(__name__)
     
     loop = asyncio.new_event_loop()
-    for lead_id in lead_ids[:3]:
-        try:
-            loop.run_until_complete(generate_website(lead_id))
-            logger.info("Auto-generated website", lead_id=lead_id)
-        except Exception as e:
-            logger.warning("Auto-gen failed", lead_id=lead_id, error=str(e))
+    total = len(lead_ids)
+    done = 0
+    
+    for i in range(0, total, 3):
+        batch = lead_ids[i:i+3]
+        logger.info(f"Auto-gen batch {i//3 + 1}: generating {len(batch)} websites ({done}/{total} done)")
+        
+        for lead_id in batch:
+            try:
+                loop.run_until_complete(generate_website(lead_id))
+                done += 1
+                logger.info("Auto-generated website", lead_id=lead_id, progress=f"{done}/{total}")
+            except Exception as e:
+                logger.warning("Auto-gen failed", lead_id=lead_id, error=str(e))
+        
+        # Wait 30 seconds between batches to avoid rate limits
+        if i + 3 < total:
+            logger.info(f"Waiting 30s before next batch... ({done}/{total} done)")
+            time.sleep(30)
+    
     loop.close()
+    logger.info(f"Auto-generation complete: {done}/{total} websites created")
 
 
 @router.delete("/{lead_id}")
