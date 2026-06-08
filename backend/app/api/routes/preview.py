@@ -355,6 +355,77 @@ def _get_design_css(category: str) -> str:
     return ""
 
 
+
+MOBILE_CSS = """
+<style>
+@media(max-width:768px){
+  .nav-links{display:none}
+  .nav{padding:12px 16px}
+  .nav-cta{padding:8px 14px;font-size:.75rem}
+  
+  .hero{min-height:70vh}
+  .hero-content{padding:100px 16px 60px!important;margin:0!important}
+  .hero h1{font-size:1.8rem!important}
+  .hero p{font-size:.95rem!important}
+  .hero-btns{flex-direction:column!important;gap:10px!important;align-items:stretch!important}
+  .hero-btns .btn{text-align:center;justify-content:center}
+  .btn-white,.btn-glass{padding:12px 20px!important;font-size:.9rem!important}
+  .hero-pill{font-size:.75rem!important;padding:6px 12px!important}
+  
+  .stats-section .stats-grid,.stats-grid{grid-template-columns:repeat(2,1fr)!important;gap:12px!important;padding:0 16px}
+  .stat-number{font-size:1.5rem!important}
+  
+  .section,.sec{padding:50px 16px!important}
+  .section-header h2,.sec-head h2{font-size:1.5rem!important}
+  
+  .about-grid{grid-template-columns:1fr!important;gap:24px!important}
+  .about-img img{height:280px!important;border-radius:14px!important}
+  .about-badge{bottom:-14px!important;left:10px!important;padding:12px 16px!important}
+  .about-text p{font-size:.95rem!important}
+  
+  .services-grid{grid-template-columns:1fr!important;gap:10px!important}
+  .service-card{display:flex!important;flex-direction:row!important;border-radius:12px!important}
+  .service-img{width:90px!important;min-width:90px!important;height:90px!important;min-height:90px!important;border-radius:12px 0 0 12px!important}
+  .service-content{padding:12px 14px!important}
+  .service-content h3{font-size:.92rem!important;margin-bottom:4px!important}
+  .service-content p{font-size:.8rem!important;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  
+  .features-grid{grid-template-columns:repeat(2,1fr)!important;gap:10px!important}
+  .feature-item{padding:16px 12px!important;border-radius:12px!important}
+  .feature-icon{width:40px!important;height:40px!important;font-size:1.2rem!important;margin-bottom:8px!important}
+  .feature-item h3{font-size:.82rem!important}
+  .feature-item p{font-size:.72rem!important}
+  
+  .gallery-grid{grid-template-columns:repeat(2,1fr)!important;gap:8px!important}
+  .gallery-item{border-radius:10px!important}
+  
+  .testimonials-grid{grid-template-columns:1fr!important;gap:12px!important}
+  .testimonial-card{padding:20px!important}
+  
+  .hiw-grid{grid-template-columns:repeat(2,1fr)!important;gap:12px!important}
+  
+  .contact-container{grid-template-columns:1fr!important;gap:20px!important}
+  .contact-section{padding:50px 16px!important}
+  .contact-form input,.contact-form textarea{font-size:.9rem!important}
+  
+  .footer{padding:30px 16px 80px!important}
+  
+  .bottom-nav{display:block!important}
+  .whatsapp-float{display:none!important}
+  .chat-btn{bottom:80px!important}
+  body{padding-bottom:60px}
+  
+  .faq-item summary{font-size:.9rem!important;padding:14px 16px!important}
+  .faq-item p{padding:0 16px 14px!important;font-size:.85rem!important}
+  
+  .benefits-grid{grid-template-columns:1fr!important}
+  .benefit-item{padding:12px!important;font-size:.85rem!important}
+}
+</style>
+"""
+
+
+
 def generate_html(content: dict, template: str, lead: dict = None) -> str:
     if "raw_content" in content:
         raw = content["raw_content"]
@@ -690,7 +761,7 @@ a{{text-decoration:none;color:inherit}}
 [data-aos]{{transition-timing-function:cubic-bezier(.16,1,.3,1)}}
 
 .contact-section input,.contact-section textarea{{max-width:100%!important;width:100%!important}}
-@media(max-width:860px){{.bottom-nav{{display:block}}.whatsapp-float{{display:none}}.chat-btn{{bottom:80px}}body{{padding-bottom:70px}}.nav-links{{display:none}}.hero-content{{padding:120px 20px 80px;margin:0}}.about-grid,.contact-container{{grid-template-columns:1fr;gap:32px}}.about-img img{{height:320px}}.stats-grid{{grid-template-columns:repeat(2,1fr);gap:24px 12px}}.section,.section-alt{{padding:72px 24px}}.about-badge{{left:12px;bottom:-16px}}.gallery-grid{{grid-template-columns:repeat(2,1fr)}}.footer{{padding-bottom:80px!important}}.contact-container{{padding:0 8px}}.contact-section{{padding:60px 16px!important}}footer div[style*='display:flex']{{flex-wrap:wrap;justify-content:center}}}}
+
 
 /* STICKY BOTTOM NAV (Mobile) */
 .bottom-nav{{display:none;position:fixed;bottom:0;left:0;right:0;z-index:1000;background:var(--p);padding:10px 0;border-top:none;box-shadow:0 -4px 20px rgba(0,0,0,.2)}}
@@ -738,7 +809,7 @@ body{{padding-bottom:70px}}
         f'<title>{seo_title}</title><meta name="description" content="{seo_desc}">'
         f'<meta property="og:image" content="{hero_img}">'
         '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">'
-        f'{css}<style>{_get_design_css(category)}</style></head><body>'
+        f'{css}<style>{_get_design_css(category)}</style>{MOBILE_CSS}</head><body>'
         f'<nav class="nav" id="mainNav"><div class="nav-brand"><svg width="36" height="36" viewBox="0 0 36 36" style="margin-right:8px;vertical-align:middle"><rect width="36" height="36" rx="8" fill="{primary}"/><text x="18" y="24" text-anchor="middle" fill="white" font-size="18" font-weight="bold" font-family="Playfair Display,serif">{business_name[0]}</text></svg>{business_name}</div>'
         '<div class="nav-links"><a href="#about">About</a><a href="#services">Services</a><a href="#gallery">Gallery</a><a href="#contact">Contact</a></div>'
         f'<a href="tel:{phone}" class="nav-cta">&#128222; Call</a></nav>'
