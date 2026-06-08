@@ -38,6 +38,7 @@ async def discover_leads(
     location: str = Query(..., description="City or area to search"),
     category: str = Query("restaurant", description="Business category"),
     count: int = Query(10, description="Number of leads to fetch"),
+    background_tasks: BackgroundTasks = None,
 ):
     """Trigger AI-powered lead discovery for a location and category."""
     from app.agents.lead_discovery.agent import run_discovery
@@ -57,14 +58,27 @@ async def discover_leads(
             pass
 
 
-    # Auto-generate websites for first few leads
-    import asyncio
-    try:
-        lead_ids = [l["id"] for l in result.get("leads", []) if l.get("id")][:3]
+    # Auto-generate websites in background
+
+
+
+    if background_tasks:
+
+
+
+        lead_ids = [l.get("id") or l["id"] for l in (result.get("leads") or discovered_leads or []) if isinstance(l, dict) and l.get("id")][:3]
+
+
+
         if lead_ids:
-            asyncio.ensure_future(_auto_generate_websites(lead_ids))
-    except Exception:
-        pass
+
+
+
+            background_tasks.add_task(_auto_generate_websites_sync, lead_ids)
+
+
+
+
     return {"discovered": len(leads), "leads": leads, "auto_processed": auto_processed}
 
 
@@ -271,17 +285,21 @@ async def scrape_area(location: str = Query(..., description="Area to scrape all
 
     return {"discovered": len(stored), "leads": stored}
 
-async def _auto_generate_websites(lead_ids: list):
+def _auto_generate_websites_sync(lead_ids: list):
     """Background task: auto-generate websites for discovered leads."""
+    import asyncio
     from app.agents.website_generation.agent import generate_website
     from app.core.logging import get_logger
     logger = get_logger(__name__)
-    for lead_id in lead_ids[:5]:  # Limit to 5 per batch to avoid rate limits
+    
+    loop = asyncio.new_event_loop()
+    for lead_id in lead_ids[:3]:
         try:
-            await generate_website(lead_id)
+            loop.run_until_complete(generate_website(lead_id))
             logger.info("Auto-generated website", lead_id=lead_id)
         except Exception as e:
             logger.warning("Auto-gen failed", lead_id=lead_id, error=str(e))
+    loop.close()
 
 
 @router.delete("/{lead_id}")
