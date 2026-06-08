@@ -66,7 +66,7 @@ async def discover_leads(
 
 
 
-        lead_ids = [l.get("id") or l["id"] for l in (result.get("leads") or discovered_leads or []) if isinstance(l, dict) and l.get("id")]
+        lead_ids = [l["id"] for l in leads if isinstance(l, dict) and l.get("id")]
 
 
 
