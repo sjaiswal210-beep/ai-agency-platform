@@ -30,9 +30,9 @@ export default function WebsitesPage() {
   const [loading, setLoading] = useState(true);
 
   const handleDelete = async (id: string, name: string) => {
-    if (!confirm(\`Delete website for \${name}?\`)) return;
+    if (!confirm(`Delete website for ${name}?`)) return;
     try {
-      await fetch(\`\${API_BASE}/api/leads/website/\${id}\`, { method: "DELETE" });
+      await fetch(`${API_BASE}/api/leads/website/${id}`, { method: "DELETE" });
       setWebsites(websites.filter(w => w.id !== id));
     } catch (err) { console.error(err); }
   };

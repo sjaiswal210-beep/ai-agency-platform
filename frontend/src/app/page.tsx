@@ -107,7 +107,7 @@ export default function Dashboard() {
   useEffect(() => {
     api.dashboard.stats().then(setStats).catch(console.error);
     api.leads.list().then((leads) => setRecentLeads(leads.slice(0, 5))).catch(console.error);
-    fetch(\`\${API_BASE}/api/agent-status/\`).then(r => r.json()).then(setAgentStatus).catch(console.error);
+    fetch(`${API_BASE}/api/agent-status/`).then(r => r.json()).then(setAgentStatus).catch(console.error);
   }, []);
 
   const navItems = [
