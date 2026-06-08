@@ -346,8 +346,8 @@ export default function Dashboard() {
                       <p className="text-sm text-green-700 font-medium">{specificResult.lead.business_name}</p>
                       <p className="text-xs text-green-600 mt-1">{specificResult.lead.phone} | {specificResult.lead.address?.split(",").slice(0,2).join(",")}</p>
                       {specificResult.website_id && (
-                        <a href={`${API_BASE}/api/preview/${specificResult.website_id}`} target="_blank" rel="noopener noreferrer"
-                          className="inline-block mt-2 text-xs bg-green-600 text-white px-3 py-1 rounded-lg">View Generated Website</a>
+                        <a href={specificResult.slug ? `https://city-maps.online/${specificResult.slug}` : `${API_BASE}/api/preview/${specificResult.website_id}`} target="_blank" rel="noopener noreferrer"
+                          className="inline-block mt-2 text-xs bg-green-600 text-white px-3 py-1 rounded-lg">{specificResult.slug ? `Live: city-maps.online/${specificResult.slug}` : "View Website"}</a>
                       )}
                     </div>
                   ) : (

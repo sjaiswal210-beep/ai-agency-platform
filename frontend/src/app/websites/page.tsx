@@ -11,6 +11,7 @@ interface WebsiteItem {
   template: string;
   status: string;
   created_at: string;
+  slug?: string;
   business_name?: string;
   category?: string;
   phone?: string;
@@ -88,7 +89,7 @@ export default function WebsitesPage() {
                 {/* Preview thumbnail */}
                 <div className="relative h-40 bg-gray-100 overflow-hidden border-b">
                   <iframe
-                    src={`${API_BASE}/api/preview/${site.id}`}
+                    src={site.slug ? `${API_BASE}/api/preview/by-slug/${site.slug}` : `${API_BASE}/api/preview/${site.id}`}
                     className="w-full h-full border-0 pointer-events-none"
                     style={{ transform: "scale(0.4)", transformOrigin: "top left", width: "250%", height: "250%" }}
                     title={site.business_name || site.template}
@@ -101,6 +102,7 @@ export default function WebsitesPage() {
                     <div className="flex-1 min-w-0">
                       <h3 className="font-semibold text-sm truncate">{site.business_name || "Untitled"}</h3>
                       <p className="text-xs text-gray-500 capitalize">{site.category || site.template}</p>
+                      {site.slug && <p className="text-xs text-purple-500 truncate">city-maps.online/{site.slug}</p>}
                     </div>
                     <span className={`px-2 py-0.5 rounded-full text-xs flex-shrink-0 ml-2 ${STATUS_COLORS[site.status] || "bg-gray-100 text-gray-600"}`}>
                       {site.status}
@@ -124,12 +126,12 @@ export default function WebsitesPage() {
                   {/* Actions */}
                   <div className="flex gap-2">
                     <a
-                      href={`${API_BASE}/api/preview/${site.id}`}
+                      href={site.slug ? `https://city-maps.online/${site.slug}` : `${API_BASE}/api/preview/${site.id}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-primary text-white text-xs font-medium rounded-lg hover:bg-primary-dark transition"
                     >
-                      <ExternalLink className="w-3 h-3" /> View Site
+                      <ExternalLink className="w-3 h-3" /> {site.slug ? "Live Site" : "Preview"}
                     </a>
                     <a
                       href={`${API_BASE}/api/logo-gen/${site.id}/preview`}

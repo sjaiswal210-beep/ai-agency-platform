@@ -177,10 +177,20 @@ async def search_specific_business(query: str = Query(..., description="Business
     except Exception:
         pass
 
+    
+    # Get slug for the website link
+    _slug = ""
+    if website_id:
+        from app.core.supabase import get_supabase as _gs
+        _db = _gs()
+        _ws = _db.table("websites").select("slug").eq("id", website_id).limit(1).execute()
+        if _ws.data:
+            _slug = _ws.data[0].get("slug", "")
     return {
         "lead": stored,
         "website_id": website_id,
         "category": category,
+        "slug": _slug,
     }
 
 
