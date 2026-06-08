@@ -24,12 +24,12 @@ async def chat_completion(messages: list[dict], model: str | None = None) -> str
             resp = await client.post(
                 f"{GEMINI_API_URL}?key={settings.gemini_api_key}",
                 json={"contents": contents},
-                timeout=60,
+                timeout=120,
             )
             
             if resp.status_code == 429:
                 # Rate limited - wait and retry
-                wait_time = (attempt + 1) * 15  # 15s, 30s, 45s
+                wait_time = (attempt + 1) * 5  # 15s, 30s, 45s
                 await asyncio.sleep(wait_time)
                 continue
             

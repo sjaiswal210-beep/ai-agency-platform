@@ -125,7 +125,12 @@ export default function LeadsPage() {
               </thead>
               <tbody>
                 {leads.map((lead) => (
-                  <tr key={lead.id} className="border-b last:border-0 hover:bg-gray-50">
+                  <tr key={lead.id} className={`border-b last:border-0 hover:bg-gray-50 border-l-4 ${
+                        lead.status === "new" ? "border-l-blue-400" :
+                        lead.status === "analyzed" ? "border-l-purple-400" :
+                        lead.status === "outreach_sent" ? "border-l-amber-400" :
+                        lead.status === "converted" ? "border-l-green-400" : "border-l-gray-200"
+                      }`}>
                     <td className="px-4 py-3">
                       <p className="font-medium text-sm">{lead.business_name}</p>
                       <p className="text-xs text-gray-500 truncate max-w-[250px]">{lead.address}</p>
