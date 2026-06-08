@@ -66,7 +66,7 @@ async def discover_leads(
 
 
 
-        lead_ids = [l["id"] for l in leads if isinstance(l, dict) and l.get("id")]
+        lead_ids = [l["id"] for l in leads if isinstance(l, dict) and l.get("id")][:1]
 
 
 
@@ -307,8 +307,8 @@ def _auto_generate_websites_sync(lead_ids: list):
     total = len(lead_ids)
     done = 0
     
-    for i in range(0, total, 3):
-        batch = lead_ids[i:i+3]
+    for i in range(0, total, 1):
+        batch = lead_ids[i:i+1]
         logger.info(f"Auto-gen batch {i//3 + 1}: generating {len(batch)} websites ({done}/{total} done)")
         
         for lead_id in batch:
@@ -319,8 +319,8 @@ def _auto_generate_websites_sync(lead_ids: list):
             except Exception as e:
                 logger.warning("Auto-gen failed", lead_id=lead_id, error=str(e))
         
-        # Wait 30 seconds between batches to avoid rate limits
-        if i + 3 < total:
+        # Wait between batches
+        if i + 1 < total:
             logger.info(f"Waiting 30s before next batch... ({done}/{total} done)")
             time.sleep(30)
     
