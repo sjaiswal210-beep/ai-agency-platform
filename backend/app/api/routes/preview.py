@@ -767,9 +767,9 @@ a{{text-decoration:none;color:inherit}}
 
 
 /* STICKY BOTTOM NAV (Mobile) */
-.bottom-nav{{display:none;position:fixed;bottom:0;left:0;right:0;z-index:1000;background:linear-gradient(135deg,var(--p),var(--ps));padding:12px 16px;border-top:none;box-shadow:0 -6px 30px rgba(0,0,0,.25);backdrop-filter:blur(10px)}}
+.bottom-nav{{display:none;position:fixed;bottom:0;left:0;right:0;z-index:1000;background:linear-gradient(135deg,var(--p),var(--ps));padding:14px 16px;border-top:none;box-shadow:0 -6px 30px rgba(0,0,0,.25);backdrop-filter:blur(10px);border-radius:20px 20px 0 0}}
 .bottom-nav-grid{{display:flex;justify-content:space-around;align-items:center;max-width:400px;margin:0 auto}}
-.bottom-nav a{{display:flex;flex-direction:column;align-items:center;gap:4px;text-decoration:none;color:rgba(255,255,255,.9);font-size:.68rem;font-weight:600;padding:8px 16px;border-right:1px solid rgba(255,255,255,.2);transition:all .2s}}.bottom-nav a:last-child{{border-right:none}}.bottom-nav a:hover{{background:rgba(255,255,255,.12);border-radius:10px}}
+.bottom-nav a{{display:flex;flex-direction:column;align-items:center;gap:4px;text-decoration:none;color:rgba(255,255,255,.9);font-size:.68rem;font-weight:600;padding:8px 16px;border-right:1px solid rgba(255,255,255,.2);transition:all .2s}}.bottom-nav a:last-child{{border-right:none}}.bottom-nav a:hover,.bottom-nav a:active{{background:rgba(255,255,255,.15);border-radius:10px;transform:scale(.92)}}.bottom-nav a{{transition:all .2s cubic-bezier(.4,0,.2,1)}}
 .bottom-nav a:nth-child(1){{color:#fff}}.bn-icon{{font-size:1.4rem;line-height:1;display:flex;align-items:center;justify-content:center;width:28px;height:28px}}.bn-icon svg{{width:22px;height:22px}}
 .bottom-nav a span.bn-icon{{font-size:1.3rem}}
 
