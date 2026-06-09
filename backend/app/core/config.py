@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     gemini_api_key: str = ""
     google_places_key: str = ""
     openrouter_api_key: str = ""
+    groq_api_key: str = ""
     openrouter_model: str = "gemini-2.5-flash-lite"
     redis_url: str = "redis://localhost:6379/0"
     api_secret_key: str = "dev-secret"
