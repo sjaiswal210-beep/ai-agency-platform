@@ -24,14 +24,22 @@ async def _call_gemini(contents: list, api_key: str) -> str:
 
 async def _call_groq(messages: list[dict], api_key: str) -> str:
     """Try Groq API (free Llama 3)."""
+    # Trim messages to fit context - keep system short, trim user content
+    trimmed = []
+    for msg in messages:
+        content = msg.get("content", "")
+        if len(content) > 6000:
+            content = content[:6000] + "\n\n[Content trimmed. Generate the JSON response based on what you have above.]"
+        trimmed.append({"role": msg["role"], "content": content})
+    
     async with httpx.AsyncClient() as client:
         resp = await client.post(
             GROQ_API_URL,
             json={
-                "model": "llama-3.1-8b-instant",
-                "messages": messages,
+                "model": "llama-3.3-70b-versatile",
+                "messages": trimmed,
                 "temperature": 0.7,
-                "max_tokens": 8192,
+                "max_tokens": 4096,
             },
             headers={
                 "Authorization": f"Bearer {api_key}",
