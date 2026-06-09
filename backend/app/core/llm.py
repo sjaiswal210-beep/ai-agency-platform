@@ -28,7 +28,7 @@ async def _call_groq(messages: list[dict], api_key: str) -> str:
         resp = await client.post(
             GROQ_API_URL,
             json={
-                "model": "llama-3.3-70b-versatile",
+                "model": "llama3-70b-8192",
                 "messages": messages,
                 "temperature": 0.7,
                 "max_tokens": 4096,
@@ -72,7 +72,8 @@ async def chat_completion(messages: list[dict], model: str | None = None) -> str
                 except Exception:
                     pass  # Fall through to Groq
 
-    # Fallback to Groq
+    # Fallback to Groq (free Llama 3)
+    await asyncio.sleep(1)  # Brief pause before fallback
     groq_key = getattr(settings, 'groq_api_key', '') or ''
     if groq_key:
         try:
