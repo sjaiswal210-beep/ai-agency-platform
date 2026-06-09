@@ -411,6 +411,9 @@ MOBILE_CSS = """
   .footer{padding:30px 16px 80px!important}
   
   .bottom-nav{display:block!important}
+  .bottom-nav a{padding:8px 14px!important;font-size:.7rem!important}
+  .bn-icon{font-size:1.5rem!important}
+  .bn-icon svg{width:24px!important;height:24px!important}
   .whatsapp-float{display:none!important}
   .chat-btn{bottom:80px!important}
   body{padding-bottom:60px}
@@ -610,7 +613,7 @@ def generate_html(content: dict, template: str, lead: dict = None) -> str:
         bottom_nav = (
             '<div class="bottom-nav"><div class="bottom-nav-grid">'
             f'<a href="tel:{phone}"><span class="bn-icon">&#128222;</span>Call Now</a>'
-            f'<a href="https://wa.me/{whatsapp_num}" target="_blank"><span class="bn-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492l4.625-1.476A11.929 11.929 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.75c-2.115 0-4.09-.57-5.793-1.564l-.415-.248-2.74.875.876-2.672-.27-.43A9.71 9.71 0 012.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75z"/></svg></span>WhatsApp</a>'
+            f'<a href="https://wa.me/{whatsapp_num}" target="_blank"><span class="bn-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492l4.625-1.476A11.929 11.929 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.75c-2.115 0-4.09-.57-5.793-1.564l-.415-.248-2.74.875.876-2.672-.27-.43A9.71 9.71 0 012.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75z"/></svg></span>WhatsApp</a>'
             f'<a href="{dir_url}" target="_blank"><span class="bn-icon">&#128205;</span>Location</a>'
             '<a href="#gallery"><span class="bn-icon">&#128247;</span>Gallery</a>'
             '</div></div>'
@@ -764,10 +767,10 @@ a{{text-decoration:none;color:inherit}}
 
 
 /* STICKY BOTTOM NAV (Mobile) */
-.bottom-nav{{display:none;position:fixed;bottom:0;left:0;right:0;z-index:1000;background:var(--p);padding:10px 0;border-top:none;box-shadow:0 -4px 20px rgba(0,0,0,.2)}}
-.bottom-nav-grid{{display:grid;grid-template-columns:repeat(4,1fr);text-align:center}}
-.bottom-nav a{{display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;color:rgba(255,255,255,.85);font-size:.65rem;font-weight:600;padding:6px 0;transition:color .2s}}
-.bottom-nav a:nth-child(1){{color:#fff}}
+.bottom-nav{{display:none;position:fixed;bottom:0;left:0;right:0;z-index:1000;background:linear-gradient(135deg,var(--p),color-mix(in srgb,var(--p) 85%,#000));padding:12px 16px;border-top:none;box-shadow:0 -6px 30px rgba(0,0,0,.25);backdrop-filter:blur(10px)}}
+.bottom-nav-grid{{display:flex;justify-content:space-around;align-items:center;max-width:400px;margin:0 auto}}
+.bottom-nav a{{display:flex;flex-direction:column;align-items:center;gap:4px;text-decoration:none;color:rgba(255,255,255,.9);font-size:.68rem;font-weight:600;padding:8px 12px;border-radius:10px;transition:all .2s}}.bottom-nav a:hover{{background:rgba(255,255,255,.12)}}
+.bottom-nav a:nth-child(1){{color:#fff}}.bn-icon{{font-size:1.4rem;line-height:1;display:flex;align-items:center;justify-content:center;width:28px;height:28px}}.bn-icon svg{{width:22px;height:22px}}
 .bottom-nav a span.bn-icon{{font-size:1.3rem}}
 
 /* Improved Buttons */
