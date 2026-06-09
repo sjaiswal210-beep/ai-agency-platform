@@ -28,10 +28,10 @@ async def _call_groq(messages: list[dict], api_key: str) -> str:
         resp = await client.post(
             GROQ_API_URL,
             json={
-                "model": "llama3-70b-8192",
+                "model": "llama-3.1-8b-instant",
                 "messages": messages,
                 "temperature": 0.7,
-                "max_tokens": 4096,
+                "max_tokens": 8192,
             },
             headers={
                 "Authorization": f"Bearer {api_key}",
