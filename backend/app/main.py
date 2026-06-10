@@ -340,7 +340,7 @@ a{text-decoration:none;color:inherit}
 <div class="pi">QR code for visiting cards</div>
 <div class="pi">Daily business growth tips</div>
 </div>
-<a href="https://wa.me/917276738899?text=Hi%2C%20I%20want%20the%20Business%20Plan%20at%20Rs.69%2Fmonth" class="p-cta">Start Growing &rarr;</a>
+<a href="https://wa.me/917350785606?text=Hi%2C%20I%20want%20the%20Business%20Plan%20at%20Rs.69%2Fmonth" class="p-cta">Start Growing &rarr;</a>
 </div>
 </div>
 </section>
@@ -349,7 +349,7 @@ a{text-decoration:none;color:inherit}
 <div class="cta-glow"></div>
 <h2 data-aos="fade-up">Stop Losing Customers to Competitors</h2>
 <p data-aos="fade-up">""" + str(count) + """+ businesses are already online. Don't get left behind.</p>
-<a href="https://wa.me/917276738899?text=Hi%20City%20Maps%2C%20I%20want%20to%20create%20my%20business%20website" class="btn-glow" data-aos="fade-up" style="position:relative;z-index:2">Create My Website &rarr;</a>
+<a href="https://wa.me/917350785606?text=Hi%20City%20Maps%2C%20I%20want%20to%20create%20my%20business%20website" class="btn-glow" data-aos="fade-up" style="position:relative;z-index:2">Create My Website &rarr;</a>
 </section>
 
 <footer class="footer">
