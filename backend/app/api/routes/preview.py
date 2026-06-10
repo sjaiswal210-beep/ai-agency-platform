@@ -411,11 +411,11 @@ MOBILE_CSS = """
 @media(max-width:768px){
   .nav-links{display:none}
   .nav{padding:12px 16px}
-  .nav-cta{padding:8px 14px;font-size:.75rem}
-  .hero{min-height:70vh}
-  .hero-content{padding:100px 16px 60px!important;margin:0!important}
-  .hero h1{font-size:1.8rem!important}
-  .hero p{font-size:.95rem!important}
+  .nav-cta{display:none!important}
+  .hero{min-height:auto;padding-top:80px!important;padding-bottom:40px!important}
+  .hero-content{padding:70px 16px 30px!important;margin:0!important}
+  .hero h1{font-size:1.6rem!important;margin-bottom:10px!important}
+  .hero p{font-size:.88rem!important;margin-bottom:14px!important}
   .hero-btns{flex-direction:column!important;gap:10px!important;align-items:stretch!important}
   .hero-btns .btn,.btn-white,.btn-glass{text-align:center;justify-content:center;padding:12px 20px!important;font-size:.9rem!important}
   .stats-section .stats-grid,.stats-grid{grid-template-columns:repeat(2,1fr)!important;gap:12px!important;padding:0 16px}
@@ -560,6 +560,36 @@ def generate_html(content: dict, template: str, lead: dict = None) -> str:
 
     # Use real Google Maps photos if available, otherwise fallback to stock
     gal_items = []
+    # Fetch products for this business
+    products_html = ""
+    if website_id:
+        try:
+            from app.core.supabase import get_supabase as _pdb
+            _pr = _pdb().table("store_products").select("*").eq("website_id", website_id).eq("in_stock", True).limit(6).execute()
+            if _pr.data:
+                prod_cards = ""
+                for p in _pr.data:
+                    p_img = p.get("image_url") or f"https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=300&h=300&fit=crop"
+                    wa_msg = urllib.parse.quote(f"Hi, I want to buy {p.get('name','')} (Rs.{p.get('price','')})")
+                    wa_link = f"https://wa.me/{whatsapp_num}?text={wa_msg}" if whatsapp_num else "#"
+                    prod_cards += (
+                        f'<div class="product-item" data-aos="fade-up">'
+                        f'<img src="{p_img}" alt="{p.get("name","")}" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px">'
+                        f'<h3 style="font-size:.9rem;font-weight:700;margin:10px 0 4px">{p.get("name","")}</h3>'
+                        f'<p style="font-size:.8rem;color:#64748b;margin-bottom:6px">{p.get("description","")[:50]}</p>'
+                        f'<p style="font-size:1rem;font-weight:800;color:var(--p);margin-bottom:8px">Rs. {p.get("price","")}</p>'
+                        f'<a href="{wa_link}" target="_blank" style="display:block;text-align:center;background:var(--p);color:#fff;padding:8px;border-radius:8px;font-size:.78rem;font-weight:700;text-decoration:none">Buy Now</a>'
+                        f'</div>'
+                    )
+                products_html = (
+                    '<section class="section" style="padding:60px 24px"><div style="max-width:1100px;margin:0 auto">'
+                    '<div class="section-header" data-aos="fade-up"><h2>Our Products</h2></div>'
+                    f'<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px">{prod_cards}</div>'
+                    '</div></section>'
+                )
+        except Exception:
+            pass
+
     for img_url in gallery_images:
         gal_items.append(f'<figure class="gallery-item" data-aos="zoom-in"><img src="{img_url}" alt="Gallery" loading="lazy"></figure>')
     gallery_html = "".join(gal_items)
@@ -882,7 +912,7 @@ body{{padding-bottom:70px}}
 
     html = (
         '<!DOCTYPE html><html lang="en"><head>'
-        '<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">'
+        f'<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><meta name="theme-color" content="{primary}">'
         f'<title>{seo_title}</title><meta name="description" content="{seo_desc}">'
         f'<meta property="og:image" content="{hero_img}">'
         '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">'
@@ -913,6 +943,7 @@ body{{padding-bottom:70px}}
         f'<div class="gallery-grid">{gallery_html}</div></section>'
         '<section class="section" style="background:#f8fafc;max-width:100%"><div style="max-width:1200px;margin:0 auto;padding:80px 24px">'
         f'<div class="section-header"><h2>Our Strengths</h2></div><div class="features-grid">{features_html}</div></div></section>'
+        f'{products_html}'
         '<section class="section"><div class="section-header"><h2>What People Say</h2></div>'
         f'<div class="testimonials-grid">{testimonials_html}</div></section>'
         f'{hiw_html}{benefits_html}{faq_html}{maps_section}'
@@ -936,7 +967,7 @@ body{{padding-bottom:70px}}
         '</div></div></section>'
         f'{wa_link}'
         ''
-        f'{social_html}'
+        ''
         f'<div class="claim-banner"><div class="claim-inner"><span>\U0001f4bc Is this your business?</span><button onclick="document.getElementById(\'claimModal\').style.display=\'flex\'">Claim This Business</button></div></div>'
         '<div class="claim-modal" id="claimModal" style="display:none"><div class="claim-box"><button class="claim-close" onclick="document.getElementById(\'claimModal\').style.display=\'none\'">&times;</button><h2>\U0001f680 Claim Your Business</h2><p class="claim-sub">Get full control of your website + premium growth tools</p><div class="claim-features"><div class="cf">\u2705 Edit website content anytime</div><div class="cf">\u2705 Add products to your store</div><div class="cf">\u2705 View analytics (visitors, calls, leads)</div><div class="cf">\u2705 AI-powered social media posts</div><div class="cf">\u2705 Daily WhatsApp content ready to share</div><div class="cf">\u2705 QR code for visiting cards</div><div class="cf">\u2705 Google Business Profile setup guide</div><div class="cf">\u2705 Festival campaign generator</div><div class="cf">\u2705 AI chatbot for your customers</div></div><div class="claim-price"><span class="price-old">\u20b9199/month</span><span class="price-new">\u20b969<small>/month</small></span></div><a href="https://city-maps.online/api/panel/{website_id}" class="claim-btn">Claim Now \u2192</a><button class="claim-skip" onclick="document.getElementById(\'claimModal\').style.display=\'none\';window.open(\'/api/panel/{website_id}\',\'_blank\')">Skip (Testing)</button></div></div>'
         
