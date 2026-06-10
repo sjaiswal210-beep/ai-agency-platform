@@ -10,13 +10,46 @@ import asyncio
 import re
 
 def _get_real_photos(business_name: str, address: str) -> list:
-    """Sync wrapper to get real Google Maps photos."""
+    """Fetch real Google Maps photos using sync HTTP."""
     try:
-        from app.services.photos_service import get_business_photos
-        loop = asyncio.new_event_loop()
-        photos = loop.run_until_complete(get_business_photos(business_name, address, max_photos=6))
-        loop.close()
-        return photos
+        import httpx
+        from app.core.config import get_settings
+        settings = get_settings()
+        api_key = settings.google_places_key
+        if not api_key:
+            return []
+        
+        query = f"{business_name} {address}".strip()
+        
+        with httpx.Client(timeout=8) as client:
+            # Search for business
+            resp = client.get(
+                "https://maps.googleapis.com/maps/api/place/textsearch/json",
+                params={"query": query, "key": api_key}
+            )
+            if resp.status_code != 200:
+                return []
+            results = resp.json().get("results", [])
+            if not results:
+                return []
+            
+            place_id = results[0]["place_id"]
+            
+            # Get photo references
+            detail = client.get(
+                "https://maps.googleapis.com/maps/api/place/details/json",
+                params={"place_id": place_id, "fields": "photos", "key": api_key}
+            )
+            if detail.status_code != 200:
+                return []
+            
+            photos = detail.json().get("result", {}).get("photos", [])
+            photo_urls = []
+            for p in photos[:6]:
+                ref = p.get("photo_reference")
+                if ref:
+                    photo_urls.append(f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=600&photo_reference={ref}&key={api_key}")
+            return photo_urls
     except Exception:
         return []
 
