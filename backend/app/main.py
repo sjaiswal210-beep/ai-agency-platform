@@ -210,33 +210,33 @@ def landing_page():
 <nav class="nav"><div class="nav-logo">City Maps</div><a href="https://ai-agency-platform-blush.vercel.app" class="nav-btn">Admin</a></nav>
 <section class="hero">
 <div class="chip"><span class="dot"></span>""" + str(count) + """+ businesses online</div>
-<h1>Your business website.<br><em>Ready in 5 minutes.</em></h1>
-<p>Professional website for your business. Customers find you on Google, call you, message on WhatsApp. No tech skills needed.</p>
+<h1>Apna Business<br><em>Online Le Jaayein</em></h1>
+<p>Aapke business ka apna website. Customers Google pe aapko dhundhein, call karein, WhatsApp pe order dein. Koi technical knowledge ki zaroorat nahi.</p>
 <div class="hero-search"><input id="bizSearch" placeholder="Type your business name..."><button onclick="searchBiz()">Search</button></div>
 <div id="searchResult"></div>
 </section>
 <div class="trust"><span>Salons</span><span>&middot;</span><span>Restaurants</span><span>&middot;</span><span>Doctors</span><span>&middot;</span><span>Gyms</span><span>&middot;</span><span>Stores</span><span>&middot;</span><span>Hotels</span></div>
 <section class="section">
-<div class="sec-label">Features</div><div class="sec-title">Everything you need to grow</div><div class="sec-desc">Simple tools that bring more customers</div>
+<div class="sec-label">Features</div><div class="sec-title">Aapke Business ke Liye Sab Kuch</div><div class="sec-desc">Jo tools aapke customers badhayein</div>
 <div class="features">
-<div class="feat"><div class="emoji" style="background:#ede9fe">&#127760;</div><h3>Business Website</h3><p>Professional mobile-friendly website showing services, photos, and location.</p></div>
-<div class="feat"><div class="emoji" style="background:#dbeafe">&#128222;</div><h3>Get More Calls</h3><p>Click-to-call button. Track how many customers call from your site.</p></div>
-<div class="feat"><div class="emoji" style="background:#dcfce7">&#128172;</div><h3>WhatsApp Orders</h3><p>One-tap WhatsApp with pre-filled message. Customers reach you instantly.</p></div>
-<div class="feat"><div class="emoji" style="background:#fef3c7">&#128722;</div><h3>Product Catalog</h3><p>Show products with prices. Buy Now button opens WhatsApp order.</p></div>
+<div class="feat"><div class="emoji" style="background:#ede9fe">&#127760;</div><h3>Business Website</h3><p>Apna professional website jismein services, photos, location sab dikhega. Har phone pe perfect chalega.</p></div>
+<div class="feat"><div class="emoji" style="background:#dbeafe">&#128222;</div><h3>Get More Calls</h3><p>Ek click mein customer aapko call kare. Kitne log call kiye - sab dikhega.</p></div>
+<div class="feat"><div class="emoji" style="background:#dcfce7">&#128172;</div><h3>WhatsApp Orders</h3><p>Customer ek tap mein WhatsApp pe message bheje. Ready message - typing ki zaroorat nahi.</p></div>
+<div class="feat"><div class="emoji" style="background:#fef3c7">&#128722;</div><h3>Product Catalog</h3><p>Apne products dikhayein price ke saath. Buy Now dabayein - WhatsApp pe order aaye.</p></div>
 </div>
 </section>
 <section class="section" style="padding-top:20px">
-<div class="sec-label">Process</div><div class="sec-title">How it works</div>
-<div class="steps"><div class="step"><div class="num">1</div><h3>Search</h3><p>Find your business</p></div><div class="step"><div class="num">2</div><h3>We Build</h3><p>Website created for you</p></div><div class="step"><div class="num">3</div><h3>Go Live</h3><p>Your site is online</p></div><div class="step"><div class="num">4</div><h3>Grow</h3><p>Get calls & messages</p></div></div>
+<div class="sec-label">Process</div><div class="sec-title">Kaise Kaam Karta Hai</div>
+<div class="steps"><div class="step"><div class="num">1</div><h3>Search</h3><p>Business naam search karein</p></div><div class="step"><div class="num">2</div><h3>We Build</h3><p>Hum website bana dete hain</p></div><div class="step"><div class="num">3</div><h3>Go Live</h3><p>Aapki site live ho jaati hai</p></div><div class="step"><div class="num">4</div><h3>Grow</h3><p>Calls aur messages aana shuru</p></div></div>
 </section>
 <section class="pricing" id="pricing">
-<div class="sec-label">Pricing</div><div class="sec-title">Simple plans. No surprises.</div>
+<div class="sec-label">Pricing</div><div class="sec-title">Seedha plan. Koi chhupi cost nahi.</div>
 <div class="pricing-grid">
-<div class="plan"><h3>Starter</h3><div class="price">&#8377;49<small>/mo</small></div><div class="desc">Just your website, live and running</div><ul><li>Professional business website</li><li>your-name.city-maps.online</li><li>Mobile-friendly design</li><li>WhatsApp button</li><li>Google Maps location</li><li>Contact form</li></ul><a href="https://wa.me/917350785606?text=Hi%2C%20I%20want%20the%20Starter%20plan%20at%20Rs.49" class="plan-btn outline">Get Started</a></div>
-<div class="plan popular"><h3>Business</h3><div class="price">&#8377;69<small>/mo</small></div><div class="desc">Website + tools to grow your business</div><ul><li>Everything in Starter</li><li>Product catalog</li><li>Track visitors & calls</li><li>Social media posts</li><li>Festival templates</li><li>Google review help</li><li>QR code for cards</li><li>Business dashboard</li></ul><a href="https://wa.me/917350785606?text=Hi%2C%20I%20want%20the%20Business%20plan%20at%20Rs.69" class="plan-btn dark">Get Started</a></div>
+<div class="plan"><h3>Starter</h3><div class="price">&#8377;49<small>/mo</small></div><div class="desc">Sirf website, live aur running</div><ul><li>Professional business website</li><li>your-name.city-maps.online</li><li>Mobile-friendly design</li><li>WhatsApp button</li><li>Google Maps location</li><li>Contact form</li></ul><a href="https://wa.me/917350785606?text=Hi%2C%20I%20want%20the%20Starter%20plan%20at%20Rs.49" class="plan-btn outline">Get Started</a></div>
+<div class="plan popular"><h3>Business</h3><div class="price">&#8377;69<small>/mo</small></div><div class="desc">Website + growth ke saare tools</div><ul><li>Everything in Starter</li><li>Product catalog</li><li>Track visitors & calls</li><li>Social media posts</li><li>Festival templates</li><li>Google review help</li><li>QR code for cards</li><li>Business dashboard</li></ul><a href="https://wa.me/917350785606?text=Hi%2C%20I%20want%20the%20Business%20plan%20at%20Rs.69" class="plan-btn dark">Get Started</a></div>
 </div>
 </section>
-<div class="cta"><h2>Your competitor is already online.</h2><p>Every day you wait, customers go to them instead of you.</p><a href="https://wa.me/917350785606?text=Hi%20City%20Maps%2C%20I%20want%20a%20website%20for%20my%20business" class="cta-btn">Create My Website &rarr;</a></div>
+<div class="cta"><h2>Aapka competitor pehle se online hai.</h2><p>Har din jo aap wait karte ho, customers unke paas jaate hain.</p><a href="https://wa.me/917350785606?text=Hi%20City%20Maps%2C%20I%20want%20a%20website%20for%20my%20business" class="cta-btn">Mera Website Banao &rarr;</a></div>
 <footer class="footer"><b>City Maps</b> &bull; Powered by Kalpdev Digitals</footer>
 <script>
 async function searchBiz(){const q=document.getElementById('bizSearch').value.trim();if(!q)return;const r=document.getElementById('searchResult');r.style.display='block';r.innerHTML='<p style="text-align:center;color:#999;font-size:.82rem">Searching...</p>';try{const slug=q.toLowerCase().replace(/[^a-z0-9\s-]/g,'').replace(/[\s]+/g,'-');const resp=await fetch('/api/preview/by-slug/'+slug);if(resp.ok){r.innerHTML='<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:12px;text-align:center;margin-top:8px"><p style="font-weight:700;color:#166534;font-size:.85rem">&#10004; Found!</p><a href="https://'+slug+'.city-maps.online" target="_blank" style="color:#111;font-weight:600;font-size:.82rem">Visit website &rarr;</a></div>';}else{throw new Error('nf');}}catch(e){r.innerHTML='<div style="border:1px solid #e4e4e7;border-radius:10px;padding:16px;margin-top:8px;text-align:center"><p style="font-weight:600;font-size:.88rem;margin-bottom:8px">Not found</p><p style="font-size:.78rem;color:#888;margin-bottom:12px">Want a free website?</p><form onsubmit="submitReq(event)" style="display:flex;flex-direction:column;gap:6px;max-width:280px;margin:0 auto"><input id="reqName" value="'+q+'" required style="padding:9px 12px;border:1px solid #e4e4e7;border-radius:8px;font-size:.82rem"><input id="reqPhone" placeholder="WhatsApp Number" required style="padding:9px 12px;border:1px solid #e4e4e7;border-radius:8px;font-size:.82rem"><input id="reqCity" placeholder="City" required style="padding:9px 12px;border:1px solid #e4e4e7;border-radius:8px;font-size:.82rem"><button type="submit" style="background:#111;color:#fff;padding:10px;border:none;border-radius:8px;font-weight:700;font-size:.82rem;cursor:pointer">Request Website</button></form></div>';}}
