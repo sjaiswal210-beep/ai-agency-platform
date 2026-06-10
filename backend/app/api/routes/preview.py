@@ -371,6 +371,60 @@ def _get_design_css(category: str) -> str:
     return ""
 
 
+
+MOBILE_CSS = """
+<style>
+@media(max-width:768px){
+  .nav-links{display:none}
+  .nav{padding:12px 16px}
+  .nav-cta{padding:8px 14px;font-size:.75rem}
+  .hero{min-height:70vh}
+  .hero-content{padding:100px 16px 60px!important;margin:0!important}
+  .hero h1{font-size:1.8rem!important}
+  .hero p{font-size:.95rem!important}
+  .hero-btns{flex-direction:column!important;gap:10px!important;align-items:stretch!important}
+  .hero-btns .btn,.btn-white,.btn-glass{text-align:center;justify-content:center;padding:12px 20px!important;font-size:.9rem!important}
+  .stats-section .stats-grid,.stats-grid{grid-template-columns:repeat(2,1fr)!important;gap:12px!important;padding:0 16px}
+  .stat-number{font-size:1.5rem!important}
+  .section,.sec{padding:50px 16px!important}
+  .section-header h2,.sec-head h2{font-size:1.5rem!important}
+  .about-grid{grid-template-columns:1fr!important;gap:24px!important}
+  .about-img img{height:280px!important;border-radius:14px!important}
+  .about-badge{bottom:-14px!important;left:10px!important;padding:12px 16px!important}
+  .services-grid{grid-template-columns:1fr!important;gap:10px!important}
+  .service-card{display:flex!important;flex-direction:row!important;border-radius:12px!important}
+  .service-img{width:90px!important;min-width:90px!important;height:90px!important;min-height:90px!important;border-radius:12px 0 0 12px!important}
+  .service-content{padding:12px 14px!important}
+  .service-content h3{font-size:.92rem!important;margin-bottom:4px!important}
+  .service-content p{font-size:.8rem!important;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .features-grid{grid-template-columns:repeat(2,1fr)!important;gap:10px!important}
+  .feature-item{padding:16px 12px!important;border-radius:12px!important}
+  .feature-icon{width:40px!important;height:40px!important;font-size:1.2rem!important;margin-bottom:8px!important}
+  .feature-item h3{font-size:.82rem!important}
+  .feature-item p{font-size:.72rem!important}
+  .gallery-grid{grid-template-columns:repeat(2,1fr)!important;gap:8px!important}
+  .gallery-item{border-radius:10px!important}
+  .testimonials-grid{grid-template-columns:1fr!important;gap:12px!important}
+  .testimonial-card{padding:20px!important}
+  .contact-container{grid-template-columns:1fr!important;gap:20px!important}
+  .contact-section{padding:50px 16px!important}
+  .footer{padding:30px 16px 80px!important}
+  .bottom-nav{display:block!important}
+  .bottom-nav a{padding:8px 14px!important;font-size:.7rem!important}
+  .bn-icon{font-size:1.5rem!important}
+  .bn-icon svg{width:24px!important;height:24px!important}
+  .whatsapp-float{display:none!important}
+  .chat-btn{bottom:80px!important}
+  body{padding-bottom:60px}
+  .faq-item summary{font-size:.9rem!important;padding:14px 16px!important}
+  .faq-item p{padding:0 16px 14px!important;font-size:.85rem!important}
+  .benefits-grid{grid-template-columns:1fr!important}
+}
+.social-sec{padding:40px 24px;text-align:center;background:rgba(248,250,252,.05)}.social-sec h2{font-size:1.5rem;font-weight:800;margin-bottom:16px}.social-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}.social-btns a{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:50px;color:#fff;font-weight:700;font-size:.85rem;text-decoration:none;transition:transform .2s}.social-btns a:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.2)}
+.claim-banner{background:linear-gradient(135deg,#f8fafc,#ede9fe);padding:16px 24px;text-align:center;border-top:1px solid #e2e8f0}.claim-inner{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap}.claim-inner span{font-size:.9rem;font-weight:600;color:#1e293b}.claim-inner button{background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;padding:10px 20px;border-radius:50px;font-weight:700;font-size:.85rem;cursor:pointer}.claim-modal{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px}.claim-box{background:#fff;border-radius:20px;padding:32px;max-width:420px;width:100%;position:relative;max-height:90vh;overflow-y:auto}.claim-close{position:absolute;top:12px;right:16px;background:none;border:none;font-size:1.5rem;cursor:pointer;color:#94a3b8}.claim-box h2{font-size:1.3rem;font-weight:800;margin-bottom:6px}.claim-sub{color:#64748b;font-size:.88rem;margin-bottom:16px}.claim-features{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}.cf{font-size:.85rem;font-weight:500;color:#1e293b}.claim-price{text-align:center;margin-bottom:16px}.price-old{text-decoration:line-through;color:#94a3b8;font-size:.9rem;margin-right:8px}.price-new{font-size:2rem;font-weight:900;color:#7c3aed}.price-new small{font-size:.9rem;font-weight:500}.claim-btn{display:block;text-align:center;background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;padding:14px;border-radius:12px;font-weight:700;font-size:1rem;text-decoration:none;margin-bottom:10px}.claim-btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(124,58,237,.3)}.claim-skip{display:block;width:100%;background:none;border:none;color:#94a3b8;font-size:.8rem;cursor:pointer;padding:8px;text-decoration:underline}
+</style>
+"""
+
 def generate_html(content: dict, template: str, lead: dict = None) -> str:
     if "raw_content" in content:
         raw = content["raw_content"]
