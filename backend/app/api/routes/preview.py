@@ -424,6 +424,7 @@ MOBILE_CSS = """
   .benefits-grid{grid-template-columns:1fr!important}
   .benefit-item{padding:12px!important;font-size:.85rem!important}
 }
+.social-sec{padding:40px 24px;text-align:center;background:#f8fafc}.social-sec h2{font-size:1.5rem;font-weight:800;margin-bottom:16px}.social-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}.social-btns a{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:50px;color:#fff;font-weight:700;font-size:.85rem;text-decoration:none;transition:transform .2s}.social-btns a:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.2)}
 </style>
 """
 
@@ -825,6 +826,19 @@ body{{padding-bottom:70px}}
 
 </style>"""
 
+    # Social follow section
+    biz_search = business_name.replace(" ", "+")
+    social_html = (
+        '<section class="social-sec">'
+        '<p style="font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--p);margin-bottom:8px">Follow Us</p>'
+        '<h2>Stay Connected</h2>'
+        '<div class="social-btns">'
+        f'<a href="https://www.instagram.com/explore/tags/{category}/" target="_blank" style="background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)">Instagram</a>'
+        f'<a href="https://www.facebook.com/search/pages/?q={biz_search}" target="_blank" style="background:#1877f2">Facebook</a>'
+        f'<a href="https://www.google.com/maps/search/{biz_search}" target="_blank" style="background:#4285f4">Google Maps</a>'
+        '</div></section>'
+    )
+
     html = (
         '<!DOCTYPE html><html lang="en"><head>'
         '<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">'
@@ -881,6 +895,7 @@ body{{padding-bottom:70px}}
         '</div></div></section>'
         f'{wa_link}'
         ''
+        f'{social_html}'
         f'<footer class="footer"><div style="max-width:900px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:16px"><div style="font-weight:700;font-size:1rem;color:#fff">{business_name}</div><div style="font-size:.8rem;color:#64748b">Made with &#10084;&#65039; by Kalpdev Digitals</div><div style="display:flex;gap:16px;margin-top:4px"><a href="https://wa.me/{whatsapp_num}" target="_blank" style="color:#25D366;text-decoration:none;font-size:.85rem">WhatsApp</a><a href="#contact" style="color:#94a3b8;text-decoration:none;font-size:.85rem">Contact</a><a href="/api/panel/{website_id}" target="_blank" style="color:#94a3b8;text-decoration:none;font-size:.85rem">Dashboard</a><a href="#services" style="color:#94a3b8;text-decoration:none;font-size:.85rem">Services</a></div></div></footer>'
         '<script>(function(){var wid=document.querySelector("[data-wid]");var id=wid?wid.dataset.wid:"";if(!id){var m=location.pathname.match(/preview\/([^/]+)/);if(m)id=m[1];}if(!id)return;fetch("/api/analytics/track",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({website_id:id,event_type:"page_view",page:location.pathname,referrer:document.referrer})}).catch(function(){});document.querySelectorAll("a[href^=\'tel:\']").forEach(function(a){a.addEventListener("click",function(){fetch("/api/analytics/track",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({website_id:id,event_type:"call_click"})}).catch(function(){});});});document.querySelectorAll("a[href*=\'wa.me\']").forEach(function(a){a.addEventListener("click",function(){fetch("/api/analytics/track",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({website_id:id,event_type:"whatsapp_click"})}).catch(function(){});});});var form=document.querySelector("form");if(form)form.addEventListener("submit",function(){fetch("/api/analytics/track",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({website_id:id,event_type:"lead_form"})}).catch(function(){});});})()</script>'
         f'<script type="application/ld+json">{{"@context":"https://schema.org","@type":"LocalBusiness","name":"{business_name}","telephone":"{phone}","email":"{email}","address":{{"@type":"PostalAddress","streetAddress":"{address}"}},"aggregateRating":{{"@type":"AggregateRating","ratingValue":"{lead.get("rating", 4.5) if lead else 4.5}","reviewCount":"{lead.get("review_count", 50) if lead else 50}"}}}}</script>'
