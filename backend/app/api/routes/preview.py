@@ -928,7 +928,9 @@ body{{padding-bottom:70px}}
         f'{css}<style>{_get_design_css(category)}</style>{MOBILE_CSS}</head><body>'
         f'<nav class="nav" id="mainNav"><div class="nav-brand"><svg width="36" height="36" viewBox="0 0 36 36" style="margin-right:8px;vertical-align:middle"><rect width="36" height="36" rx="8" fill="{primary}"/><text x="18" y="24" text-anchor="middle" fill="white" font-size="18" font-weight="bold" font-family="Playfair Display,serif">{business_name[0]}</text></svg>{business_name}</div>'
         '<div class="nav-links"><a href="#about">About</a><a href="#services">Services</a><a href="#gallery">Gallery</a><a href="#contact">Contact</a></div>'
-        f'<a href="tel:{phone}" class="nav-cta">&#128222; Call</a><button class="hamburger" onclick="document.querySelector(&apos;.mobile-menu&apos;).classList.toggle(&apos;show&apos;)">&#9776;</button></nav><div class="mobile-menu"><a href="#about">About</a><a href="#services">Services</a><a href="#gallery">Gallery</a><a href="tel:{phone}">&#128222; Call Now</a><a href="https://wa.me/{whatsapp_num}" target="_blank">&#128172; WhatsApp</a></div>'"
+        f'<a href="tel:{phone}" class="nav-cta">&#128222; Call</a>'
+        '<button class="hamburger" id="menuBtn">&#9776;</button></nav>'
+        '<div class="mobile-menu" id="mobileMenu"><a href="#about">About</a><a href="#services">Services</a><a href="#gallery">Gallery</a><a href="#contact">Contact</a></div>'
         '<section class="hero"><div class="hero-bg"></div><div class="hero-overlay"></div><div class="hero-glow"></div>'
         f'<div class="hero-content"><div class="hero-pill">&#9733; Trusted by {lead.get("review_count", 100) if lead else 100}+ customers</div><h1>{hero_title}</h1><p>{hero_subtitle}</p>' + (f'<div class="hero-offer">{hero_offer}</div>' if hero_offer else '') +
         f'<div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center"><a href="#contact" class="btn btn-white">{cta_text}</a><a href="https://www.google.com/maps/dir/?api=1&destination={address.replace(" ", "+")}" target="_blank" class="btn btn-glass">&#128205; Get Directions</a></div></div></section>'
