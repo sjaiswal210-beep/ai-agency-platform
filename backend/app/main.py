@@ -320,7 +320,7 @@ a{text-decoration:none;color:inherit}
 <div style="text-align:center" data-aos="fade-up"><span class="tag">&#128640; Quick Start</span><h2 class="sec-title" style="margin-top:12px">Online in 5 Minutes</h2></div>
 <div class="how-grid">
 <div class="how-step" data-aos="fade-up"><div class="num">1</div><h3>Search Business</h3><p>Type your business name above</p></div>
-<div class="how-step" data-aos="fade-up" data-aos-delay="80"><div class="num">2</div><h3>Website Created</h3><p>We build it with your info from Google</p></div>
+<div class="how-step" data-aos="fade-up" data-aos-delay="80"><div class="num">2</div><h3>Website Created</h3><p>We build your website professionally</p></div>
 <div class="how-step" data-aos="fade-up" data-aos-delay="160"><div class="num">3</div><h3>Claim & Manage</h3><p>Access your tools dashboard</p></div>
 <div class="how-step" data-aos="fade-up" data-aos-delay="240"><div class="num">4</div><h3>Get Customers</h3><p>Start receiving calls and messages</p></div>
 </div>
