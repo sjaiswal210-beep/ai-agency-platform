@@ -324,112 +324,51 @@ def get_maps_embed(address: str) -> str:
 
 
 def _get_design_css(category: str) -> str:
-    """Get category-specific CSS overrides for professional look."""
+    """Get category-specific CSS for unique visual personality per business type."""
     cat = category.lower().strip()
     
-    # Gym / Fitness - bold, dark, energetic
+    # Gym / Fitness - bold, dark, energetic, angular
     if any(k in cat for k in ["gym", "fitness", "crossfit", "workout", "sports"]):
-        return "body{background:#0a0a0a;color:#fff}.sec{color:#fff}.sec-head h2{color:#fff}.svc-body h3,.feat-card h3,.about-text h2{color:#fff}.svc-body p,.feat-card p,.about-text p{color:#a0a0a0}.sec-alt,.sec-tint{background:#111!important}.feature-item,.svc-card,.t-card,.faq-item,.ben-list li{background:#1a1a1a!important;border-color:#2a2a2a!important;color:#fff}.feature-item h3,.t-card blockquote,.faq-item summary{color:#fff}.t-card cite,.feature-item p,.faq-item p,.ben-list li{color:#a0a0a0}.contact-section{background:#000!important}.footer{background:#000!important}"
+        return """body{background:#0a0a0a;color:#fff}.sec,.section{color:#fff}.sec-head h2,.section-header h2{color:#fff}.svc-body h3,.feat-card h3,.about-text h2,.feature-item h3{color:#fff}.svc-body p,.feat-card p,.about-text p,.feature-item p{color:#a0a0a0}.sec-alt,.sec-tint,.section-alt{background:#111!important}.feature-item,.service-card,.testimonial-card,.faq-item,.benefit-item{background:#1a1a1a!important;border-color:#2a2a2a!important;color:#fff}.testimonial-card blockquote,.faq-item summary{color:#fff}.testimonial-card cite,.faq-item p{color:#a0a0a0}.contact-section{background:#000!important}.footer{background:#000!important}.service-card{border-radius:8px!important}.feature-item{border-radius:8px!important}.hero h1{text-transform:uppercase;letter-spacing:.05em}"""
     
-    # Salon / Spa / Beauty - glass, soft, elegant
+    # Salon / Spa / Beauty - soft, elegant, rounded, pastel
     if any(k in cat for k in ["salon", "beauty", "spa", "yoga", "wellness", "parlour"]):
-        return "body{background:#fafaff}.section,.sec{background:#fafaff}.sec-alt,.sec-tint{background:rgba(255,255,255,.6)!important}.service-card,.feature-item,.t-card,.faq-item{backdrop-filter:blur(8px);background:rgba(255,255,255,.7)!important;border:1px solid rgba(255,255,255,.5)!important;box-shadow:0 8px 32px rgba(0,0,0,.04)!important}"
+        return """body{background:#fafaff}.section,.sec{background:#fafaff}.sec-alt,.sec-tint,.section-alt{background:rgba(255,255,255,.7)!important}.service-card,.feature-item,.testimonial-card,.faq-item{backdrop-filter:blur(8px);background:rgba(255,255,255,.8)!important;border:1px solid rgba(200,180,255,.2)!important;box-shadow:0 8px 32px rgba(124,58,237,.04)!important;border-radius:24px!important}.hero h1{font-family:'Playfair Display',serif!important;font-style:italic}.service-img{border-radius:20px!important}.stats-section{border-radius:30px;margin:0 16px}"""
     
-    # Restaurant / Cafe / Food - warm, inviting
+    # Restaurant / Cafe / Food - warm, inviting, curved
     if any(k in cat for k in ["restaurant", "food", "cafe", "bakery", "pizza", "dhaba"]):
-        return "body{background:#fffbf5}.sec-alt,.sec-tint{background:#fff8f0!important}.section-header h2,.sec-head h2,.about-text h2{font-family:'Playfair Display',serif!important}"
+        return """body{background:#fffbf5}.sec-alt,.sec-tint,.section-alt{background:#fff8f0!important}.section-header h2,.sec-head h2,.about-text h2,.hero h1{font-family:'Playfair Display',serif!important}.service-card{border-radius:24px!important;overflow:hidden}.service-img{height:220px!important}.feature-item{background:#fff8f0!important;border-color:#f0e6d8!important}.stats-section{background:linear-gradient(135deg,#dc2626,#ea580c)!important}"""
     
-    # Medical / Dental / Clinic - clean, trust
+    # Medical / Dental / Clinic - clean, minimal, trust
     if any(k in cat for k in ["clinic", "dentist", "doctor", "hospital", "medical", "health"]):
-        return "body{background:#fff}.sec-alt,.sec-tint{background:#f0f9ff!important}.service-card,.feature-item,.t-card{border-color:#e2e8f0!important}"
+        return """body{background:#fff}.sec-alt,.sec-tint,.section-alt{background:#f0f9ff!important}.service-card{border-left:4px solid var(--p)!important;border-radius:4px 16px 16px 4px!important}.feature-item{border-radius:12px!important;border-left:3px solid var(--p)!important}.stats-section{background:linear-gradient(135deg,#0284c7,#0ea5e9)!important}.hero::after{display:none}"""
     
-    # School / Education - vibrant, friendly
-    if any(k in cat for k in ["school", "coaching", "academy", "institute", "tuition"]):
-        return ".feature-item{border-radius:20px!important}.service-card{border-radius:20px!important}"
-    
-    # Hotel / Resort - luxury, immersive
+    # Hotel / Resort - luxury, serif headings, wide
     if any(k in cat for k in ["hotel", "resort", "lodge"]):
-        return ".section-header h2,.sec-head h2,.about-text h2,.hero h1{font-family:'Playfair Display',serif!important;letter-spacing:-.03em}"
+        return """.hero h1,.section-header h2,.sec-head h2,.about-text h2{font-family:'Playfair Display',serif!important;letter-spacing:-.03em}.service-card{border-radius:4px!important}.service-img{height:240px!important}.feature-item{border-radius:4px!important;border-bottom:2px solid var(--p)!important;border-left:none!important}.stats-section{background:linear-gradient(135deg,#1e1b4b,#312e81)!important}"""
+    
+    # Store / Retail / Shopping - product-focused, grid, modern
+    if any(k in cat for k in ["store", "shop", "retail", "cloth", "fashion", "boot", "shoe"]):
+        return """.service-card{border-radius:16px!important}.service-img{height:200px!important;border-radius:12px 12px 0 0!important}.service-content{padding:16px!important}.feature-item{border-radius:50px!important;padding:16px 24px!important;flex-direction:row!important;text-align:left!important;gap:16px!important}.feature-icon{margin-bottom:0!important}.gallery-item{border-radius:12px!important;aspect-ratio:3/4!important}"""
+    
+    # School / Education - colorful, friendly, rounded
+    if any(k in cat for k in ["school", "coaching", "academy", "institute", "tuition"]):
+        return """.service-card,.feature-item,.testimonial-card{border-radius:24px!important}.feature-icon{border-radius:50%!important;width:60px!important;height:60px!important}.stats-section{background:linear-gradient(135deg,#7c3aed,#ec4899)!important;border-radius:24px;margin:0 16px}.hero::after{background:linear-gradient(90deg,#7c3aed,#ec4899,#f59e0b)!important}"""
+    
+    # Photographer / Creative - minimal, image-focused
+    if any(k in cat for k in ["photo", "photographer", "studio", "video", "creative"]):
+        return """.service-card{border:none!important;box-shadow:none!important}.service-img{height:280px!important;border-radius:4px!important}.service-content{padding:16px 0!important}.gallery-item{border-radius:2px!important;aspect-ratio:auto!important}.hero h1{font-size:clamp(3rem,7vw,5rem)!important;font-weight:300!important;letter-spacing:-.04em}.feature-item{border:none!important;background:transparent!important}"""
+    
+    # Solar / Energy - eco, green accents
+    if any(k in cat for k in ["solar", "energy", "electric", "power"]):
+        return """.stats-section{background:linear-gradient(135deg,#059669,#10b981)!important}.feature-item{border-radius:16px!important;border:2px solid #d1fae5!important;background:#f0fdf4!important}.hero::after{background:linear-gradient(90deg,#059669,#10b981,#34d399)!important}"""
+    
+    # Lawyer / Professional - authoritative, sharp
+    if any(k in cat for k in ["lawyer", "advocate", "legal", "consultant", "accountant"]):
+        return """.hero h1,.section-header h2{font-family:'Playfair Display',serif!important}.service-card{border-radius:4px!important;border-top:3px solid var(--p)!important}.feature-item{border-radius:4px!important}.stats-section{background:linear-gradient(135deg,#1e293b,#334155)!important}"""
     
     # Default professional
     return ""
-
-
-
-MOBILE_CSS = """
-.claim-banner{background:linear-gradient(135deg,#f8fafc,#ede9fe);padding:16px 24px;text-align:center;border-top:1px solid #e2e8f0}.claim-inner{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap}.claim-inner span{font-size:.9rem;font-weight:600;color:#1e293b}.claim-inner button{background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;padding:10px 20px;border-radius:50px;font-weight:700;font-size:.85rem;cursor:pointer}.claim-modal{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px}.claim-box{background:#fff;border-radius:20px;padding:32px;max-width:420px;width:100%;position:relative;max-height:90vh;overflow-y:auto}.claim-close{position:absolute;top:12px;right:16px;background:none;border:none;font-size:1.5rem;cursor:pointer;color:#94a3b8}.claim-box h2{font-size:1.3rem;font-weight:800;margin-bottom:6px}.claim-sub{color:#64748b;font-size:.88rem;margin-bottom:16px}.claim-features{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}.cf{font-size:.85rem;font-weight:500;color:#1e293b}.claim-price{text-align:center;margin-bottom:16px}.price-old{text-decoration:line-through;color:#94a3b8;font-size:.9rem;margin-right:8px}.price-new{font-size:2rem;font-weight:900;color:#7c3aed}.price-new small{font-size:.9rem;font-weight:500}.claim-btn{display:block;text-align:center;background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;padding:14px;border-radius:12px;font-weight:700;font-size:1rem;text-decoration:none;margin-bottom:10px}.claim-btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(124,58,237,.3)}.claim-skip{display:block;width:100%;background:none;border:none;color:#94a3b8;font-size:.8rem;cursor:pointer;padding:8px;text-decoration:underline}
-
-<style>
-@media(max-width:768px){
-  .nav-links{display:none}
-  .nav{padding:12px 16px}
-  .nav-cta{padding:8px 14px;font-size:.75rem}
-  
-  .hero{min-height:70vh}
-  .hero-content{padding:100px 16px 60px!important;margin:0!important}
-  .hero h1{font-size:1.8rem!important}
-  .hero p{font-size:.95rem!important}
-  .hero-btns{flex-direction:column!important;gap:10px!important;align-items:stretch!important}
-  .hero-btns .btn{text-align:center;justify-content:center}
-  .btn-white,.btn-glass{padding:12px 20px!important;font-size:.9rem!important}
-  .hero-pill{font-size:.75rem!important;padding:6px 12px!important}
-  
-  .stats-section .stats-grid,.stats-grid{grid-template-columns:repeat(2,1fr)!important;gap:12px!important;padding:0 16px}
-  .stat-number{font-size:1.5rem!important}
-  
-  .section,.sec{padding:50px 16px!important}
-  .section-header h2,.sec-head h2{font-size:1.5rem!important}
-  
-  .about-grid{grid-template-columns:1fr!important;gap:24px!important}
-  .about-img img{height:280px!important;border-radius:14px!important}
-  .about-badge{bottom:-14px!important;left:10px!important;padding:12px 16px!important}
-  .about-text p{font-size:.95rem!important}
-  
-  .services-grid{grid-template-columns:1fr!important;gap:10px!important}
-  .service-card{display:flex!important;flex-direction:row!important;border-radius:12px!important}
-  .service-img{width:90px!important;min-width:90px!important;height:90px!important;min-height:90px!important;border-radius:12px 0 0 12px!important}
-  .service-content{padding:12px 14px!important}
-  .service-content h3{font-size:.92rem!important;margin-bottom:4px!important}
-  .service-content p{font-size:.8rem!important;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-  
-  .features-grid{grid-template-columns:repeat(2,1fr)!important;gap:10px!important}
-  .feature-item{padding:16px 12px!important;border-radius:12px!important}
-  .feature-icon{width:40px!important;height:40px!important;font-size:1.2rem!important;margin-bottom:8px!important}
-  .feature-item h3{font-size:.82rem!important}
-  .feature-item p{font-size:.72rem!important}
-  
-  .gallery-grid{grid-template-columns:repeat(2,1fr)!important;gap:8px!important}
-  .gallery-item{border-radius:10px!important}
-  
-  .testimonials-grid{grid-template-columns:1fr!important;gap:12px!important}
-  .testimonial-card{padding:20px!important}
-  
-  .hiw-grid{grid-template-columns:repeat(2,1fr)!important;gap:12px!important}
-  
-  .contact-container{grid-template-columns:1fr!important;gap:20px!important}
-  .contact-section{padding:50px 16px!important}
-  .contact-form input,.contact-form textarea{font-size:.9rem!important}
-  
-  .footer{padding:30px 16px 80px!important}
-  
-  .bottom-nav{display:block!important}
-  .bottom-nav a{padding:8px 14px!important;font-size:.7rem!important}
-  .bn-icon{font-size:1.5rem!important}
-  .bn-icon svg{width:24px!important;height:24px!important}
-  .whatsapp-float{display:none!important}
-  .chat-btn{bottom:80px!important}
-  body{padding-bottom:60px}
-  
-  .faq-item summary{font-size:.9rem!important;padding:14px 16px!important}
-  .faq-item p{padding:0 16px 14px!important;font-size:.85rem!important}
-  
-  .benefits-grid{grid-template-columns:1fr!important}
-  .benefit-item{padding:12px!important;font-size:.85rem!important}
-}
-.social-sec{padding:40px 24px;text-align:center;background:#f8fafc}.social-sec h2{font-size:1.5rem;font-weight:800;margin-bottom:16px}.social-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}.social-btns a{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:50px;color:#fff;font-weight:700;font-size:.85rem;text-decoration:none;transition:transform .2s}.social-btns a:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.2)}
-</style>
-"""
-
 
 
 def generate_html(content: dict, template: str, lead: dict = None) -> str:
