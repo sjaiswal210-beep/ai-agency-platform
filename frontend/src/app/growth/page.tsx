@@ -1,6 +1,6 @@
 "use client";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || (typeof window !== "undefined" && window.location.hostname !== "localhost" ? "https://ai-agency-platform.onrender.com" : "http://localhost:8000");
+const API_BASE = "https://ai-agency-platform.onrender.com";
 import { useEffect, useState } from "react";
 import { api, Lead } from "@/lib/api";
 import { Bot, ArrowLeft, Search, TrendingUp, Mail, Calendar, Target, Star, BarChart3, Copy, Check } from "lucide-react";
