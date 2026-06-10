@@ -315,10 +315,11 @@ def _get_logo_icon(category: str) -> str:
     return icon_path
 
 
-def get_maps_embed(address: str) -> str:
+def get_maps_embed(address: str, business_name: str = "") -> str:
     if not address:
         return ""
-    encoded = urllib.parse.quote(address)
+    query = f"{business_name} {address}".strip() if business_name else address
+    encoded = urllib.parse.quote(query)
     return f"https://www.google.com/maps?q={encoded}&output=embed"
 
 
@@ -472,7 +473,7 @@ def generate_html(content: dict, template: str, lead: dict = None) -> str:
     business_name = lead.get("business_name", hero_title) if lead else hero_title
     whatsapp_num = phone.replace("-", "").replace(" ", "").replace("+", "") if phone else ""
     short_name = business_name.split()[0] if business_name else "Biz"
-    maps_url = get_maps_embed(address)
+    maps_url = get_maps_embed(address, business_name)
     dir_url = "https://www.google.com/maps/dir/?api=1&destination=" + urllib.parse.quote(address) if address else "#"
 
     # Get website_id for dashboard link
