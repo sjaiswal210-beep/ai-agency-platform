@@ -149,6 +149,7 @@ app.include_router(sitemap_router, prefix="")
 @app.get("/", response_class=HTMLResponse)
 def landing_page():
     """City Maps - Premium Digital Infrastructure Platform."""
+    from app.core.supabase import get_supabase
     db = get_supabase()
     try:
         sites = db.table("websites").select("slug", count="exact").not_.is_("slug", "null").execute()
