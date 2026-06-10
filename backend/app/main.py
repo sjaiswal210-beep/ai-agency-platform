@@ -165,14 +165,14 @@ def landing_page():
 <style>
 *{margin:0;padding:0;box-sizing:border-box}body{font-family:Inter,sans-serif;background:#fff;color:#111}a{text-decoration:none;color:inherit}
 .nav{max-width:1000px;margin:0 auto;padding:16px 24px;display:flex;align-items:center;justify-content:space-between}.nav-logo{font-weight:900;font-size:1.1rem}.nav-btn{background:#111;color:#fff;padding:8px 16px;border-radius:8px;font-size:.78rem;font-weight:600}
-.hero{max-width:680px;margin:0 auto;padding:80px 24px 60px;text-align:center}
+.hero{max-width:100%;padding:80px 24px 60px;text-align:center;background:linear-gradient(160deg,#f0f7ff 0%,#fdf2f8 30%,#faf5ff 60%,#ecfdf5 100%);position:relative;overflow:hidden}.hero::before{content:'';position:absolute;top:-50%;right:-20%;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,.06),transparent 70%)}.hero::after{content:'';position:absolute;bottom:-30%;left:-10%;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(16,185,129,.05),transparent 70%)}
 .hero .chip{display:inline-flex;align-items:center;gap:6px;background:#f4f4f5;border:1px solid #e4e4e7;padding:6px 14px;border-radius:20px;font-size:.75rem;color:#555;margin-bottom:20px}
 .hero .chip .dot{width:6px;height:6px;border-radius:50%;background:#22c55e}
-.hero h1{font-size:clamp(2.2rem,5vw,3.4rem);font-weight:900;line-height:1.1;margin-bottom:16px;letter-spacing:-.03em}
+.hero h1{font-size:clamp(2.2rem,5vw,3.4rem);font-weight:900;line-height:1.1;margin-bottom:16px;letter-spacing:-.03em}.hero h1 em{font-style:normal;background:linear-gradient(135deg,#7c3aed,#2563eb);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .hero p{font-size:1.05rem;color:#666;line-height:1.6;margin-bottom:28px;max-width:500px;margin-left:auto;margin-right:auto}
 .hero-search{display:flex;gap:6px;max-width:420px;margin:0 auto;border:1.5px solid #e4e4e7;border-radius:12px;padding:4px}
 .hero-search input{flex:1;border:none;padding:11px 14px;font-size:.88rem;outline:none;font-family:inherit;background:transparent}
-.hero-search button{background:#111;color:#fff;border:none;padding:11px 18px;border-radius:8px;font-weight:700;font-size:.8rem;cursor:pointer}
+.hero-search button{background:linear-gradient(135deg,#7c3aed,#2563eb);color:#fff;border:none;padding:11px 18px;border-radius:8px;font-weight:700;font-size:.8rem;cursor:pointer}
 #searchResult{max-width:420px;margin:10px auto 0}
 .trust{padding:20px 24px;text-align:center;border-top:1px solid #f4f4f5;border-bottom:1px solid #f4f4f5;margin-top:16px}
 .trust span{font-size:.75rem;color:#999;margin:0 10px}
@@ -183,34 +183,34 @@ def landing_page():
 .features{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
 .feat{padding:20px;border:1px solid #f4f4f5;border-radius:12px;transition:all .2s}
 .feat:hover{border-color:#e4e4e7;box-shadow:0 4px 12px rgba(0,0,0,.03)}
-.feat .emoji{font-size:1.4rem;margin-bottom:8px}
+.feat .emoji{font-size:1.4rem;margin-bottom:8px;width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center}
 .feat h3{font-size:.85rem;font-weight:700;margin-bottom:4px}.feat p{font-size:.78rem;color:#888;line-height:1.5}
 .pricing{max-width:700px;margin:0 auto;padding:60px 24px;text-align:center}
 .pricing-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:28px;text-align:left}
 .plan{border:1.5px solid #f4f4f5;border-radius:16px;padding:24px;position:relative;transition:all .2s}
 .plan:hover{border-color:#111;box-shadow:0 8px 24px rgba(0,0,0,.06)}
-.plan.popular{border-color:#111;background:#fafafa}
-.plan.popular::after{content:'POPULAR';position:absolute;top:12px;right:12px;background:#111;color:#fff;font-size:.6rem;padding:3px 8px;border-radius:4px;font-weight:700}
+.plan.popular{border-color:#7c3aed;background:#faf5ff}
+.plan.popular::after{content:'POPULAR';position:absolute;top:12px;right:12px;background:linear-gradient(135deg,#7c3aed,#2563eb);color:#fff;font-size:.6rem;padding:3px 8px;border-radius:4px;font-weight:700}
 .plan h3{font-size:.82rem;color:#888;font-weight:500;margin-bottom:4px}
 .plan .price{font-size:2rem;font-weight:900;margin-bottom:2px}.plan .price small{font-size:.8rem;color:#999;font-weight:400}
 .plan .desc{font-size:.78rem;color:#888;margin-bottom:16px}
 .plan ul{list-style:none;margin-bottom:18px}.plan li{font-size:.8rem;color:#555;padding:5px 0;padding-left:18px;position:relative}.plan li::before{content:'\2713';position:absolute;left:0;color:#22c55e;font-weight:700;font-size:.7rem}
 .plan-btn{display:block;text-align:center;padding:11px;border-radius:8px;font-weight:700;font-size:.82rem;transition:all .15s}
-.plan-btn.dark{background:#111;color:#fff}.plan-btn.outline{border:1.5px solid #e4e4e7;color:#111}.plan-btn:hover{transform:translateY(-1px)}
+.plan-btn.dark{background:linear-gradient(135deg,#7c3aed,#2563eb);color:#fff}.plan-btn.outline{border:1.5px solid #e4e4e7;color:#111}.plan-btn:hover{transform:translateY(-1px)}
 .steps{display:flex;gap:20px;margin-top:20px}
-.step{flex:1;text-align:center;padding:16px 8px}.step .num{width:28px;height:28px;border-radius:50%;background:#111;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;margin:0 auto 8px}
+.step{flex:1;text-align:center;padding:16px 8px}.step .num{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#2563eb);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;margin:0 auto 8px}
 .step h3{font-size:.8rem;font-weight:700;margin-bottom:2px}.step p{font-size:.7rem;color:#888}
-.cta{text-align:center;padding:50px 24px;background:#fafafa;border-top:1px solid #f4f4f5;margin-top:40px}
+.cta{text-align:center;padding:50px 24px;background:linear-gradient(135deg,#f0f7ff,#faf5ff);border-top:none;margin-top:40px;border-radius:20px;max-width:800px;margin-left:auto;margin-right:auto}
 .cta h2{font-size:1.4rem;font-weight:800;margin-bottom:8px}
 .cta p{color:#666;font-size:.88rem;margin-bottom:18px}
-.cta-btn{display:inline-block;background:#111;color:#fff;padding:12px 24px;border-radius:8px;font-weight:700;font-size:.88rem}
+.cta-btn{display:inline-block;background:linear-gradient(135deg,#7c3aed,#2563eb);color:#fff;padding:12px 24px;border-radius:8px;font-weight:700;font-size:.88rem}
 .footer{text-align:center;padding:24px;font-size:.75rem;color:#bbb}.footer b{color:#111}
 @media(max-width:600px){.features{grid-template-columns:1fr}.pricing-grid{grid-template-columns:1fr}.steps{flex-direction:column;gap:8px}.hero h1{font-size:2rem}}
 </style></head><body>
 <nav class="nav"><div class="nav-logo">City Maps</div><a href="https://ai-agency-platform-blush.vercel.app" class="nav-btn">Admin</a></nav>
 <section class="hero">
 <div class="chip"><span class="dot"></span>""" + str(count) + """+ businesses online</div>
-<h1>Your business website.<br>Ready in 5 minutes.</h1>
+<h1>Your business website.<br><em>Ready in 5 minutes.</em></h1>
 <p>Professional website for your business. Customers find you on Google, call you, message on WhatsApp. No tech skills needed.</p>
 <div class="hero-search"><input id="bizSearch" placeholder="Type your business name..."><button onclick="searchBiz()">Search</button></div>
 <div id="searchResult"></div>
@@ -219,10 +219,10 @@ def landing_page():
 <section class="section">
 <div class="sec-label">Features</div><div class="sec-title">Everything you need to grow</div><div class="sec-desc">Simple tools that bring more customers</div>
 <div class="features">
-<div class="feat"><div class="emoji">&#127760;</div><h3>Business Website</h3><p>Professional mobile-friendly website showing services, photos, and location.</p></div>
-<div class="feat"><div class="emoji">&#128222;</div><h3>Get More Calls</h3><p>Click-to-call button. Track how many customers call from your site.</p></div>
-<div class="feat"><div class="emoji">&#128172;</div><h3>WhatsApp Orders</h3><p>One-tap WhatsApp with pre-filled message. Customers reach you instantly.</p></div>
-<div class="feat"><div class="emoji">&#128722;</div><h3>Product Catalog</h3><p>Show products with prices. Buy Now button opens WhatsApp order.</p></div>
+<div class="feat"><div class="emoji" style="background:#ede9fe">&#127760;</div><h3>Business Website</h3><p>Professional mobile-friendly website showing services, photos, and location.</p></div>
+<div class="feat"><div class="emoji" style="background:#dbeafe">&#128222;</div><h3>Get More Calls</h3><p>Click-to-call button. Track how many customers call from your site.</p></div>
+<div class="feat"><div class="emoji" style="background:#dcfce7">&#128172;</div><h3>WhatsApp Orders</h3><p>One-tap WhatsApp with pre-filled message. Customers reach you instantly.</p></div>
+<div class="feat"><div class="emoji" style="background:#fef3c7">&#128722;</div><h3>Product Catalog</h3><p>Show products with prices. Buy Now button opens WhatsApp order.</p></div>
 </div>
 </section>
 <section class="section" style="padding-top:20px">
