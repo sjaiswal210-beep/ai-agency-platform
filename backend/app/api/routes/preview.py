@@ -457,9 +457,20 @@ def generate_html(content: dict, template: str, lead: dict = None) -> str:
     logo_url = content.get("logo_url", "") if isinstance(content, dict) else ""
 
     # Try to get real photos from Google Maps
-    real_photos = []
-    if lead:
+    # Use stored photos from content first (saved during generation)
+    real_photos = content.get("real_photos", []) if isinstance(content, dict) else []
+    # If no stored photos, try fetching from Google Maps
+    if not real_photos and lead:
         real_photos = _get_real_photos(lead.get("business_name", ""), lead.get("address", ""))
+        # Store for next time (avoid re-fetching)
+        if real_photos and isinstance(content, dict):
+            try:
+                from app.core.supabase import get_supabase as _gdb
+                content["real_photos"] = real_photos
+                if website_id:
+                    _gdb().table("websites").update({"content": content}).eq("id", website_id).execute()
+            except Exception:
+                pass
     images = get_images_for_category(category)
     gallery_images = real_photos if real_photos else images["gallery"]
     hero_img = real_photos[0] if real_photos else images["hero"]
