@@ -161,23 +161,23 @@ async function generate() {{
     }}
 }}
 
-async function saveSocial(e) {
-    e.preventDefault();
-    const data = {
+async function saveSocial(event) {{
+    event.preventDefault();
+    const data = {{
         instagram: document.getElementById('instaUrl').value,
         facebook: document.getElementById('fbUrl').value,
         youtube: document.getElementById('ytUrl').value,
-    };
-    try {
-        const r = await fetch('/api/panel/' + '{website_id}' + '/social-links', {
+    }};
+    try {{
+        const r = await fetch('/api/panel/' + '{website_id}' + '/social-links', {{
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: {{'Content-Type': 'application/json'}},
             body: JSON.stringify(data)
-        });
-        if (r.ok) { alert('Social links saved! They will appear on your website.'); }
-        else { alert('Failed to save. Try again.'); }
-    } catch(e) { alert('Error saving links.'); }
-}
+        }});
+        if (r.ok) {{ alert('Social links saved! They will appear on your website.'); }}
+        else {{ alert('Failed to save. Try again.'); }}
+    }} catch(e) {{ alert('Error saving links.'); }}
+}}
 
 function copyOutput() {{
     const text = document.getElementById('outputContent').textContent;
