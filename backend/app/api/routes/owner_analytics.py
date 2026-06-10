@@ -78,7 +78,7 @@ def owner_analytics_page(website_id: str):
         d = (datetime.utcnow() - timedelta(days=i)).strftime("%Y-%m-%d")
         chart_labels.append((datetime.utcnow() - timedelta(days=i)).strftime("%b %d"))
         chart_values.append(daily.get(d, 0))
-    site_url = f"https://city-maps.online/{slug}" if slug else ""
+    site_url = f"https://{slug}.city-maps.online" if slug else ""
     max_val = max(max(chart_values), 1)
     bars = "".join(
         f'<div class="bw"><div class="bv">{chart_values[i]}</div>'

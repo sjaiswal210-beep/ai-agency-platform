@@ -84,7 +84,7 @@ body{{font-family:Inter,sans-serif;background:#f1f5f9;color:#1e293b;min-height:1
 
 <div class="container">
     <div class="quick-links">
-        <a href="/api/preview/{website_id}" class="quick-link" target="_blank">\U0001f310 View Website</a>
+        <a href="https://city-maps.online/api/preview/{website_id}" class="quick-link" target="_blank">\U0001f310 View Website</a>
         <a href="/api/owner-analytics/{website_id}" class="quick-link" target="_blank">\U0001f4ca Analytics</a>
         <a href="/api/daily/{website_id}" class="quick-link" target="_blank">\U0001f4f1 Daily Content</a>
         <a href="/api/store/{website_id}" class="quick-link" target="_blank">\U0001f6cd Store</a>
