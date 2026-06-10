@@ -324,7 +324,7 @@ a{text-decoration:none;color:inherit}
 
 <section class="pricing" id="pricing" style="position:relative">
 <div class="container">
-<div style="text-align:center" data-aos="fade-up"><span class="tag">&#128176; Simple Pricing</span><h2 class="sec-title" style="margin-top:12px">Less Than a Chai Per Day</h2></div>
+<div style="text-align:center" data-aos="fade-up"><span class="tag">&#128176; Simple Pricing</span><h2 class="sec-title" style="margin-top:12px">&#9749; Chai se bhi kam</h2></div>
 <div class="p-card" data-aos="zoom-in">
 <h3>Business Plan</h3>
 <div class="price">&#8377;69<small>/mo</small></div>
