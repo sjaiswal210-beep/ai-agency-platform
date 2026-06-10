@@ -84,10 +84,15 @@ body{{font-family:Inter,sans-serif;background:#f1f5f9;color:#1e293b;min-height:1
 
 <div class="container">
     <div class="quick-links">
-        <a href="/api/preview/{website_id}" class="quick-link" target="_blank">View Website</a>
-        <a href="https://wa.me/{phone.replace('-','').replace(' ','').replace('+','')}" class="quick-link" target="_blank">WhatsApp</a>
-        <a href="/api/branding/{website_id}/logo/preview" class="quick-link" target="_blank">Generate Logo</a>
-        <a href="/api/branding/{website_id}/social-post/preview?platform=instagram" class="quick-link" target="_blank">Social Post</a>
+        <a href="/api/preview/{website_id}" class="quick-link" target="_blank">\U0001f310 View Website</a>
+        <a href="/api/owner-analytics/{website_id}" class="quick-link" target="_blank">\U0001f4ca Analytics</a>
+        <a href="/api/daily/{website_id}" class="quick-link" target="_blank">\U0001f4f1 Daily Content</a>
+        <a href="/api/store/{website_id}" class="quick-link" target="_blank">\U0001f6cd Store</a>
+        <a href="/api/store/{website_id}/manage" class="quick-link" target="_blank">\U0001f4e6 Manage Products</a>
+        <a href="/api/qr/{website_id}" class="quick-link" target="_blank">\U0001f4f7 QR Code</a>
+        <a href="/api/branding/{website_id}/logo/preview" class="quick-link" target="_blank">\U0001f3a8 Logo</a>
+        <a href="/api/branding/{website_id}/social-post/preview?platform=instagram" class="quick-link" target="_blank">\U0001f4f8 Social Post</a>
+        <a href="https://wa.me/{phone.replace('-','').replace(' ','').replace('+','')}" class="quick-link" target="_blank">\U0001f4ac WhatsApp</a>
     </div>
 
     <p class="section-title">Your Business Tools</p>
