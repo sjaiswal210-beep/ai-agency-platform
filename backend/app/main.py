@@ -148,7 +148,7 @@ app.include_router(sitemap_router, prefix="")
 
 @app.get("/", response_class=HTMLResponse)
 def landing_page():
-    """City Maps - Premium Digital Infrastructure Platform."""
+    """City Maps simple landing page."""
     from app.core.supabase import get_supabase
     db = get_supabase()
     try:
@@ -156,115 +156,63 @@ def landing_page():
         count = sites.count or 0
     except Exception:
         count = 0
-    
-    # Get some live business examples
-    examples = []
-    try:
-        result = db.table("websites").select("slug").not_.is_("slug", "null").limit(4).execute()
-        if result.data:
-            for s in result.data:
-                if s.get("slug"):
-                    examples.append(s["slug"])
-    except Exception:
-        pass
-    
-    examples_html = ""
-    for slug in examples[:4]:
-        name = slug.replace("-", " ").title()
-        examples_html += f'<a href="https://{slug}.city-maps.online" target="_blank" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;transition:all .2s;text-decoration:none;color:#e2e8f0"><span style="font-weight:600;font-size:.85rem">{name}</span><span style="font-size:.75rem;color:#64748b">{slug}.city-maps.online &rarr;</span></a>'
 
     html = f'''<!DOCTYPE html><html lang="en"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>City Maps - Digital Infrastructure for Local Businesses</title>
-<meta name="description" content="Every business deserves a digital address. Professional business profiles, websites, product catalogues, and customer engagement tools.">
-<meta name="theme-color" content="#0a0a14">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+<title>City Maps - Business Websites</title>
+<meta name="theme-color" content="#111827">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:Inter,sans-serif;background:#0a0a14;color:#e2e8f0;overflow-x:hidden}}a{{text-decoration:none;color:inherit}}
-
-.nav{{max-width:1100px;margin:0 auto;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;position:relative;z-index:10}}.nav-logo{{font-weight:900;font-size:1rem;background:linear-gradient(135deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}}.nav-links{{display:flex;gap:20px;font-size:.8rem;color:#64748b}}.nav-links a:hover{{color:#e2e8f0}}.nav-btn{{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#fff;padding:8px 16px;border-radius:8px;font-size:.78rem;font-weight:600}}
-
-.hero{{max-width:1100px;margin:0 auto;padding:80px 24px 60px;text-align:center;position:relative}}.hero-glow{{position:absolute;top:-100px;left:50%;transform:translateX(-50%);width:700px;height:500px;background:radial-gradient(ellipse,rgba(96,165,250,.08),rgba(167,139,250,.04),transparent 70%);filter:blur(40px);pointer-events:none}}
-.hero .chip{{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);padding:6px 14px;border-radius:20px;font-size:.72rem;color:#94a3b8;margin-bottom:22px}}.hero .chip .dot{{width:6px;height:6px;border-radius:50%;background:#22c55e;box-shadow:0 0 6px #22c55e}}
-.hero h1{{font-size:clamp(2.2rem,5.5vw,3.8rem);font-weight:900;line-height:1.08;margin-bottom:18px;letter-spacing:-.04em}}.hero h1 em{{font-style:normal;background:linear-gradient(135deg,#60a5fa,#a78bfa,#34d399);-webkit-background-clip:text;-webkit-text-fill-color:transparent}}
-.hero p{{font-size:1rem;color:#7c8594;line-height:1.7;max-width:560px;margin:0 auto 28px}}
-.hero-btns{{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}}.btn{{padding:12px 22px;border-radius:10px;font-weight:700;font-size:.85rem;transition:all .2s}}.btn-glow{{background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:#fff;box-shadow:0 4px 20px rgba(59,130,246,.25)}}.btn-glow:hover{{transform:translateY(-2px);box-shadow:0 8px 28px rgba(59,130,246,.35)}}.btn-ghost{{border:1px solid rgba(255,255,255,.12);color:#e2e8f0}}.btn-ghost:hover{{background:rgba(255,255,255,.05)}}
-.hero-search{{max-width:440px;margin:24px auto 0;display:flex;gap:6px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:4px}}.hero-search input{{flex:1;background:transparent;border:none;padding:11px 14px;color:#fff;font-size:.85rem;outline:none;font-family:inherit}}.hero-search input::placeholder{{color:#4b5563}}.hero-search button{{background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:#fff;border:none;padding:10px 16px;border-radius:8px;font-weight:700;font-size:.78rem;cursor:pointer}}
-#searchResult{{max-width:440px;margin:8px auto 0}}
-.hero-img{{margin-top:36px}}.hero-img img{{width:100%;max-width:700px;border-radius:14px;border:1px solid rgba(255,255,255,.08);box-shadow:0 20px 60px rgba(0,0,0,.5);transition:transform .3s}}
-
-.trust{{padding:28px 24px;border-top:1px solid rgba(255,255,255,.04);border-bottom:1px solid rgba(255,255,255,.04);text-align:center}}.trust p{{font-size:.7rem;color:#4b5563;text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px}}.trust-nums{{display:flex;justify-content:center;gap:32px;flex-wrap:wrap}}.trust-num .n{{font-size:1.3rem;font-weight:800;background:linear-gradient(135deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}}.trust-num .l{{font-size:.68rem;color:#4b5563;margin-top:2px}}
-
-.sec{{max-width:900px;margin:0 auto;padding:80px 24px}}.sec-line{{height:1px;background:linear-gradient(90deg,transparent,rgba(96,165,250,.15),transparent);margin-bottom:48px}}.sec-label{{font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:#60a5fa;margin-bottom:8px}}.sec-title{{font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;margin-bottom:10px;letter-spacing:-.02em}}.sec-desc{{color:#64748b;font-size:.9rem;margin-bottom:32px;max-width:500px}}
-
-.problem-grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}}.problem-card{{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:16px;transition:all .2s}}.problem-card:hover{{border-color:rgba(96,165,250,.2);background:rgba(96,165,250,.03)}}.problem-card .ic{{font-size:1.3rem;margin-bottom:8px}}.problem-card h3{{font-size:.8rem;font-weight:600;color:#cbd5e1}}
-
-.features-grid{{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}}.f-card{{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:20px;transition:all .25s;position:relative;overflow:hidden}}.f-card:hover{{border-color:rgba(96,165,250,.2);transform:translateY(-3px)}}.f-card::before{{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#3b82f6,#8b5cf6);opacity:0;transition:opacity .2s}}.f-card:hover::before{{opacity:1}}.f-card .emoji{{font-size:1.3rem;margin-bottom:10px}}.f-card h3{{font-size:.82rem;font-weight:700;margin-bottom:4px;color:#e2e8f0}}.f-card p{{font-size:.72rem;color:#64748b;line-height:1.5}}
-
-.examples-grid{{display:flex;flex-direction:column;gap:8px}}
-
-.steps{{display:flex;gap:16px;flex-wrap:wrap}}.step{{flex:1;min-width:140px;text-align:center;padding:16px 10px}}.step .num{{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.72rem;margin:0 auto 10px}}.step h3{{font-size:.78rem;font-weight:700;color:#e2e8f0;margin-bottom:3px}}.step p{{font-size:.68rem;color:#64748b}}
-
-.pricing-grid{{display:grid;grid-template-columns:1fr 1fr;gap:14px}}.plan{{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:24px;position:relative}}.plan.pop{{border-color:rgba(96,165,250,.3);background:rgba(59,130,246,.03)}}.plan.pop::after{{content:'POPULAR';position:absolute;top:10px;right:10px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:#fff;font-size:.58rem;padding:3px 8px;border-radius:4px;font-weight:700}}.plan h3{{font-size:.78rem;color:#64748b;margin-bottom:4px}}.plan .price{{font-size:2rem;font-weight:900;background:linear-gradient(135deg,#e2e8f0,#94a3b8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}}.plan .price small{{font-size:.8rem}}.plan ul{{list-style:none;margin:14px 0 18px}}.plan li{{font-size:.76rem;color:#94a3b8;padding:4px 0;padding-left:16px;position:relative}}.plan li::before{{content:'\27A4';position:absolute;left:0;color:#60a5fa;font-size:.65rem}}.plan-btn{{display:block;text-align:center;padding:10px;border-radius:8px;font-weight:700;font-size:.8rem}}.plan-btn.fill{{background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:#fff}}.plan-btn.outline{{border:1px solid rgba(255,255,255,.12);color:#e2e8f0}}
-
-.cta-sec{{text-align:center;padding:80px 24px;position:relative}}.cta-glow{{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:500px;height:250px;background:radial-gradient(ellipse,rgba(59,130,246,.08),transparent 60%);pointer-events:none}}
-.footer{{text-align:center;padding:28px 24px;border-top:1px solid rgba(255,255,255,.04);font-size:.72rem;color:#4b5563}}.footer b{{background:linear-gradient(135deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}}
-@media(max-width:640px){{.features-grid{{grid-template-columns:1fr}}.pricing-grid{{grid-template-columns:1fr}}.steps{{flex-direction:column}}.nav-links{{display:none}}.trust-nums{{gap:16px}}}}
+*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:Inter,sans-serif;background:#111827;color:#f9fafb}}a{{text-decoration:none;color:inherit}}
+.nav{{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;max-width:900px;margin:0 auto}}.nav b{{font-size:1rem;color:#60a5fa}}.nav a{{font-size:.75rem;color:#9ca3af;border:1px solid #374151;padding:6px 12px;border-radius:6px}}
+.hero{{text-align:center;padding:50px 20px 30px;max-width:600px;margin:0 auto}}
+.hero h1{{font-size:clamp(1.8rem,5vw,2.8rem);font-weight:900;line-height:1.15;margin-bottom:12px}}.hero h1 span{{color:#60a5fa}}
+.hero p{{color:#9ca3af;font-size:.92rem;margin-bottom:22px;line-height:1.6}}
+.hero-img{{margin:24px auto;max-width:500px}}.hero-img img{{width:100%;border-radius:12px;border:1px solid #1f2937}}
+.search{{display:flex;gap:6px;max-width:380px;margin:0 auto;background:#1f2937;border:1px solid #374151;border-radius:10px;padding:4px}}.search input{{flex:1;background:transparent;border:none;padding:10px 12px;color:#fff;font-size:.85rem;outline:none}}.search input::placeholder{{color:#6b7280}}.search button{{background:#3b82f6;color:#fff;border:none;padding:10px 16px;border-radius:7px;font-weight:700;font-size:.78rem;cursor:pointer}}
+#searchResult{{max-width:380px;margin:8px auto 0}}
+.stats{{display:flex;justify-content:center;gap:24px;padding:20px;margin-top:16px}}.stats div{{text-align:center}}.stats .n{{font-size:1.2rem;font-weight:800;color:#60a5fa}}.stats .l{{font-size:.65rem;color:#6b7280}}
+.section{{max-width:700px;margin:0 auto;padding:50px 20px}}.section h2{{font-size:1.4rem;font-weight:800;text-align:center;margin-bottom:6px}}.section .sub{{text-align:center;color:#6b7280;font-size:.85rem;margin-bottom:24px}}
+.cards{{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}}.card{{background:#1f2937;border:1px solid #374151;border-radius:10px;padding:16px}}.card .em{{font-size:1.3rem;margin-bottom:8px}}.card h3{{font-size:.82rem;font-weight:700;margin-bottom:3px}}.card p{{font-size:.72rem;color:#9ca3af;line-height:1.5}}
+.pricing{{max-width:700px;margin:0 auto;padding:40px 20px;text-align:center}}.pricing h2{{font-size:1.4rem;font-weight:800;margin-bottom:20px}}
+.plans{{display:grid;grid-template-columns:1fr 1fr;gap:12px}}.plan{{background:#1f2937;border:1px solid #374151;border-radius:12px;padding:20px;text-align:left}}.plan.pop{{border-color:#3b82f6}}.plan h3{{font-size:.78rem;color:#9ca3af;margin-bottom:4px}}.plan .price{{font-size:1.8rem;font-weight:900;color:#f9fafb}}.plan .price small{{font-size:.75rem;color:#6b7280}}.plan ul{{list-style:none;margin:12px 0}}.plan li{{font-size:.75rem;color:#d1d5db;padding:4px 0;padding-left:14px;position:relative}}.plan li::before{{content:"\27A4";position:absolute;left:0;color:#60a5fa;font-size:.6rem}}.plan-btn{{display:block;text-align:center;padding:10px;border-radius:8px;font-weight:700;font-size:.8rem;margin-top:12px}}.plan-btn.fill{{background:#3b82f6;color:#fff}}.plan-btn.ghost{{border:1px solid #374151;color:#d1d5db}}
+.cta{{text-align:center;padding:40px 20px}}.cta h2{{font-size:1.2rem;font-weight:800;margin-bottom:8px}}.cta p{{color:#6b7280;font-size:.85rem;margin-bottom:16px}}.cta a{{background:#3b82f6;color:#fff;padding:12px 22px;border-radius:8px;font-weight:700;font-size:.85rem}}
+.wa-float{{position:fixed;bottom:20px;right:20px;width:52px;height:52px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(37,211,102,.4);z-index:99}}
+.footer{{text-align:center;padding:20px;font-size:.7rem;color:#4b5563;border-top:1px solid #1f2937}}.footer b{{color:#60a5fa}}
+@media(max-width:500px){{.cards,.plans{{grid-template-columns:1fr}}.stats{{gap:14px}}}}
 </style></head><body>
-<nav class="nav"><div class="nav-logo">City Maps</div><div class="nav-links"><a href="#features">Platform</a><a href="#pricing">Pricing</a><a href="#examples">Examples</a></div><a href="https://ai-agency-platform-blush.vercel.app" class="nav-btn">Admin</a></nav>
-
-<section class="hero"><div class="hero-glow"></div>
-<div class="chip" data-aos="fade-down"><span class="dot"></span>{count}+ businesses connected</div>
-<h1 data-aos="fade-up">Every Business Deserves<br><em>A Digital Address</em></h1>
-<p data-aos="fade-up">Create a professional online presence with your own business page, product catalogue, customer contact options, and digital visibility — all from one platform.</p>
-<div class="hero-btns" data-aos="fade-up"><a href="#pricing" class="btn btn-glow">Create My Business Page</a><a href="#examples" class="btn btn-ghost">View Examples</a></div>
-<div class="hero-search" data-aos="fade-up"><input id="bizSearch" placeholder="Search your business..."><button onclick="searchBiz()">Search</button></div>
+<nav class="nav"><b>City Maps</b><a href="https://ai-agency-platform-blush.vercel.app">Admin</a></nav>
+<section class="hero">
+<h1>Apna Business<br><span>Online Le Jaayein</span></h1>
+<p>Professional website for your business. Customers Google pe dhundhein, call karein, WhatsApp pe order dein.</p>
+<div class="search"><input id="bizSearch" placeholder="Business name search karein..."><button onclick="searchBiz()">Search</button></div>
 <div id="searchResult"></div>
-<div class="hero-img" data-aos="fade-up"><img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=400&fit=crop" alt="Platform"></div>
+<div class="hero-img"><img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&h=320&fit=crop" alt="Dashboard"></div>
+<div class="stats"><div><div class="n">{count}+</div><div class="l">Businesses</div></div><div><div class="n">5 min</div><div class="l">Setup</div></div><div><div class="n">Rs.49</div><div class="l">Per Month</div></div></div>
 </section>
-
-<div class="trust" data-aos="fade-up"><p>Trusted by growing businesses</p><div class="trust-nums"><div class="trust-num"><div class="n">{count}+</div><div class="l">Businesses</div></div><div class="trust-num"><div class="n">1000+</div><div class="l">Products</div></div><div class="trust-num"><div class="n">5000+</div><div class="l">Monthly Visitors</div></div><div class="trust-num"><div class="n">20+</div><div class="l">Cities</div></div></div></div>
-
-<section class="sec" id="problem"><div class="sec-line"></div><div class="sec-label" data-aos="fade-up">The Problem</div><div class="sec-title" data-aos="fade-up">Most Businesses Are Still Invisible Online</div>
-<div class="problem-grid"><div class="problem-card" data-aos="fade-up"><div class="ic">&#128683;</div><h3>No Website</h3></div><div class="problem-card" data-aos="fade-up"><div class="ic">&#128270;</div><h3>No Discoverability</h3></div><div class="problem-card" data-aos="fade-up"><div class="ic">&#128722;</div><h3>No Product Catalog</h3></div><div class="problem-card" data-aos="fade-up"><div class="ic">&#128242;</div><h3>No Digital Presence</h3></div><div class="problem-card" data-aos="fade-up"><div class="ic">&#128101;</div><h3>Missed Customers</h3></div><div class="problem-card" data-aos="fade-up"><div class="ic">&#128263;</div><h3>Word of Mouth Only</h3></div></div></section>
-
-<section class="sec" id="features"><div class="sec-line"></div><div class="sec-label" data-aos="fade-up">Platform</div><div class="sec-title" data-aos="fade-up">Everything For A Professional Online Presence</div>
-<div class="features-grid"><div class="f-card" data-aos="fade-up"><div class="emoji">&#127760;</div><h3>Business Website</h3><p>Professional mobile-ready site with your services, photos, and location</p></div><div class="f-card" data-aos="fade-up"><div class="emoji">&#128722;</div><h3>Product Catalogue</h3><p>Showcase products with prices. Customers order via WhatsApp</p></div><div class="f-card" data-aos="fade-up"><div class="emoji">&#128172;</div><h3>WhatsApp Integration</h3><p>One-tap messaging. Pre-filled orders. Instant connection</p></div><div class="f-card" data-aos="fade-up"><div class="emoji">&#128200;</div><h3>Business Dashboard</h3><p>Track visitors, calls, messages. See what works</p></div><div class="f-card" data-aos="fade-up"><div class="emoji">&#128205;</div><h3>Google Visibility</h3><p>Show up when customers search for businesses like yours</p></div><div class="f-card" data-aos="fade-up"><div class="emoji">&#128247;</div><h3>Social Content</h3><p>Download-ready posts for Instagram and WhatsApp status</p></div></div></section>
-
-<section class="sec" id="examples"><div class="sec-line"></div><div class="sec-label" data-aos="fade-up">Live Examples</div><div class="sec-title" data-aos="fade-up">Businesses Already Online</div><div class="sec-desc" data-aos="fade-up">Real businesses using City Maps right now</div>
-<div class="examples-grid" data-aos="fade-up">{examples_html}</div></section>
-
-<section class="sec"><div class="sec-line"></div><div class="sec-label" data-aos="fade-up">Process</div><div class="sec-title" data-aos="fade-up">Live In 5 Minutes</div>
-<div class="steps"><div class="step" data-aos="fade-up"><div class="num">1</div><h3>Create Profile</h3><p>Add business name & category</p></div><div class="step" data-aos="fade-up"><div class="num">2</div><h3>Add Details</h3><p>Services, products, photos</p></div><div class="step" data-aos="fade-up"><div class="num">3</div><h3>Publish</h3><p>Your site goes live instantly</p></div><div class="step" data-aos="fade-up"><div class="num">4</div><h3>Grow</h3><p>Receive enquiries & orders</p></div></div></section>
-
-<section class="sec"><div class="sec-line"></div><div class="sec-label" data-aos="fade-up">Why Us</div><div class="sec-title" data-aos="fade-up">Traditional Agency vs City Maps</div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:24px" data-aos="fade-up">
-<div style="background:rgba(239,68,68,.04);border:1px solid rgba(239,68,68,.12);border-radius:12px;padding:18px"><h3 style="font-size:.82rem;font-weight:700;color:#ef4444;margin-bottom:10px">Traditional Agency</h3><div style="font-size:.75rem;color:#94a3b8;line-height:2">&#10060; Rs.15,000 - 50,000 cost<br>&#10060; 2-4 weeks delivery<br>&#10060; Complex process<br>&#10060; Monthly maintenance fees<br>&#10060; Agency dependent</div></div>
-<div style="background:rgba(59,130,246,.04);border:1px solid rgba(59,130,246,.12);border-radius:12px;padding:18px"><h3 style="font-size:.82rem;font-weight:700;color:#60a5fa;margin-bottom:10px">City Maps</h3><div style="font-size:.75rem;color:#94a3b8;line-height:2">&#10004; Rs.49 - 69/month<br>&#10004; Ready in 5 minutes<br>&#10004; Simple self-service<br>&#10004; No hidden costs<br>&#10004; You own everything</div></div>
-</div></section>
-
-<section class="sec" id="pricing"><div class="sec-line"></div><div class="sec-label" data-aos="fade-up">Pricing</div><div class="sec-title" data-aos="fade-up">Simple. Transparent. No Surprises.</div>
-<div class="pricing-grid" data-aos="fade-up"><div class="plan"><h3>Starter</h3><div class="price">&#8377;49<small>/mo</small></div><ul><li>Business Profile</li><li>Website</li><li>Contact Details</li><li>WhatsApp Button</li><li>Product Listings</li><li>Mobile Design</li></ul><a href="https://wa.me/917350785606?text=Hi%2C%20I%20want%20Starter%20plan" class="plan-btn outline">Get Started</a></div><div class="plan pop"><h3>Business</h3><div class="price">&#8377;69<small>/mo</small></div><ul><li>Everything in Starter</li><li>Business Dashboard</li><li>Visitor Analytics</li><li>Social Content</li><li>Product Catalogue</li><li>Lead Management</li><li>Premium Placement</li><li>Growth Tools</li></ul><a href="https://wa.me/917350785606?text=Hi%2C%20I%20want%20Business%20plan" class="plan-btn fill">Get Started</a></div></div></section>
-
-<section class="sec"><div class="sec-line"></div><div class="sec-label" data-aos="fade-up">Testimonials</div><div class="sec-title" data-aos="fade-up">What Business Owners Say</div>
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:24px">
-<div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:18px" data-aos="fade-up"><p style="font-size:.8rem;color:#94a3b8;line-height:1.6;margin-bottom:12px;font-style:italic">"Customers now find us on Google. Our calls increased within the first week."</p><div style="font-size:.75rem"><strong style="color:#e2e8f0">Rahul S.</strong><br><span style="color:#4b5563">Restaurant Owner, Pune</span></div></div>
-<div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:18px" data-aos="fade-up"><p style="font-size:.8rem;color:#94a3b8;line-height:1.6;margin-bottom:12px;font-style:italic">"Professional website at a price I can afford. WhatsApp orders come directly now."</p><div style="font-size:.75rem"><strong style="color:#e2e8f0">Priya M.</strong><br><span style="color:#4b5563">Boutique Owner, Mumbai</span></div></div>
-<div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:18px" data-aos="fade-up"><p style="font-size:.8rem;color:#94a3b8;line-height:1.6;margin-bottom:12px;font-style:italic">"No technical knowledge needed. Everything was ready in minutes. Best investment."</p><div style="font-size:.75rem"><strong style="color:#e2e8f0">Amit K.</strong><br><span style="color:#4b5563">Salon Owner, Bangalore</span></div></div>
-</div></section>
-
-<section class="cta-sec"><div class="cta-glow"></div><h2 style="font-size:1.6rem;font-weight:800;margin-bottom:8px;position:relative" data-aos="fade-up">Start Building Your Digital Presence</h2><p style="color:#64748b;margin-bottom:20px;position:relative" data-aos="fade-up">Join {count}+ businesses on City Maps</p><a href="https://wa.me/917350785606?text=Hi%20City%20Maps%2C%20I%20want%20to%20create%20my%20business%20page" class="btn btn-glow" style="position:relative" data-aos="fade-up">Create My Business Page &rarr;</a></section>
-
-<footer class="footer"><b>City Maps</b> &bull; Digital Infrastructure for Local Businesses &bull; Powered by Kalpdev Digitals</footer>
-
+<section class="section">
+<h2>Kya Milega Aapko</h2><p class="sub">Simple tools jo customers badhayein</p>
+<div class="cards">
+<div class="card"><div class="em">&#127760;</div><h3>Business Website</h3><p>Apna professional website jismein services, photos, location sab dikhega.</p></div>
+<div class="card"><div class="em">&#128222;</div><h3>More Calls</h3><p>Ek click mein customer call kare. Track karein kitne log call kiye.</p></div>
+<div class="card"><div class="em">&#128172;</div><h3>WhatsApp Orders</h3><p>Customer ek tap mein WhatsApp pe order de. Ready message.</p></div>
+<div class="card"><div class="em">&#128722;</div><h3>Product Catalog</h3><p>Products dikhayein price ke saath. Buy Now se WhatsApp order.</p></div>
+</div>
+</section>
+<section class="pricing" id="pricing">
+<h2>Simple Pricing</h2>
+<div class="plans">
+<div class="plan"><h3>Starter</h3><div class="price">&#8377;49<small>/mo</small></div><ul><li>Business Website</li><li>WhatsApp Button</li><li>Google Maps</li><li>Contact Form</li><li>Mobile Friendly</li></ul><a href="https://wa.me/917350785606?text=Hi%2C%20Starter%20plan%20chahiye" class="plan-btn ghost">Get Started</a></div>
+<div class="plan pop"><h3>Business</h3><div class="price">&#8377;69<small>/mo</small></div><ul><li>Everything in Starter</li><li>Product Catalog</li><li>Analytics Dashboard</li><li>Social Posts</li><li>Growth Tools</li><li>Festival Templates</li></ul><a href="https://wa.me/917350785606?text=Hi%2C%20Business%20plan%20chahiye" class="plan-btn fill">Get Started</a></div>
+</div>
+</section>
+<div class="cta"><h2>Aapka competitor online hai. Aap kab?</h2><p>Har din customers unke paas jaate hain.</p><a href="https://wa.me/917350785606?text=Hi%20City%20Maps%2C%20mera%20website%20banao">Mera Website Banao &rarr;</a></div>
+<a href="https://wa.me/917350785606?text=Hi%20City%20Maps" class="wa-float" target="_blank"><svg width="26" height="26" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492l4.625-1.476A11.929 11.929 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.75c-2.115 0-4.09-.57-5.793-1.564l-.415-.248-2.74.875.876-2.672-.27-.43A9.71 9.71 0 012.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75z"/></svg></a>
+<footer class="footer"><b>City Maps</b> &bull; Powered by Kalpdev Digitals</footer>
 <script>
-async function searchBiz(){{const q=document.getElementById("bizSearch").value.trim();if(!q)return;const r=document.getElementById("searchResult");r.style.display="block";r.innerHTML="<p style=\"text-align:center;color:#64748b;font-size:.8rem\">Searching...</p>";try{{const slug=q.toLowerCase().replace(/[^a-z0-9\s-]/g,"").replace(/[\s]+/g,"-");const resp=await fetch("/api/preview/by-slug/"+slug);if(resp.ok){{r.innerHTML="<div style=\"background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);border-radius:10px;padding:10px;text-align:center;margin-top:6px\"><p style=\"font-weight:700;color:#22c55e;font-size:.82rem\">Found!</p><a href=\"https://"+slug+".city-maps.online\" target=\"_blank\" style=\"color:#60a5fa;font-size:.78rem\">Visit &rarr;</a></div>";}}else{{throw new Error("nf");}}}}catch{{r.innerHTML="<div style=\"background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:14px;margin-top:6px;text-align:center\"><p style=\"font-size:.82rem;margin-bottom:8px\">Not found</p><form onsubmit=\"submitReq(event)\" style=\"display:flex;flex-direction:column;gap:5px;max-width:260px;margin:0 auto\"><input id=\"reqName\" value=\""+q+"\" required style=\"padding:8px 12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:6px;color:#fff;font-size:.8rem\"><input id=\"reqPhone\" placeholder=\"WhatsApp\" required style=\"padding:8px 12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:6px;color:#fff;font-size:.8rem\"><input id=\"reqCity\" placeholder=\"City\" required style=\"padding:8px 12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:6px;color:#fff;font-size:.8rem\"><button type=\"submit\" style=\"background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:#fff;padding:9px;border:none;border-radius:6px;font-weight:700;font-size:.78rem;cursor:pointer\">Request Page</button></form></div>";}}}}
-async function submitReq(e){{e.preventDefault();try{{await fetch("/api/website-requests",{{method:"POST",headers:{{"Content-Type":"application/json"}},body:JSON.stringify({{business_name:document.getElementById("reqName").value,phone:document.getElementById("reqPhone").value,city:document.getElementById("reqCity").value}})}});document.getElementById("searchResult").innerHTML="<div style=\"background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);border-radius:10px;padding:10px;text-align:center;margin-top:6px\"><p style=\"font-weight:700;color:#22c55e;font-size:.82rem\">Submitted! We will notify you soon.</p></div>";}}catch{{alert("Failed");}}}}
-</script>
-<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
-<script>AOS.init({{duration:500,once:true,offset:30}});</script>
-</body></html>'''
+async function searchBiz(){{const q=document.getElementById("bizSearch").value.trim();if(!q)return;const r=document.getElementById("searchResult");r.style.display="block";r.innerHTML="<p style=\"text-align:center;color:#6b7280;font-size:.78rem\">Searching...</p>";try{{const slug=q.toLowerCase().replace(/[^a-z0-9\s-]/g,"").replace(/[\s]+/g,"-");const resp=await fetch("/api/preview/by-slug/"+slug);if(resp.ok){{r.innerHTML="<div style=\"background:#064e3b;border:1px solid #065f46;border-radius:8px;padding:10px;text-align:center;margin-top:6px\"><p style=\"color:#34d399;font-size:.82rem;font-weight:600\">Found!</p><a href=\"https://"+slug+".city-maps.online\" target=\"_blank\" style=\"color:#60a5fa;font-size:.78rem\">Visit &rarr;</a></div>";}}else{{throw new Error("nf");}}}}catch{{r.innerHTML="<div style=\"background:#1f2937;border:1px solid #374151;border-radius:8px;padding:12px;margin-top:6px;text-align:center\"><p style=\"font-size:.82rem;margin-bottom:8px\">Not found</p><p style=\"font-size:.72rem;color:#6b7280;margin-bottom:8px\">Free website chahiye?</p><form onsubmit=\"submitReq(event)\" style=\"display:flex;flex-direction:column;gap:5px;max-width:240px;margin:0 auto\"><input id=\"reqName\" value=\""+q+"\" required style=\"padding:8px;background:#111827;border:1px solid #374151;border-radius:6px;color:#fff;font-size:.78rem\"><input id=\"reqPhone\" placeholder=\"WhatsApp No.\" required style=\"padding:8px;background:#111827;border:1px solid #374151;border-radius:6px;color:#fff;font-size:.78rem\"><input id=\"reqCity\" placeholder=\"City\" required style=\"padding:8px;background:#111827;border:1px solid #374151;border-radius:6px;color:#fff;font-size:.78rem\"><button type=\"submit\" style=\"background:#3b82f6;color:#fff;padding:8px;border:none;border-radius:6px;font-weight:700;font-size:.78rem;cursor:pointer\">Request</button></form></div>";}}}}
+async function submitReq(e){{e.preventDefault();try{{await fetch("/api/website-requests",{{method:"POST",headers:{{"Content-Type":"application/json"}},body:JSON.stringify({{business_name:document.getElementById("reqName").value,phone:document.getElementById("reqPhone").value,city:document.getElementById("reqCity").value}})}});document.getElementById("searchResult").innerHTML="<div style=\"background:#064e3b;border:1px solid #065f46;border-radius:8px;padding:10px;text-align:center;margin-top:6px\"><p style=\"color:#34d399;font-size:.82rem;font-weight:600\">Done! 24 hours mein notify karenge.</p></div>";}}catch{{alert("Failed");}}}}
+</script></body></html>'''
     return HTMLResponse(content=html)
 
 @app.get("/health")
