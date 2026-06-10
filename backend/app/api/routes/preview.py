@@ -460,6 +460,7 @@ def generate_html(content: dict, template: str, lead: dict = None) -> str:
     if lead:
         real_photos = _get_real_photos(lead.get("business_name", ""), lead.get("address", ""))
     images = get_images_for_category(category)
+    gallery_images = real_photos if real_photos else images["gallery"]
     hero_img = real_photos[0] if real_photos else images["hero"]
     about_img = real_photos[1] if len(real_photos) > 1 else images["about"]
     gallery = images["gallery"]
@@ -513,7 +514,6 @@ def generate_html(content: dict, template: str, lead: dict = None) -> str:
     testimonials_html = "".join(test_cards)
 
     # Use real Google Maps photos if available, otherwise fallback to stock
-    gallery_images = real_photos if real_photos else images["gallery"]
     gal_items = []
     for img_url in gallery_images:
         gal_items.append(f'<figure class="gallery-item" data-aos="zoom-in"><img src="{img_url}" alt="Gallery" loading="lazy"></figure>')
