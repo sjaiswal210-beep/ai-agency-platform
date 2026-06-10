@@ -268,7 +268,7 @@ a{text-decoration:none;color:inherit}
 <div class="hero-text" data-aos="fade-right">
 <div class="pill"><span class="dot"></span>""" + str(count) + """+ businesses trust us</div>
 <h1>Your Business<br>Deserves To Be<br><span class="grad">Found Online</span></h1>
-<p>Premium websites, lead management, and digital marketing tools for local businesses. Get discovered by customers searching near you.</p>
+<p>Customers search Google every day for businesses like yours. If they can't find you online, they go to your competitor. City Maps fixes that — in just 5 minutes.</p>
 <div class="hero-btns">
 <a href="https://ai-agency-platform-blush.vercel.app" class="btn btn-dark">Get Started Free &rarr;</a>
 <a href="https://ai-agency-platform-blush.vercel.app" class="btn btn-outline">Find My Business</a>
@@ -287,19 +287,19 @@ a{text-decoration:none;color:inherit}
 </div>
 
 <section class="features" id="features">
-<div class="sec-head" data-aos="fade-up"><span class="tag">&#9889; Platform Features</span><h2>Everything to Grow Online</h2><p>One platform for your entire digital presence</p></div>
+<div class="sec-head" data-aos="fade-up"><span class="tag">&#9889; What You Get</span><h2>Tools That Bring You Customers</h2><p>Every tool is designed to get you more calls, more walk-ins, and more revenue</p></div>
 <div class="f-grid">
-<div class="f-card" data-aos="fade-up"><div class="ic" style="background:#ede9fe">&#127760;</div><h3>Premium Website</h3><p>Mobile-first website at your-name.city-maps.online</p></div>
-<div class="f-card" data-aos="fade-up" data-aos-delay="80"><div class="ic" style="background:#dbeafe">&#128200;</div><h3>Live Analytics</h3><p>Track visitors, calls, WhatsApp clicks in real-time</p></div>
-<div class="f-card" data-aos="fade-up" data-aos-delay="160"><div class="ic" style="background:#f0fdf4">&#128172;</div><h3>WhatsApp Integration</h3><p>One-click contact. Never miss a customer enquiry</p></div>
-<div class="f-card" data-aos="fade-up" data-aos-delay="240"><div class="ic" style="background:#fef3c7">&#11088;</div><h3>Review Management</h3><p>Build trust with automated review responses</p></div>
-<div class="f-card" data-aos="fade-up" data-aos-delay="320"><div class="ic" style="background:#fce7f3">&#128247;</div><h3>Social Content</h3><p>Download-ready posts for Instagram and Facebook</p></div>
-<div class="f-card" data-aos="fade-up" data-aos-delay="400"><div class="ic" style="background:#ecfdf5">&#128722;</div><h3>WhatsApp Store</h3><p>Sell products directly through WhatsApp catalog</p></div>
+<div class="f-card" data-aos="fade-up"><div class="ic" style="background:#ede9fe">&#127760;</div><h3>Your Own Website</h3><p>Customers find your business name on Google, see your services, photos, reviews, and contact you instantly. Available 24/7.</p></div>
+<div class="f-card" data-aos="fade-up" data-aos-delay="80"><div class="ic" style="background:#dbeafe">&#128222;</div><h3>More Phone Calls</h3><p>Click-to-call button on every page. Track how many people call you from your website each day.</p></div>
+<div class="f-card" data-aos="fade-up" data-aos-delay="160"><div class="ic" style="background:#f0fdf4">&#128172;</div><h3>WhatsApp Enquiries</h3><p>Customers message you directly on WhatsApp from your website. Pre-filled message so they don't have to type.</p></div>
+<div class="f-card" data-aos="fade-up" data-aos-delay="240"><div class="ic" style="background:#fef3c7">&#11088;</div><h3>Google Reviews Help</h3><p>We generate review request messages you can send to happy customers. More reviews = higher Google ranking.</p></div>
+<div class="f-card" data-aos="fade-up" data-aos-delay="320"><div class="ic" style="background:#fce7f3">&#128247;</div><h3>Social Media Posts</h3><p>Download ready-made Instagram and WhatsApp status posts with your business name. No designer needed.</p></div>
+<div class="f-card" data-aos="fade-up" data-aos-delay="400"><div class="ic" style="background:#ecfdf5">&#128722;</div><h3>Product Catalog</h3><p>Show your products with prices. Customers click "Buy Now" and it opens WhatsApp with their order details.</p></div>
 </div>
 </section>
 
 <section class="showcase">
-<div class="sec-head" data-aos="fade-up"><span class="tag">&#127912; Beautiful Designs</span><h2>Websites That Convert</h2><p>Premium designs for every business type</p></div>
+<div class="sec-head" data-aos="fade-up"><span class="tag">&#127912; Real Results</span><h2>Businesses Like Yours</h2><p>Salons, restaurants, doctors, gyms, stores — all growing online with City Maps</p></div>
 <div class="showcase-grid">
 <div class="showcase-item" data-aos="fade-up"><img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400&h=700&fit=crop" alt="Salon"><div class="label">Salon Website</div></div>
 <div class="showcase-item" data-aos="fade-up" data-aos-delay="100"><img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&h=700&fit=crop" alt="Restaurant"><div class="label">Restaurant Website</div></div>
@@ -324,15 +324,15 @@ a{text-decoration:none;color:inherit}
 <div class="price">&#8377;69<small>/month</small></div>
 <div class="per">Just &#8377;2.3 per day</div>
 <div class="p-list">
-<div class="pi">Premium Business Website</div>
-<div class="pi">Custom Subdomain</div>
-<div class="pi">Business Analytics Dashboard</div>
-<div class="pi">WhatsApp Lead Management</div>
-<div class="pi">Review Management Tools</div>
-<div class="pi">Social Media Content</div>
-<div class="pi">WhatsApp Product Store</div>
-<div class="pi">Festival Campaign Templates</div>
-<div class="pi">QR Code for Business Cards</div>
+<div class="pi">Professional Website (your-name.city-maps.online)</div>
+<div class="pi">Track who visits, calls, messages you</div>
+<div class="pi">WhatsApp click-to-chat on your website</div>
+<div class="pi">Product catalog with Buy Now button</div>
+<div class="pi">Ready social media posts (just download & post)</div>
+<div class="pi">Festival offer templates (Diwali, Holi, etc.)</div>
+<div class="pi">Google review request messages</div>
+<div class="pi">QR code for visiting cards & banners</div>
+<div class="pi">Daily growth tips for your business</div>
 </div>
 <a href="https://ai-agency-platform-blush.vercel.app" class="p-cta">Start Growing &rarr;</a>
 </div>
@@ -340,8 +340,8 @@ a{text-decoration:none;color:inherit}
 
 <section class="cta-sec">
 <div data-aos="fade-up">
-<h2>Ready To Grow Your Business?</h2>
-<p>Join """ + str(count) + """+ businesses already growing online with City Maps</p>
+<h2>Stop Losing Customers to Competitors</h2>
+<p>Join """ + str(count) + """+ local businesses are already online. Don't get left behind.</p>
 <a href="https://ai-agency-platform-blush.vercel.app" class="btn btn-dark">Create My Website &rarr;</a>
 </div>
 </section>
