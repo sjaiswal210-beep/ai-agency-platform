@@ -480,7 +480,13 @@ def generate_html(content: dict, template: str, lead: dict = None) -> str:
 
     svc_cards = []
     for i, svc in enumerate(services):
-        img = gallery[i % len(gallery)]
+        # Use real photos if available, otherwise generate relevant stock image
+        if real_photos and i < len(real_photos):
+            img = real_photos[i]
+        else:
+            # Use Unsplash with service name for relevant images
+            svc_name = svc.get("name", category).replace(" ", "+").replace("&", "and")
+            img = f"https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500&h=400&fit=crop" if not svc_name else f"https://source.unsplash.com/500x400/?{svc_name},{category}"
         svc_cards.append(
             '<article class="service-card" data-aos="fade-up">'
             f'<div class="service-img" style="background-image:url({img})"></div>'
