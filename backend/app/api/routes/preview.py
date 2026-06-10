@@ -411,7 +411,7 @@ MOBILE_CSS = """
 @media(max-width:768px){
   .nav-links{display:none}
   .nav{padding:12px 16px}
-  .nav-cta{display:none!important}
+  .nav-cta{display:flex!important;background:transparent!important;box-shadow:none!important;color:var(--p)!important;font-size:1.2rem!important;padding:6px!important}
   .hero{min-height:auto;padding-top:80px!important;padding-bottom:40px!important}
   .hero-content{padding:70px 16px 30px!important;margin:0!important}
   .hero h1{font-size:1.6rem!important;margin-bottom:10px!important}
@@ -574,7 +574,7 @@ def generate_html(content: dict, template: str, lead: dict = None) -> str:
                     wa_link = f"https://wa.me/{whatsapp_num}?text={wa_msg}" if whatsapp_num else "#"
                     prod_cards += (
                         f'<div class="product-item" data-aos="fade-up">'
-                        f'<img src="{p_img}" alt="{p.get("name","")}" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px">'
+                        f'<img src="{p_img}" alt="{p.get("name","")}" style="width:100%;height:110px;object-fit:cover;border-radius:10px">'
                         f'<h3 style="font-size:.9rem;font-weight:700;margin:10px 0 4px">{p.get("name","")}</h3>'
                         f'<p style="font-size:.8rem;color:#64748b;margin-bottom:6px">{p.get("description","")[:50]}</p>'
                         f'<p style="font-size:1rem;font-weight:800;color:var(--p);margin-bottom:8px">Rs. {p.get("price","")}</p>'
