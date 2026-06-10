@@ -171,14 +171,14 @@ a{text-decoration:none;color:inherit}
 /* GLOBAL */
 .container{max-width:1100px;margin:0 auto;padding:0 24px}
 .glass{background:#fff;border:1px solid #f1f5f9;backdrop-filter:blur(12px);border-radius:20px}
-.tag{display:inline-flex;align-items:center;gap:6px;background:rgba(124,58,237,.12);border:1px solid rgba(124,58,237,.25);padding:6px 14px;border-radius:50px;font-size:.72rem;font-weight:600;color:#a78bfa;letter-spacing:.03em}
+.tag{display:inline-flex;align-items:center;gap:6px;background:rgba(45,138,78,.12);border:1px solid rgba(45,138,78,.25);padding:6px 14px;border-radius:50px;font-size:.72rem;font-weight:600;color:#4ade80;letter-spacing:.03em}
 .sec-title{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:900;margin-bottom:12px;letter-spacing:-.03em}
 .sec-sub{color:#64748b;font-size:1rem;max-width:500px}
 
 /* NAV */
 .nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 32px;display:flex;align-items:center;justify-content:space-between}
 .nav.solid{background:rgba(255,255,255,.95);backdrop-filter:blur(20px);border-bottom:1px solid #f1f5f9}
-.nav-brand{font-weight:900;font-size:1.15rem;background:linear-gradient(135deg,#a78bfa,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-brand{font-weight:900;font-size:1.15rem;background:linear-gradient(135deg,#4ade80,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .nav-links{display:flex;gap:24px;font-size:.85rem;color:#64748b}
 .nav-links a:hover{color:#fff}
 .nav-btn{background:rgba(255,255,255,.08);border:1px solid #e2e8f0;color:#fff;padding:9px 18px;border-radius:50px;font-weight:600;font-size:.8rem;transition:all .2s}
@@ -186,7 +186,7 @@ a{text-decoration:none;color:inherit}
 
 /* HERO */
 .hero{min-height:100vh;display:flex;align-items:center;position:relative;padding:120px 24px 80px;overflow:hidden}
-.hero-glow{position:absolute;top:-200px;left:50%;transform:translateX(-50%);width:800px;height:800px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,.08) 0%,rgba(37,99,235,.04) 40%,transparent 65%);filter:blur(60px);animation:breathe 8s ease-in-out infinite}
+.hero-glow{position:absolute;top:-200px;left:50%;transform:translateX(-50%);width:800px;height:800px;border-radius:50%;background:radial-gradient(circle,rgba(45,138,78,.08) 0%,rgba(37,99,235,.04) 40%,transparent 65%);filter:blur(60px);animation:breathe 8s ease-in-out infinite}
 @keyframes breathe{0%,100%{opacity:.8;transform:translateX(-50%) scale(1)}50%{opacity:1;transform:translateX(-50%) scale(1.05)}}
 .hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px);background-size:60px 60px}
 
@@ -195,11 +195,11 @@ a{text-decoration:none;color:inherit}
 .hero-pill .pulse{width:8px;height:8px;border-radius:50%;background:#10b981;box-shadow:0 0 8px #10b981;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .hero h1{font-size:clamp(2.6rem,6vw,4.2rem);font-weight:900;line-height:1.05;margin-bottom:20px;letter-spacing:-.04em}
-.hero h1 .grad{background:linear-gradient(135deg,#a78bfa,#60a5fa,#34d399);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero h1 .grad{background:linear-gradient(135deg,#4ade80,#60a5fa,#34d399);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .hero .lead{font-size:1.1rem;color:#64748b;line-height:1.7;margin-bottom:32px;max-width:580px;margin-left:auto;margin-right:auto}
 .hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:20px}
-.btn-glow{background:linear-gradient(135deg,#7c3aed,#2563eb);color:#fff;padding:14px 28px;border-radius:14px;font-weight:700;font-size:.92rem;box-shadow:0 8px 32px rgba(124,58,237,.35);transition:all .25s}
-.btn-glow:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(124,58,237,.5)}
+.btn-glow{background:linear-gradient(135deg,#2d8a4e,#059669);color:#fff;padding:14px 28px;border-radius:14px;font-weight:700;font-size:.92rem;box-shadow:0 8px 32px rgba(45,138,78,.35);transition:all .25s}
+.btn-glow:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(45,138,78,.5)}
 .btn-glass{background:#f8fafc;border:1px solid #e2e8f0;color:#fff;padding:14px 28px;border-radius:14px;font-weight:700;font-size:.92rem;transition:all .25s}
 .btn-glass:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2)}
 
@@ -207,7 +207,7 @@ a{text-decoration:none;color:inherit}
 .search-box{max-width:500px;margin:32px auto 0;display:flex;gap:8px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:6px}
 .search-box input{flex:1;background:transparent;border:none;padding:12px 16px;color:#fff;font-size:.9rem;outline:none;font-family:inherit}
 .search-box input::placeholder{color:#64748b}
-.search-box button{background:linear-gradient(135deg,#7c3aed,#2563eb);color:#fff;border:none;padding:12px 20px;border-radius:10px;font-weight:700;font-size:.82rem;cursor:pointer}
+.search-box button{background:linear-gradient(135deg,#2d8a4e,#059669);color:#fff;border:none;padding:12px 20px;border-radius:10px;font-weight:700;font-size:.82rem;cursor:pointer}
 #searchResult{margin-top:14px}
 
 /* STATS */
@@ -218,12 +218,12 @@ a{text-decoration:none;color:inherit}
 
 /* FEATURES */
 .features{padding:120px 24px;position:relative}
-.features::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(124,58,237,.3),transparent)}
+.features::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(45,138,78,.3),transparent)}
 .f-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:48px}
 .f-card{padding:28px 24px;border-radius:20px;background:#fff;border:1px solid #f8fafc;transition:all .35s;position:relative;overflow:hidden}
 .f-card:hover{background:#f8fafc;border-color:#ede9fe;transform:translateY(-4px)}
-.f-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#7c3aed,#2563eb);opacity:0;transition:opacity .3s}.f-card:hover::after{opacity:1}
-.f-card .ic{width:44px;height:44px;border-radius:12px;background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.2);display:flex;align-items:center;justify-content:center;font-size:1.2rem;margin-bottom:16px}
+.f-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#2d8a4e,#059669);opacity:0;transition:opacity .3s}.f-card:hover::after{opacity:1}
+.f-card .ic{width:44px;height:44px;border-radius:12px;background:rgba(45,138,78,.1);border:1px solid rgba(45,138,78,.2);display:flex;align-items:center;justify-content:center;font-size:1.2rem;margin-bottom:16px}
 .f-card h3{font-size:.95rem;font-weight:700;margin-bottom:8px;color:#1e293b}
 .f-card p{font-size:.82rem;color:#64748b;line-height:1.6}
 
@@ -231,32 +231,32 @@ a{text-decoration:none;color:inherit}
 .pricing{padding:120px 24px;position:relative}
 .pricing::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(96,165,250,.3),transparent)}
 .p-card{max-width:380px;margin:48px auto 0;background:#fff;border:1px solid #e2e8f0;border-radius:24px;padding:36px;text-align:center;position:relative;overflow:hidden}
-.p-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#7c3aed,#2563eb,#10b981)}
+.p-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#2d8a4e,#059669,#10b981)}
 .p-card h3{font-size:1rem;font-weight:600;color:#64748b;margin-bottom:8px}
-.p-card .price{font-size:3.2rem;font-weight:900;background:linear-gradient(135deg,#fff,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px}
+.p-card .price{font-size:3.2rem;font-weight:900;background:linear-gradient(135deg,#fff,#4ade80);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px}
 .p-card .price small{font-size:1rem;-webkit-text-fill-color:#64748b}
 .p-card .per{font-size:.82rem;color:#64748b;margin-bottom:24px}
 .p-list{text-align:left;margin-bottom:28px}.p-list .pi{display:flex;align-items:center;gap:10px;padding:9px 0;font-size:.88rem;color:#475569;border-bottom:1px solid rgba(255,255,255,.04)}.p-list .pi::before{content:'\2713';color:#10b981;font-weight:800;font-size:.8rem}
-.p-cta{display:block;background:linear-gradient(135deg,#7c3aed,#2563eb);color:#fff;padding:14px;border-radius:12px;font-weight:700;font-size:.95rem;transition:all .25s;box-shadow:0 8px 24px rgba(124,58,237,.3)}.p-cta:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(124,58,237,.4)}
+.p-cta{display:block;background:linear-gradient(135deg,#2d8a4e,#059669);color:#fff;padding:14px;border-radius:12px;font-weight:700;font-size:.95rem;transition:all .25s;box-shadow:0 8px 24px rgba(45,138,78,.3)}.p-cta:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(45,138,78,.4)}
 
 /* HOW */
 .how{padding:120px 24px}
 .how::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(52,211,153,.3),transparent)}
 .how-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:48px}
-.how-step{text-align:center;padding:24px 16px;border-radius:16px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);transition:all .3s}
+.how-step{text-align:center;padding:24px 16px;border-radius:16px;background:rgba(255,255,255,.02);border:1px solid #f5f5f5;transition:all .3s}
 .how-step:hover{background:#fff;border-color:rgba(255,255,255,.1)}
-.how-step .num{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#2563eb);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;margin:0 auto 12px;font-size:.9rem}
+.how-step .num{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#2d8a4e,#059669);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;margin:0 auto 12px;font-size:.9rem}
 .how-step h3{font-size:.88rem;font-weight:700;color:#1e293b;margin-bottom:4px}
 .how-step p{font-size:.78rem;color:#64748b}
 
 /* CTA */
 .cta-sec{padding:100px 24px;text-align:center;position:relative}
-.cta-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,.12),transparent 60%);filter:blur(40px)}
+.cta-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(45,138,78,.12),transparent 60%);filter:blur(40px)}
 .cta-sec h2{position:relative;z-index:2;font-size:clamp(1.6rem,4vw,2.4rem);font-weight:900;margin-bottom:12px}
 .cta-sec p{position:relative;z-index:2;color:#64748b;margin-bottom:24px}
 
 .footer{padding:40px 24px;text-align:center;border-top:1px solid rgba(255,255,255,.05)}
-.footer h3{font-size:.95rem;font-weight:700;background:linear-gradient(135deg,#a78bfa,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px}
+.footer h3{font-size:.95rem;font-weight:700;background:linear-gradient(135deg,#4ade80,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px}
 .footer p{font-size:.78rem;color:#4b5563}
 
 @media(max-width:768px){.f-grid{grid-template-columns:1fr}.how-grid{grid-template-columns:repeat(2,1fr)}.stats-row{flex-wrap:wrap;gap:12px}.nav-links{display:none}.hero h1{font-size:2.2rem}}
@@ -375,7 +375,7 @@ a{text-decoration:none;color:inherit}
 </footer>
 
 <script>
-async function searchBiz(){const q=document.getElementById('bizSearch').value.trim();if(!q)return;const r=document.getElementById('searchResult');r.style.display='block';r.innerHTML='<p style="text-align:center;color:#64748b;font-size:.85rem">Searching...</p>';try{const slug=q.toLowerCase().replace(/[^a-z0-9\s-]/g,'').replace(/[\s]+/g,'-');const resp=await fetch('/api/preview/by-slug/'+slug);if(resp.ok){r.innerHTML='<div style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:12px;padding:14px;text-align:center;margin-top:12px"><p style="font-weight:700;color:#10b981;margin-bottom:6px">&#10004; Your business is online!</p><a href="https://'+slug+'.city-maps.online" target="_blank" style="color:#a78bfa;font-weight:600;font-size:.88rem">Visit your website &rarr;</a></div>';}else{throw new Error('nf');}}catch(e){r.innerHTML='<div style="background:#fff;border:1px solid #f1f5f9;border-radius:12px;padding:18px;margin-top:12px;text-align:center"><p style="font-weight:600;color:#1e293b;margin-bottom:10px">Website not found for &quot;'+q+'&quot;</p><p style="font-size:.82rem;color:#64748b;margin-bottom:14px">Want a free website for your business?</p><form onsubmit="submitReq(event)" style="display:flex;flex-direction:column;gap:8px;max-width:320px;margin:0 auto"><input id="reqName" value="'+q+'" placeholder="Business Name" required style="padding:10px 14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;color:#fff;font-size:.88rem"><input id="reqPhone" placeholder="WhatsApp Number" required style="padding:10px 14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;color:#fff;font-size:.88rem"><input id="reqCity" placeholder="City / Area" required style="padding:10px 14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;color:#fff;font-size:.88rem"><button type="submit" style="background:linear-gradient(135deg,#7c3aed,#2563eb);color:#fff;padding:12px;border:none;border-radius:10px;font-weight:700;cursor:pointer">Request Free Website</button></form></div>';}}
+async function searchBiz(){const q=document.getElementById('bizSearch').value.trim();if(!q)return;const r=document.getElementById('searchResult');r.style.display='block';r.innerHTML='<p style="text-align:center;color:#64748b;font-size:.85rem">Searching...</p>';try{const slug=q.toLowerCase().replace(/[^a-z0-9\s-]/g,'').replace(/[\s]+/g,'-');const resp=await fetch('/api/preview/by-slug/'+slug);if(resp.ok){r.innerHTML='<div style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:12px;padding:14px;text-align:center;margin-top:12px"><p style="font-weight:700;color:#10b981;margin-bottom:6px">&#10004; Your business is online!</p><a href="https://'+slug+'.city-maps.online" target="_blank" style="color:#4ade80;font-weight:600;font-size:.88rem">Visit your website &rarr;</a></div>';}else{throw new Error('nf');}}catch(e){r.innerHTML='<div style="background:#fff;border:1px solid #f1f5f9;border-radius:12px;padding:18px;margin-top:12px;text-align:center"><p style="font-weight:600;color:#1e293b;margin-bottom:10px">Website not found for &quot;'+q+'&quot;</p><p style="font-size:.82rem;color:#64748b;margin-bottom:14px">Want a free website for your business?</p><form onsubmit="submitReq(event)" style="display:flex;flex-direction:column;gap:8px;max-width:320px;margin:0 auto"><input id="reqName" value="'+q+'" placeholder="Business Name" required style="padding:10px 14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;color:#fff;font-size:.88rem"><input id="reqPhone" placeholder="WhatsApp Number" required style="padding:10px 14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;color:#fff;font-size:.88rem"><input id="reqCity" placeholder="City / Area" required style="padding:10px 14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;color:#fff;font-size:.88rem"><button type="submit" style="background:linear-gradient(135deg,#2d8a4e,#059669);color:#fff;padding:12px;border:none;border-radius:10px;font-weight:700;cursor:pointer">Request Free Website</button></form></div>';}}
 async function submitReq(e){e.preventDefault();const name=document.getElementById('reqName').value;const phone=document.getElementById('reqPhone').value;const city=document.getElementById('reqCity').value;try{await fetch('/api/website-requests',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({business_name:name,phone:phone,city:city})});document.getElementById('searchResult').innerHTML='<div style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:12px;padding:14px;text-align:center;margin-top:12px"><p style="font-weight:700;color:#10b981">&#10004; Request submitted!</p><p style="font-size:.82rem;color:#64748b;margin-top:4px">We will create your website and notify you within 24 hours.</p></div>';}catch(err){alert('Failed. Please try again.');}}
 </script>
 <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
