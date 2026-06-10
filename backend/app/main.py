@@ -68,6 +68,37 @@ app.add_middleware(
 )
 
 
+@app.middleware("http")
+async def subdomain_routing(request: Request, call_next):
+    """Route subdomain requests to the correct website."""
+    host = request.headers.get("host", "")
+    # Check if it's a subdomain of city-maps.online
+    if ".city-maps.online" in host and not host.startswith("www.") and not host.startswith("api."):
+        subdomain = host.split(".city-maps.online")[0].lower().strip()
+        if subdomain and subdomain not in ["www", "api", "admin"]:
+            # Redirect to the preview by slug
+            from app.api.routes.preview import generate_html, _get_real_photos, get_images_for_category, _get_logo_icon, get_maps_embed
+            from app.services.website_service import WebsiteService
+            from app.services.lead_service import LeadService
+            from fastapi.responses import HTMLResponse
+            from app.core.supabase import get_supabase
+            import json
+            
+            db = get_supabase()
+            result = db.table("websites").select("*").eq("slug", subdomain).limit(1).execute()
+            if result.data:
+                website = result.data[0]
+                content = website.get("content", {})
+                if content:
+                    lead_service = LeadService()
+                    lead = lead_service.get(website["lead_id"]) if website.get("lead_id") else None
+                    html = generate_html(content, website.get("template", "store"), lead)
+                    return HTMLResponse(content=html)
+            # If no match, continue to normal routing
+    response = await call_next(request)
+    return response
+
+
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
     return JSONResponse(status_code=500, content={"detail": str(exc)})
