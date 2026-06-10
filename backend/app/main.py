@@ -259,7 +259,7 @@ a{text-decoration:none;color:inherit}
 <nav class="nav" id="nav">
 <div class="nav-brand">City Maps</div>
 <div class="nav-links"><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="#how">How It Works</a></div>
-<a href="#pricing" class="nav-btn">Get Started</a>
+<a href="https://ai-agency-platform-blush.vercel.app" class="nav-btn">Admin</a>
 </nav>
 
 <section class="hero">
@@ -351,6 +351,33 @@ a{text-decoration:none;color:inherit}
 <p>Your Digital Business Partner &bull; Powered by Kalpdev Digitals</p>
 </footer>
 
+<script>
+async function searchBiz(){
+const q=document.getElementById('bizSearch').value.trim();
+if(!q)return;
+const r=document.getElementById('searchResult');
+r.style.display='block';
+r.innerHTML='<p style="text-align:center;color:#64748b;font-size:.85rem">Searching...</p>';
+try{
+const resp=await fetch('/api/preview/by-slug/'+q.toLowerCase().replace(/[^a-z0-9\s-]/g,'').replace(/[\s]+/g,'-'));
+if(resp.ok){
+r.innerHTML='<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:16px;text-align:center"><p style="font-weight:700;color:#166534;margin-bottom:8px">&#10004; Your business is online!</p><a href="https://'+q.toLowerCase().replace(/[^a-z0-9\s-]/g,'').replace(/[\s]+/g,'-')+'.city-maps.online" target="_blank" style="color:#7c3aed;font-weight:700;font-size:.9rem">Visit your website &rarr;</a></div>';
+}else{throw new Error('not found');}
+}catch{
+r.innerHTML=\'<div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px;text-align:center"><p style="font-weight:600;margin-bottom:12px">Website not found for \"+q+\"</p><p style="font-size:.85rem;color:#64748b;margin-bottom:14px">Want us to create a free website for your business?</p><form onsubmit="submitRequest(event)" style="display:flex;flex-direction:column;gap:8px"><input id="reqName" placeholder="Business Name" value="\"+q+\" required style="padding:10px 14px;border:1px solid #e2e8f0;border-radius:8px;font-size:.88rem"><input id="reqPhone" placeholder="Your Phone (WhatsApp)" required style="padding:10px 14px;border:1px solid #e2e8f0;border-radius:8px;font-size:.88rem"><input id="reqCity" placeholder="City / Area" required style="padding:10px 14px;border:1px solid #e2e8f0;border-radius:8px;font-size:.88rem"><button type="submit" style="background:#0f172a;color:#fff;padding:12px;border:none;border-radius:10px;font-weight:700;cursor:pointer">Request Free Website</button></form></div>\';
+}
+}
+async function submitRequest(e){
+e.preventDefault();
+const name=document.getElementById(\'reqName\').value;
+const phone=document.getElementById(\'reqPhone\').value;
+const city=document.getElementById(\'reqCity\').value;
+try{
+await fetch(\'/api/website-requests\',{method:\'POST\',headers:{\'Content-Type\':\'application/json\'},body:JSON.stringify({business_name:name,phone:phone,city:city})});
+document.getElementById(\'searchResult\').innerHTML=\'<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:16px;text-align:center"><p style="font-weight:700;color:#166534">&#10004; Request submitted!</p><p style="font-size:.85rem;color:#64748b;margin-top:4px">We will create your website and notify you on WhatsApp within 24 hours.</p></div>\';
+}catch{alert(\'Failed to submit. Please try again.\');}
+}
+</script>
 <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
 <script>
 AOS.init({duration:600,once:true,offset:60});
