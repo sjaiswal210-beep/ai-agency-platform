@@ -264,7 +264,7 @@ RULES:
 
     track_usage("gemini_website_gen", 1)
 
-    # Auto-assign slug for public URL
+    # Auto-assign slug using AI for clean, short URL
     try:
         import re as _re
         def _make_slug(name):
@@ -272,9 +272,21 @@ RULES:
             s = _re.sub(r'[^a-z0-9\s-]', '', s)
             s = _re.sub(r'[\s_]+', '-', s)
             s = _re.sub(r'-+', '-', s).strip('-')
-            return s[:60] if s else 'business'
+            return s[:40] if s else 'business'
         
-        base_slug = _make_slug(lead.get("business_name", "business"))
+        # Try AI-generated slug (shorter, cleaner)
+        try:
+            slug_prompt = f"Suggest a short, clean URL slug for a {category} business named \"{lead.get('business_name', '')}\". Rules: lowercase, hyphens only, max 25 chars, no special chars, memorable. Return ONLY the slug, nothing else."
+            ai_slug = await chat_completion([{"role": "user", "content": slug_prompt}])
+            ai_slug = ai_slug.strip().lower().strip('"').strip("'")
+            ai_slug = _re.sub(r'[^a-z0-9-]', '', ai_slug.replace(' ', '-'))
+            ai_slug = _re.sub(r'-+', '-', ai_slug).strip('-')
+            if len(ai_slug) > 3 and len(ai_slug) <= 30:
+                base_slug = ai_slug
+            else:
+                base_slug = _make_slug(lead.get("business_name", "business"))
+        except Exception:
+            base_slug = _make_slug(lead.get("business_name", "business"))
         slug = base_slug
         # Check uniqueness
         from app.core.config import get_settings as _gs
