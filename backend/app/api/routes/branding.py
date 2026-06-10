@@ -182,38 +182,118 @@ Return ONLY valid JSON."""
 
 
 @router.get("/{website_id}/social-post/preview", response_class=HTMLResponse)
-async def preview_social_post(website_id: str, platform: str = "instagram", purpose: str = "promotion"):
-    """Preview a social media post as rendered HTML."""
-    post = await generate_social_post(website_id, SocialPostRequest(platform=platform, purpose=purpose))
+def social_post_preview(website_id: str, platform: str = "instagram", purpose: str = "promotion"):
+    """Generate a beautiful social media post with background image + download option."""
+    from app.services.website_service import WebsiteService
+    from app.services.lead_service import LeadService
+    import urllib.parse
 
-    w = post["size"]["w"]
-    h = post["size"]["h"]
-    primary = post["colors"].get("primary", "#6366f1")
-    accent = post["colors"].get("accent", "#10b981")
-    scale = min(500 / w, 700 / h)
+    service = WebsiteService()
+    lead_service = LeadService()
 
-    html = f"""<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Social Post Preview</title>
+    website = service.get(website_id)
+    if not website:
+        raise HTTPException(404, "Website not found")
+
+    lead = lead_service.get(website["lead_id"]) if website.get("lead_id") else None
+    business_name = lead.get("business_name", "Business") if lead else "Business"
+    category = lead.get("category", "business") if lead else "business"
+    phone = lead.get("phone", "") if lead else ""
+    slug = website.get("slug", "")
+    site_url = f"city-maps.online/{slug}" if slug else ""
+
+    content = website.get("content", {})
+    colors = content.get("color_scheme", {})
+    primary = colors.get("primary", "#7C3AED")
+    
+    # Get relevant background image
+    bg_img = f"https://source.unsplash.com/1080x1080/?{category},business"
+    
+    # Generate content based on purpose
+    taglines = {
+        "promotion": f"Visit us today! Best {category} services in town.",
+        "offer": f"Special offer! Limited time deal at {business_name}.",
+        "festive": f"Celebrate with {business_name}! Festive special offers.",
+        "new": f"Something new at {business_name}! Come check it out.",
+    }
+    tagline = taglines.get(purpose, taglines["promotion"])
+
+    html = f"""<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Social Post - {business_name}</title>
 <style>
-body{{display:flex;align-items:center;justify-content:center;min-height:100vh;background:#1e293b;font-family:Inter,sans-serif;margin:0}}
-.container{{text-align:center}}
-.post{{width:{int(w*scale)}px;height:{int(h*scale)}px;background:linear-gradient(135deg,{primary},{accent});border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;color:#fff;position:relative;overflow:hidden;box-shadow:0 20px 40px rgba(0,0,0,.3)}}
-.post::before{{content:'';position:absolute;top:-50%;right:-50%;width:100%;height:100%;background:radial-gradient(circle,rgba(255,255,255,.1),transparent);border-radius:50%}}
-.post h1{{font-size:{int(28*scale)}px;font-weight:900;margin-bottom:12px;position:relative;text-align:center;line-height:1.2}}
-.post p{{font-size:{int(16*scale)}px;opacity:.9;position:relative;text-align:center;margin-bottom:16px}}
-.post .offer{{background:rgba(255,255,255,.2);padding:8px 20px;border-radius:50px;font-weight:700;font-size:{int(14*scale)}px;position:relative}}
-.post .brand{{position:absolute;bottom:20px;font-size:{int(12*scale)}px;opacity:.7}}
-.caption{{color:#94a3b8;font-size:13px;max-width:400px;margin:20px auto 0;text-align:left;background:#0f172a;padding:16px;border-radius:8px;line-height:1.6}}
-.hashtags{{color:#60a5fa;font-size:12px;margin-top:8px}}
+*{{margin:0;padding:0;box-sizing:border-box}}
+body{{font-family:system-ui,sans-serif;background:#1e293b;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}}
+.post-container{{position:relative;width:100%;max-width:540px}}
+.post{{width:100%;aspect-ratio:1;border-radius:16px;overflow:hidden;position:relative;background:url('{bg_img}') center/cover;box-shadow:0 20px 50px rgba(0,0,0,.3)}}
+.post-overlay{{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.2) 0%,rgba(0,0,0,.7) 100%);display:flex;flex-direction:column;justify-content:flex-end;padding:40px}}
+.post-brand{{position:absolute;top:20px;left:20px;background:rgba(255,255,255,.95);padding:8px 16px;border-radius:50px;font-weight:800;font-size:.85rem;color:{primary}}}
+.post-badge{{position:absolute;top:20px;right:20px;background:{primary};color:#fff;padding:6px 12px;border-radius:50px;font-size:.7rem;font-weight:700}}
+.post-content h2{{color:#fff;font-size:1.8rem;font-weight:800;margin-bottom:12px;text-shadow:0 2px 10px rgba(0,0,0,.5)}}
+.post-content p{{color:rgba(255,255,255,.9);font-size:1rem;margin-bottom:16px}}
+.post-footer{{display:flex;justify-content:space-between;align-items:center}}
+.post-url{{color:rgba(255,255,255,.8);font-size:.8rem;background:rgba(255,255,255,.15);padding:6px 12px;border-radius:50px}}
+.post-cta{{background:#fff;color:{primary};padding:8px 16px;border-radius:50px;font-weight:700;font-size:.8rem}}
+.controls{{margin-top:20px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center}}
+.controls select,.controls input{{padding:10px 14px;border-radius:8px;border:1px solid #475569;background:#334155;color:#fff;font-size:.85rem}}
+.controls button{{padding:10px 20px;border-radius:8px;border:none;background:#7c3aed;color:#fff;font-weight:700;cursor:pointer;font-size:.85rem}}
+.controls button:hover{{background:#6d28d9}}
+.download-btn{{background:#059669!important}}.download-btn:hover{{background:#047857!important}}
+.tip{{color:#94a3b8;font-size:.75rem;margin-top:12px;text-align:center}}
 </style></head><body>
-<div class="container">
-<div class="post">
-<h1>{post.get('headline','')}</h1>
-<p>{post.get('subtext','')}</p>
-{'<div class="offer">' + post.get('offer','') + '</div>' if post.get('offer') else ''}
-<div class="brand">{post['business_name']} | {post.get('phone','')}</div>
+<div class="post-container">
+<div class="post" id="socialPost">
+<div class="post-overlay">
+<div class="post-brand">{business_name}</div>
+<div class="post-badge">{platform.upper()}</div>
+<div class="post-content">
+<h2 id="postText">{tagline}</h2>
+<p id="postSub">\U0001f4cd {site_url} | \U0001f4de {phone}</p>
+<div class="post-footer">
+<span class="post-url">{site_url}</span>
+<span class="post-cta">Visit Now \u2192</span>
 </div>
-<div class="caption">{post.get('caption','')}<div class="hashtags">{' '.join(['#'+h for h in post.get('hashtags',[])])}</div></div>
-</div></body></html>"""
+</div>
+</div>
+</div>
+</div>
+<div class="controls">
+<select onchange="changePurpose(this.value)">
+<option value="promotion">Promotion</option>
+<option value="offer">Special Offer</option>
+<option value="festive">Festive</option>
+<option value="new">New Arrival</option>
+</select>
+<input type="text" id="customText" placeholder="Custom text..." style="flex:1;min-width:150px">
+<button onclick="applyCustom()">Apply</button>
+<button class="download-btn" onclick="downloadPost()">\u2b07 Download</button>
+</div>
+<p class="tip">Right-click the image to save, or use the Download button. Works best on desktop.</p>
+<script>
+function changePurpose(p){{
+const texts={{promotion:"Visit us today! Best {category} services in town.",offer:"Special offer! Limited time deal at {business_name}.",festive:"Celebrate with {business_name}! Festive special offers.",new:"Something new at {business_name}! Come check it out."}};
+document.getElementById('postText').textContent=texts[p]||texts.promotion;
+}}
+function applyCustom(){{
+const t=document.getElementById('customText').value;
+if(t)document.getElementById('postText').textContent=t;
+}}
+function downloadPost(){{
+const el=document.getElementById('socialPost');
+// Use html2canvas if available, otherwise prompt screenshot
+const s=document.createElement('script');
+s.src='https://html2canvas.hertzen.com/dist/html2canvas.min.js';
+s.onload=function(){{
+html2canvas(el,{{useCORS:true,scale:2}}).then(canvas=>{{
+const a=document.createElement('a');
+a.download='{business_name.replace(" ","-")}-post.png';
+a.href=canvas.toDataURL();
+a.click();
+}});
+}};
+document.head.appendChild(s);
+}}
+</script>
+</body></html>"""
     return HTMLResponse(content=html)
 
 
