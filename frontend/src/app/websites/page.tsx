@@ -102,7 +102,7 @@ export default function WebsitesPage() {
                     <div className="flex-1 min-w-0">
                       <h3 className="font-semibold text-sm truncate">{site.business_name || "Untitled"}</h3>
                       <p className="text-xs text-gray-500 capitalize">{site.category || site.template}</p>
-                      {site.slug && <p className="text-xs text-purple-500 truncate">city-maps.online/{site.slug}</p>}
+                      {site.slug && <p className="text-xs text-purple-500 truncate">{site.slug}.city-maps.online</p>}
                     </div>
                     <span className={`px-2 py-0.5 rounded-full text-xs flex-shrink-0 ml-2 ${STATUS_COLORS[site.status] || "bg-gray-100 text-gray-600"}`}>
                       {site.status}
@@ -126,7 +126,7 @@ export default function WebsitesPage() {
                   {/* Actions */}
                   <div className="flex gap-2">
                     <a
-                      href={site.slug ? `https://city-maps.online/${site.slug}` : `${API_BASE}/api/preview/${site.id}`}
+                      href={site.slug ? `https://${site.slug}.city-maps.online` : `${API_BASE}/api/preview/${site.id}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-primary text-white text-xs font-medium rounded-lg hover:bg-primary-dark transition"
