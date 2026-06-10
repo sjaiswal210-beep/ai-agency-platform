@@ -465,8 +465,8 @@ def generate_html(content: dict, template: str, lead: dict = None) -> str:
     if lead:
         real_photos = _get_real_photos(lead.get("business_name", ""), lead.get("address", ""))
     images = get_images_for_category(category)
-    hero_img = images["hero"]
-    about_img = images["about"]
+    hero_img = real_photos[0] if real_photos else f"https://source.unsplash.com/1400x800/?{category}"
+    about_img = real_photos[1] if len(real_photos) > 1 else f"https://source.unsplash.com/800x600/?{category},professional"
     gallery = images["gallery"]
 
     phone = contact.get("phone", lead.get("phone", "") if lead else "")
