@@ -38,6 +38,7 @@ from app.api.routes.agent_status import router as agent_status_router
 from app.api.routes.admin_panel import router as admin_panel_router
 from app.api.routes.locations import router as locations_router
 from app.api.routes.ecommerce import router as ecommerce_router
+from app.api.routes.google_profile import router as google_profile_router
 from app.api.routes.sitemap import router as sitemap_router
 from app.automation.scheduler import start_scheduler, stop_scheduler
 from app.core.logging import setup_logging
@@ -141,6 +142,7 @@ app.include_router(agent_status_router, prefix="/api")
 app.include_router(admin_panel_router, prefix="/api")
 app.include_router(locations_router, prefix="/api")
 app.include_router(ecommerce_router, prefix="/api")
+app.include_router(google_profile_router, prefix="/api")
 app.include_router(sitemap_router, prefix="")
 
 
