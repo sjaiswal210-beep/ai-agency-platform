@@ -144,11 +144,6 @@ app.include_router(ecommerce_router, prefix="/api")
 app.include_router(sitemap_router, prefix="")
 
 
-static_dir = os.path.join(os.path.dirname(__file__), "..", "static", "videos")
-os.makedirs(static_dir, exist_ok=True)
-app.mount("/static/videos", StaticFiles(directory=static_dir), name="videos")
-
-
 @app.get("/", response_class=HTMLResponse)
 def landing_page():
     """Landing page for city-maps.online"""
@@ -170,6 +165,14 @@ def landing_page():
 <a href="https://ai-agency-platform-blush.vercel.app" class="btn">Admin Dashboard &rarr;</a>
 </div></body></html>"""
     return HTMLResponse(content=html)
+
+
+static_dir = os.path.join(os.path.dirname(__file__), "..", "static", "videos")
+os.makedirs(static_dir, exist_ok=True)
+app.mount("/static/videos", StaticFiles(directory=static_dir), name="videos")
+
+
+
 
 
 @app.get("/health")
