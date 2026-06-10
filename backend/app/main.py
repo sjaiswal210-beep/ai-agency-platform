@@ -149,6 +149,29 @@ os.makedirs(static_dir, exist_ok=True)
 app.mount("/static/videos", StaticFiles(directory=static_dir), name="videos")
 
 
+@app.get("/", response_class=HTMLResponse)
+def landing_page():
+    """Landing page for city-maps.online"""
+    from app.core.supabase import get_supabase
+    db = get_supabase()
+    sites = db.table("websites").select("slug, lead_id", count="exact").not_.is_("slug", "null").execute()
+    count = sites.count or 0
+    
+    html = f"""<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>City Maps - AI Websites for Local Businesses</title>
+<style>*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:system-ui,sans-serif;background:#0f172a;color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px}}
+.hero{{max-width:600px}}.hero h1{{font-size:clamp(2rem,5vw,3.5rem);font-weight:900;margin-bottom:16px;background:linear-gradient(135deg,#7c3aed,#a78bfa,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent}}
+.hero p{{color:#94a3b8;font-size:1.1rem;margin-bottom:24px}}.stat{{font-size:3rem;font-weight:900;color:#7c3aed;margin-bottom:8px}}.sub{{font-size:.85rem;color:#64748b}}
+.btn{{display:inline-block;background:linear-gradient(135deg,#7c3aed,#a78bfa);color:#fff;padding:14px 28px;border-radius:50px;text-decoration:none;font-weight:700;margin-top:20px;transition:transform .2s}}.btn:hover{{transform:scale(1.05)}}
+</style></head><body><div class="hero">
+<div class="stat">{count}+</div><div class="sub">Businesses Online</div>
+<h1>AI-Powered Websites for Local Businesses</h1>
+<p>We create premium websites for local businesses automatically. Your business gets discovered, generates leads, and grows - all on autopilot.</p>
+<a href="https://ai-agency-platform-blush.vercel.app" class="btn">Admin Dashboard &rarr;</a>
+</div></body></html>"""
+    return HTMLResponse(content=html)
+
+
 @app.get("/health")
 def health():
     return {"status": "ok", "service": "ai-agency-platform"}
