@@ -338,15 +338,15 @@ def _get_design_css(category: str) -> str:
     
     # Restaurant / Cafe / Food - warm, inviting, curved
     if any(k in cat for k in ["restaurant", "food", "cafe", "bakery", "pizza", "dhaba"]):
-        return """body{background:#fffbf5}.sec-alt,.sec-tint,.section-alt{background:#fff8f0!important}.section-header h2,.sec-head h2,.about-text h2,.hero h1{font-family:'Playfair Display',serif!important}.service-card{border-radius:24px!important;overflow:hidden}.service-img{height:220px!important}.feature-item{background:#fff8f0!important;border-color:#f0e6d8!important}.stats-section{background:linear-gradient(135deg,#dc2626,#ea580c)!important}"""
+        return """body{background:#fffbf5}.sec-alt,.sec-tint,.section-alt{background:#fff8f0!important}.section-header h2,.sec-head h2,.about-text h2,.hero h1{font-family:'Playfair Display',serif!important}.service-card{border-radius:24px!important;overflow:hidden}.service-img{height:220px!important}.feature-item{background:#fff8f0!important;border-color:#f0e6d8!important}.stats-section::before{background:rgba(15,23,42,.8)!important}"""
     
     # Medical / Dental / Clinic - clean, minimal, trust
     if any(k in cat for k in ["clinic", "dentist", "doctor", "hospital", "medical", "health"]):
-        return """body{background:#fff}.sec-alt,.sec-tint,.section-alt{background:#f0f9ff!important}.service-card{border-left:4px solid var(--p)!important;border-radius:4px 16px 16px 4px!important}.feature-item{border-radius:12px!important;border-left:3px solid var(--p)!important}.stats-section{background:linear-gradient(135deg,#0284c7,#0ea5e9)!important}.hero::after{display:none}"""
+        return """body{background:#fff}.sec-alt,.sec-tint,.section-alt{background:#f0f9ff!important}.service-card{border-left:4px solid var(--p)!important;border-radius:4px 16px 16px 4px!important}.feature-item{border-radius:12px!important;border-left:3px solid var(--p)!important}.hero::after{display:none}"""
     
     # Hotel / Resort - luxury, serif headings, wide
     if any(k in cat for k in ["hotel", "resort", "lodge"]):
-        return """.hero h1,.section-header h2,.sec-head h2,.about-text h2{font-family:'Playfair Display',serif!important;letter-spacing:-.03em}.service-card{border-radius:4px!important}.service-img{height:240px!important}.feature-item{border-radius:4px!important;border-bottom:2px solid var(--p)!important;border-left:none!important}.stats-section{background:linear-gradient(135deg,#1e1b4b,#312e81)!important}"""
+        return """.hero h1,.section-header h2,.sec-head h2,.about-text h2{font-family:'Playfair Display',serif!important;letter-spacing:-.03em}.service-card{border-radius:4px!important}.service-img{height:240px!important}.feature-item{border-radius:4px!important;border-bottom:2px solid var(--p)!important;border-left:none!important}"""
     
     # Store / Retail / Shopping - product-focused, grid, modern
     if any(k in cat for k in ["store", "shop", "retail", "cloth", "fashion", "boot", "shoe"]):
@@ -354,7 +354,7 @@ def _get_design_css(category: str) -> str:
     
     # School / Education - colorful, friendly, rounded
     if any(k in cat for k in ["school", "coaching", "academy", "institute", "tuition"]):
-        return """.service-card,.feature-item,.testimonial-card{border-radius:24px!important}.feature-icon{border-radius:50%!important;width:60px!important;height:60px!important}.stats-section{background:linear-gradient(135deg,#7c3aed,#ec4899)!important;border-radius:24px;margin:0 16px}.hero::after{background:linear-gradient(90deg,#7c3aed,#ec4899,#f59e0b)!important}"""
+        return """.service-card,.feature-item,.testimonial-card{border-radius:24px!important}.feature-icon{border-radius:50%!important;width:60px!important;height:60px!important}.hero::after{background:linear-gradient(90deg,#7c3aed,#ec4899,#f59e0b)!important}"""
     
     # Photographer / Creative - minimal, image-focused
     if any(k in cat for k in ["photo", "photographer", "studio", "video", "creative"]):
@@ -362,11 +362,11 @@ def _get_design_css(category: str) -> str:
     
     # Solar / Energy - eco, green accents
     if any(k in cat for k in ["solar", "energy", "electric", "power"]):
-        return """.stats-section{background:linear-gradient(135deg,#059669,#10b981)!important}.feature-item{border-radius:16px!important;border:2px solid #d1fae5!important;background:#f0fdf4!important}.hero::after{background:linear-gradient(90deg,#059669,#10b981,#34d399)!important}"""
+        return """.feature-item{border-radius:16px!important;border:2px solid #d1fae5!important;background:#f0fdf4!important}.hero::after{background:linear-gradient(90deg,#059669,#10b981,#34d399)!important}"""
     
     # Lawyer / Professional - authoritative, sharp
     if any(k in cat for k in ["lawyer", "advocate", "legal", "consultant", "accountant"]):
-        return """.hero h1,.section-header h2{font-family:'Playfair Display',serif!important}.service-card{border-radius:4px!important;border-top:3px solid var(--p)!important}.feature-item{border-radius:4px!important}.stats-section{background:linear-gradient(135deg,#1e293b,#334155)!important}"""
+        return """.hero h1,.section-header h2{font-family:'Playfair Display',serif!important}.service-card{border-radius:4px!important;border-top:3px solid var(--p)!important}.feature-item{border-radius:4px!important}"""
     
     # Default professional
     return ""
@@ -671,7 +671,7 @@ a{{text-decoration:none;color:inherit}}
 .hero-badge{{display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);padding:8px 16px;border-radius:50px;font-size:.85rem;margin-bottom:24px;backdrop-filter:blur(4px)}}
 
 /* STATS */
-.stats-section{{background:linear-gradient(135deg,var(--p),var(--ps));padding:48px 24px;position:relative;overflow:hidden}}.stats-section::before{{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 70% 20%,rgba(255,255,255,.12),transparent 55%)}}
+.stats-section{{background:url('https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&h=300&fit=crop') center/cover;padding:52px 24px;position:relative;overflow:hidden}}.stats-section::before{{content:'';position:absolute;inset:0;background:rgba(15,23,42,.75);backdrop-filter:blur(2px)}}.stats-section::before{{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 70% 20%,rgba(255,255,255,.12),transparent 55%)}}
 .stats-grid{{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:16px;max-width:1000px;margin:0 auto;text-align:center}}.stat-item{{color:#fff}}.stat-number{{font-size:clamp(1.8rem,3.5vw,2.6rem);font-weight:800}}.stat-label{{font-size:.82rem;opacity:.75;margin-top:4px;font-weight:500}}
 
 /* SECTIONS */
