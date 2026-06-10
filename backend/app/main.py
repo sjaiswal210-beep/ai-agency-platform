@@ -284,6 +284,11 @@ a{text-decoration:none;color:inherit}
 <button onclick="searchBiz()">Search</button>
 </div>
 <div id="searchResult"></div>
+<div style="margin-top:40px;display:flex;justify-content:center;gap:16px;flex-wrap:wrap" data-aos="fade-up" data-aos-delay="350">
+<img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=280&h=180&fit=crop" style="border-radius:14px;border:1px solid rgba(255,255,255,.1);box-shadow:0 10px 30px rgba(0,0,0,.3)" alt="Store">
+<img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=280&h=180&fit=crop" style="border-radius:14px;border:1px solid rgba(255,255,255,.1);box-shadow:0 10px 30px rgba(0,0,0,.3)" alt="Salon">
+<img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=280&h=180&fit=crop" style="border-radius:14px;border:1px solid rgba(255,255,255,.1);box-shadow:0 10px 30px rgba(0,0,0,.3)" alt="Restaurant">
+</div>
 <div class="stats-row" data-aos="fade-up" data-aos-delay="400">
 <div class="stat-pill"><div class="num">""" + str(count) + """+</div><div class="lbl">Websites Live</div></div>
 <div class="stat-pill"><div class="num">9</div><div class="lbl">Languages</div></div>
@@ -300,12 +305,12 @@ a{text-decoration:none;color:inherit}
 <p class="sec-sub" style="margin:0 auto">Every tool designed to get you more calls, walk-ins, and revenue</p>
 </div>
 <div class="f-grid">
-<div class="f-card" data-aos="fade-up"><div class="ic">&#127760;</div><h3>Your Own Website</h3><p>Customers find you on Google, see services, photos, reviews. Contact you instantly. Works on every phone.</p></div>
-<div class="f-card" data-aos="fade-up" data-aos-delay="60"><div class="ic">&#128222;</div><h3>More Phone Calls</h3><p>Click-to-call on every page. See how many people call from your website each day in your dashboard.</p></div>
-<div class="f-card" data-aos="fade-up" data-aos-delay="120"><div class="ic">&#128172;</div><h3>WhatsApp Enquiries</h3><p>One-tap WhatsApp with pre-filled message. Customers don't need to save your number or type anything.</p></div>
-<div class="f-card" data-aos="fade-up" data-aos-delay="180"><div class="ic">&#11088;</div><h3>More Google Reviews</h3><p>Ready messages to send happy customers asking for reviews. More reviews = higher Google ranking.</p></div>
-<div class="f-card" data-aos="fade-up" data-aos-delay="240"><div class="ic">&#128247;</div><h3>Social Media Posts</h3><p>Download beautiful Instagram and WhatsApp status posts with your business name. No designer needed.</p></div>
-<div class="f-card" data-aos="fade-up" data-aos-delay="300"><div class="ic">&#128722;</div><h3>Product Catalog</h3><p>Show products with prices. Customer clicks Buy Now, WhatsApp opens with their order. Simple selling.</p></div>
+<div class="f-card" data-aos="fade-up"><img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=160&fit=crop" style="width:100%;height:120px;object-fit:cover;border-radius:12px;margin-bottom:14px;opacity:.85"><h3>Your Own Website</h3><p>Customers find you on Google, see services, photos, reviews. Contact you instantly. Works on every phone.</p></div>
+<div class="f-card" data-aos="fade-up" data-aos-delay="60"><img src="https://images.unsplash.com/photo-1423666639041-f56000c27a9a?w=400&h=160&fit=crop" style="width:100%;height:120px;object-fit:cover;border-radius:12px;margin-bottom:14px;opacity:.85"><h3>More Phone Calls</h3><p>Click-to-call on every page. See how many people call from your website each day in your dashboard.</p></div>
+<div class="f-card" data-aos="fade-up" data-aos-delay="120"><img src="https://images.unsplash.com/photo-1611746872915-64382b5c76da?w=400&h=160&fit=crop" style="width:100%;height:120px;object-fit:cover;border-radius:12px;margin-bottom:14px;opacity:.85"><h3>WhatsApp Enquiries</h3><p>One-tap WhatsApp with pre-filled message. Customers don't need to save your number or type anything.</p></div>
+<div class="f-card" data-aos="fade-up" data-aos-delay="180"><img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=160&fit=crop" style="width:100%;height:120px;object-fit:cover;border-radius:12px;margin-bottom:14px;opacity:.85"><h3>More Google Reviews</h3><p>Ready messages to send happy customers asking for reviews. More reviews = higher Google ranking.</p></div>
+<div class="f-card" data-aos="fade-up" data-aos-delay="240"><img src="https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?w=400&h=160&fit=crop" style="width:100%;height:120px;object-fit:cover;border-radius:12px;margin-bottom:14px;opacity:.85"><h3>Social Media Posts</h3><p>Download beautiful Instagram and WhatsApp status posts with your business name. No designer needed.</p></div>
+<div class="f-card" data-aos="fade-up" data-aos-delay="300"><img src="https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=400&h=160&fit=crop" style="width:100%;height:120px;object-fit:cover;border-radius:12px;margin-bottom:14px;opacity:.85"><h3>Product Catalog</h3><p>Show products with prices. Customer clicks Buy Now, WhatsApp opens with their order. Simple selling.</p></div>
 </div>
 </div>
 </section>
@@ -322,6 +327,18 @@ a{text-decoration:none;color:inherit}
 </div>
 </section>
 
+<section style="padding:60px 24px;text-align:center">
+<p style="font-size:.72rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.1em;margin-bottom:16px">Trusted by businesses in</p>
+<div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;max-width:700px;margin:0 auto">
+<span style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);padding:8px 18px;border-radius:50px;font-size:.82rem;color:#94a3b8">Pune</span>
+<span style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);padding:8px 18px;border-radius:50px;font-size:.82rem;color:#94a3b8">Mumbai</span>
+<span style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);padding:8px 18px;border-radius:50px;font-size:.82rem;color:#94a3b8">Bangalore</span>
+<span style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);padding:8px 18px;border-radius:50px;font-size:.82rem;color:#94a3b8">Delhi</span>
+<span style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);padding:8px 18px;border-radius:50px;font-size:.82rem;color:#94a3b8">Hyderabad</span>
+<span style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);padding:8px 18px;border-radius:50px;font-size:.82rem;color:#94a3b8">Chennai</span>
+<span style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);padding:8px 18px;border-radius:50px;font-size:.82rem;color:#94a3b8">Nashik</span>
+</div>
+</section>
 <section class="pricing" id="pricing" style="position:relative">
 <div class="container">
 <div style="text-align:center" data-aos="fade-up"><span class="tag">&#128176; Simple Pricing</span><h2 class="sec-title" style="margin-top:12px">&#9749; Chai se bhi kam</h2></div>
