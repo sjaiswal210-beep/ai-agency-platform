@@ -148,7 +148,7 @@ app.include_router(sitemap_router, prefix="")
 
 @app.get("/", response_class=HTMLResponse)
 def landing_page():
-    """City Maps premium landing page."""
+    """City Maps premium landing page with visuals."""
     from app.core.supabase import get_supabase
     db = get_supabase()
     try:
@@ -160,170 +160,189 @@ def landing_page():
     html = """<!DOCTYPE html><html lang="en"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>City Maps - Premium Websites for Local Businesses</title>
-<meta name="description" content="City Maps helps local businesses grow online with professional websites, lead management, and digital marketing tools.">
+<meta name="description" content="Professional websites for local businesses. Get discovered online, attract customers, grow your revenue. Starting at Rs.69/month.">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Plus Jakarta Sans',sans-serif;color:#0f172a;background:#fff;overflow-x:hidden}
-a{text-decoration:none}
+a{text-decoration:none;color:inherit}
+.container{max-width:1100px;margin:0 auto;padding:0 24px}
 
-/* NAV */
 .nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 32px;display:flex;align-items:center;justify-content:space-between;transition:all .3s}
-.nav.scrolled{background:rgba(255,255,255,.9);backdrop-filter:blur(20px);box-shadow:0 1px 0 rgba(0,0,0,.05)}
-.nav-brand{font-weight:900;font-size:1.2rem;color:#0f172a;display:flex;align-items:center;gap:8px}
-.nav-brand span{background:linear-gradient(135deg,#7c3aed,#2563eb);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.nav-btn{background:#0f172a;color:#fff;padding:10px 20px;border-radius:50px;font-weight:700;font-size:.82rem;transition:transform .2s}
-.nav-btn:hover{transform:scale(1.05)}
+.nav.solid{background:rgba(255,255,255,.92);backdrop-filter:blur(20px);box-shadow:0 1px 0 rgba(0,0,0,.05)}
+.nav-brand{font-weight:900;font-size:1.15rem;background:linear-gradient(135deg,#7c3aed,#2563eb);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-links{display:flex;gap:24px;font-size:.88rem;font-weight:500;color:#64748b}
+.nav-links a:hover{color:#7c3aed}
+.nav-btn{background:#0f172a;color:#fff;padding:10px 20px;border-radius:50px;font-weight:700;font-size:.82rem}
 
 /* HERO */
-.hero{min-height:100vh;display:flex;align-items:center;position:relative;overflow:hidden;padding:100px 24px}
-.hero-bg{position:absolute;inset:0;background:linear-gradient(135deg,#f8fafc 0%,#ede9fe 30%,#dbeafe 70%,#f0fdf4 100%)}
-.hero-grid{position:absolute;inset:0;background-image:radial-gradient(circle at 1px 1px,rgba(124,58,237,.07) 1px,transparent 0);background-size:40px 40px}
-.hero-orb1{position:absolute;top:10%;right:10%;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,.15),transparent 70%);filter:blur(40px);animation:float 8s ease-in-out infinite}
-.hero-orb2{position:absolute;bottom:10%;left:5%;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(37,99,235,.12),transparent 70%);filter:blur(30px);animation:float 6s ease-in-out infinite reverse}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-30px)}}
-.hero-content{position:relative;z-index:2;max-width:700px;margin:0 auto;text-align:center}
-.hero-pill{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid #e2e8f0;padding:8px 16px;border-radius:50px;font-size:.8rem;font-weight:600;color:#64748b;margin-bottom:24px;box-shadow:0 4px 12px rgba(0,0,0,.04)}
-.hero-pill .dot{width:8px;height:8px;border-radius:50%;background:#10b981;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.hero h1{font-size:clamp(2.4rem,6vw,4rem);font-weight:900;line-height:1.1;margin-bottom:20px;letter-spacing:-.03em}
-.hero h1 .gradient{background:linear-gradient(135deg,#7c3aed,#2563eb,#0ea5e9);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hero .lead{font-size:clamp(1rem,2vw,1.2rem);color:#64748b;max-width:550px;margin:0 auto 32px;line-height:1.7}
-.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:14px;font-weight:700;font-size:.95rem;transition:all .25s}
-.btn-primary{background:#0f172a;color:#fff;box-shadow:0 10px 30px rgba(15,23,42,.2)}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(15,23,42,.3)}
-.btn-secondary{background:#fff;color:#0f172a;border:1.5px solid #e2e8f0;box-shadow:0 4px 12px rgba(0,0,0,.04)}
-.btn-secondary:hover{border-color:#7c3aed;color:#7c3aed}
-.hero-stat{margin-top:40px;display:flex;gap:32px;justify-content:center}
-.hero-stat div{text-align:center}
-.hero-stat .num{font-size:1.8rem;font-weight:900;color:#0f172a}
-.hero-stat .lbl{font-size:.75rem;color:#94a3b8;font-weight:500}
+.hero{min-height:100vh;display:flex;align-items:center;position:relative;overflow:hidden;padding:100px 24px 60px}
+.hero-bg{position:absolute;inset:0;background:linear-gradient(160deg,#fafafa 0%,#ede9fe 25%,#dbeafe 50%,#f0fdf4 75%,#fefce8 100%)}
+.hero-mesh{position:absolute;inset:0;background-image:radial-gradient(circle at 1px 1px,rgba(99,102,241,.05) 1px,transparent 0);background-size:32px 32px}
+.hero-glow{position:absolute;top:-100px;right:-100px;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,.12),transparent 65%);animation:glow 10s ease-in-out infinite alternate}
+.hero-glow2{position:absolute;bottom:-150px;left:-50px;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(37,99,235,.1),transparent 65%);animation:glow 8s ease-in-out infinite alternate-reverse}
+@keyframes glow{0%{transform:scale(1) translate(0,0)}100%{transform:scale(1.1) translate(20px,-20px)}}
 
-/* 3D CARDS SECTION */
-.features{padding:100px 24px;background:#fff}
-.features-head{text-align:center;max-width:600px;margin:0 auto 56px}
-.features-head .tag{display:inline-block;background:#f0fdf4;color:#059669;font-size:.72rem;font-weight:700;padding:6px 14px;border-radius:50px;margin-bottom:14px;letter-spacing:.05em;text-transform:uppercase}
-.features-head h2{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:900;margin-bottom:12px}
-.features-head p{color:#64748b;font-size:1rem}
-.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:1000px;margin:0 auto;perspective:1000px}
-.f-card{background:#fff;border:1px solid #f1f5f9;border-radius:20px;padding:28px;transition:all .4s cubic-bezier(.16,1,.3,1);transform-style:preserve-3d}
-.f-card:hover{transform:translateY(-8px) rotateX(2deg) rotateY(-2deg);box-shadow:0 30px 60px rgba(124,58,237,.1);border-color:#ede9fe}
-.f-card .icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:16px}
-.f-card h3{font-size:1rem;font-weight:700;margin-bottom:8px}
-.f-card p{font-size:.85rem;color:#64748b;line-height:1.6}
+.hero-inner{position:relative;z-index:2;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;max-width:1100px;margin:0 auto}
+.hero-text .pill{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid #e2e8f0;padding:7px 14px;border-radius:50px;font-size:.78rem;font-weight:600;color:#64748b;box-shadow:0 2px 8px rgba(0,0,0,.03);margin-bottom:20px}
+.hero-text .pill .dot{width:7px;height:7px;border-radius:50%;background:#10b981;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.hero-text h1{font-size:clamp(2.2rem,5vw,3.6rem);font-weight:900;line-height:1.08;margin-bottom:18px;letter-spacing:-.03em}
+.hero-text h1 .grad{background:linear-gradient(135deg,#7c3aed,#2563eb);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-text p{font-size:1.05rem;color:#64748b;line-height:1.7;margin-bottom:28px;max-width:480px}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 26px;border-radius:12px;font-weight:700;font-size:.92rem;transition:all .25s}
+.btn-dark{background:#0f172a;color:#fff;box-shadow:0 8px 24px rgba(15,23,42,.18)}.btn-dark:hover{transform:translateY(-2px);box-shadow:0 14px 32px rgba(15,23,42,.25)}
+.btn-outline{border:1.5px solid #e2e8f0;color:#0f172a;background:#fff}.btn-outline:hover{border-color:#7c3aed;color:#7c3aed}
+
+.hero-visual{position:relative}
+.hero-mockup{width:100%;border-radius:16px;box-shadow:0 40px 80px rgba(15,23,42,.15);border:1px solid rgba(255,255,255,.8)}
+.hero-float{position:absolute;background:#fff;border-radius:12px;padding:12px 16px;box-shadow:0 12px 32px rgba(0,0,0,.1);font-size:.8rem;font-weight:600;animation:floaty 4s ease-in-out infinite}
+.hero-float.f1{top:20%;right:-20px;animation-delay:0s}.hero-float.f2{bottom:20%;left:-20px;animation-delay:1s}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+
+/* LOGOS */
+.logos{padding:40px 24px;background:#f8fafc;border-top:1px solid #f1f5f9;border-bottom:1px solid #f1f5f9}
+.logos-inner{display:flex;align-items:center;justify-content:center;gap:32px;flex-wrap:wrap;opacity:.6}
+.logos-inner span{font-size:.85rem;font-weight:700;color:#94a3b8}
+
+/* FEATURES */
+.features{padding:100px 24px}
+.sec-head{text-align:center;max-width:550px;margin:0 auto 52px}
+.sec-head .tag{display:inline-block;background:#f0fdf4;color:#059669;font-size:.7rem;font-weight:700;padding:5px 12px;border-radius:50px;margin-bottom:12px;letter-spacing:.08em;text-transform:uppercase}
+.sec-head h2{font-size:clamp(1.8rem,4vw,2.5rem);font-weight:900;margin-bottom:10px}
+.sec-head p{color:#64748b;font-size:.98rem}
+.f-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:1000px;margin:0 auto}
+.f-card{background:#fff;border:1px solid #f1f5f9;border-radius:18px;padding:28px 24px;transition:all .35s;position:relative;overflow:hidden}
+.f-card:hover{transform:translateY(-6px);box-shadow:0 20px 50px rgba(124,58,237,.08);border-color:#ede9fe}
+.f-card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#7c3aed,#2563eb);transform:scaleX(0);transition:transform .3s;transform-origin:left}.f-card:hover::after{transform:scaleX(1)}
+.f-card .ic{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin-bottom:14px}
+.f-card h3{font-size:.98rem;font-weight:700;margin-bottom:6px}
+.f-card p{font-size:.84rem;color:#64748b;line-height:1.6}
+
+/* SHOWCASE */
+.showcase{padding:80px 24px;background:linear-gradient(180deg,#f8fafc,#fff)}
+.showcase-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:900px;margin:0 auto}
+.showcase-item{border-radius:12px;overflow:hidden;aspect-ratio:9/16;position:relative;box-shadow:0 10px 30px rgba(0,0,0,.1)}
+.showcase-item img{width:100%;height:100%;object-fit:cover}
+.showcase-item .label{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(0,0,0,.7),transparent);color:#fff;padding:16px;font-size:.8rem;font-weight:600}
 
 /* PRICING */
-.pricing{padding:100px 24px;background:linear-gradient(180deg,#f8fafc,#fff)}
-.pricing-head{text-align:center;max-width:500px;margin:0 auto 48px}
-.pricing-head h2{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:900;margin-bottom:12px}
-.price-card{max-width:400px;margin:0 auto;background:#fff;border:2px solid #7c3aed;border-radius:24px;padding:40px 32px;text-align:center;box-shadow:0 20px 60px rgba(124,58,237,.12);position:relative;overflow:hidden}
-.price-card::before{content:'';position:absolute;top:-2px;left:-2px;right:-2px;height:6px;background:linear-gradient(90deg,#7c3aed,#2563eb,#0ea5e9);border-radius:24px 24px 0 0}
-.price-card h3{font-size:1.1rem;font-weight:700;margin-bottom:4px}
-.price-card .amt{font-size:3rem;font-weight:900;color:#7c3aed;margin:12px 0}.price-card .amt small{font-size:1rem;color:#94a3b8;font-weight:500}
-.price-card .perday{font-size:.82rem;color:#64748b;margin-bottom:20px}
-.price-list{text-align:left;margin-bottom:24px}
-.price-list .item{display:flex;align-items:center;gap:10px;padding:8px 0;font-size:.9rem;font-weight:500}
-.price-list .item::before{content:'\2713';color:#059669;font-weight:800;font-size:.85rem}
-.price-cta{display:block;background:#0f172a;color:#fff;padding:16px;border-radius:14px;font-weight:700;font-size:1rem;transition:transform .2s}
-.price-cta:hover{transform:scale(1.02)}
+.pricing{padding:100px 24px;background:#0f172a;color:#fff}
+.pricing .sec-head p{color:#94a3b8}
+.pricing .sec-head h2{color:#fff}
+.p-card{max-width:380px;margin:0 auto;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:36px;text-align:center;position:relative;overflow:hidden}
+.p-card::before{content:'POPULAR';position:absolute;top:16px;right:-28px;background:#7c3aed;color:#fff;font-size:.65rem;font-weight:700;padding:4px 32px;transform:rotate(45deg)}
+.p-card h3{font-size:1.1rem;font-weight:700;margin-bottom:8px}
+.p-card .price{font-size:3rem;font-weight:900;margin:12px 0}.p-card .price small{font-size:1rem;color:#94a3b8;font-weight:400}
+.p-card .per{font-size:.82rem;color:#64748b;margin-bottom:20px}
+.p-list{text-align:left;margin-bottom:24px}.p-list .pi{display:flex;align-items:center;gap:10px;padding:8px 0;font-size:.88rem;color:#e2e8f0}.p-list .pi::before{content:'\2713';color:#10b981;font-weight:800}
+.p-cta{display:block;background:#fff;color:#0f172a;padding:14px;border-radius:12px;font-weight:800;font-size:.95rem;transition:transform .2s}.p-cta:hover{transform:scale(1.02)}
 
-/* HOW IT WORKS */
-.how{padding:100px 24px;background:#0f172a;color:#fff}
-.how-head{text-align:center;margin-bottom:56px}
-.how-head h2{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:900;margin-bottom:12px}
-.how-head p{color:#94a3b8}
-.how-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;max-width:900px;margin:0 auto}
-.how-step{text-align:center;position:relative}
-.how-step .num{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#2563eb);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;margin:0 auto 14px;font-size:1.1rem}
-.how-step h3{font-size:.95rem;font-weight:700;margin-bottom:6px}
-.how-step p{font-size:.8rem;color:#94a3b8}
+/* HOW */
+.how{padding:100px 24px}
+.how-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;max-width:900px;margin:0 auto}
+.how-step{text-align:center}.how-step .num{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#2563eb);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;margin:0 auto 12px;font-size:1rem}
+.how-step h3{font-size:.92rem;font-weight:700;margin-bottom:4px}.how-step p{font-size:.8rem;color:#64748b}
 
-/* FOOTER */
-.footer{padding:48px 24px;text-align:center;border-top:1px solid #f1f5f9}
-.footer h3{font-size:1.1rem;font-weight:800;margin-bottom:4px}
-.footer p{font-size:.82rem;color:#94a3b8}
+/* CTA */
+.cta-sec{padding:80px 24px;text-align:center;background:linear-gradient(135deg,#ede9fe,#dbeafe)}
+.cta-sec h2{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:900;margin-bottom:12px}
+.cta-sec p{color:#64748b;margin-bottom:24px;font-size:1rem}
 
-@media(max-width:768px){
-.features-grid{grid-template-columns:1fr;gap:14px}
-.how-grid{grid-template-columns:repeat(2,1fr);gap:16px}
-.hero-stat{gap:20px}
-.nav{padding:12px 16px}
-}
+.footer{padding:40px 24px;text-align:center;border-top:1px solid #f1f5f9}.footer h3{font-size:1rem;font-weight:800;margin-bottom:4px}.footer p{font-size:.8rem;color:#94a3b8}
+
+@media(max-width:768px){.hero-inner{grid-template-columns:1fr;text-align:center}.hero-text p{margin-left:auto;margin-right:auto}.hero-btns{justify-content:center}.hero-visual{display:none}.f-grid{grid-template-columns:1fr}.how-steps{grid-template-columns:repeat(2,1fr)}.showcase-grid{grid-template-columns:1fr}.nav-links{display:none}}
 </style></head><body>
 
 <nav class="nav" id="nav">
-<div class="nav-brand"><span>City Maps</span></div>
+<div class="nav-brand">City Maps</div>
+<div class="nav-links"><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="#how">How It Works</a></div>
 <a href="https://ai-agency-platform-blush.vercel.app" class="nav-btn">Dashboard</a>
 </nav>
 
 <section class="hero">
-<div class="hero-bg"></div>
-<div class="hero-grid"></div>
-<div class="hero-orb1"></div>
-<div class="hero-orb2"></div>
-<div class="hero-content">
-<div class="hero-pill"><span class="dot"></span>""" + str(count) + """+ businesses already online</div>
-<h1>Grow Your Business<br><span class="gradient">Online Effortlessly</span></h1>
-<p class="lead">Professional websites, lead management, customer reviews, and marketing tools. Everything local businesses need to get discovered and grow.</p>
+<div class="hero-bg"></div><div class="hero-mesh"></div><div class="hero-glow"></div><div class="hero-glow2"></div>
+<div class="hero-inner">
+<div class="hero-text" data-aos="fade-right">
+<div class="pill"><span class="dot"></span>""" + str(count) + """+ businesses trust us</div>
+<h1>Your Business<br>Deserves To Be<br><span class="grad">Found Online</span></h1>
+<p>Premium websites, lead management, and digital marketing tools for local businesses. Get discovered by customers searching near you.</p>
 <div class="hero-btns">
-<a href="https://ai-agency-platform-blush.vercel.app" class="btn btn-primary">Get Started Free &rarr;</a>
-<a href="https://ai-agency-platform-blush.vercel.app" class="btn btn-secondary">Find My Business</a>
-</div>
-<div class="hero-stat">
-<div><div class="num">""" + str(count) + """+</div><div class="lbl">Websites Created</div></div>
-<div><div class="num">9</div><div class="lbl">Languages</div></div>
-<div><div class="num">&#8377;69</div><div class="lbl">Per Month</div></div>
+<a href="https://ai-agency-platform-blush.vercel.app" class="btn btn-dark">Get Started Free &rarr;</a>
+<a href="https://ai-agency-platform-blush.vercel.app" class="btn btn-outline">Find My Business</a>
 </div>
 </div>
-</section>
-
-<section class="features">
-<div class="features-head">
-<span class="tag">&#10024; All-in-one Platform</span>
-<h2>Everything Your Business Needs</h2>
-<p>From websites to marketing, we handle your entire digital presence.</p>
+<div class="hero-visual" data-aos="fade-left">
+<img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&h=400&fit=crop" class="hero-mockup" alt="Dashboard">
+<div class="hero-float f1">&#128200; 340+ visitors this week</div>
+<div class="hero-float f2">&#128222; 12 new calls today</div>
 </div>
-<div class="features-grid">
-<div class="f-card"><div class="icon" style="background:#f0fdf4">&#127760;</div><h3>Professional Website</h3><p>Modern, mobile-first website at your-business.city-maps.online</p></div>
-<div class="f-card"><div class="icon" style="background:#ede9fe">&#128172;</div><h3>WhatsApp Integration</h3><p>One-click WhatsApp for instant customer contact</p></div>
-<div class="f-card"><div class="icon" style="background:#dbeafe">&#128200;</div><h3>Business Analytics</h3><p>Track visitors, calls, WhatsApp clicks, and leads</p></div>
-<div class="f-card"><div class="icon" style="background:#fef3c7">&#11088;</div><h3>Review Management</h3><p>Track and respond to customer reviews easily</p></div>
-<div class="f-card"><div class="icon" style="background:#fce7f3">&#128247;</div><h3>Social Content</h3><p>Ready-to-post content for Instagram and Facebook</p></div>
-<div class="f-card"><div class="icon" style="background:#ecfdf5">&#128722;</div><h3>Online Store</h3><p>Sell products via WhatsApp with a beautiful catalog</p></div>
 </div>
 </section>
 
-<section class="how">
-<div class="how-head">
-<h2>How It Works</h2>
-<p>Get online in under 5 minutes</p>
+<div class="logos">
+<div class="logos-inner"><span>Salons</span><span>&#8226;</span><span>Restaurants</span><span>&#8226;</span><span>Doctors</span><span>&#8226;</span><span>Gyms</span><span>&#8226;</span><span>Hotels</span><span>&#8226;</span><span>Stores</span><span>&#8226;</span><span>Schools</span><span>&#8226;</span><span>Photographers</span></div>
 </div>
-<div class="how-grid">
-<div class="how-step"><div class="num">1</div><h3>Find Business</h3><p>Search your business name</p></div>
-<div class="how-step"><div class="num">2</div><h3>Website Created</h3><p>Professional site built instantly</p></div>
-<div class="how-step"><div class="num">3</div><h3>Claim & Manage</h3><p>Take control of your dashboard</p></div>
-<div class="how-step"><div class="num">4</div><h3>Grow Online</h3><p>Get leads and customers</p></div>
+
+<section class="features" id="features">
+<div class="sec-head" data-aos="fade-up"><span class="tag">&#9889; Platform Features</span><h2>Everything to Grow Online</h2><p>One platform for your entire digital presence</p></div>
+<div class="f-grid">
+<div class="f-card" data-aos="fade-up"><div class="ic" style="background:#ede9fe">&#127760;</div><h3>Premium Website</h3><p>Mobile-first website at your-name.city-maps.online</p></div>
+<div class="f-card" data-aos="fade-up" data-aos-delay="80"><div class="ic" style="background:#dbeafe">&#128200;</div><h3>Live Analytics</h3><p>Track visitors, calls, WhatsApp clicks in real-time</p></div>
+<div class="f-card" data-aos="fade-up" data-aos-delay="160"><div class="ic" style="background:#f0fdf4">&#128172;</div><h3>WhatsApp Integration</h3><p>One-click contact. Never miss a customer enquiry</p></div>
+<div class="f-card" data-aos="fade-up" data-aos-delay="240"><div class="ic" style="background:#fef3c7">&#11088;</div><h3>Review Management</h3><p>Build trust with automated review responses</p></div>
+<div class="f-card" data-aos="fade-up" data-aos-delay="320"><div class="ic" style="background:#fce7f3">&#128247;</div><h3>Social Content</h3><p>Download-ready posts for Instagram and Facebook</p></div>
+<div class="f-card" data-aos="fade-up" data-aos-delay="400"><div class="ic" style="background:#ecfdf5">&#128722;</div><h3>WhatsApp Store</h3><p>Sell products directly through WhatsApp catalog</p></div>
 </div>
 </section>
 
-<section class="pricing">
-<div class="pricing-head"><h2>Simple, Transparent Pricing</h2></div>
-<div class="price-card">
+<section class="showcase">
+<div class="sec-head" data-aos="fade-up"><span class="tag">&#127912; Beautiful Designs</span><h2>Websites That Convert</h2><p>Premium designs for every business type</p></div>
+<div class="showcase-grid">
+<div class="showcase-item" data-aos="fade-up"><img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400&h=700&fit=crop" alt="Salon"><div class="label">Salon Website</div></div>
+<div class="showcase-item" data-aos="fade-up" data-aos-delay="100"><img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&h=700&fit=crop" alt="Restaurant"><div class="label">Restaurant Website</div></div>
+<div class="showcase-item" data-aos="fade-up" data-aos-delay="200"><img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=700&fit=crop" alt="Gym"><div class="label">Gym Website</div></div>
+</div>
+</section>
+
+<section class="how" id="how">
+<div class="sec-head" data-aos="fade-up"><span class="tag">&#128640; Quick Setup</span><h2>Online in 5 Minutes</h2></div>
+<div class="how-steps">
+<div class="how-step" data-aos="fade-up"><div class="num">1</div><h3>Find Business</h3><p>Search your business name</p></div>
+<div class="how-step" data-aos="fade-up" data-aos-delay="100"><div class="num">2</div><h3>Website Created</h3><p>Professional site built instantly</p></div>
+<div class="how-step" data-aos="fade-up" data-aos-delay="200"><div class="num">3</div><h3>Claim & Manage</h3><p>Access your dashboard</p></div>
+<div class="how-step" data-aos="fade-up" data-aos-delay="300"><div class="num">4</div><h3>Get Customers</h3><p>Start receiving enquiries</p></div>
+</div>
+</section>
+
+<section class="pricing" id="pricing">
+<div class="sec-head" data-aos="fade-up"><span class="tag" style="background:rgba(255,255,255,.1);color:#a78bfa">&#128176; Pricing</span><h2>Simple & Affordable</h2><p>Less than a cup of chai per day</p></div>
+<div class="p-card" data-aos="zoom-in">
 <h3>Business Plan</h3>
-<div class="amt">&#8377;69<small>/month</small></div>
-<div class="perday">Less than &#8377;3 per day</div>
-<div class="price-list">
-<div class="item">Professional Website</div>
-<div class="item">Business Dashboard</div>
-<div class="item">Lead Management</div>
-<div class="item">Review Management</div>
-<div class="item">Social Media Content</div>
-<div class="item">WhatsApp Integration</div>
-<div class="item">Online Store</div>
-<div class="item">Ongoing Updates</div>
+<div class="price">&#8377;69<small>/month</small></div>
+<div class="per">Just &#8377;2.3 per day</div>
+<div class="p-list">
+<div class="pi">Premium Business Website</div>
+<div class="pi">Custom Subdomain</div>
+<div class="pi">Business Analytics Dashboard</div>
+<div class="pi">WhatsApp Lead Management</div>
+<div class="pi">Review Management Tools</div>
+<div class="pi">Social Media Content</div>
+<div class="pi">WhatsApp Product Store</div>
+<div class="pi">Festival Campaign Templates</div>
+<div class="pi">QR Code for Business Cards</div>
 </div>
-<a href="https://ai-agency-platform-blush.vercel.app" class="price-cta">Start Growing &rarr;</a>
+<a href="https://ai-agency-platform-blush.vercel.app" class="p-cta">Start Growing &rarr;</a>
+</div>
+</section>
+
+<section class="cta-sec">
+<div data-aos="fade-up">
+<h2>Ready To Grow Your Business?</h2>
+<p>Join """ + str(count) + """+ businesses already growing online with City Maps</p>
+<a href="https://ai-agency-platform-blush.vercel.app" class="btn btn-dark">Create My Website &rarr;</a>
 </div>
 </section>
 
@@ -332,8 +351,10 @@ a{text-decoration:none}
 <p>Your Digital Business Partner &bull; Powered by Kalpdev Digitals</p>
 </footer>
 
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
 <script>
-window.addEventListener('scroll',()=>{document.getElementById('nav').classList.toggle('scrolled',scrollY>50)});
+AOS.init({duration:600,once:true,offset:60});
+window.addEventListener('scroll',()=>{document.getElementById('nav').classList.toggle('solid',scrollY>50)});
 </script>
 </body></html>"""
     return HTMLResponse(content=html)
