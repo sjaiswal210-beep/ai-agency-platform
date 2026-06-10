@@ -194,7 +194,7 @@ def landing_page():
 .plan h3{font-size:.82rem;color:#888;font-weight:500;margin-bottom:4px}
 .plan .price{font-size:2rem;font-weight:900;margin-bottom:2px}.plan .price small{font-size:.8rem;color:#999;font-weight:400}
 .plan .desc{font-size:.78rem;color:#888;margin-bottom:16px}
-.plan ul{list-style:none;margin-bottom:18px}.plan li{font-size:.8rem;color:#555;padding:5px 0;padding-left:18px;position:relative}.plan li::before{content:'\2713';position:absolute;left:0;color:#22c55e;font-weight:700;font-size:.7rem}
+.plan ul{list-style:none;margin-bottom:18px}.plan li{font-size:.8rem;color:#555;padding:5px 0;padding-left:18px;position:relative}.plan li::before{content:'\27A4';position:absolute;left:0;color:#7c3aed;font-weight:700;font-size:.7rem}
 .plan-btn{display:block;text-align:center;padding:11px;border-radius:8px;font-weight:700;font-size:.82rem;transition:all .15s}
 .plan-btn.dark{background:linear-gradient(135deg,#7c3aed,#2563eb);color:#fff}.plan-btn.outline{border:1.5px solid #e4e4e7;color:#111}.plan-btn:hover{transform:translateY(-1px)}
 .steps{display:flex;gap:20px;margin-top:20px}
