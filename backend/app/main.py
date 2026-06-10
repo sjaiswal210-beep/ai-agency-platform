@@ -148,7 +148,7 @@ app.include_router(sitemap_router, prefix="")
 
 @app.get("/", response_class=HTMLResponse)
 def landing_page():
-    """City Maps landing page."""
+    """City Maps premium landing page."""
     from app.core.supabase import get_supabase
     db = get_supabase()
     try:
@@ -159,120 +159,182 @@ def landing_page():
 
     html = """<!DOCTYPE html><html lang="en"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>City Maps - Grow Your Business Online</title>
-<meta name="description" content="City Maps helps local businesses establish a strong online presence. Professional websites, lead management, reviews, and marketing tools starting at Rs.69/month.">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<title>City Maps - Premium Websites for Local Businesses</title>
+<meta name="description" content="City Maps helps local businesses grow online with professional websites, lead management, and digital marketing tools.">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Plus Jakarta Sans',sans-serif;color:#1e293b;line-height:1.7}
-.hero{background:linear-gradient(135deg,#0f172a,#1e1b4b);color:#fff;padding:80px 24px;text-align:center}
-.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:900;margin-bottom:16px;max-width:700px;margin-left:auto;margin-right:auto}
-.hero p{color:#94a3b8;font-size:1.05rem;max-width:600px;margin:0 auto 24px}
-.hero .sub{font-size:.85rem;color:#64748b;max-width:500px;margin:0 auto 28px}
-.btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-.btn{padding:14px 28px;border-radius:50px;font-weight:700;font-size:.95rem;text-decoration:none;transition:transform .2s}
-.btn-primary{background:linear-gradient(135deg,#7c3aed,#a78bfa);color:#fff;box-shadow:0 8px 24px rgba(124,58,237,.3)}
-.btn-outline{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.3)}
-.btn:hover{transform:translateY(-2px)}
-.section{padding:70px 24px;max-width:900px;margin:0 auto}
-.section-alt{background:#f8fafc}
-.section h2{font-size:1.8rem;font-weight:800;margin-bottom:12px;text-align:center}
-.section .lead{text-align:center;color:#64748b;margin-bottom:32px;font-size:1rem}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-top:20px}
-.card{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:20px}
-.card h3{font-size:1rem;font-weight:700;margin-bottom:8px}
-.card p{font-size:.88rem;color:#64748b}
-.check{color:#059669;font-weight:700;margin-bottom:6px;font-size:.9rem}
-.pricing{text-align:center;padding:60px 24px;background:linear-gradient(135deg,#f5f3ff,#ede9fe)}
-.price-card{background:#fff;border-radius:20px;padding:32px;max-width:380px;margin:0 auto;box-shadow:0 10px 40px rgba(124,58,237,.1);border:2px solid #7c3aed}
-.price-card h3{font-size:1.2rem;font-weight:800;margin-bottom:4px}
-.price-card .amount{font-size:2.5rem;font-weight:900;color:#7c3aed;margin:12px 0}
-.price-card .amount small{font-size:1rem;font-weight:500;color:#64748b}
-.price-card .per-day{font-size:.82rem;color:#64748b;margin-bottom:16px}
-.price-features{text-align:left;margin-bottom:20px}
-.price-features .check{margin-bottom:8px}
-.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;margin-top:24px}
-.step{text-align:center;padding:16px}
-.step-num{width:40px;height:40px;border-radius:50%;background:#7c3aed;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;margin:0 auto 12px}
-.step h3{font-size:.95rem;font-weight:700;margin-bottom:4px}
-.step p{font-size:.82rem;color:#64748b}
-.footer{background:#0f172a;color:#94a3b8;text-align:center;padding:32px 24px}
-.footer h3{color:#fff;font-weight:800;margin-bottom:4px}
-.footer p{font-size:.82rem}
-.stat{font-size:2.5rem;font-weight:900;color:#7c3aed}
-@media(max-width:640px){.hero{padding:50px 16px}.hero h1{font-size:1.8rem}.section{padding:50px 16px}}
+body{font-family:'Plus Jakarta Sans',sans-serif;color:#0f172a;background:#fff;overflow-x:hidden}
+a{text-decoration:none}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 32px;display:flex;align-items:center;justify-content:space-between;transition:all .3s}
+.nav.scrolled{background:rgba(255,255,255,.9);backdrop-filter:blur(20px);box-shadow:0 1px 0 rgba(0,0,0,.05)}
+.nav-brand{font-weight:900;font-size:1.2rem;color:#0f172a;display:flex;align-items:center;gap:8px}
+.nav-brand span{background:linear-gradient(135deg,#7c3aed,#2563eb);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-btn{background:#0f172a;color:#fff;padding:10px 20px;border-radius:50px;font-weight:700;font-size:.82rem;transition:transform .2s}
+.nav-btn:hover{transform:scale(1.05)}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;align-items:center;position:relative;overflow:hidden;padding:100px 24px}
+.hero-bg{position:absolute;inset:0;background:linear-gradient(135deg,#f8fafc 0%,#ede9fe 30%,#dbeafe 70%,#f0fdf4 100%)}
+.hero-grid{position:absolute;inset:0;background-image:radial-gradient(circle at 1px 1px,rgba(124,58,237,.07) 1px,transparent 0);background-size:40px 40px}
+.hero-orb1{position:absolute;top:10%;right:10%;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,.15),transparent 70%);filter:blur(40px);animation:float 8s ease-in-out infinite}
+.hero-orb2{position:absolute;bottom:10%;left:5%;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(37,99,235,.12),transparent 70%);filter:blur(30px);animation:float 6s ease-in-out infinite reverse}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-30px)}}
+.hero-content{position:relative;z-index:2;max-width:700px;margin:0 auto;text-align:center}
+.hero-pill{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid #e2e8f0;padding:8px 16px;border-radius:50px;font-size:.8rem;font-weight:600;color:#64748b;margin-bottom:24px;box-shadow:0 4px 12px rgba(0,0,0,.04)}
+.hero-pill .dot{width:8px;height:8px;border-radius:50%;background:#10b981;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.hero h1{font-size:clamp(2.4rem,6vw,4rem);font-weight:900;line-height:1.1;margin-bottom:20px;letter-spacing:-.03em}
+.hero h1 .gradient{background:linear-gradient(135deg,#7c3aed,#2563eb,#0ea5e9);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero .lead{font-size:clamp(1rem,2vw,1.2rem);color:#64748b;max-width:550px;margin:0 auto 32px;line-height:1.7}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:14px;font-weight:700;font-size:.95rem;transition:all .25s}
+.btn-primary{background:#0f172a;color:#fff;box-shadow:0 10px 30px rgba(15,23,42,.2)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(15,23,42,.3)}
+.btn-secondary{background:#fff;color:#0f172a;border:1.5px solid #e2e8f0;box-shadow:0 4px 12px rgba(0,0,0,.04)}
+.btn-secondary:hover{border-color:#7c3aed;color:#7c3aed}
+.hero-stat{margin-top:40px;display:flex;gap:32px;justify-content:center}
+.hero-stat div{text-align:center}
+.hero-stat .num{font-size:1.8rem;font-weight:900;color:#0f172a}
+.hero-stat .lbl{font-size:.75rem;color:#94a3b8;font-weight:500}
+
+/* 3D CARDS SECTION */
+.features{padding:100px 24px;background:#fff}
+.features-head{text-align:center;max-width:600px;margin:0 auto 56px}
+.features-head .tag{display:inline-block;background:#f0fdf4;color:#059669;font-size:.72rem;font-weight:700;padding:6px 14px;border-radius:50px;margin-bottom:14px;letter-spacing:.05em;text-transform:uppercase}
+.features-head h2{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:900;margin-bottom:12px}
+.features-head p{color:#64748b;font-size:1rem}
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:1000px;margin:0 auto;perspective:1000px}
+.f-card{background:#fff;border:1px solid #f1f5f9;border-radius:20px;padding:28px;transition:all .4s cubic-bezier(.16,1,.3,1);transform-style:preserve-3d}
+.f-card:hover{transform:translateY(-8px) rotateX(2deg) rotateY(-2deg);box-shadow:0 30px 60px rgba(124,58,237,.1);border-color:#ede9fe}
+.f-card .icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:16px}
+.f-card h3{font-size:1rem;font-weight:700;margin-bottom:8px}
+.f-card p{font-size:.85rem;color:#64748b;line-height:1.6}
+
+/* PRICING */
+.pricing{padding:100px 24px;background:linear-gradient(180deg,#f8fafc,#fff)}
+.pricing-head{text-align:center;max-width:500px;margin:0 auto 48px}
+.pricing-head h2{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:900;margin-bottom:12px}
+.price-card{max-width:400px;margin:0 auto;background:#fff;border:2px solid #7c3aed;border-radius:24px;padding:40px 32px;text-align:center;box-shadow:0 20px 60px rgba(124,58,237,.12);position:relative;overflow:hidden}
+.price-card::before{content:'';position:absolute;top:-2px;left:-2px;right:-2px;height:6px;background:linear-gradient(90deg,#7c3aed,#2563eb,#0ea5e9);border-radius:24px 24px 0 0}
+.price-card h3{font-size:1.1rem;font-weight:700;margin-bottom:4px}
+.price-card .amt{font-size:3rem;font-weight:900;color:#7c3aed;margin:12px 0}.price-card .amt small{font-size:1rem;color:#94a3b8;font-weight:500}
+.price-card .perday{font-size:.82rem;color:#64748b;margin-bottom:20px}
+.price-list{text-align:left;margin-bottom:24px}
+.price-list .item{display:flex;align-items:center;gap:10px;padding:8px 0;font-size:.9rem;font-weight:500}
+.price-list .item::before{content:'\2713';color:#059669;font-weight:800;font-size:.85rem}
+.price-cta{display:block;background:#0f172a;color:#fff;padding:16px;border-radius:14px;font-weight:700;font-size:1rem;transition:transform .2s}
+.price-cta:hover{transform:scale(1.02)}
+
+/* HOW IT WORKS */
+.how{padding:100px 24px;background:#0f172a;color:#fff}
+.how-head{text-align:center;margin-bottom:56px}
+.how-head h2{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:900;margin-bottom:12px}
+.how-head p{color:#94a3b8}
+.how-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;max-width:900px;margin:0 auto}
+.how-step{text-align:center;position:relative}
+.how-step .num{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#2563eb);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;margin:0 auto 14px;font-size:1.1rem}
+.how-step h3{font-size:.95rem;font-weight:700;margin-bottom:6px}
+.how-step p{font-size:.8rem;color:#94a3b8}
+
+/* FOOTER */
+.footer{padding:48px 24px;text-align:center;border-top:1px solid #f1f5f9}
+.footer h3{font-size:1.1rem;font-weight:800;margin-bottom:4px}
+.footer p{font-size:.82rem;color:#94a3b8}
+
+@media(max-width:768px){
+.features-grid{grid-template-columns:1fr;gap:14px}
+.how-grid{grid-template-columns:repeat(2,1fr);gap:16px}
+.hero-stat{gap:20px}
+.nav{padding:12px 16px}
+}
 </style></head><body>
 
+<nav class="nav" id="nav">
+<div class="nav-brand"><span>City Maps</span></div>
+<a href="https://ai-agency-platform-blush.vercel.app" class="nav-btn">Dashboard</a>
+</nav>
+
 <section class="hero">
-<div class="stat">""" + str(count) + """+</div>
-<p style="font-size:.85rem;color:#64748b;margin-bottom:20px">Businesses Online</p>
-<h1>Grow Your Business Online</h1>
-<p>Website &bull; Leads &bull; Reviews &bull; Marketing &bull; Digital Presence</p>
-<p class="sub">City Maps helps local businesses establish a strong online presence and attract more customers. Whether you're a salon, restaurant, doctor, gym, retailer, or service provider.</p>
-<div class="btns">
-<a href="https://ai-agency-platform-blush.vercel.app" class="btn btn-primary">Get Started</a>
-<a href="https://ai-agency-platform-blush.vercel.app" class="btn btn-outline">Find My Business</a>
+<div class="hero-bg"></div>
+<div class="hero-grid"></div>
+<div class="hero-orb1"></div>
+<div class="hero-orb2"></div>
+<div class="hero-content">
+<div class="hero-pill"><span class="dot"></span>""" + str(count) + """+ businesses already online</div>
+<h1>Grow Your Business<br><span class="gradient">Online Effortlessly</span></h1>
+<p class="lead">Professional websites, lead management, customer reviews, and marketing tools. Everything local businesses need to get discovered and grow.</p>
+<div class="hero-btns">
+<a href="https://ai-agency-platform-blush.vercel.app" class="btn btn-primary">Get Started Free &rarr;</a>
+<a href="https://ai-agency-platform-blush.vercel.app" class="btn btn-secondary">Find My Business</a>
+</div>
+<div class="hero-stat">
+<div><div class="num">""" + str(count) + """+</div><div class="lbl">Websites Created</div></div>
+<div><div class="num">9</div><div class="lbl">Languages</div></div>
+<div><div class="num">&#8377;69</div><div class="lbl">Per Month</div></div>
+</div>
 </div>
 </section>
 
-<section class="section">
-<h2>Everything Your Business Needs Online</h2>
-<p class="lead">Your customers are searching online every day. Make sure they find you.</p>
-<div class="grid">
-<div class="card"><div class="check">&#10004; Professional Website</div><p>Modern website that works on mobile, tablet, and desktop. Available at business-name.city-maps.online</p></div>
-<div class="card"><div class="check">&#10004; WhatsApp Integration</div><p>Customers can reach you instantly via WhatsApp with one click from your website.</p></div>
-<div class="card"><div class="check">&#10004; Lead Collection</div><p>Never miss a customer. Track enquiries from website forms, phone calls, and WhatsApp clicks.</p></div>
-<div class="card"><div class="check">&#10004; Customer Reviews</div><p>Build trust with reviews. Track, respond, and improve your online rating.</p></div>
-<div class="card"><div class="check">&#10004; Business Analytics</div><p>See who visits your website, how they found you, and what actions they take.</p></div>
-<div class="card"><div class="check">&#10004; Social Media Content</div><p>Ready-to-post content for Instagram, Facebook, and WhatsApp status. Festival campaigns included.</p></div>
+<section class="features">
+<div class="features-head">
+<span class="tag">&#10024; All-in-one Platform</span>
+<h2>Everything Your Business Needs</h2>
+<p>From websites to marketing, we handle your entire digital presence.</p>
+</div>
+<div class="features-grid">
+<div class="f-card"><div class="icon" style="background:#f0fdf4">&#127760;</div><h3>Professional Website</h3><p>Modern, mobile-first website at your-business.city-maps.online</p></div>
+<div class="f-card"><div class="icon" style="background:#ede9fe">&#128172;</div><h3>WhatsApp Integration</h3><p>One-click WhatsApp for instant customer contact</p></div>
+<div class="f-card"><div class="icon" style="background:#dbeafe">&#128200;</div><h3>Business Analytics</h3><p>Track visitors, calls, WhatsApp clicks, and leads</p></div>
+<div class="f-card"><div class="icon" style="background:#fef3c7">&#11088;</div><h3>Review Management</h3><p>Track and respond to customer reviews easily</p></div>
+<div class="f-card"><div class="icon" style="background:#fce7f3">&#128247;</div><h3>Social Content</h3><p>Ready-to-post content for Instagram and Facebook</p></div>
+<div class="f-card"><div class="icon" style="background:#ecfdf5">&#128722;</div><h3>Online Store</h3><p>Sell products via WhatsApp with a beautiful catalog</p></div>
 </div>
 </section>
 
-<section class="section section-alt">
+<section class="how">
+<div class="how-head">
 <h2>How It Works</h2>
-<div class="steps">
-<div class="step"><div class="step-num">1</div><h3>Find Your Business</h3><p>Search your business or create a new profile.</p></div>
-<div class="step"><div class="step-num">2</div><h3>We Create Your Presence</h3><p>Your website and tools are set up automatically.</p></div>
-<div class="step"><div class="step-num">3</div><h3>Claim & Manage</h3><p>Take control of your business dashboard.</p></div>
-<div class="step"><div class="step-num">4</div><h3>Grow Online</h3><p>Start receiving enquiries and growing your customer base.</p></div>
+<p>Get online in under 5 minutes</p>
+</div>
+<div class="how-grid">
+<div class="how-step"><div class="num">1</div><h3>Find Business</h3><p>Search your business name</p></div>
+<div class="how-step"><div class="num">2</div><h3>Website Created</h3><p>Professional site built instantly</p></div>
+<div class="how-step"><div class="num">3</div><h3>Claim & Manage</h3><p>Take control of your dashboard</p></div>
+<div class="how-step"><div class="num">4</div><h3>Grow Online</h3><p>Get leads and customers</p></div>
 </div>
 </section>
 
 <section class="pricing">
-<h2>Simple Pricing</h2>
-<p class="lead">Less than &#8377;3 per day.</p>
+<div class="pricing-head"><h2>Simple, Transparent Pricing</h2></div>
 <div class="price-card">
 <h3>Business Plan</h3>
-<div class="amount">&#8377;69<small>/month</small></div>
-<div class="per-day">That's just &#8377;2.3 per day</div>
-<div class="price-features">
-<div class="check">&#10004; Website Hosting</div>
-<div class="check">&#10004; Business Dashboard</div>
-<div class="check">&#10004; Lead Management</div>
-<div class="check">&#10004; Review Management</div>
-<div class="check">&#10004; Social Content</div>
-<div class="check">&#10004; Digital Presence Tools</div>
-<div class="check">&#10004; Ongoing Updates</div>
+<div class="amt">&#8377;69<small>/month</small></div>
+<div class="perday">Less than &#8377;3 per day</div>
+<div class="price-list">
+<div class="item">Professional Website</div>
+<div class="item">Business Dashboard</div>
+<div class="item">Lead Management</div>
+<div class="item">Review Management</div>
+<div class="item">Social Media Content</div>
+<div class="item">WhatsApp Integration</div>
+<div class="item">Online Store</div>
+<div class="item">Ongoing Updates</div>
 </div>
-<a href="https://ai-agency-platform-blush.vercel.app" class="btn btn-primary" style="display:block;text-align:center">Get Started &rarr;</a>
-</div>
-</section>
-
-<section class="section">
-<h2>Built For Indian Businesses</h2>
-<p class="lead">Simple. Affordable. Easy to Use.</p>
-<div class="grid">
-<div class="card"><h3>No Technical Knowledge</h3><p>Everything is set up for you. Just claim and manage.</p></div>
-<div class="card"><h3>Multi-Language</h3><p>Available in English, Hindi, and Hinglish.</p></div>
-<div class="card"><h3>Local Focus</h3><p>Designed specifically for Indian local businesses.</p></div>
+<a href="https://ai-agency-platform-blush.vercel.app" class="price-cta">Start Growing &rarr;</a>
 </div>
 </section>
 
 <footer class="footer">
-<h3>City Maps Online</h3>
-<p>Your Digital Business Partner</p>
-<p style="margin-top:8px">Powered by Kalpdev Digitals</p>
+<h3>City Maps</h3>
+<p>Your Digital Business Partner &bull; Powered by Kalpdev Digitals</p>
 </footer>
+
+<script>
+window.addEventListener('scroll',()=>{document.getElementById('nav').classList.toggle('scrolled',scrollY>50)});
+</script>
 </body></html>"""
     return HTMLResponse(content=html)
 
