@@ -505,9 +505,11 @@ def generate_html(content: dict, template: str, lead: dict = None) -> str:
             except Exception:
                 pass
     images = get_images_for_category(category)
-    gallery_images = real_photos if real_photos else images["gallery"]
-    hero_img = real_photos[0] if real_photos else images["hero"]
-    about_img = real_photos[1] if len(real_photos) > 1 else images["about"]
+    gallery_images = real_photos if real_photos else [
+        f"https://image.pollinations.ai/prompt/{category}+business+product+showcase+photo+{i}?width=500&height=500&nologo=true" for i in range(1, 5)
+    ]
+    hero_img = real_photos[0] if real_photos else f"https://image.pollinations.ai/prompt/professional+{category}+business+interior+modern+high+quality?width=1400&height=800&nologo=true"
+    about_img = real_photos[1] if len(real_photos) > 1 else f"https://image.pollinations.ai/prompt/{category}+business+team+professional+indian?width=800&height=600&nologo=true"
     gallery = images["gallery"]
 
     phone = contact.get("phone", lead.get("phone", "") if lead else "")
