@@ -95,6 +95,17 @@ body{{font-family:Inter,sans-serif;background:#f1f5f9;color:#1e293b;min-height:1
         <a href="https://wa.me/{phone.replace('-','').replace(' ','').replace('+','')}" class="quick-link" target="_blank">\U0001f4ac WhatsApp</a>
     </div>
 
+    <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:16px;margin-bottom:24px">
+        <p class="section-title" style="margin-bottom:12px">Social Media Links</p>
+        <p style="font-size:.75rem;color:#94a3b8;margin-bottom:12px">Add your social media links. These will appear on your website.</p>
+        <form onsubmit="saveSocial(event)" style="display:flex;flex-direction:column;gap:8px">
+            <input id="instaUrl" placeholder="Instagram URL (e.g., https://instagram.com/yourbusiness)" style="padding:10px;border:1px solid #e2e8f0;border-radius:8px;font-size:.85rem">
+            <input id="fbUrl" placeholder="Facebook URL (e.g., https://facebook.com/yourbusiness)" style="padding:10px;border:1px solid #e2e8f0;border-radius:8px;font-size:.85rem">
+            <input id="ytUrl" placeholder="YouTube URL (optional)" style="padding:10px;border:1px solid #e2e8f0;border-radius:8px;font-size:.85rem">
+            <button type="submit" class="btn" style="align-self:flex-start">Save Social Links</button>
+        </form>
+    </div>
+
     <p class="section-title">Your Business Tools</p>
     <div class="tools-grid">{tools_html}</div>
 
@@ -149,6 +160,24 @@ async function generate() {{
         loading.style.display = 'none';
     }}
 }}
+
+async function saveSocial(e) {
+    e.preventDefault();
+    const data = {
+        instagram: document.getElementById('instaUrl').value,
+        facebook: document.getElementById('fbUrl').value,
+        youtube: document.getElementById('ytUrl').value,
+    };
+    try {
+        const r = await fetch('/api/panel/' + '{website_id}' + '/social-links', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        });
+        if (r.ok) { alert('Social links saved! They will appear on your website.'); }
+        else { alert('Failed to save. Try again.'); }
+    } catch(e) { alert('Error saving links.'); }
+}
 
 function copyOutput() {{
     const text = document.getElementById('outputContent').textContent;

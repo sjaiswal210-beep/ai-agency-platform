@@ -826,16 +826,21 @@ body{{padding-bottom:70px}}
 
 </style>"""
 
-    # Social follow section
+    # Social follow section - uses saved links or defaults to search
     biz_search = business_name.replace(" ", "+")
+    social_links = content.get("social_links", {}) if isinstance(content, dict) else {}
+    insta_url = social_links.get("instagram") or f"https://www.instagram.com/explore/tags/{category}/"
+    fb_url = social_links.get("facebook") or f"https://www.facebook.com/search/pages/?q={biz_search}"
+    yt_url = social_links.get("youtube", "")
+    yt_btn = f'<a href="{yt_url}" target="_blank" style="background:#ff0000">YouTube</a>' if yt_url else f'<a href="https://www.google.com/maps/search/{biz_search}" target="_blank" style="background:#4285f4">Google Maps</a>'
     social_html = (
         '<section class="social-sec">'
         '<p style="font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--p);margin-bottom:8px">Follow Us</p>'
         '<h2>Stay Connected</h2>'
         '<div class="social-btns">'
-        f'<a href="https://www.instagram.com/explore/tags/{category}/" target="_blank" style="background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)">Instagram</a>'
-        f'<a href="https://www.facebook.com/search/pages/?q={biz_search}" target="_blank" style="background:#1877f2">Facebook</a>'
-        f'<a href="https://www.google.com/maps/search/{biz_search}" target="_blank" style="background:#4285f4">Google Maps</a>'
+        f'<a href="{insta_url}" target="_blank" style="background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)">Instagram</a>'
+        f'<a href="{fb_url}" target="_blank" style="background:#1877f2">Facebook</a>'
+        f'{yt_btn}'
         '</div></section>'
     )
 
