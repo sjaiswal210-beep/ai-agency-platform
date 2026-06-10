@@ -411,7 +411,7 @@ MOBILE_CSS = """
 @media(max-width:768px){
   .nav-links{display:none}
   .nav{padding:12px 16px}
-  .nav-cta{display:flex!important;background:transparent!important;box-shadow:none!important;color:var(--p)!important;font-size:1.2rem!important;padding:6px!important}
+  .nav-cta{display:flex!important;background:transparent!important;box-shadow:none!important;color:var(--p)!important;font-size:1.1rem!important;padding:7px!important;border:1.5px solid var(--p)!important;border-radius:50%!important;width:36px!important;height:36px!important;align-items:center!important;justify-content:center!important}
   .hero{min-height:auto;padding-top:80px!important;padding-bottom:40px!important}
   .hero-content{padding:70px 16px 30px!important;margin:0!important}
   .hero h1{font-size:1.6rem!important;margin-bottom:10px!important}
@@ -723,7 +723,7 @@ a{{text-decoration:none;color:inherit}}
 .nav-brand{{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:1.15rem;color:#fff;display:flex;align-items:center;gap:10px}}
 .nav-brand .logo{{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--p),var(--ps));display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px color-mix(in srgb,var(--p) 40%,transparent)}}
 .nav-links{{display:flex;gap:28px}}.nav-links a{{font-size:.88rem;font-weight:600;color:rgba(255,255,255,.85);transition:color .2s}}.nav-links a:hover{{color:#fff}}.nav.solid .nav-links a:hover{{color:var(--p)}}
-.nav-cta{{background:var(--p);color:#fff!important;padding:10px 20px;border-radius:50px;font-weight:700;font-size:.85rem;display:flex;align-items:center;gap:6px;box-shadow:0 6px 20px color-mix(in srgb,var(--p) 40%,transparent);transition:transform .25s}}.nav-cta:hover{{transform:translateY(-2px)}}
+.nav-cta{{background:transparent;color:var(--p)!important;padding:9px 18px;border-radius:50px;font-weight:700;font-size:.85rem;display:flex;align-items:center;gap:6px;border:1.5px solid var(--p);transition:all .25s}}.nav-cta:hover{{background:var(--p);color:#fff!important;transform:translateY(-1px)}}
 
 /* HERO */
 .hero{{position:relative;min-height:100vh;display:flex;align-items:center;overflow:hidden}}
