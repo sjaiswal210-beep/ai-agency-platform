@@ -460,8 +460,8 @@ def generate_html(content: dict, template: str, lead: dict = None) -> str:
     if lead:
         real_photos = _get_real_photos(lead.get("business_name", ""), lead.get("address", ""))
     images = get_images_for_category(category)
-    hero_img = real_photos[0] if real_photos else f"https://source.unsplash.com/1400x800/?{category}"
-    about_img = real_photos[1] if len(real_photos) > 1 else f"https://source.unsplash.com/800x600/?{category},professional"
+    hero_img = real_photos[0] if real_photos else images["hero"]
+    about_img = real_photos[1] if len(real_photos) > 1 else images["about"]
     gallery = images["gallery"]
 
     phone = contact.get("phone", lead.get("phone", "") if lead else "")
@@ -487,13 +487,11 @@ def generate_html(content: dict, template: str, lead: dict = None) -> str:
 
     svc_cards = []
     for i, svc in enumerate(services):
-        # Use real photos if available, otherwise generate relevant stock image
+        # Use real photos if available, otherwise use gallery images cycling
         if real_photos and i < len(real_photos):
             img = real_photos[i]
         else:
-            # Use Unsplash with service name for relevant images
-            svc_name = svc.get("name", category).replace(" ", "+").replace("&", "and")
-            img = f"https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500&h=400&fit=crop" if not svc_name else f"https://source.unsplash.com/500x400/?{svc_name},{category}"
+            img = gallery_images[i % len(gallery_images)]
         svc_cards.append(
             '<article class="service-card" data-aos="fade-up">'
             f'<div class="service-img" style="background-image:url({img})"></div>'
@@ -515,9 +513,7 @@ def generate_html(content: dict, template: str, lead: dict = None) -> str:
     testimonials_html = "".join(test_cards)
 
     # Use real Google Maps photos if available, otherwise fallback to stock
-    gallery_images = real_photos if real_photos else [
-        f"https://source.unsplash.com/500x500/?{category},business,{i}" for i in ['interior', 'product', 'team', 'work']
-    ]
+    gallery_images = real_photos if real_photos else images["gallery"]
     gal_items = []
     for img_url in gallery_images:
         gal_items.append(f'<figure class="gallery-item" data-aos="zoom-in"><img src="{img_url}" alt="Gallery" loading="lazy"></figure>')
