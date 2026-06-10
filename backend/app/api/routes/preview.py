@@ -508,7 +508,9 @@ def generate_html(content: dict, template: str, lead: dict = None) -> str:
     testimonials_html = "".join(test_cards)
 
     # Use real Google Maps photos if available, otherwise fallback to stock
-    gallery_images = real_photos if real_photos else gallery
+    gallery_images = real_photos if real_photos else [
+        f"https://source.unsplash.com/500x500/?{category},business,{i}" for i in ['interior', 'product', 'team', 'work']
+    ]
     gal_items = []
     for img_url in gallery_images:
         gal_items.append(f'<figure class="gallery-item" data-aos="zoom-in"><img src="{img_url}" alt="Gallery" loading="lazy"></figure>')
