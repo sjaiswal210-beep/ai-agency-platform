@@ -478,6 +478,17 @@ def generate_html(content: dict, template: str, lead: dict = None) -> str:
     maps_url = get_maps_embed(address)
     dir_url = "https://www.google.com/maps/dir/?api=1&destination=" + urllib.parse.quote(address) if address else "#"
 
+    # Get website_id for dashboard link
+    website_id = ""
+    if lead and lead.get("id"):
+        try:
+            from app.core.supabase import get_supabase as _gsb
+            _wr = _gsb().table("websites").select("id").eq("lead_id", lead["id"]).limit(1).execute()
+            if _wr.data:
+                website_id = _wr.data[0]["id"]
+        except Exception:
+            pass
+
     svc_cards = []
     for i, svc in enumerate(services):
         # Use real photos if available, otherwise generate relevant stock image
@@ -870,7 +881,7 @@ body{{padding-bottom:70px}}
         '</div></div></section>'
         f'{wa_link}'
         ''
-        f'<footer class="footer"><div style="max-width:900px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:16px"><div style="font-weight:700;font-size:1rem;color:#fff">{business_name}</div><div style="font-size:.8rem;color:#64748b">Made with &#10084;&#65039; by Kalpdev Digitals</div><div style="display:flex;gap:16px;margin-top:4px"><a href="https://wa.me/{whatsapp_num}" target="_blank" style="color:#25D366;text-decoration:none;font-size:.85rem">WhatsApp</a><a href="#contact" style="color:#94a3b8;text-decoration:none;font-size:.85rem">Contact</a><a href="#dashboard" target="_blank" style="color:#94a3b8;text-decoration:none;font-size:.85rem">Dashboard</a><a href="#services" style="color:#94a3b8;text-decoration:none;font-size:.85rem">Services</a></div></div></footer>'
+        f'<footer class="footer"><div style="max-width:900px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:16px"><div style="font-weight:700;font-size:1rem;color:#fff">{business_name}</div><div style="font-size:.8rem;color:#64748b">Made with &#10084;&#65039; by Kalpdev Digitals</div><div style="display:flex;gap:16px;margin-top:4px"><a href="https://wa.me/{whatsapp_num}" target="_blank" style="color:#25D366;text-decoration:none;font-size:.85rem">WhatsApp</a><a href="#contact" style="color:#94a3b8;text-decoration:none;font-size:.85rem">Contact</a><a href="/api/panel/{website_id}" target="_blank" style="color:#94a3b8;text-decoration:none;font-size:.85rem">Dashboard</a><a href="#services" style="color:#94a3b8;text-decoration:none;font-size:.85rem">Services</a></div></div></footer>'
         '<script>(function(){var wid=document.querySelector("[data-wid]");var id=wid?wid.dataset.wid:"";if(!id){var m=location.pathname.match(/preview\/([^/]+)/);if(m)id=m[1];}if(!id)return;fetch("/api/analytics/track",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({website_id:id,event_type:"page_view",page:location.pathname,referrer:document.referrer})}).catch(function(){});document.querySelectorAll("a[href^=\'tel:\']").forEach(function(a){a.addEventListener("click",function(){fetch("/api/analytics/track",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({website_id:id,event_type:"call_click"})}).catch(function(){});});});document.querySelectorAll("a[href*=\'wa.me\']").forEach(function(a){a.addEventListener("click",function(){fetch("/api/analytics/track",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({website_id:id,event_type:"whatsapp_click"})}).catch(function(){});});});var form=document.querySelector("form");if(form)form.addEventListener("submit",function(){fetch("/api/analytics/track",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({website_id:id,event_type:"lead_form"})}).catch(function(){});});})()</script>'
         f'<script type="application/ld+json">{{"@context":"https://schema.org","@type":"LocalBusiness","name":"{business_name}","telephone":"{phone}","email":"{email}","address":{{"@type":"PostalAddress","streetAddress":"{address}"}},"aggregateRating":{{"@type":"AggregateRating","ratingValue":"{lead.get("rating", 4.5) if lead else 4.5}","reviewCount":"{lead.get("review_count", 50) if lead else 50}"}}}}</script>'
         '<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>'
