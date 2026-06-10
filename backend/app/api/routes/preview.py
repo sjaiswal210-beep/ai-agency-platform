@@ -584,7 +584,7 @@ def generate_html(content: dict, template: str, lead: dict = None) -> str:
                 products_html = (
                     '<section class="section" style="padding:60px 24px"><div style="max-width:1100px;margin:0 auto">'
                     '<div class="section-header" data-aos="fade-up"><h2>Our Products</h2></div>'
-                    f'<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px">{prod_cards}</div>'
+                    f'<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px">{prod_cards}</div>'
                     '</div></section>'
                 )
         except Exception:
@@ -923,7 +923,7 @@ body{{padding-bottom:70px}}
         f'{css}<style>{_get_design_css(category)}</style>{MOBILE_CSS}</head><body>'
         f'<nav class="nav" id="mainNav"><div class="nav-brand"><svg width="36" height="36" viewBox="0 0 36 36" style="margin-right:8px;vertical-align:middle"><rect width="36" height="36" rx="8" fill="{primary}"/><text x="18" y="24" text-anchor="middle" fill="white" font-size="18" font-weight="bold" font-family="Playfair Display,serif">{business_name[0]}</text></svg>{business_name}</div>'
         '<div class="nav-links"><a href="#about">About</a><a href="#services">Services</a><a href="#gallery">Gallery</a><a href="#contact">Contact</a></div>'
-        f'<a href="tel:{phone}" class="nav-cta">&#128222; Call</a></nav>'
+        f'<a href="tel:{phone}" class="nav-cta">&#128222;</a></nav>'
         '<section class="hero"><div class="hero-bg"></div><div class="hero-overlay"></div><div class="hero-glow"></div>'
         f'<div class="hero-content"><div class="hero-pill">&#9733; Trusted by {lead.get("review_count", 100) if lead else 100}+ customers</div><h1>{hero_title}</h1><p>{hero_subtitle}</p>' + (f'<div class="hero-offer">{hero_offer}</div>' if hero_offer else '') +
         f'<div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center"><a href="#contact" class="btn btn-white">{cta_text}</a><a href="https://www.google.com/maps/dir/?api=1&destination={address.replace(" ", "+")}" target="_blank" class="btn btn-glass">&#128205; Get Directions</a></div></div></section>'
@@ -941,8 +941,7 @@ body{{padding-bottom:70px}}
         f'<div class="services-grid">{services_html}</div></section>'
         '<section class="section" id="gallery"><div class="section-header"><h2>Gallery</h2></div>'
         f'<div class="gallery-grid">{gallery_html}</div></section>'
-        '<section class="section" style="background:#f8fafc;max-width:100%"><div style="max-width:1200px;margin:0 auto;padding:80px 24px">'
-        f'<div class="section-header"><h2>Our Strengths</h2></div><div class="features-grid">{features_html}</div></div></section>'
+        ''
         f'{products_html}'
         '<section class="section"><div class="section-header"><h2>What People Say</h2></div>'
         f'<div class="testimonials-grid">{testimonials_html}</div></section>'
