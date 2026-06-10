@@ -450,6 +450,8 @@ MOBILE_CSS = """
   .whatsapp-float{display:none!important}
   .chat-btn{bottom:80px!important}
   body{padding-bottom:60px}
+  .hamburger{display:block!important;background:none;border:none;font-size:1.4rem;cursor:pointer;color:#1e293b;padding:8px}
+  .mobile-menu.show{display:flex!important}
   .faq-item summary{font-size:.9rem!important;padding:14px 16px!important}
   .faq-item p{padding:0 16px 14px!important;font-size:.85rem!important}
   .benefits-grid{grid-template-columns:1fr!important}
@@ -574,7 +576,7 @@ def generate_html(content: dict, template: str, lead: dict = None) -> str:
                     wa_link = f"https://wa.me/{whatsapp_num}?text={wa_msg}" if whatsapp_num else "#"
                     prod_cards += (
                         f'<div class="product-item" data-aos="fade-up">'
-                        f'<img src="{p_img}" alt="{p.get("name","")}" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px">'
+                        f'<img src="{p_img}" alt="{p.get("name","")}" style="width:100%;height:120px;object-fit:cover;border-radius:10px">'
                         f'<h3 style="font-size:.9rem;font-weight:700;margin:10px 0 4px">{p.get("name","")}</h3>'
                         f'<p style="font-size:.8rem;color:#64748b;margin-bottom:6px">{p.get("description","")[:50]}</p>'
                         f'<p style="font-size:1rem;font-weight:800;color:var(--p);margin-bottom:8px">Rs. {p.get("price","")}</p>'
@@ -724,6 +726,9 @@ a{{text-decoration:none;color:inherit}}
 .nav-brand .logo{{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--p),var(--ps));display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px color-mix(in srgb,var(--p) 40%,transparent)}}
 .nav-links{{display:flex;gap:28px}}.nav-links a{{font-size:.88rem;font-weight:600;color:rgba(255,255,255,.85);transition:color .2s}}.nav-links a:hover{{color:#fff}}.nav.solid .nav-links a:hover{{color:var(--p)}}
 .nav-cta{{background:var(--p);color:#fff!important;padding:10px 20px;border-radius:50px;font-weight:700;font-size:.85rem;display:flex;align-items:center;gap:6px;box-shadow:0 6px 20px color-mix(in srgb,var(--p) 40%,transparent);transition:transform .25s}}.nav-cta:hover{{transform:translateY(-2px)}}
+.hamburger{{display:none;background:none;border:none;font-size:1.3rem;cursor:pointer;color:#1e293b;padding:6px}}
+.mobile-menu{{display:none;position:fixed;top:58px;left:0;right:0;background:#fff;flex-direction:column;padding:12px 20px;gap:8px;box-shadow:0 8px 20px rgba(0,0,0,.08);z-index:999;border-bottom:1px solid #f1f5f9}}
+.mobile-menu a{{padding:10px 0;font-size:.9rem;font-weight:600;color:#475569;border-bottom:1px solid #f8fafc}}
 
 /* HERO */
 .hero{{position:relative;min-height:100vh;display:flex;align-items:center;overflow:hidden}}
@@ -759,7 +764,7 @@ a{{text-decoration:none;color:inherit}}
 .about-img{{position:relative}}.about-img img{{width:100%;height:480px;object-fit:cover;border-radius:20px;box-shadow:0 32px 64px rgba(15,23,42,.16);filter:brightness(1.05) contrast(1.05) saturate(1.1)}}
 .about-badge{{position:absolute;bottom:-20px;left:-16px;background:#fff;border-radius:16px;padding:18px 22px;box-shadow:0 16px 40px rgba(15,23,42,.12);display:flex;align-items:center;gap:12px}}
 .about-badge .big{{font-size:1.7rem;font-weight:800;color:var(--p)}}.about-badge .sm{{font-size:.75rem;color:var(--mute);font-weight:600}}
-.about-text h2{{font-size:clamp(1.8rem,3.5vw,2.6rem);font-weight:800;margin-bottom:16px}}.about-text p{{color:var(--mute);font-size:1.05rem;line-height:1.85}}
+.about-text h2{{font-size:clamp(1.8rem,3.5vw,2.6rem);font-weight:800;margin-bottom:16px}}.section,.sec{{position:relative}}.section::before{{content:'';position:absolute;top:0;left:5%;right:5%;height:1px;background:linear-gradient(90deg,transparent,var(--line,#e2e8f0),transparent)}}.about-text p{{color:var(--mute);font-size:1.05rem;line-height:1.85}}
 
 /* SERVICES */
 .services-grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px}}
@@ -923,7 +928,7 @@ body{{padding-bottom:70px}}
         f'{css}<style>{_get_design_css(category)}</style>{MOBILE_CSS}</head><body>'
         f'<nav class="nav" id="mainNav"><div class="nav-brand"><svg width="36" height="36" viewBox="0 0 36 36" style="margin-right:8px;vertical-align:middle"><rect width="36" height="36" rx="8" fill="{primary}"/><text x="18" y="24" text-anchor="middle" fill="white" font-size="18" font-weight="bold" font-family="Playfair Display,serif">{business_name[0]}</text></svg>{business_name}</div>'
         '<div class="nav-links"><a href="#about">About</a><a href="#services">Services</a><a href="#gallery">Gallery</a><a href="#contact">Contact</a></div>'
-        f'<a href="tel:{phone}" class="nav-cta">&#128222; Call</a></nav>'
+        f'<a href="tel:{phone}" class="nav-cta">&#128222; Call</a><button class="hamburger" onclick="document.querySelector(\'.mobile-menu\').classList.toggle(\'show\')">&#9776;</button></nav><div class="mobile-menu"><a href="#about">About</a><a href="#services">Services</a><a href="#gallery">Gallery</a><a href="tel:{phone}">&#128222; Call Now</a><a href="https://wa.me/{whatsapp_num}" target="_blank">&#128172; WhatsApp</a></div>'"
         '<section class="hero"><div class="hero-bg"></div><div class="hero-overlay"></div><div class="hero-glow"></div>'
         f'<div class="hero-content"><div class="hero-pill">&#9733; Trusted by {lead.get("review_count", 100) if lead else 100}+ customers</div><h1>{hero_title}</h1><p>{hero_subtitle}</p>' + (f'<div class="hero-offer">{hero_offer}</div>' if hero_offer else '') +
         f'<div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center"><a href="#contact" class="btn btn-white">{cta_text}</a><a href="https://www.google.com/maps/dir/?api=1&destination={address.replace(" ", "+")}" target="_blank" class="btn btn-glass">&#128205; Get Directions</a></div></div></section>'
