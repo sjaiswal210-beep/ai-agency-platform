@@ -259,7 +259,7 @@ a{text-decoration:none;color:inherit}
 <nav class="nav" id="nav">
 <div class="nav-brand">City Maps</div>
 <div class="nav-links"><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="#how">How It Works</a></div>
-<a href="https://ai-agency-platform-blush.vercel.app" class="nav-btn">Dashboard</a>
+<a href="#pricing" class="nav-btn">Get Started</a>
 </nav>
 
 <section class="hero">
@@ -270,8 +270,8 @@ a{text-decoration:none;color:inherit}
 <h1>Your Business<br>Deserves To Be<br><span class="grad">Found Online</span></h1>
 <p>Customers search Google every day for businesses like yours. If they can't find you online, they go to your competitor. City Maps fixes that — in just 5 minutes.</p>
 <div class="hero-btns">
-<a href="https://ai-agency-platform-blush.vercel.app" class="btn btn-dark">Get Started Free &rarr;</a>
-<a href="https://ai-agency-platform-blush.vercel.app" class="btn btn-outline">Find My Business</a>
+<a href="#pricing" class="btn btn-dark">Get Started Free &rarr;</a>
+<a href="https://wa.me/917276738899?text=Hi%20City%20Maps%2C%20I%20want%20to%20create%20my%20business%20website" class="btn btn-outline">Find My Business</a>
 </div>
 </div>
 <div class="hero-visual" data-aos="fade-left">
@@ -334,7 +334,7 @@ a{text-decoration:none;color:inherit}
 <div class="pi">QR code for visiting cards & banners</div>
 <div class="pi">Daily growth tips for your business</div>
 </div>
-<a href="https://ai-agency-platform-blush.vercel.app" class="p-cta">Start Growing &rarr;</a>
+<a href="https://wa.me/917276738899?text=Hi%2C%20I%20want%20to%20start%20the%20Business%20Plan%20at%20Rs.69%2Fmonth" class="p-cta">Start Growing &rarr;</a>
 </div>
 </section>
 
@@ -342,7 +342,7 @@ a{text-decoration:none;color:inherit}
 <div data-aos="fade-up">
 <h2>Stop Losing Customers to Competitors</h2>
 <p>Join """ + str(count) + """+ local businesses are already online. Don't get left behind.</p>
-<a href="https://ai-agency-platform-blush.vercel.app" class="btn btn-dark">Create My Website &rarr;</a>
+<a href="https://wa.me/917276738899?text=Hi%2C%20I%20want%20to%20create%20my%20business%20website%20on%20City%20Maps" class="btn btn-dark">Create My Website &rarr;</a>
 </div>
 </section>
 
