@@ -214,8 +214,14 @@ def landing_page():
 <p>Aapke business ka apna website. Customers Google pe aapko dhundhein, call karein, WhatsApp pe order dein. Koi technical knowledge ki zaroorat nahi.</p>
 <div class="hero-search"><input id="bizSearch" placeholder="Type your business name..."><button onclick="searchBiz()">Search</button></div>
 <div id="searchResult"></div>
+<div style="margin-top:28px;text-align:center"><img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&h=300&fit=crop" style="border-radius:16px;box-shadow:0 12px 32px rgba(0,0,0,.1);max-width:500px;width:100%" alt="Dashboard"></div>
 </section>
 <div class="trust"><span>Salons</span><span>&middot;</span><span>Restaurants</span><span>&middot;</span><span>Doctors</span><span>&middot;</span><span>Gyms</span><span>&middot;</span><span>Stores</span><span>&middot;</span><span>Hotels</span></div>
+<div style="display:flex;justify-content:center;gap:12px;padding:30px 24px;flex-wrap:wrap;max-width:750px;margin:0 auto">
+<img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=220&h=150&fit=crop" style="border-radius:14px;box-shadow:0 6px 16px rgba(0,0,0,.08);flex:1;min-width:140px;max-width:220px;object-fit:cover" alt="Store">
+<img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=220&h=150&fit=crop" style="border-radius:14px;box-shadow:0 6px 16px rgba(0,0,0,.08);flex:1;min-width:140px;max-width:220px;object-fit:cover" alt="Salon">
+<img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=220&h=150&fit=crop" style="border-radius:14px;box-shadow:0 6px 16px rgba(0,0,0,.08);flex:1;min-width:140px;max-width:220px;object-fit:cover" alt="Restaurant">
+</div>
 <section class="section">
 <div class="sec-label">Features</div><div class="sec-title">Aapke Business ke Liye Sab Kuch</div><div class="sec-desc">Jo tools aapke customers badhayein</div>
 <div class="features">
