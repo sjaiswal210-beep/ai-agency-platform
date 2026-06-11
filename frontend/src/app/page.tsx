@@ -4,7 +4,7 @@ const API_BASE = "https://ai-agency-platform.onrender.com";
 
 import { useEffect, useState } from "react";
 import { api, DashboardStats, Lead } from "@/lib/api";
-import { Users, MessageSquare, TrendingUp, Globe, Search, Mail, PlusCircle, LayoutGrid, Zap, Settings, BarChart3, Bot, ChevronLeft, Bell } from "lucide-react";
+import { Users, MessageSquare, TrendingUp, Globe, Search, Mail, PlusCircle, LayoutGrid, Zap, Settings, BarChart3, Bot, ChevronLeft, Bell, StickyNote } from "lucide-react";
 
 export default function Dashboard() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
@@ -120,6 +120,7 @@ export default function Dashboard() {
     { name: "Creatives", icon: Zap, href: "/creatives" },
     { name: "Growth", icon: TrendingUp, href: "/growth" },
     { name: "Analytics", icon: BarChart3, href: "/analytics" },
+    { name: "Notes", icon: StickyNote, href: "/notes" },
   ];
 
   return (
