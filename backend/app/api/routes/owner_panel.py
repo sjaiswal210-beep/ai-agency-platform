@@ -56,21 +56,59 @@ body{{padding-bottom:70px}}
 <div class="stat"><div class="n">{wa}</div><div class="l">WhatsApp</div></div>
 </div>
 
-<div class="section-title">Manage</div>
+<div class="section-title">Manage Your Business</div>
 <div class="tools">
-<a href="https://city-maps.online/api/store/{website_id}/manage" target="_blank" class="tool"><div class="emoji">&#128722;</div><div class="name">Products</div><div class="desc">Add & manage products</div></a>
+<a href="https://city-maps.online/api/store/{website_id}/manage" target="_blank" class="tool"><div class="emoji">&#128722;</div><div class="name">Products</div><div class="desc">Add & manage items</div></a>
 <a href="https://city-maps.online/api/branding/{website_id}/social-post/preview" target="_blank" class="tool"><div class="emoji">&#128247;</div><div class="name">Social Post</div><div class="desc">Create & download</div></a>
 <a href="https://city-maps.online/api/qr/{website_id}" target="_blank" class="tool"><div class="emoji">&#128248;</div><div class="name">QR Code</div><div class="desc">For cards & banners</div></a>
-<a href="https://city-maps.online/api/owner-analytics/{website_id}" target="_blank" class="tool"><div class="emoji">&#128200;</div><div class="name">Analytics</div><div class="desc">Detailed stats</div></a>
+<a href="https://city-maps.online/api/owner-analytics/{website_id}" target="_blank" class="tool"><div class="emoji">&#128200;</div><div class="name">Analytics</div><div class="desc">Visitors & calls</div></a>
 <a href="https://city-maps.online/api/daily/{website_id}" target="_blank" class="tool"><div class="emoji">&#128197;</div><div class="name">Daily Content</div><div class="desc">Ready to share</div></a>
-<a href="https://city-maps.online/api/google-profile/{website_id}/setup-guide" target="_blank" class="tool"><div class="emoji">&#128205;</div><div class="name">Google Setup</div><div class="desc">Get on Google Maps</div></a>
+<a href="https://city-maps.online/api/google-profile/{website_id}/setup-guide" target="_blank" class="tool"><div class="emoji">&#128205;</div><div class="name">Google Setup</div><div class="desc">Get on Maps</div></a>
+</div>
+
+<div class="section-title">Edit Your Website</div>
+<div class="tools">
+<a href="#" onclick="showEditor()" class="tool"><div class="emoji">&#9998;</div><div class="name">Edit Website</div><div class="desc">Change text & info</div></a>
+<a href="#" onclick="showSocial()" class="tool"><div class="emoji">&#128279;</div><div class="name">Social Links</div><div class="desc">Instagram & Facebook</div></a>
+<a href="#" onclick="showGallery()" class="tool"><div class="emoji">&#128444;</div><div class="name">Gallery Photos</div><div class="desc">Add your photos</div></a>
+<a href="https://city-maps.online/api/campaigns/{website_id}/festival/diwali" target="_blank" class="tool"><div class="emoji">&#127878;</div><div class="name">Festival Offers</div><div class="desc">Campaign templates</div></a>
+</div>
+
+<div id="editorPanel" style="display:none;background:#fff;border-radius:12px;padding:16px;margin-top:12px;box-shadow:0 1px 3px rgba(0,0,0,.04)">
+<h3 style="font-size:.85rem;font-weight:700;margin-bottom:10px">Edit Website Content</h3>
+<p style="font-size:.72rem;color:#64748b;margin-bottom:8px">Type what you want to change (e.g., "Change phone number to 9876543210" or "Add Diwali offer 20% off")</p>
+<textarea id="editPrompt" rows="3" placeholder="Type your edit here..." style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;font-size:.82rem;font-family:inherit;resize:none;margin-bottom:8px"></textarea>
+<button onclick="submitEdit()" style="background:#6366f1;color:#fff;border:none;padding:9px 16px;border-radius:8px;font-weight:700;font-size:.78rem;cursor:pointer;width:100%">Apply Changes</button>
+<p id="editResult" style="font-size:.75rem;color:#64748b;margin-top:8px"></p>
+</div>
+
+<div id="socialPanel" style="display:none;background:#fff;border-radius:12px;padding:16px;margin-top:12px;box-shadow:0 1px 3px rgba(0,0,0,.04)">
+<h3 style="font-size:.85rem;font-weight:700;margin-bottom:10px">Social Media Links</h3>
+<input id="instaUrl" placeholder="Instagram URL" style="width:100%;padding:9px;border:1px solid #e2e8f0;border-radius:8px;font-size:.8rem;margin-bottom:6px">
+<input id="fbUrl" placeholder="Facebook URL" style="width:100%;padding:9px;border:1px solid #e2e8f0;border-radius:8px;font-size:.8rem;margin-bottom:6px">
+<input id="ytUrl" placeholder="YouTube URL" style="width:100%;padding:9px;border:1px solid #e2e8f0;border-radius:8px;font-size:.8rem;margin-bottom:8px">
+<button onclick="saveSocial()" style="background:#6366f1;color:#fff;border:none;padding:9px 16px;border-radius:8px;font-weight:700;font-size:.78rem;cursor:pointer;width:100%">Save Social Links</button>
+</div>
+
+<div id="galleryPanel" style="display:none;background:#fff;border-radius:12px;padding:16px;margin-top:12px;box-shadow:0 1px 3px rgba(0,0,0,.04)">
+<h3 style="font-size:.85rem;font-weight:700;margin-bottom:10px">Gallery Photos</h3>
+<p style="font-size:.72rem;color:#64748b;margin-bottom:8px">Paste image URLs (one per line) from Instagram or any website</p>
+<textarea id="galUrls" rows="4" placeholder="Paste image URLs here..." style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;font-size:.8rem;font-family:inherit;resize:none;margin-bottom:8px"></textarea>
+<button onclick="saveGallery()" style="background:#6366f1;color:#fff;border:none;padding:9px 16px;border-radius:8px;font-weight:700;font-size:.78rem;cursor:pointer;width:100%">Save Photos</button>
 </div>
 
 <div class="wa-bar">
 <a href="{site_url}" target="_blank" class="blue">View Website</a>
 <a href="https://wa.me/917350785606?text=Hi%2C%20I%20need%20help%20with%20my%20business%20page" target="_blank" class="green">Get Help</a>
 </div>
-</body></html>'''
+<script>
+function showEditor(){{document.getElementById("editorPanel").style.display="block";document.getElementById("socialPanel").style.display="none";document.getElementById("galleryPanel").style.display="none";}}
+function showSocial(){{document.getElementById("socialPanel").style.display="block";document.getElementById("editorPanel").style.display="none";document.getElementById("galleryPanel").style.display="none";}}
+function showGallery(){{document.getElementById("galleryPanel").style.display="block";document.getElementById("editorPanel").style.display="none";document.getElementById("socialPanel").style.display="none";}}
+async function submitEdit(){{var p=document.getElementById("editPrompt").value;if(!p)return;document.getElementById("editResult").textContent="Applying...";try{{var r=await fetch("https://city-maps.online/api/editor/{website_id}/edit",{{method:"POST",headers:{{"Content-Type":"application/json"}},body:JSON.stringify({{prompt:p}})}});var d=await r.json();document.getElementById("editResult").textContent=d.message||"Done! Refresh your website to see changes.";}}catch{{document.getElementById("editResult").textContent="Failed. Try again.";}}}}
+async function saveSocial(){{try{{await fetch("https://city-maps.online/api/panel/{website_id}/social-links",{{method:"POST",headers:{{"Content-Type":"application/json"}},body:JSON.stringify({{instagram:document.getElementById("instaUrl").value,facebook:document.getElementById("fbUrl").value,youtube:document.getElementById("ytUrl").value}})}});alert("Social links saved!");}}catch{{alert("Failed");}}}}
+async function saveGallery(){{var urls=document.getElementById("galUrls").value.split(String.fromCharCode(10)).filter(function(u){{return u.trim()}});try{{await fetch("https://city-maps.online/api/panel/{website_id}/gallery",{{method:"POST",headers:{{"Content-Type":"application/json"}},body:JSON.stringify({{urls:urls}})}});alert("Gallery saved! "+urls.length+" photos added.");}}catch{{alert("Failed");}}}}
+</script></body></html>'''
     return HTMLResponse(content=html)
 
 @router.post("/{website_id}/social-links")
