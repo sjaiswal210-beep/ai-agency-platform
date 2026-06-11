@@ -1,5 +1,8 @@
 import json
-from crewai import Agent, Task, Crew
+try:
+    from crewai import Agent, Task, Crew
+except ImportError:
+    Agent = Task = Crew = None
 from app.core.llm import chat_completion
 from app.services.lead_service import LeadService
 from app.schemas.leads import LeadUpdate

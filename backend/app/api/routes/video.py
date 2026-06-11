@@ -2,7 +2,10 @@ from __future__ import annotations
 import os
 import os
 import tempfile
-import replicate
+try:
+    import replicate
+except ImportError:
+    replicate = None
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from app.services.website_service import WebsiteService
@@ -320,6 +323,9 @@ Format as a numbered list. Return ONLY the list."""
         "business": business_name,
         "category": category,
         "suggestions": suggestions,
-    }
-
-
+    }
+
+
+
+
+

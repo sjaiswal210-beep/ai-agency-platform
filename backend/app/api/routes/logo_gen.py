@@ -1,6 +1,9 @@
 from __future__ import annotations
 import os
-import replicate
+try:
+    import replicate
+except ImportError:
+    replicate = None
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
@@ -190,7 +193,8 @@ async function generateLogo() {{
 }}
 </script>
 </body></html>"""
-    return HTMLResponse(content=html)
+    return HTMLResponse(content=html)
+
 
 
 @router.post("/{website_id}/set-logo")
@@ -219,5 +223,7 @@ def get_current_logo(website_id: str):
 
     content = website.get("content", {})
     logo_url = content.get("logo_url", "") if isinstance(content, dict) else ""
-    return {"logo_url": logo_url, "has_logo": bool(logo_url)}
-
+    return {"logo_url": logo_url, "has_logo": bool(logo_url)}
+
+
+
