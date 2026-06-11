@@ -64,6 +64,7 @@ body{{padding-bottom:70px}}
 <a href="https://city-maps.online/api/owner-analytics/{website_id}" target="_blank" class="tool"><div class="emoji">&#128200;</div><div class="name">Analytics</div><div class="desc">Visitors & calls</div></a>
 <a href="https://city-maps.online/api/daily/{website_id}" target="_blank" class="tool"><div class="emoji">&#128197;</div><div class="name">Daily Content</div><div class="desc">Ready to share</div></a>
 <a href="https://city-maps.online/api/google-profile/{website_id}/setup-guide" target="_blank" class="tool"><div class="emoji">&#128205;</div><div class="name">Google Setup</div><div class="desc">Get on Maps</div></a>
+<a href="https://city-maps.online/api/panel/{website_id}/video-creator" target="_blank" class="tool"><div class="emoji">&#127916;</div><div class="name">Video Creator</div><div class="desc">Make promo videos</div></a>
 </div>
 
 <div class="section-title">Edit Your Website</div>
@@ -141,3 +142,346 @@ def save_gallery(website_id: str, data: dict):
     content["custom_gallery"] = urls
     db.table("websites").update({"content": content}).eq("id", website_id).execute()
     return {"saved": True, "count": len(urls)}
+
+
+@router.get("/{website_id}/video-creator", response_class=HTMLResponse)
+def video_creator_page(website_id: str):
+    """Browser-based video creator - all processing client-side."""
+    service = WebsiteService()
+    lead_service = LeadService()
+    website = service.get(website_id)
+    if not website:
+        raise HTTPException(404, "Not found")
+    lead = lead_service.get(website["lead_id"]) if website.get("lead_id") else None
+    business_name = lead.get("business_name", "Business") if lead else "Business"
+
+    html = f'''<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>{business_name} - Video Creator</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{{margin:0;padding:0;box-sizing:border-box}}
+body{{font-family:Inter,sans-serif;background:#f8fafc;color:#1e293b;padding:16px;max-width:500px;margin:0 auto}}
+.hdr{{text-align:center;padding:16px 0}}.hdr h1{{font-size:1.1rem;font-weight:800}}.hdr p{{font-size:.72rem;color:#64748b;margin-top:4px}}
+.step{{background:#fff;border-radius:14px;padding:18px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.04);border:1px solid #e2e8f0}}
+.step h2{{font-size:.85rem;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px}}
+.step-num{{width:24px;height:24px;border-radius:50%;background:#6366f1;color:#fff;font-size:.7rem;font-weight:700;display:flex;align-items:center;justify-content:center}}
+.upload-zone{{border:2px dashed #e2e8f0;border-radius:10px;padding:24px;text-align:center;cursor:pointer;transition:all .2s}}
+.upload-zone:hover{{border-color:#6366f1;background:rgba(99,102,241,.02)}}
+.upload-zone p{{font-size:.78rem;color:#64748b}}.upload-zone .icon{{font-size:2rem;margin-bottom:8px}}
+.thumbs{{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px}}
+.thumb{{position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden}}.thumb img{{width:100%;height:100%;object-fit:cover}}
+.thumb .del{{position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;font-size:.6rem;display:flex;align-items:center;justify-content:center;cursor:pointer}}
+.text-input{{width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;font-size:.82rem;margin-bottom:8px}}
+.text-opts{{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}}
+.text-opts button{{padding:5px 10px;border-radius:6px;border:1px solid #e2e8f0;background:#fff;font-size:.7rem;font-weight:600;cursor:pointer}}
+.text-opts button.active{{background:#6366f1;color:#fff;border-color:#6366f1}}
+.music-list{{display:flex;flex-direction:column;gap:6px}}
+.music-item{{display:flex;align-items:center;gap:10px;padding:10px;border:1px solid #e2e8f0;border-radius:8px;cursor:pointer;transition:all .15s}}
+.music-item:hover,.music-item.selected{{border-color:#6366f1;background:rgba(99,102,241,.04)}}
+.music-item .name{{font-size:.78rem;font-weight:600;flex:1}}.music-item .dur{{font-size:.68rem;color:#94a3b8}}
+.music-item .play-btn{{width:28px;height:28px;border-radius:50%;background:#6366f1;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.7rem;border:none;cursor:pointer}}
+.gen-btn{{width:100%;padding:14px;background:#6366f1;color:#fff;border:none;border-radius:10px;font-weight:700;font-size:.88rem;cursor:pointer;transition:all .2s}}
+.gen-btn:hover{{background:#4f46e5;transform:translateY(-1px)}}.gen-btn:disabled{{opacity:.5;cursor:not-allowed;transform:none}}
+.progress{{width:100%;height:6px;background:#e2e8f0;border-radius:3px;margin-top:10px;overflow:hidden}}
+.progress-bar{{height:100%;background:linear-gradient(90deg,#6366f1,#8b5cf6);border-radius:3px;transition:width .3s}}
+.result{{text-align:center;padding:20px}}.result video{{width:100%;border-radius:10px;margin-bottom:12px}}
+.dl-btn{{display:inline-block;padding:12px 24px;background:#22c55e;color:#fff;border-radius:10px;font-weight:700;font-size:.85rem;text-decoration:none;cursor:pointer;border:none}}
+.reset-btn{{display:block;margin:10px auto 0;background:none;border:none;color:#64748b;font-size:.75rem;cursor:pointer;text-decoration:underline}}
+.note{{font-size:.68rem;color:#94a3b8;text-align:center;margin-top:8px}}
+.hidden{{display:none}}
+</style></head><body>
+<div class="hdr">
+<h1>&#127916; Video Creator</h1>
+<p>{business_name} - Create promotional videos</p>
+</div>
+
+<div id="step1" class="step">
+<h2><span class="step-num">1</span>Upload Photos</h2>
+<div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+<div class="icon">&#128247;</div>
+<p>Tap to select photos (2-20 images)<br><span style="font-size:.68rem;color:#94a3b8">JPEG, PNG, WebP &bull; Max 10MB each</span></p>
+</div>
+<input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp" multiple style="display:none" onchange="handleFiles(this.files)">
+<div class="thumbs" id="thumbs"></div>
+</div>
+
+<div id="step2" class="step hidden">
+<h2><span class="step-num">2</span>Add Text</h2>
+<input type="text" class="text-input" id="textInput" placeholder="Business name or offer text (optional)" maxlength="100">
+<div class="text-opts">
+<button onclick="setPos('top')" id="pos-top">Top</button>
+<button onclick="setPos('center')" id="pos-center" class="active">Center</button>
+<button onclick="setPos('bottom')" id="pos-bottom">Bottom</button>
+</div>
+<div class="text-opts">
+<button onclick="setSize('small')" id="sz-small">Small</button>
+<button onclick="setSize('medium')" id="sz-medium" class="active">Medium</button>
+<button onclick="setSize('large')" id="sz-large">Large</button>
+</div>
+</div>
+
+<div id="step3" class="step hidden">
+<h2><span class="step-num">3</span>Choose Music</h2>
+<div class="music-list" id="musicList"></div>
+</div>
+
+<div id="step4" class="step hidden">
+<h2><span class="step-num">4</span>Generate Video</h2>
+<button class="gen-btn" id="genBtn" onclick="generateVideo()">&#127916; Create Video</button>
+<div class="progress hidden" id="progressWrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+<p id="statusText" class="note"></p>
+</div>
+
+<div id="step5" class="step hidden">
+<div class="result">
+<h2 style="margin-bottom:12px">&#10004;&#65039; Video Ready!</h2>
+<video id="resultVideo" controls></video>
+<button class="dl-btn" onclick="downloadVideo()">&#11015; Download Video</button>
+<button class="reset-btn" onclick="resetAll()">Create Another Video</button>
+<p class="note">No data stored on server. Everything processed in your browser.</p>
+</div>
+</div>
+
+<script>
+let photos=[];let textOverlay="";let textPos="center";let textSize="medium";let selectedMusic=0;let videoBlob=null;let videoUrl=null;
+
+const MUSIC_TRACKS=[
+{{name:"Upbeat Corporate",url:"https://cdn.pixabay.com/audio/2022/10/25/audio_564fdf2fac.mp3",dur:"2:10"}},
+{{name:"Happy Acoustic",url:"https://cdn.pixabay.com/audio/2022/05/27/audio_1808fbf07a.mp3",dur:"1:55"}},
+{{name:"Inspiring Piano",url:"https://cdn.pixabay.com/audio/2022/01/18/audio_d0a13f69d2.mp3",dur:"2:30"}},
+{{name:"Modern Technology",url:"https://cdn.pixabay.com/audio/2022/03/15/audio_942de29241.mp3",dur:"2:05"}},
+{{name:"Chill Lofi",url:"https://cdn.pixabay.com/audio/2022/11/22/audio_a1876e0990.mp3",dur:"1:45"}}
+];
+
+let audioEl=null;
+
+function initMusic(){{
+const list=document.getElementById("musicList");
+MUSIC_TRACKS.forEach((t,i)=>{{
+const div=document.createElement("div");
+div.className="music-item"+(i===0?" selected":"");
+div.innerHTML=`<button class="play-btn" onclick="event.stopPropagation();previewMusic(${{i}})">&#9654;</button><span class="name">${{t.name}}</span><span class="dur">${{t.dur}}</span>`;
+div.onclick=()=>selectMusic(i);
+list.appendChild(div);
+}});
+}}
+
+function selectMusic(i){{
+selectedMusic=i;
+document.querySelectorAll(".music-item").forEach((el,idx)=>{{el.className="music-item"+(idx===i?" selected":"");}});
+}}
+
+function previewMusic(i){{
+if(audioEl){{audioEl.pause();audioEl=null;}}
+audioEl=new Audio(MUSIC_TRACKS[i].url);
+audioEl.volume=0.5;audioEl.play();
+setTimeout(()=>{{if(audioEl)audioEl.pause();}},8000);
+}}
+
+function handleFiles(files){{
+const maxFiles=20;const maxSize=10*1024*1024;
+for(let f of files){{
+if(photos.length>=maxFiles){{alert("Max 20 photos");break;}}
+if(f.size>maxSize){{alert(f.name+" is too large (max 10MB)");continue;}}
+if(!f.type.match(/image\/(jpeg|png|webp)/)){{alert(f.name+" is not a valid format");continue;}}
+const reader=new FileReader();
+reader.onload=(e)=>{{
+photos.push({{data:e.target.result,name:f.name}});
+renderThumbs();
+if(photos.length>=2)showSteps();
+}};
+reader.readAsDataURL(f);
+}}
+}}
+
+function renderThumbs(){{
+const container=document.getElementById("thumbs");
+container.innerHTML="";
+photos.forEach((p,i)=>{{
+container.innerHTML+=`<div class="thumb"><img src="${{p.data}}"><div class="del" onclick="removePhoto(${{i}})">&times;</div></div>`;
+}});
+}}
+
+function removePhoto(i){{photos.splice(i,1);renderThumbs();if(photos.length<2)hideSteps();}}
+
+function showSteps(){{
+document.getElementById("step2").classList.remove("hidden");
+document.getElementById("step3").classList.remove("hidden");
+document.getElementById("step4").classList.remove("hidden");
+}}
+
+function hideSteps(){{
+document.getElementById("step2").classList.add("hidden");
+document.getElementById("step3").classList.add("hidden");
+document.getElementById("step4").classList.add("hidden");
+}}
+
+function setPos(p){{textPos=p;document.querySelectorAll("[id^=pos-]").forEach(b=>b.classList.remove("active"));document.getElementById("pos-"+p).classList.add("active");}}
+function setSize(s){{textSize=s;document.querySelectorAll("[id^=sz-]").forEach(b=>b.classList.remove("active"));document.getElementById("sz-"+s).classList.add("active");}}
+
+async function generateVideo(){{
+const btn=document.getElementById("genBtn");
+btn.disabled=true;btn.textContent="Generating...";
+document.getElementById("progressWrap").classList.remove("hidden");
+document.getElementById("statusText").textContent="Creating canvas frames...";
+
+textOverlay=document.getElementById("textInput").value;
+
+const W=1280,H=720,FPS=30,SLIDE_SEC=3,TRANS_SEC=0.5;
+const totalFrames=photos.length*SLIDE_SEC*FPS;
+const canvas=document.createElement("canvas");
+canvas.width=W;canvas.height=H;
+const ctx=canvas.getContext("2d");
+
+// Load images
+const imgs=[];
+for(let p of photos){{
+const img=new Image();
+img.src=p.data;
+await new Promise(r=>{{img.onload=r;}});
+imgs.push(img);
+}}
+
+// Generate frames as blob array
+const frames=[];
+let frameCount=0;
+
+for(let i=0;i<imgs.length;i++){{
+const slideFrames=SLIDE_SEC*FPS;
+const transFrames=TRANS_SEC*FPS;
+
+for(let f=0;f<slideFrames;f++){{
+ctx.fillStyle="#000";ctx.fillRect(0,0,W,H);
+
+// Draw current image (cover fit)
+drawCover(ctx,imgs[i],W,H);
+
+// Transition: fade in from previous at start
+if(i>0&&f<transFrames){{
+const alpha=f/transFrames;
+ctx.globalAlpha=1-alpha;
+drawCover(ctx,imgs[i-1],W,H);
+ctx.globalAlpha=1;
+// Redraw current with alpha
+ctx.globalAlpha=alpha;
+drawCover(ctx,imgs[i],W,H);
+ctx.globalAlpha=1;
+}}
+
+// Text overlay
+if(textOverlay){{
+const fontSize=textSize==="small"?28:textSize==="large"?52:38;
+ctx.font=`bold ${{fontSize}}px Inter,sans-serif`;
+ctx.textAlign="center";
+ctx.fillStyle="#fff";
+ctx.shadowColor="rgba(0,0,0,.7)";ctx.shadowBlur=8;
+let y=textPos==="top"?80:textPos==="bottom"?H-40:H/2;
+ctx.fillText(textOverlay,W/2,y);
+ctx.shadowBlur=0;
+}}
+
+frames.push(canvas.toDataURL("image/jpeg",0.8));
+frameCount++;
+const pct=Math.round(frameCount/totalFrames*70);
+document.getElementById("progressBar").style.width=pct+"%";
+// Yield to prevent freezing
+if(frameCount%10===0)await new Promise(r=>setTimeout(r,0));
+}}
+}}
+
+document.getElementById("statusText").textContent="Encoding video... (this may take a moment)";
+document.getElementById("progressBar").style.width="75%";
+
+// Use canvas captureStream + MediaRecorder for video encoding
+const stream=canvas.captureStream(FPS);
+
+// Add audio
+let audioStream=null;
+try{{
+const audioCtx=new AudioContext();
+const audioResp=await fetch(MUSIC_TRACKS[selectedMusic].url);
+const audioBuffer=await audioCtx.decodeAudioData(await audioResp.arrayBuffer());
+const source=audioCtx.createBufferSource();
+source.buffer=audioBuffer;
+source.loop=true;
+const dest=audioCtx.createMediaStreamDestination();
+source.connect(dest);
+source.start();
+audioStream=dest.stream;
+stream.addTrack(audioStream.getAudioTracks()[0]);
+}}catch(e){{console.log("Audio failed, continuing without:",e);}}
+
+const recorder=new MediaRecorder(stream,{{mimeType:"video/webm;codecs=vp9",videoBitsPerSecond:2500000}});
+const chunks=[];
+recorder.ondataavailable=(e)=>{{if(e.data.size>0)chunks.push(e.data);}};
+
+recorder.start();
+
+// Play back frames to canvas
+for(let i=0;i<frames.length;i++){{
+const img=new Image();
+img.src=frames[i];
+await new Promise(r=>{{img.onload=r;}});
+ctx.drawImage(img,0,0);
+const pct=75+Math.round(i/frames.length*20);
+document.getElementById("progressBar").style.width=pct+"%";
+await new Promise(r=>setTimeout(r,1000/FPS));
+}}
+
+recorder.stop();
+await new Promise(r=>{{recorder.onstop=r;}});
+
+document.getElementById("progressBar").style.width="100%";
+document.getElementById("statusText").textContent="Done!";
+
+videoBlob=new Blob(chunks,{{type:"video/webm"}});
+videoUrl=URL.createObjectURL(videoBlob);
+
+// Show result
+document.getElementById("step1").classList.add("hidden");
+document.getElementById("step2").classList.add("hidden");
+document.getElementById("step3").classList.add("hidden");
+document.getElementById("step4").classList.add("hidden");
+document.getElementById("step5").classList.remove("hidden");
+document.getElementById("resultVideo").src=videoUrl;
+
+// Free frame memory
+frames.length=0;
+}}
+
+function drawCover(ctx,img,W,H){{
+const ratio=Math.max(W/img.width,H/img.height);
+const w=img.width*ratio,h=img.height*ratio;
+ctx.drawImage(img,(W-w)/2,(H-h)/2,w,h);
+}}
+
+function downloadVideo(){{
+const a=document.createElement("a");
+a.href=videoUrl;
+a.download="{business_name.replace(" ","_")}_promo.webm";
+a.click();
+}}
+
+function resetAll(){{
+// Cleanup
+if(videoUrl)URL.revokeObjectURL(videoUrl);
+videoBlob=null;videoUrl=null;photos=[];
+document.getElementById("thumbs").innerHTML="";
+document.getElementById("textInput").value="";
+document.getElementById("step1").classList.remove("hidden");
+document.getElementById("step2").classList.add("hidden");
+document.getElementById("step3").classList.add("hidden");
+document.getElementById("step4").classList.add("hidden");
+document.getElementById("step5").classList.add("hidden");
+document.getElementById("genBtn").disabled=false;
+document.getElementById("genBtn").textContent="\U0001f3ac Create Video";
+document.getElementById("progressWrap").classList.add("hidden");
+document.getElementById("progressBar").style.width="0%";
+document.getElementById("statusText").textContent="";
+if(audioEl){{audioEl.pause();audioEl=null;}}
+}}
+
+initMusic();
+</script></body></html>'''
+    return HTMLResponse(content=html)
