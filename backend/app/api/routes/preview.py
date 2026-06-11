@@ -407,9 +407,8 @@ def _get_design_css(category: str) -> str:
 
 
 MOBILE_CSS = """
-.lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:9999;align-items:center;justify-content:center;padding:20px}.lightbox.open{display:flex}.lightbox img{max-width:90%;max-height:80vh;border-radius:12px;object-fit:contain}.lightbox .close{position:absolute;top:16px;right:20px;color:#fff;font-size:2rem;cursor:pointer;background:none;border:none}
-
 <style>
+.lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:9999;align-items:center;justify-content:center;padding:20px}.lightbox.open{display:flex}.lightbox img{max-width:90%;max-height:80vh;border-radius:12px;object-fit:contain}.lightbox .close{position:absolute;top:16px;right:20px;color:#fff;font-size:2rem;cursor:pointer;background:none;border:none}
 @media(max-width:768px){
   .nav-links{display:none}
   .nav{padding:12px 16px}
