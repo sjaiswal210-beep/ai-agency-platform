@@ -124,3 +124,20 @@ def save_social_links(website_id: str, links: dict):
     content["social_links"] = {"instagram": links.get("instagram", ""), "facebook": links.get("facebook", ""), "youtube": links.get("youtube", "")}
     db.table("websites").update({"content": content}).eq("id", website_id).execute()
     return {"saved": True}
+
+
+@router.post("/{website_id}/gallery")
+def save_gallery(website_id: str, data: dict):
+    """Save gallery photos (custom URLs from owner)."""
+    from app.core.supabase import get_supabase
+    db = get_supabase()
+    service = WebsiteService()
+    website = service.get(website_id)
+    if not website:
+        raise HTTPException(404, "Not found")
+    content = website.get("content", {}) or {}
+    urls = data.get("urls", [])
+    urls = [u.strip() for u in urls if u and u.strip()]
+    content["custom_gallery"] = urls
+    db.table("websites").update({"content": content}).eq("id", website_id).execute()
+    return {"saved": True, "count": len(urls)}

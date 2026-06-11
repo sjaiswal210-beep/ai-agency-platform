@@ -461,7 +461,7 @@ MOBILE_CSS = """
 </style>
 """
 
-def generate_html(content: dict, template: str, lead: dict = None) -> str:
+def generate_html(content: dict, template: str, lead: dict = None, website_id_override: str = "") -> str:
     if "raw_content" in content:
         raw = content["raw_content"]
         if "```json" in raw:
@@ -525,8 +525,8 @@ def generate_html(content: dict, template: str, lead: dict = None) -> str:
     dir_url = "https://www.google.com/maps/dir/?api=1&destination=" + urllib.parse.quote(address) if address else "#"
 
     # Get website_id for dashboard link
-    website_id = ""
-    if lead and lead.get("id"):
+    website_id = website_id_override or ""
+    if not website_id and lead and lead.get("id"):
         try:
             from app.core.supabase import get_supabase as _gsb
             _wr = _gsb().table("websites").select("id").eq("lead_id", lead["id"]).limit(1).execute()
@@ -976,7 +976,7 @@ body{{padding-bottom:70px}}
         f'{wa_link}'
         ''
         ''
-        f'<div style="text-align:center;padding:20px 24px;display:flex;justify-content:center;gap:12px"><a href="https://instagram.com" target="_blank" style="width:40px;height:40px;border-radius:12px;background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#bc1888);display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="#fff" stroke="none"/></svg></a><a href="https://facebook.com" target="_blank" style="width:40px;height:40px;border-radius:12px;background:#1877f2;display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg></a></div>'
+        f'<div style="text-align:center;padding:20px 24px;display:flex;justify-content:center;gap:12px"><a href="{insta_url}" target="_blank" style="width:40px;height:40px;border-radius:12px;background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#bc1888);display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="#fff" stroke="none"/></svg></a><a href="{fb_url}" target="_blank" style="width:40px;height:40px;border-radius:12px;background:#1877f2;display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg></a></div>'
         '<div class="claim-banner"><div class="claim-inner"><span>\U0001f4bc Is this your business?</span><button onclick="document.getElementById(\'claimModal\').style.display=\'flex\'">Claim This Business</button></div></div>'
         '<div class="claim-modal" id="claimModal" style="display:none"><div class="claim-box"><button class="claim-close" onclick="document.getElementById(\'claimModal\').style.display=\'none\'">&times;</button><h2>\U0001f680 Claim Your Business</h2><p class="claim-sub">Get full control of your website + premium growth tools</p><div class="claim-features"><div class="cf">\u2705 Edit website content anytime</div><div class="cf">\u2705 Add products to your store</div><div class="cf">\u2705 View analytics (visitors, calls, leads)</div><div class="cf">\u2705 AI-powered social media posts</div><div class="cf">\u2705 Daily WhatsApp content ready to share</div><div class="cf">\u2705 QR code for visiting cards</div><div class="cf">\u2705 Google Business Profile setup guide</div><div class="cf">\u2705 Festival campaign generator</div><div class="cf">\u2705 AI chatbot for your customers</div></div><div class="claim-price"><span class="price-old">\u20b9199/month</span><span class="price-new">\u20b969<small>/month</small></span></div><a href="https://city-maps.online/api/panel/{website_id}" class="claim-btn">Claim Now \u2192</a><button class="claim-skip" onclick="document.getElementById(\'claimModal\').style.display=\'none\';window.open(\'/api/panel/{website_id}\',\'_blank\')">Skip (Testing)</button></div></div>'
         
@@ -1046,7 +1046,7 @@ def preview_website(website_id: str):
     if not content:
         raise HTTPException(404, "No content generated")
     lead = lead_service.get(website["lead_id"]) if website.get("lead_id") else None
-    html = generate_html(content, website.get("template", "store"), lead)
+    html = generate_html(content, website.get("template", "store"), lead, website_id_override=website_id)
     if not website.get("preview_url"):
         from app.core.config import get_settings
         settings = get_settings()
