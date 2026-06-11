@@ -224,7 +224,7 @@ def landing_page():
 <section class="hero"><div class="hero-bg"></div><div class="hero-glow"></div>
 <div class="hero-inner">
 <div class="hero-badge"><span class="dot"></span>{count}+ businesses online</div>
-<h1>Take Your Business Online In Just 5 Minutes</h1>
+<h1>Take Your Business Online At Just &#8377;49</h1>
 <p>Professional website, WhatsApp orders, Google visibility, customer tools and business growth — everything from one platform.</p>
 <div class="hero-btns"><a href="#pricing" class="btn btn-cyan">Create My Website</a><a href="#demos" class="btn btn-ghost">View Live Demos</a></div>
 <div class="hero-search"><input id="bizSearch" placeholder="Search your business..."><button onclick="searchBiz()">Search</button></div>
