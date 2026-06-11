@@ -113,6 +113,8 @@ def admin_dashboard(auth: str = ""):
     html += '</div>'
     html += f'<div class="card"><h3>Recent Leads (20)</h3><table><thead><tr><th>Business</th><th>Category</th><th>Phone</th><th>Rating</th><th>Status</th><th>Date</th></tr></thead><tbody>{lead_rows}</tbody></table></div>'
     html += f'<div class="card"><h3>Recent Websites (20)</h3><table><thead><tr><th>Slug/URL</th><th>Status</th><th>Date</th></tr></thead><tbody>{site_rows}</tbody></table></div>'
+    html += '<div class="card"><h3>Quick Notes</h3><textarea id="noteText" rows="2" placeholder="Write a note..." style="width:100%;padding:8px;border:1px solid rgba(255,255,255,.08);border-radius:8px;background:rgba(255,255,255,.04);color:#e2e8f0;font-size:.8rem;margin-bottom:8px;resize:none"></textarea><button onclick="saveNote()" style="background:#7c3aed;color:#fff;border:none;padding:6px 12px;border-radius:6px;font-size:.75rem;font-weight:600;cursor:pointer">Save Note</button><div id="notesList" style="margin-top:10px;font-size:.75rem;color:#94a3b8"></div></div>'
+    html += \'<script>async function saveNote(){var t=document.getElementById("noteText").value;if(!t)return;await fetch("/api/admin/notes",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({text:t})});document.getElementById("noteText").value="";loadNotes()}async function loadNotes(){var r=await fetch("/api/admin/notes");var d=await r.json();document.getElementById("notesList").innerHTML=d.map(function(n){return"<div style=\\"padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04)\\">"+n.note+"<br><small>"+n.created_at.slice(0,10)+"</small></div>"}).join("")}loadNotes();</script>\'
     html += '</div></body></html>'
     return HTMLResponse(content=html)
 
@@ -197,3 +199,36 @@ def admin_stats():
         "leads_by_category": categories,
         "avg_rating": round(avg_rating / max(rated_count, 1), 2),
     }
+
+
+@router.get("/notes")
+def get_notes():
+    """Get saved admin notes."""
+    from app.core.supabase import get_supabase
+    db = get_supabase()
+    try:
+        result = db.table("agent_logs").select("*").eq("agent_name", "admin_notes").order("created_at", desc=True).limit(20).execute()
+        return [{"id": r["id"], "note": r.get("action", ""), "created_at": r.get("created_at", "")} for r in (result.data or [])]
+    except Exception:
+        return []
+
+
+@router.post("/notes")
+def save_note(note: dict):
+    """Save an admin note."""
+    from app.core.supabase import get_supabase
+    db = get_supabase()
+    text = note.get("text", "")
+    if not text:
+        raise HTTPException(400, "Note text required")
+    db.table("agent_logs").insert({"agent_name": "admin_notes", "action": text, "details": {"type": "note"}}).execute()
+    return {"saved": True}
+
+
+@router.delete("/notes/{note_id}")
+def delete_note(note_id: str):
+    """Delete an admin note."""
+    from app.core.supabase import get_supabase
+    db = get_supabase()
+    db.table("agent_logs").delete().eq("id", note_id).eq("agent_name", "admin_notes").execute()
+    return {"deleted": True}
