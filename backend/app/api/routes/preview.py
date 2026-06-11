@@ -536,7 +536,7 @@ def generate_html(content: dict, template: str, lead: dict = None) -> str:
             pass
 
     svc_cards = []
-    for i, svc in enumerate(services):
+    for i, svc in enumerate(services[:6]):
         # Use real photos if available, otherwise use gallery images cycling
         if real_photos and i < len(real_photos):
             img = real_photos[i]
@@ -551,7 +551,7 @@ def generate_html(content: dict, template: str, lead: dict = None) -> str:
     services_html = "".join(svc_cards)
 
     test_cards = []
-    for t in testimonials:
+    for t in testimonials[:3]:
         stars = "&#9733;" * t.get("rating", 5)
         test_cards.append(
             '<div class="testimonial-card" data-aos="fade-up">'
@@ -599,7 +599,7 @@ def generate_html(content: dict, template: str, lead: dict = None) -> str:
     if custom_gallery:
         gallery_images = custom_gallery + gallery_images  # Custom photos first
 
-    for img_url in gallery_images:
+    for img_url in gallery_images[:6]:
         gal_items.append(f'<figure class="gallery-item" data-aos="zoom-in" onclick="openLb(\'{img_url}\')"><img src="{img_url}" alt="Gallery" loading="lazy" style="cursor:pointer"></figure>')
     gallery_html = "".join(gal_items)
 
