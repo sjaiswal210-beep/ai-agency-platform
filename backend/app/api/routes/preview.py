@@ -407,6 +407,8 @@ def _get_design_css(category: str) -> str:
 
 
 MOBILE_CSS = """
+.lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:9999;align-items:center;justify-content:center;padding:20px}.lightbox.open{display:flex}.lightbox img{max-width:90%;max-height:80vh;border-radius:12px;object-fit:contain}.lightbox .close{position:absolute;top:16px;right:20px;color:#fff;font-size:2rem;cursor:pointer;background:none;border:none}
+
 <style>
 @media(max-width:768px){
   .nav-links{display:none}
@@ -592,8 +594,13 @@ def generate_html(content: dict, template: str, lead: dict = None) -> str:
         except Exception:
             pass
 
+    # Custom gallery from owner (Instagram/Facebook photos)
+    custom_gallery = content.get("custom_gallery", []) if isinstance(content, dict) else []
+    if custom_gallery:
+        gallery_images = custom_gallery + gallery_images  # Custom photos first
+
     for img_url in gallery_images:
-        gal_items.append(f'<figure class="gallery-item" data-aos="zoom-in"><img src="{img_url}" alt="Gallery" loading="lazy"></figure>')
+        gal_items.append(f'<figure class="gallery-item" data-aos="zoom-in" onclick="openLb(\'{img_url}\')"><img src="{img_url}" alt="Gallery" loading="lazy" style="cursor:pointer"></figure>')
     gallery_html = "".join(gal_items)
 
     # Icon to emoji mapping
@@ -977,7 +984,7 @@ body{{padding-bottom:70px}}
         '<script>(function(){var wid=document.querySelector("[data-wid]");var id=wid?wid.dataset.wid:"";if(!id){var m=location.pathname.match(/preview\/([^/]+)/);if(m)id=m[1];}if(!id)return;fetch("/api/analytics/track",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({website_id:id,event_type:"page_view",page:location.pathname,referrer:document.referrer})}).catch(function(){});document.querySelectorAll("a[href^=\'tel:\']").forEach(function(a){a.addEventListener("click",function(){fetch("/api/analytics/track",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({website_id:id,event_type:"call_click"})}).catch(function(){});});});document.querySelectorAll("a[href*=\'wa.me\']").forEach(function(a){a.addEventListener("click",function(){fetch("/api/analytics/track",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({website_id:id,event_type:"whatsapp_click"})}).catch(function(){});});});var form=document.querySelector("form");if(form)form.addEventListener("submit",function(){fetch("/api/analytics/track",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({website_id:id,event_type:"lead_form"})}).catch(function(){});});})()</script>'
         f'<script type="application/ld+json">{{"@context":"https://schema.org","@type":"LocalBusiness","name":"{business_name}","telephone":"{phone}","email":"{email}","address":{{"@type":"PostalAddress","streetAddress":"{address}"}},"aggregateRating":{{"@type":"AggregateRating","ratingValue":"{lead.get("rating", 4.5) if lead else 4.5}","reviewCount":"{lead.get("review_count", 50) if lead else 50}"}}}}</script>'
         '<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>'
-        '<script>AOS.init({duration:650,once:true,offset:60});const nav=document.getElementById("mainNav");window.addEventListener("scroll",()=>{nav.classList.toggle("solid",scrollY>60)});if("serviceWorker"in navigator){navigator.serviceWorker.register("data:text/javascript,self.addEventListener(\'fetch\',e=>e.respondWith(fetch(e.request)))").catch(()=>{});}let deferredPrompt;window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;const b=document.createElement("div");b.innerHTML=\'<div style="position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#fff;color:#333;padding:12px 20px;border-radius:50px;box-shadow:0 4px 20px rgba(0,0,0,.15);font-size:.85rem;font-weight:600;z-index:9999;cursor:pointer;display:flex;align-items:center;gap:8px" onclick="this.remove()">\\u2b07\\ufe0f Install App<\\/div>\';document.body.appendChild(b.firstChild);setTimeout(()=>{const el=document.querySelector("[onclick]");if(el)el.addEventListener("click",()=>{deferredPrompt.prompt();})},100)});</script>'
+        '<script>document.body.insertAdjacentHTML("beforeend","<div class=lightbox id=lb onclick=this.classList.remove(String.fromCharCode(111,112,101,110))><button class=close onclick=document.getElementById(String.fromCharCode(108,98)).classList.remove(String.fromCharCode(111,112,101,110))>&times;</button><img id=lbImg></div>");function openLb(s){document.getElementById("lbImg").src=s;document.getElementById("lb").classList.add("open")};AOS.init({duration:650,once:true,offset:60});const nav=document.getElementById("mainNav");window.addEventListener("scroll",()=>{nav.classList.toggle("solid",scrollY>60)});if("serviceWorker"in navigator){navigator.serviceWorker.register("data:text/javascript,self.addEventListener(\'fetch\',e=>e.respondWith(fetch(e.request)))").catch(()=>{});}let deferredPrompt;window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;const b=document.createElement("div");b.innerHTML=\'<div style="position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#fff;color:#333;padding:12px 20px;border-radius:50px;box-shadow:0 4px 20px rgba(0,0,0,.15);font-size:.85rem;font-weight:600;z-index:9999;cursor:pointer;display:flex;align-items:center;gap:8px" onclick="this.remove()">\\u2b07\\ufe0f Install App<\\/div>\';document.body.appendChild(b.firstChild);setTimeout(()=>{const el=document.querySelector("[onclick]");if(el)el.addEventListener("click",()=>{deferredPrompt.prompt();})},100)});</script>'
         f'{bottom_nav}'
         '</body></html>'
     )
