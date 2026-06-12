@@ -352,7 +352,7 @@ a{{text-decoration:none;color:inherit}}
 <div class="test-grid">
 <div class="test-card glass"><div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><blockquote>&ldquo;Within 2 weeks of going live, I started getting WhatsApp enquiries from new customers who found me on Google. Best Rs.49 I ever spent!&rdquo;</blockquote><div class="author"><div class="avatar">P</div><div><div class="name">Priya Sharma</div><div class="biz">Glow Salon, Pune</div></div></div></div>
 <div class="test-card glass"><div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><blockquote>&ldquo;My patients now book appointments directly from my website. The analytics show 200+ visits per month. Incredible value.&rdquo;</blockquote><div class="author"><div class="avatar">R</div><div><div class="name">Rajesh Patil</div><div class="biz">Patil Dental Clinic, Kothrud</div></div></div></div>
-<div class="test-card glass"><div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><blockquote>&ldquo;My website was built in minutes and looks better than what I paid Rs.15000 for before. WhatsApp orders for supplements are a bonus!&rdquo;</blockquote><div class="author"><div class="avatar">A</div><div><div class="name">Amit Gupta</div><div class="biz">FitZone Gym, Wakad</div></div></div></div>
+<div class="test-card glass"><div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><blockquote>&ldquo;My website was built with precision and looks better than what I paid Rs.15000 for before. WhatsApp orders for supplements are a bonus!&rdquo;</blockquote><div class="author"><div class="avatar">A</div><div><div class="name">Amit Gupta</div><div class="biz">FitZone Gym, Wakad</div></div></div></div>
 </div></section>
 
 <!-- Pricing -->
