@@ -453,7 +453,7 @@ MOBILE_CSS = """
   body{padding-bottom:60px}
   .faq-item summary{font-size:.9rem!important;padding:14px 16px!important}
   .faq-item p{padding:0 16px 14px!important;font-size:.85rem!important}
-  .benefits-grid{grid-template-columns:1fr!important}
+  .benefits-grid{grid-template-columns:1fr!important}.benefits-section{display:none!important}
 }
 .social-sec{padding:40px 24px;text-align:center;background:rgba(248,250,252,.05)}.social-sec h2{font-size:1.5rem;font-weight:800;margin-bottom:16px}.social-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}.social-btns a{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:50px;color:#fff;font-weight:700;font-size:.85rem;text-decoration:none;transition:transform .2s}.social-btns a:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.2)}
 .claim-banner{background:linear-gradient(135deg,#f8fafc,#ede9fe);padding:16px 24px;text-align:center;border-top:1px solid #e2e8f0}.claim-inner{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap}.claim-inner span{font-size:.9rem;font-weight:600;color:#1e293b}.claim-inner button{background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;padding:10px 20px;border-radius:50px;font-weight:700;font-size:.85rem;cursor:pointer}.claim-modal{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px}.claim-box{background:#fff;border-radius:20px;padding:32px;max-width:420px;width:100%;position:relative;max-height:90vh;overflow-y:auto}.claim-close{position:absolute;top:12px;right:16px;background:none;border:none;font-size:1.5rem;cursor:pointer;color:#94a3b8}.claim-box h2{font-size:1.3rem;font-weight:800;margin-bottom:6px}.claim-sub{color:#64748b;font-size:.88rem;margin-bottom:16px}.claim-features{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}.cf{font-size:.85rem;font-weight:500;color:#1e293b}.claim-price{text-align:center;margin-bottom:16px}.price-old{text-decoration:line-through;color:#94a3b8;font-size:.9rem;margin-right:8px}.price-new{font-size:2rem;font-weight:900;color:#7c3aed}.price-new small{font-size:.9rem;font-weight:500}.claim-btn{display:block;text-align:center;background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;padding:14px;border-radius:12px;font-weight:700;font-size:1rem;text-decoration:none;margin-bottom:10px}.claim-btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(124,58,237,.3)}.claim-skip{display:block;width:100%;background:none;border:none;color:#94a3b8;font-size:.8rem;cursor:pointer;padding:8px;text-decoration:underline}
@@ -664,7 +664,7 @@ def generate_html(content: dict, template: str, lead: dict = None, website_id_ov
     benefits_html = ""
     if benefits:
         ben_items = "".join([f'<div class="benefit-item">\u2713 {b}</div>' for b in benefits])
-        benefits_html = f'<section class="section"><div class="section-header"><h2>Benefits</h2></div><div class="benefits-grid">{ben_items}</div></section>'
+        benefits_html = f'<section class="section benefits-section"><div class="section-header"><h2>Benefits</h2></div><div class="benefits-grid">{ben_items}</div></section>'
 
     # Why choose us
     why_choose = content.get("why_choose_us", [])
