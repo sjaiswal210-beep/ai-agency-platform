@@ -697,6 +697,7 @@ def generate_html(content: dict, template: str, lead: dict = None, website_id_ov
         )
 
     wa_link = ""
+    bottom_nav = ""
     if whatsapp_num:
         wa_msg = f"Hi {business_name}, I visited your website and I'm interested in your services. Can we discuss?"
         import urllib.parse as _up
@@ -1052,4 +1053,3 @@ def preview_website(website_id: str):
         preview_url = f"{settings.backend_url}/api/preview/{website_id}"
         service.update_status(website_id, website["status"], preview_url=preview_url)
     return HTMLResponse(content=html)
-
