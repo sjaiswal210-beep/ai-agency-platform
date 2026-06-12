@@ -754,7 +754,7 @@ a{{text-decoration:none;color:inherit}}
 .hero-badge{{display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);padding:8px 16px;border-radius:50px;font-size:.85rem;margin-bottom:24px;backdrop-filter:blur(4px)}}
 
 /* STATS */
-.stats-section{{background:url('https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&h=300&fit=crop') center/cover;padding:36px 24px;position:relative;overflow:hidden}}.stats-section::before{{content:'';position:absolute;inset:0;background:rgba(15,23,42,.75);backdrop-filter:blur(2px)}}.stats-section::before{{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 70% 20%,rgba(255,255,255,.12),transparent 55%)}}
+.stats-section{{background:url('{real_photos[1] if len(real_photos) > 1 else (real_photos[0] if real_photos else about_img)}') center/cover;padding:36px 24px;position:relative;overflow:hidden}}.stats-section::before{{content:'';position:absolute;inset:0;background:rgba(15,23,42,.75);backdrop-filter:blur(2px)}}.stats-section::before{{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 70% 20%,rgba(255,255,255,.12),transparent 55%)}}
 .stats-grid{{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:16px;max-width:1000px;margin:0 auto;text-align:center}}.stat-item{{color:#fff}}.stat-number{{font-size:clamp(1.4rem,2.5vw,2rem);font-weight:800}}.stat-label{{font-size:.82rem;opacity:.75;margin-top:4px;font-weight:500}}
 
 /* SECTIONS */
