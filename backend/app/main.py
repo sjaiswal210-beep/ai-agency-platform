@@ -346,7 +346,7 @@ a{{text-decoration:none;color:inherit}}
 <h1>Take Your Business <span>Online</span> In 5 Minutes</h1>
 <p>Professional website, WhatsApp orders, Google visibility, and customer growth tools. Everything your business needs from one platform.</p>
 <div class="hero-btns"><a href="https://wa.me/917350785606?text=Hi%20City%20Maps%2C%20I%20want%20to%20create%20my%20business%20website" target="_blank" class="btn-primary">Create My Website &mdash; &#8377;49/mo</a><a href="#features" class="btn-ghost">See What You Get</a></div>
-<div class="hero-search"><input id="bizSearch" placeholder="Search your business..." onkeydown="if(event.key==='Enter')searchBiz()"><button onclick="searchBiz()">Search</button></div>
+<div class="hero-search"><input id="bizSearch" placeholder="Search your business..." onkeydown="if(event.key==='Enter')searchBiz()"><button type="button" onclick="searchBiz()">Search</button></div>
 <div id="searchResult"></div>
 <div class="hero-sub"><span>&#128640;</span> Boost Your Business <span style="color:#475569">|</span> <span>&#128222;</span> 24/7 Support</div>
 </div>
