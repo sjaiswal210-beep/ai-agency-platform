@@ -321,6 +321,16 @@ a{{text-decoration:none;color:inherit}}
 <div class="feat-card glass"><div class="feat-icon">&#127909;</div><h3>Video &amp; Content</h3><p>Create promo videos, social posts, and stories for your business.</p></div>
 </div></section>
 
+<!-- Video -->
+<section class="sec" style="text-align:center">
+<div class="sec-label">See It In Action</div><div class="sec-title">Watch How It Works</div><div class="sec-desc">See how we help businesses grow online in minutes.</div>
+<div style="max-width:640px;margin:0 auto;border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.08);box-shadow:0 20px 60px rgba(0,0,0,.4)">
+<video width="100%" controls playsinline preload="metadata" poster="" style="display:block;background:#0a0a0a">
+<source src="/static/videos/promo.mp4" type="video/mp4">
+</video>
+</div>
+</section>
+
 <!-- Categories -->
 <section class="sec">
 <div class="sec-label">Industries</div><div class="sec-title">Built For Every Business Type</div><div class="sec-desc">We design the perfect website tailored to your industry.</div>
