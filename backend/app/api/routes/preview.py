@@ -808,12 +808,13 @@ a{{text-decoration:none;color:inherit}}
 .benefits-grid{{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;max-width:900px;margin:0 auto;padding:0}}
 .benefit-item{{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-weight:600;font-size:.82rem}}
 .benefit-check{{flex-shrink:0;width:26px;height:26px;border-radius:50%;background:color-mix(in srgb,var(--p) 12%,#fff);color:var(--p);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem}}
+.benefits-section{{display:none}}
 
 /* FAQ */
-.faq-item{{background:#fff;border:1px solid var(--line);border-radius:14px;margin-bottom:12px;overflow:hidden;transition:box-shadow .3s}}
+.faq-list{{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}}.faq-item{{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden;transition:box-shadow .3s}}
 .faq-item[open]{{box-shadow:0 12px 32px rgba(15,23,42,.07)}}
-.faq-item summary{{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;cursor:pointer;font-weight:700;font-size:.85rem;list-style:none}}
-.faq-item summary::-webkit-details-marker{{display:none}}.faq-item p{{padding:0 18px 16px;color:var(--mute);font-size:.82rem;line-height:1.8}}
+.faq-item summary{{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;cursor:pointer;font-weight:600;font-size:.78rem;list-style:none}}
+.faq-item summary::-webkit-details-marker{{display:none}}.faq-item p{{padding:0 14px 12px;color:var(--mute);font-size:.75rem;line-height:1.7}}
 
 /* CONTACT */
 .contact-section{{background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;padding:60px 24px}}
