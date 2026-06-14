@@ -105,7 +105,10 @@ async def public_create_site(data: dict):
     
     from app.core.supabase import get_supabase
     db = get_supabase()
+    # Check by name OR phone to prevent duplicates
     existing = db.table("leads").select("id").eq("business_name", business_name).limit(1).execute()
+    if not existing.data and phone:
+        existing = db.table("leads").select("id").eq("phone", phone).limit(1).execute()
     
     if existing.data:
         lead_id = existing.data[0]["id"]
@@ -115,8 +118,9 @@ async def public_create_site(data: dict):
             slug = websites[0].get("slug", "")
             if slug:
                 return {"slug": slug, "message": "Website already exists", "whatsapp_sent": False}
+        # Lead exists but no website - proceed to generate
     else:
-        # Create new lead
+        # Create new lead (not a duplicate)
         lead_data = {
             "business_name": business_name,
             "phone": phone,
