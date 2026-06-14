@@ -757,6 +757,17 @@ a{{text-decoration:none;color:inherit}}
 .hero{{position:relative;min-height:100vh;display:flex;align-items:center;overflow:hidden}}
 .hero-bg{{position:absolute;inset:0;background:url('{real_photos[0] if real_photos else hero_img}') center/cover no-repeat;transform:scale(1.05);animation:heroZ 20s ease-in-out infinite alternate}}
 @keyframes heroZ{{to{{transform:scale(1)}}}}
+/* 3D Parallax & Blur Effects */
+.parallax-wrap{{perspective:1000px;transform-style:preserve-3d}}
+.section,.sec{{transform:translateZ(0);transition:transform .6s cubic-bezier(.4,0,.2,1)}}
+.service-card,.feature-item,.testimonial-card,.faq-item{{transform:translateZ(0);transition:all .4s cubic-bezier(.4,0,.2,1)}}
+.service-card:hover{{transform:translateY(-8px) translateZ(20px) rotateX(2deg);box-shadow:0 24px 48px rgba(15,23,42,.15)}}
+.feature-item:hover{{transform:translateY(-6px) translateZ(15px);box-shadow:0 20px 44px rgba(15,23,42,.12)}}
+.hero-bg{{animation:heroZ 20s ease-in-out infinite alternate,heroPan 30s ease-in-out infinite}}
+@keyframes heroPan{{0%,100%{{transform:scale(1.05) translate(0,0)}}25%{{transform:scale(1.08) translate(-1%,-1%)}}50%{{transform:scale(1.05) translate(1%,0)}}75%{{transform:scale(1.07) translate(-0.5%,1%)}}}}
+.gallery-item img{{transition:transform .8s cubic-bezier(.16,1,.3,1),filter .4s}}.gallery-item:hover img{{transform:scale(1.1) translateZ(10px);filter:brightness(1.1) contrast(1.05)}}
+.stats-section{{position:relative;overflow:hidden}}.stats-section::after{{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,0,0,.1) 25%,transparent 25%,transparent 50%,rgba(0,0,0,.1) 50%,rgba(0,0,0,.1) 75%,transparent 75%);background-size:4px 4px;pointer-events:none;opacity:.3}}
+.about-img img{{transition:transform .6s cubic-bezier(.16,1,.3,1)}}.about-img:hover img{{transform:scale(1.04) rotate(.5deg)}}
 .hero-overlay{{position:absolute;inset:0;background:linear-gradient(125deg,rgba(5,5,20,.84) 0%,rgba(5,5,20,.5) 50%,rgba(5,5,20,.3) 100%)}}.hero::after{{content:'';position:absolute;bottom:0;left:0;right:0;height:5px;background:linear-gradient(90deg,var(--p),var(--ps),var(--ac));z-index:3}}
 .hero-glow{{position:absolute;top:-20%;right:-10%;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--p) 40%,transparent),transparent 65%);filter:blur(40px);opacity:.6}}
 .hero-content{{position:relative;z-index:2;max-width:720px;padding:110px 24px 60px;margin-left:5%}}
