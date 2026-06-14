@@ -200,14 +200,14 @@ def social_post_preview(website_id: str, platform: str = "instagram", purpose: s
     category = lead.get("category", "business") if lead else "business"
     phone = lead.get("phone", "") if lead else ""
     slug = website.get("slug", "")
-    site_url = f"city-maps.online/{slug}" if slug else ""
+    site_url = f"{slug}.city-maps.online" if slug else ""
 
     content = website.get("content", {})
     colors = content.get("color_scheme", {})
     primary = colors.get("primary", "#7C3AED")
     
     # Get relevant background image
-    bg_img = f"https://source.unsplash.com/1080x1080/?{category},business"
+    bg_img = f"https://image.pollinations.ai/prompt/{category}+business+professional+aesthetic+background?width=1080&height=1080&nologo=true"
     
     # Generate content based on purpose
     taglines = {
@@ -264,8 +264,11 @@ body{{font-family:system-ui,sans-serif;background:#1e293b;min-height:100vh;displ
 <option value="new">New Arrival</option>
 </select>
 <input type="text" id="customText" placeholder="Custom text..." style="flex:1;min-width:150px">
+<input type="text" id="customBg" placeholder="Paste image URL for background..." style="flex:1;min-width:200px">
+<button onclick="applyBg()">Set BG</button>
 <button onclick="applyCustom()">Apply</button>
 <button class="download-btn" onclick="downloadPost()">\u2b07 Download</button>
+<button onclick="shareWa()" style="padding:10px 20px;border-radius:8px;border:none;background:#25D366;color:#fff;font-weight:700;cursor:pointer;font-size:.85rem">&#128242; WhatsApp</button>
 </div>
 <p class="tip">Right-click the image to save, or use the Download button. Works best on desktop.</p>
 <script>
@@ -273,9 +276,17 @@ function changePurpose(p){{
 const texts={{promotion:"Visit us today! Best {category} services in town.",offer:"Special offer! Limited time deal at {business_name}.",festive:"Celebrate with {business_name}! Festive special offers.",new:"Something new at {business_name}! Come check it out."}};
 document.getElementById('postText').textContent=texts[p]||texts.promotion;
 }}
+function applyBg(){{
+var url=document.getElementById('customBg').value;
+if(url)document.getElementById('socialPost').style.backgroundImage="url('"+url+"')";
+}}
 function applyCustom(){{
 const t=document.getElementById('customText').value;
 if(t)document.getElementById('postText').textContent=t;
+}}
+function shareWa(){{
+var msg=encodeURIComponent(document.getElementById('postText').textContent + ' | Visit: https://{site_url}');
+window.open('https://wa.me/?text='+msg,'_blank');
 }}
 function downloadPost(){{
 const el=document.getElementById('socialPost');
