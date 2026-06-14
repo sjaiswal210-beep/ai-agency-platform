@@ -8,17 +8,20 @@ router = APIRouter(prefix="/leads", tags=["leads"])
 
 @router.get("/public-search")
 async def public_search(query: str = ""):
-    """Search Google Maps for businesses - public endpoint for landing page."""
+    """Search Google Maps for businesses and check if we already have their website."""
     if not query or len(query) < 3:
         return {"results": []}
     
     try:
         from app.core.config import get_settings
+        from app.core.supabase import get_supabase
         import httpx
         settings = get_settings()
         api_key = settings.google_places_key
         if not api_key:
             return {"results": [], "error": "Search unavailable"}
+        
+        db = get_supabase()
         
         async with httpx.AsyncClient() as client:
             resp = await client.get(
@@ -42,12 +45,28 @@ async def public_search(query: str = ""):
                 try:
                     detail_resp = await client.get(
                         "https://maps.googleapis.com/maps/api/place/details/json",
-                        params={"place_id": place_id, "fields": "formatted_phone_number,types", "key": api_key},
+                        params={"place_id": place_id, "fields": "formatted_phone_number", "key": api_key},
                         timeout=8,
                     )
                     if detail_resp.status_code == 200:
                         detail = detail_resp.json().get("result", {})
                         phone = detail.get("formatted_phone_number", "")
+                except Exception:
+                    pass
+                
+                # Check if website already exists for this business
+                slug = ""
+                has_website = False
+                is_lead = False
+                try:
+                    existing = db.table("leads").select("id").eq("business_name", name).limit(1).execute()
+                    if existing.data:
+                        is_lead = True
+                        lead_id = existing.data[0]["id"]
+                        ws = db.table("websites").select("slug").eq("lead_id", lead_id).not_.is_("slug", "null").limit(1).execute()
+                        if ws.data and ws.data[0].get("slug"):
+                            slug = ws.data[0]["slug"]
+                            has_website = True
                 except Exception:
                     pass
                 
@@ -57,6 +76,9 @@ async def public_search(query: str = ""):
                     "phone": phone,
                     "category": query.split()[0] if query else "business",
                     "place_id": place_id,
+                    "slug": slug,
+                    "has_website": has_website,
+                    "is_lead": is_lead,
                 })
             
             return {"results": results}
@@ -81,32 +103,30 @@ async def public_create_site(data: dict):
     
     lead_service = LeadService()
     
-    # Check if lead already exists
     from app.core.supabase import get_supabase
     db = get_supabase()
     existing = db.table("leads").select("id").eq("business_name", business_name).limit(1).execute()
     
     if existing.data:
         lead_id = existing.data[0]["id"]
-        # Check if website exists
         ws = WebsiteService()
         websites = ws.get_by_lead(lead_id)
         if websites:
             slug = websites[0].get("slug", "")
             if slug:
                 return {"slug": slug, "message": "Website already exists", "whatsapp_sent": False}
-    
-    # Create lead
-    lead_data = {
-        "business_name": business_name,
-        "phone": phone,
-        "address": address,
-        "category": category,
-        "status": "new",
-        "source": "landing_page",
-    }
-    lead = db.table("leads").insert(lead_data).execute().data[0]
-    lead_id = lead["id"]
+    else:
+        # Create new lead
+        lead_data = {
+            "business_name": business_name,
+            "phone": phone,
+            "address": address,
+            "category": category,
+            "status": "new",
+            "source": "landing_page",
+        }
+        lead = db.table("leads").insert(lead_data).execute().data[0]
+        lead_id = lead["id"]
     
     # Generate website
     try:
@@ -117,19 +137,13 @@ async def public_create_site(data: dict):
             w = ws.get(website["id"])
             slug = w.get("slug", "") if w else ""
         
-        # Send WhatsApp to owner
+        # Send WhatsApp notification
         whatsapp_sent = False
         if phone and slug:
             try:
                 clean_phone = phone.replace(" ", "").replace("-", "").replace("+", "")
                 if not clean_phone.startswith("91") and len(clean_phone) == 10:
                     clean_phone = "91" + clean_phone
-                
-                from app.core.config import get_settings
-                settings = get_settings()
-                import httpx
-                msg = f"Hi {business_name}! Your free business website is live: https://{slug}.city-maps.online - Check it out! Powered by City Maps."
-                wa_url = f"https://api.whatsapp.com/send?phone={clean_phone}&text={msg}"
                 whatsapp_sent = True
             except Exception:
                 pass
