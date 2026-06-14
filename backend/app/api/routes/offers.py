@@ -114,7 +114,7 @@ textarea{{resize:vertical;min-height:70px}}
 <p style="font-size:.7rem;font-weight:600;color:#64748b;margin-bottom:6px">LIVE PREVIEW</p>
 <div class="creative-wrap">
 <div class="creative" id="creativeCard">
-<img class="bg-img" id="creativeBg" src="https://image.pollinations.ai/prompt/{lead.get("category","business") if lead else "business"}+store+interior+aesthetic?width=600&height=600&nologo=true">
+<img class="bg-img" id="creativeBg" src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=600&h=600&fit=crop">
 <div class="overlay"></div>
 <div class="brand">{business_name}</div>
 <div class="badge" id="creativeBadge" style="display:none"></div>

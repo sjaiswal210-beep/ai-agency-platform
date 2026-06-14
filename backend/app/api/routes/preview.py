@@ -541,21 +541,21 @@ def generate_html(content: dict, template: str, lead: dict = None, website_id_ov
     gallery_images = real_photos if real_photos else [
         f"https://image.pollinations.ai/prompt/{category}+business+product+showcase+photo+{i}?width=500&height=500&nologo=true" for i in range(1, 5)
     ]
-    hero_img = real_photos[0] if real_photos else f"https://image.pollinations.ai/prompt/professional+{category}+business+interior+modern+high+quality?width=1400&height=800&nologo=true"
-    about_img = real_photos[1] if len(real_photos) > 1 else f"https://image.pollinations.ai/prompt/{category}+business+team+professional+indian?width=800&height=600&nologo=true"
+    hero_img = real_photos[0] if real_photos else images["hero"]
+    about_img = real_photos[1] if len(real_photos) > 1 else images["about"]
         # Use real photos for gallery if we have enough, otherwise AI-generate
     if real_photos and len(real_photos) >= 4:
         gallery_display = real_photos[:6]
     elif real_photos and len(real_photos) >= 2:
         # Mix real + AI generated
         gallery_display = real_photos + [
-            f"https://image.pollinations.ai/prompt/{category}+business+{desc}+professional+high+quality?width=500&height=500&nologo=true&seed={idx*77}"
+            images["gallery"][idx % len(images["gallery"])]
             for idx, desc in enumerate(["interior", "products", "team", "customers"], len(real_photos))
         ]
         gallery_display = gallery_display[:6]
     else:
         gallery_display = [
-            f"https://image.pollinations.ai/prompt/{category}+business+{desc}+professional+indian+modern?width=500&height=500&nologo=true&seed={idx*77}"
+            images["gallery"][idx % len(images["gallery"])]
             for idx, desc in enumerate(["exterior", "interior", "products", "service", "team", "happy+customers"])
         ]
     gallery = gallery_display if gallery_display else images["gallery"]
@@ -589,9 +589,8 @@ def generate_html(content: dict, template: str, lead: dict = None, website_id_ov
         elif real_photos and i < len(real_photos) and len(real_photos) >= 3:
             img = real_photos[i]
         else:
-            # Generate unique AI image per service using Pollinations (free)
-            svc_name = svc.get("name", "service").replace(" ", "+").replace("&", "and")
-            img = f"https://image.pollinations.ai/prompt/{svc_name}+{category}+business+professional+modern+indian?width=600&height=400&nologo=true&seed={i*100+42}"
+            # Use category gallery images cycling through them
+            img = gallery_images[i % len(gallery_images)]
         svc_cards.append(
             '<article class="service-card" data-aos="fade-up">'
             f'<div class="service-img" style="background-image:url({img})"></div>'
