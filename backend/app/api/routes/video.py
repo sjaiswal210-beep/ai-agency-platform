@@ -129,7 +129,9 @@ async def stitch_videos(clips: list, website_id: str) -> str:
             except Exception:
                 continue
 
+    logger.info("Stitch: downloaded clips", count=len(clip_files))
     if len(clip_files) < 1:
+        logger.warning("Stitch: no clips downloaded")
         return None
 
     output_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), "static", "videos")
@@ -160,6 +162,16 @@ async def stitch_videos(clips: list, website_id: str) -> str:
                 try: os.remove(f)
                 except: pass
             return None
+
+    # Verify output exists
+    if not os.path.exists(output_path):
+        logger.warning("Stitch: output file not created", path=output_path)
+        for f in clip_files:
+            try: os.remove(f)
+            except: pass
+        return None
+
+    logger.info("Stitch: combined video created", path=output_path, size=os.path.getsize(output_path))
 
     # Cleanup
     for f in clip_files:
