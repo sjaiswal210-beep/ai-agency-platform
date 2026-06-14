@@ -4,7 +4,7 @@ async function pubSearch(){
   var country=document.getElementById("sCountry").value;
   if(!biz)return;
   var r=document.getElementById("searchResult");
-  r.innerHTML="<p style='text-align:center;color:#64748b;font-size:.75rem'>Searching Google Maps...</p>";
+  r.innerHTML="<p style='text-align:center;color:#64748b;font-size:.75rem'>Finding your website...</p>";
   try{
     var query=biz+(area?" "+area:"")+(country?" "+country:"");
     var resp=await fetch("/api/leads/public-search?query="+encodeURIComponent(query));
