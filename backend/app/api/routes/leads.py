@@ -351,7 +351,7 @@ def delete_website(website_id: str):
     return {"deleted": True, "website_id": website_id}
 
 
-@router.get("/leads/public-search")
+@router.get("/public-search")
 async def public_search(query: str = ""):
     """Search Google Maps for businesses - public endpoint for landing page."""
     if not query or len(query) < 3:
@@ -409,7 +409,7 @@ async def public_search(query: str = ""):
         return {"results": [], "error": str(e)}
 
 
-@router.post("/leads/public-create-site")
+@router.post("/public-create-site")
 async def public_create_site(data: dict):
     """Create a lead + generate website + send WhatsApp - triggered from landing page."""
     from app.services.lead_service import LeadService
