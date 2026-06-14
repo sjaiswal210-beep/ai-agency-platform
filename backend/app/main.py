@@ -42,6 +42,7 @@ from app.api.routes.google_profile import router as google_profile_router
 from app.api.routes.sitemap import router as sitemap_router
 from app.api.routes.qa_review import router as qa_router
 from app.api.routes.offers import router as offers_router
+from app.api.routes.ads import router as ads_router
 from app.automation.scheduler import start_scheduler, stop_scheduler
 from app.core.logging import setup_logging
 
@@ -148,6 +149,7 @@ app.include_router(google_profile_router, prefix="/api")
 app.include_router(sitemap_router, prefix="")
 app.include_router(qa_router, prefix="/api")
 app.include_router(offers_router, prefix="/api")
+app.include_router(ads_router, prefix="/api")
 
 
 # Mount static files
