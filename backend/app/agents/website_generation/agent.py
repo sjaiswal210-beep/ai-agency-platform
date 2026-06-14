@@ -321,4 +321,13 @@ RULES:
             logger.info("Auto-generated logo", url=logo_result["logo_url"])
     except Exception as e:
         logger.warning("Auto logo generation failed", error=str(e))
+    # Auto QA review after generation
+    try:
+        from app.agents.qa_review.agent import review_website as qa_review
+        import asyncio
+        asyncio.ensure_future(qa_review(website["id"]))
+        logger.info("QA review scheduled", website_id=website["id"])
+    except Exception as e:
+        logger.warning("QA review scheduling failed", error=str(e))
+
     return website
