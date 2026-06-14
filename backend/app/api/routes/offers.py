@@ -18,7 +18,7 @@ class OfferCreate(BaseModel):
 
 @router.get("/{website_id}", response_class=HTMLResponse)
 def offer_creator_page(website_id: str):
-    """Offer creator UI for business owners."""
+    """Offer creator UI - upload image, build creative, share directly."""
     from app.services.website_service import WebsiteService
     from app.services.lead_service import LeadService
 
@@ -32,171 +32,191 @@ def offer_creator_page(website_id: str):
     business_name = lead.get("business_name", "Business") if lead else "Business"
     phone = lead.get("phone", "") if lead else ""
     slug = website.get("slug", "")
+    site_url = f"https://{slug}.city-maps.online" if slug else ""
 
     html = f'''<!DOCTYPE html><html><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Create Offer - {business_name}</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 <style>
 *{{margin:0;padding:0;box-sizing:border-box}}
-body{{font-family:'Inter',sans-serif;background:#f8fafc;color:#1e293b;padding:16px;max-width:500px;margin:0 auto}}
-h1{{font-size:1.2rem;font-weight:800;text-align:center;margin-bottom:4px}}
-.sub{{text-align:center;font-size:.75rem;color:#64748b;margin-bottom:20px}}
-.form-group{{margin-bottom:14px}}
-label{{display:block;font-size:.72rem;font-weight:600;color:#475569;margin-bottom:4px}}
-input,textarea{{width:100%;padding:10px 12px;border:1px solid #e2e8f0;border-radius:10px;font-size:.82rem;outline:none;font-family:inherit;transition:border .2s}}
+body{{font-family:'Inter',sans-serif;background:#0f172a;color:#fff;padding:16px;max-width:520px;margin:0 auto;min-height:100vh}}
+h1{{font-size:1.1rem;font-weight:800;text-align:center;margin-bottom:4px}}
+.sub{{text-align:center;font-size:.72rem;color:#64748b;margin-bottom:20px}}
+.form-group{{margin-bottom:12px}}
+label{{display:block;font-size:.7rem;font-weight:600;color:#94a3b8;margin-bottom:4px}}
+input,textarea,select{{width:100%;padding:10px 12px;border:1px solid #334155;border-radius:10px;font-size:.8rem;outline:none;font-family:inherit;background:#1e293b;color:#fff;transition:border .2s}}
 input:focus,textarea:focus{{border-color:#6366f1}}
-textarea{{resize:vertical;min-height:80px}}
-.preview{{margin:16px 0;border-radius:14px;overflow:hidden;border:1px solid #e2e8f0;background:#fff}}
-.preview-img{{width:100%;height:180px;object-fit:cover;background:#f1f5f9;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:.8rem}}
-.preview-img img{{width:100%;height:100%;object-fit:cover}}
-.preview-body{{padding:14px}}
-.preview-body h2{{font-size:1rem;font-weight:800;margin-bottom:4px}}
-.preview-body p{{font-size:.78rem;color:#64748b;line-height:1.5;margin-bottom:8px}}
-.preview-body .discount{{display:inline-block;background:#ef4444;color:#fff;font-size:.7rem;font-weight:700;padding:3px 10px;border-radius:50px;margin-bottom:8px}}
-.preview-body .valid{{font-size:.65rem;color:#94a3b8}}
-.btn{{display:block;width:100%;padding:12px;border:none;border-radius:10px;font-weight:700;font-size:.85rem;cursor:pointer;text-align:center;transition:all .2s}}
-.btn-primary{{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;box-shadow:0 4px 14px rgba(99,102,241,.25);margin-bottom:8px}}
-.btn-primary:hover{{transform:translateY(-1px);box-shadow:0 6px 20px rgba(99,102,241,.35)}}
-.btn-wa{{background:#25D366;color:#fff;margin-bottom:8px}}
-.btn-copy{{background:#f1f5f9;color:#475569}}
-.share-section{{margin-top:16px;padding:14px;background:#fff;border-radius:12px;border:1px solid #e2e8f0}}
-.share-section h3{{font-size:.8rem;font-weight:700;margin-bottom:10px}}
-.share-btns{{display:flex;gap:8px;flex-wrap:wrap}}
-.share-btns a,.share-btns button{{flex:1;min-width:100px;padding:10px;border-radius:8px;font-size:.72rem;font-weight:600;text-align:center;border:none;cursor:pointer;text-decoration:none}}
-.success{{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:12px;text-align:center;font-size:.8rem;color:#16a34a;font-weight:600;margin-top:12px;display:none}}
+textarea{{resize:vertical;min-height:70px}}
+.upload-area{{border:2px dashed #334155;border-radius:12px;padding:24px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:12px}}
+.upload-area:hover{{border-color:#6366f1;background:rgba(99,102,241,.05)}}
+.upload-area p{{font-size:.75rem;color:#64748b}}
+.upload-area .icon{{font-size:1.5rem;margin-bottom:6px}}
+
+/* Creative Preview */
+.creative-wrap{{margin:16px 0;border-radius:14px;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,.4)}}
+.creative{{position:relative;width:100%;aspect-ratio:1;background:#1e293b;overflow:hidden;display:flex;align-items:flex-end}}
+.creative .bg-img{{position:absolute;inset:0;object-fit:cover;width:100%;height:100%}}
+.creative .overlay{{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.1) 0%,rgba(0,0,0,.7) 100%)}}
+.creative .content{{position:relative;z-index:2;padding:24px;width:100%}}
+.creative .brand{{position:absolute;top:16px;left:16px;z-index:2;background:rgba(255,255,255,.95);padding:6px 14px;border-radius:50px;font-weight:800;font-size:.75rem;color:#6366f1}}
+.creative .badge{{position:absolute;top:16px;right:16px;z-index:2;background:#ef4444;color:#fff;padding:5px 12px;border-radius:50px;font-size:.68rem;font-weight:700}}
+.creative h2{{color:#fff;font-size:1.4rem;font-weight:800;margin-bottom:8px;text-shadow:0 2px 8px rgba(0,0,0,.5)}}
+.creative p{{color:rgba(255,255,255,.85);font-size:.82rem;margin-bottom:10px}}
+.creative .cta-bar{{display:flex;justify-content:space-between;align-items:center;margin-top:8px}}
+.creative .cta-btn{{background:#fff;color:#6366f1;padding:8px 16px;border-radius:50px;font-weight:700;font-size:.72rem}}
+.creative .url{{color:rgba(255,255,255,.7);font-size:.68rem}}
+
+/* Buttons */
+.btn-row{{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}}
+.btn{{flex:1;min-width:100px;padding:12px;border:none;border-radius:10px;font-weight:700;font-size:.78rem;cursor:pointer;text-align:center;transition:all .2s;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:6px}}
+.btn-save{{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff}}
+.btn-wa{{background:#25D366;color:#fff}}
+.btn-dl{{background:#334155;color:#fff}}
+.btn-fb{{background:#1877F2;color:#fff}}
+.btn:hover{{transform:translateY(-1px);opacity:.9}}
+.toast{{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#22c55e;color:#fff;padding:10px 20px;border-radius:50px;font-size:.78rem;font-weight:600;display:none;z-index:99}}
 </style></head><body>
 <h1>Create Offer</h1>
 <p class="sub">{business_name}</p>
 
+<!-- Upload Image -->
+<div class="upload-area" onclick="document.getElementById('fileInput').click()" id="uploadArea">
+<div class="icon">&#128247;</div>
+<p>Tap to upload image from gallery/camera</p>
+<p style="font-size:.65rem;color:#475569;margin-top:4px">JPG, PNG supported</p>
+</div>
+<input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handleUpload(event)">
+
 <div class="form-group">
 <label>Offer Title</label>
-<input id="ofTitle" placeholder="e.g., 50% OFF on all services this weekend!" oninput="updatePreview()">
+<input id="ofTitle" placeholder="e.g., 50% OFF this weekend!" oninput="updateCreative()">
 </div>
 
 <div class="form-group">
 <label>Description</label>
-<textarea id="ofDesc" placeholder="Describe your offer details, terms, etc." oninput="updatePreview()"></textarea>
+<textarea id="ofDesc" placeholder="Offer details..." oninput="updateCreative()"></textarea>
 </div>
 
-<div class="form-group">
-<label>Image URL (upload to Google Drive/Imgur and paste link)</label>
-<input id="ofImg" placeholder="https://drive.google.com/... or https://i.imgur.com/..." oninput="updatePreview()">
+<div style="display:flex;gap:8px">
+<div class="form-group" style="flex:1">
+<label>Discount Badge</label>
+<input id="ofDiscount" placeholder="50% OFF" oninput="updateCreative()">
 </div>
-
-<div class="form-group">
-<label>Discount Badge (optional)</label>
-<input id="ofDiscount" placeholder="e.g., 50% OFF, Buy 1 Get 1, etc." oninput="updatePreview()">
-</div>
-
-<div class="form-group">
-<label>Valid Till (optional)</label>
-<input id="ofValid" type="text" placeholder="e.g., 30 June 2026" oninput="updatePreview()">
-</div>
-
-<h3 style="font-size:.8rem;font-weight:700;margin:16px 0 8px;color:#475569">Live Preview</h3>
-<div class="preview">
-<div class="preview-img" id="previewImg"><span>Image preview will appear here</span></div>
-<div class="preview-body">
-<div class="discount" id="previewDiscount" style="display:none"></div>
-<h2 id="previewTitle">Your Offer Title</h2>
-<p id="previewDesc">Offer description will show here</p>
-<p class="valid" id="previewValid"></p>
+<div class="form-group" style="flex:1">
+<label>Valid Till</label>
+<input id="ofValid" placeholder="30 June" oninput="updateCreative()">
 </div>
 </div>
 
-<div class="share-section">
-<h3>Share This Offer</h3>
-<div class="share-btns">
-<a id="shareWa" href="#" target="_blank" class="btn-wa" style="color:#fff">WhatsApp Broadcast</a>
-<button onclick="copyLink()" class="btn-copy">Copy Link</button>
+<!-- Creative Preview -->
+<p style="font-size:.7rem;font-weight:600;color:#64748b;margin-bottom:6px">LIVE PREVIEW</p>
+<div class="creative-wrap">
+<div class="creative" id="creativeCard">
+<img class="bg-img" id="creativeBg" src="https://image.pollinations.ai/prompt/{lead.get("category","business") if lead else "business"}+store+interior+aesthetic?width=600&height=600&nologo=true">
+<div class="overlay"></div>
+<div class="brand">{business_name}</div>
+<div class="badge" id="creativeBadge" style="display:none"></div>
+<div class="content">
+<h2 id="creativeTitle">Your Offer Title</h2>
+<p id="creativeDesc">Offer details appear here</p>
+<div class="cta-bar">
+<span class="cta-btn">Visit Now</span>
+<span class="url">{slug}.city-maps.online</span>
 </div>
-<div class="share-btns" style="margin-top:8px">
-<a id="shareFb" href="#" target="_blank" style="background:#1877F2;color:#fff">Facebook</a>
-<a id="shareInsta" href="#" target="_blank" style="background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:#fff">Instagram</a>
+</div>
 </div>
 </div>
 
-<div class="success" id="successMsg">Offer saved & ready to share!</div>
-
-<div style="margin-top:16px">
-<button class="btn btn-primary" onclick="saveOffer()">Save & Publish Offer</button>
+<!-- Action Buttons -->
+<div class="btn-row">
+<button class="btn btn-dl" onclick="downloadCreative()">&#11015; Download</button>
+<button class="btn btn-wa" onclick="shareWhatsApp()">&#128172; WhatsApp</button>
 </div>
+<div class="btn-row">
+<button class="btn btn-fb" onclick="shareFacebook()">&#128077; Facebook</button>
+<button class="btn btn-save" onclick="saveOffer()">&#10003; Save Offer</button>
+</div>
+
+<div class="toast" id="toast">Saved!</div>
 
 <script>
-var wid = "{website_id}";
-var slug = "{slug}";
+var siteUrl = "{site_url}";
 var bizName = "{business_name}";
-var phone = "{phone}";
+var slug = "{slug}";
 
-function updatePreview() {{
-    var title = document.getElementById("ofTitle").value || "Your Offer Title";
-    var desc = document.getElementById("ofDesc").value || "Offer description";
-    var img = document.getElementById("ofImg").value;
-    var discount = document.getElementById("ofDiscount").value;
-    var valid = document.getElementById("ofValid").value;
-
-    document.getElementById("previewTitle").textContent = title;
-    document.getElementById("previewDesc").textContent = desc;
-
-    if (img) {{
-        document.getElementById("previewImg").innerHTML = "<img src='" + img + "' onerror=\\"this.parentElement.innerHTML='<span>Image failed to load</span>'\\">";
-    }} else {{
-        document.getElementById("previewImg").innerHTML = "<span>Image preview</span>";
-    }}
-
-    if (discount) {{
-        document.getElementById("previewDiscount").style.display = "inline-block";
-        document.getElementById("previewDiscount").textContent = discount;
-    }} else {{
-        document.getElementById("previewDiscount").style.display = "none";
-    }}
-
-    document.getElementById("previewValid").textContent = valid ? "Valid till: " + valid : "";
-
-    // Update share links
-    var offerUrl = "https://" + slug + ".city-maps.online/offers";
-    var waMsg = encodeURIComponent("*" + bizName + " - Special Offer!*\\n\\n" + title + "\\n" + desc + (discount ? "\\n\\n" + discount : "") + (valid ? "\\nValid till: " + valid : "") + "\\n\\nVisit: " + offerUrl);
-    document.getElementById("shareWa").href = "https://wa.me/?text=" + waMsg;
-    document.getElementById("shareFb").href = "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(offerUrl);
-    document.getElementById("shareInsta").href = "https://www.instagram.com/";
+function handleUpload(e) {{
+    var file = e.target.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function(ev) {{
+        document.getElementById('creativeBg').src = ev.target.result;
+        document.getElementById('uploadArea').innerHTML = '<div class="icon">&#10003;</div><p style="color:#22c55e">Image uploaded! Tap to change</p>';
+    }};
+    reader.readAsDataURL(file);
 }}
 
-function copyLink() {{
-    var offerUrl = "https://" + slug + ".city-maps.online";
-    navigator.clipboard.writeText(offerUrl + " - " + document.getElementById("ofTitle").value);
-    alert("Copied!");
+function updateCreative() {{
+    var title = document.getElementById('ofTitle').value || 'Your Offer Title';
+    var desc = document.getElementById('ofDesc').value || 'Offer details appear here';
+    var discount = document.getElementById('ofDiscount').value;
+    document.getElementById('creativeTitle').textContent = title;
+    document.getElementById('creativeDesc').textContent = desc;
+    if (discount) {{
+        document.getElementById('creativeBadge').style.display = 'block';
+        document.getElementById('creativeBadge').textContent = discount;
+    }} else {{
+        document.getElementById('creativeBadge').style.display = 'none';
+    }}
+}}
+
+function downloadCreative() {{
+    html2canvas(document.getElementById('creativeCard'), {{useCORS:true, scale:2, allowTaint:true}}).then(function(canvas) {{
+        var a = document.createElement('a');
+        a.download = bizName.replace(/\\s/g,'-') + '-offer.png';
+        a.href = canvas.toDataURL('image/png');
+        a.click();
+    }});
+}}
+
+function shareWhatsApp() {{
+    var title = document.getElementById('ofTitle').value || 'Special Offer';
+    var desc = document.getElementById('ofDesc').value || '';
+    var discount = document.getElementById('ofDiscount').value || '';
+    var msg = '*' + bizName + ' - ' + title + '*';
+    if (desc) msg += '\\n' + desc;
+    if (discount) msg += '\\n\\n' + discount;
+    msg += '\\n\\nVisit: ' + siteUrl;
+    window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+}}
+
+function shareFacebook() {{
+    window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(siteUrl) + '&quote=' + encodeURIComponent(document.getElementById('ofTitle').value || bizName + ' Offer'), '_blank');
 }}
 
 async function saveOffer() {{
     var data = {{
-        title: document.getElementById("ofTitle").value,
-        description: document.getElementById("ofDesc").value,
-        image_url: document.getElementById("ofImg").value,
-        discount: document.getElementById("ofDiscount").value,
-        valid_till: document.getElementById("ofValid").value,
-        cta_text: "Grab This Offer"
+        title: document.getElementById('ofTitle').value,
+        description: document.getElementById('ofDesc').value,
+        image_url: document.getElementById('creativeBg').src,
+        discount: document.getElementById('ofDiscount').value,
+        valid_till: document.getElementById('ofValid').value,
+        cta_text: 'Visit Now'
     }};
     try {{
-        var resp = await fetch("/api/offers/" + wid + "/save", {{
-            method: "POST",
-            headers: {{"Content-Type": "application/json"}},
+        await fetch('/api/offers/{website_id}/save', {{
+            method: 'POST',
+            headers: {{'Content-Type': 'application/json'}},
             body: JSON.stringify(data)
         }});
-        if (resp.ok) {{
-            document.getElementById("successMsg").style.display = "block";
-            setTimeout(function() {{ document.getElementById("successMsg").style.display = "none"; }}, 3000);
-        }}
-    }} catch(e) {{
-        alert("Failed to save");
-    }}
+        document.getElementById('toast').style.display = 'block';
+        setTimeout(function() {{ document.getElementById('toast').style.display = 'none'; }}, 2500);
+    }} catch(e) {{ alert('Failed'); }}
 }}
-
-updatePreview();
 </script>
 </body></html>'''
     return HTMLResponse(content=html)
-
 
 @router.post("/{website_id}/save")
 async def save_offer(website_id: str, offer: OfferCreate):
