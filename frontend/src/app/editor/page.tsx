@@ -57,7 +57,7 @@ export default function EditorPage() {
         const err = await res.json();
         setMessage(`Error: ${err.detail || "Failed"}`);
       }
-    } catch { setMessage("Error: Server unreachable"); }
+    } catch (e: any) { setMessage(e?.name === "AbortError" ? "Error: Video generation timed out (>3min). Try fewer clips." : "Error: Server unreachable. Try again."); }
     finally { setLoading(false); }
   };
 
@@ -88,7 +88,7 @@ export default function EditorPage() {
       } else {
         setMessage("Error: " + (data.detail || "Failed to generate"));
       }
-    } catch { setMessage("Error: Server unreachable"); }
+    } catch (e: any) { setMessage(e?.name === "AbortError" ? "Error: Video generation timed out (>3min). Try fewer clips." : "Error: Server unreachable. Try again."); }
     finally { setVideoLoading(false); }
   };
 
