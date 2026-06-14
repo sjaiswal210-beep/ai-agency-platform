@@ -229,7 +229,7 @@ a{{text-decoration:none;color:inherit}}
 .hero-btns{{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}}
 .btn-primary{{padding:14px 28px;background:linear-gradient(135deg,#00e5ff,#00b4d8);color:#020817;font-weight:700;font-size:.85rem;border-radius:12px;box-shadow:0 8px 30px rgba(0,229,255,.25);transition:all .25s}}.btn-primary:hover{{transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,229,255,.35)}}
 .btn-ghost{{padding:14px 28px;border:1px solid rgba(255,255,255,.12);color:#e2e8f0;font-weight:600;font-size:.85rem;border-radius:12px;backdrop-filter:blur(10px);transition:all .2s}}.btn-ghost:hover{{background:rgba(255,255,255,.05)}}
-.hero-search{{max-width:420px;margin:24px auto 0;display:flex;gap:5px;padding:4px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(10px)}}.hero-search input{{flex:1;background:transparent;border:none;padding:10px 14px;color:#fff;font-size:.82rem;outline:none}}.hero-search input::placeholder{{color:#4b5563}}.hero-search button{{background:linear-gradient(135deg,#00e5ff,#00b4d8);color:#020817;border:none;padding:10px 18px;border-radius:8px;font-weight:700;font-size:.75rem;cursor:pointer}}
+.hero-search{{max-width:420px;margin:24px auto 0;display:flex;gap:5px;padding:4px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(10px);justify-content:center}}.hero-search input{{flex:1;background:transparent;border:none;padding:10px 14px;color:#fff;font-size:.82rem;outline:none}}.hero-search input::placeholder{{color:#4b5563}}.hero-search button{{background:linear-gradient(135deg,#00e5ff,#00b4d8);color:#020817;border:none;padding:10px 18px;border-radius:8px;font-weight:700;font-size:.75rem;cursor:pointer}}
 #searchResult{{max-width:420px;margin:8px auto 0}}
 .hero-sub{{margin-top:24px;font-size:.75rem;font-weight:600;color:#64748b}}
 .hero-sub span{{color:#00e5ff}}
@@ -298,7 +298,7 @@ a{{text-decoration:none;color:inherit}}
 .wa-float{{position:fixed;bottom:20px;right:20px;width:50px;height:50px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(37,211,102,.35);z-index:99;animation:wab 3s ease-in-out infinite}}@keyframes wab{{0%,100%{{transform:translateY(0)}}50%{{transform:translateY(-4px)}}}}
 
 /* Mobile */
-@media(max-width:768px){{
+@media(max-width:768px){{.search-box div{{flex-wrap:wrap;justify-content:center}}.search-box input,.search-box select{{min-width:100%!important;margin-bottom:4px}}.search-box button{{width:100%;margin-top:4px}}
 .feat-grid{{grid-template-columns:repeat(2,1fr)}}
 .cat-grid{{grid-template-columns:repeat(3,1fr)}}
 .journey-grid{{grid-template-columns:repeat(2,1fr)}}
@@ -353,8 +353,8 @@ a{{text-decoration:none;color:inherit}}
 <div class="badge"><span class="dot"></span>{count}+ businesses already online</div>
 <h1>Take Your Business <span>Online</span> In 5 Minutes</h1>
 <p>Professional website, WhatsApp orders, Google visibility, and customer growth tools. Everything your business needs from one platform.</p>
-<div class="hero-btns"><a href="https://wa.me/917350785606?text=Hi%20City%20Maps%2C%20I%20want%20to%20create%20my%20business%20website" target="_blank" class="btn-primary">Create My Website &mdash; &#8377;49/mo</a><a href="#features" class="btn-ghost">See What You Get</a></div>
-<div class="search-box glass" style="max-width:560px;margin:24px auto 0;padding:12px 14px;border-radius:14px">
+<div class="hero-btns"><a href="https://wa.me/917350785606?text=Hi%20City%20Maps%2C%20I%20want%20to%20create%20my%20business%20website" target="_blank" class="btn-primary">Create My Website &mdash; Free</a></div>
+<div class="search-box glass" style="max-width:560px;margin:24px auto 0;padding:14px 16px;border-radius:16px;box-shadow:0 8px 32px rgba(0,229,255,.08)">
 <div style="display:flex;gap:8px;flex-wrap:wrap">
 <select id="sCountry" style="padding:9px 12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-size:.75rem;outline:none;min-width:70px"><option value="India">IN</option><option value="USA">US</option><option value="UK">UK</option><option value="UAE">UAE</option><option value="Australia">AU</option></select>
 <input id="sBiz" placeholder="Business name or type" style="flex:1;min-width:120px;padding:9px 12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-size:.75rem;outline:none">
