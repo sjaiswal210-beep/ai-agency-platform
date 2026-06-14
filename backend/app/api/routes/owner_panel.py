@@ -63,6 +63,7 @@ body{{padding-bottom:70px}}
 <a href="https://city-maps.online/api/qr/{website_id}" target="_blank" class="tool"><div class="emoji">&#128248;</div><div class="name">QR Code</div><div class="desc">For cards & banners</div></a>
 <a href="https://city-maps.online/api/owner-analytics/{website_id}" target="_blank" class="tool"><div class="emoji">&#128200;</div><div class="name">Analytics</div><div class="desc">Visitors & calls</div></a>
 <a href="https://city-maps.online/api/daily/{website_id}" target="_blank" class="tool"><div class="emoji">&#128197;</div><div class="name">Daily Content</div><div class="desc">Ready to share</div></a>
+<a href="https://city-maps.online/api/offers/{website_id}" target="_blank" class="tool"><div class="emoji">&#127873;</div><div class="name">Create Offer</div><div class="desc">Share deals & ads</div></a>
 <a href="https://city-maps.online/api/google-profile/{website_id}/setup-guide" target="_blank" class="tool"><div class="emoji">&#128205;</div><div class="name">Google Setup</div><div class="desc">Get on Maps</div></a>
 <a href="https://city-maps.online/api/panel/{website_id}/video-creator" target="_blank" class="tool"><div class="emoji">&#127916;</div><div class="name">Video Creator</div><div class="desc">Make promo videos</div></a>
 </div>
