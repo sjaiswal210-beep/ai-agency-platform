@@ -21,6 +21,8 @@ export default function LeadsPage() {
   const [filter, setFilter] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState<string>("");
+  const [qaReview, setQaReview] = useState<any>(null);
+  const [qaLoading, setQaLoading] = useState<string>("");
   
 
   useEffect(() => {
@@ -44,7 +46,19 @@ export default function LeadsPage() {
     }
   };
 
-  const handleDelete = async (lead: Lead) => {
+  const handleQaReview = async (lead: Lead) => {
+    setQaLoading(lead.id);
+    try {
+      const res = await fetch(`${API_BASE}/api/qa/lead/${lead.id}`);
+      const data = await res.json();
+      setQaReview({ ...data, business_name: lead.business_name });
+    } catch (err) {
+      alert("QA review failed");
+    } finally {
+      setQaLoading("");
+    }
+  };
+    const handleDelete = async (lead: Lead) => {
     if (!confirm(`Delete ${lead.business_name}? This also removes its website.`)) return;
     try {
       await fetch(`${API_BASE}/api/leads/${lead.id}`, { method: "DELETE" });
@@ -226,6 +240,71 @@ export default function LeadsPage() {
         </div>
       </main>
 
+      {/* QA Review Modal */}
+      {qaReview && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setQaReview(null)}>
+          <div className="bg-white rounded-2xl p-6 w-full max-w-lg shadow-xl max-h-[85vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h3 className="font-bold text-lg">QA Agent Review</h3>
+                <p className="text-xs text-gray-500">{qaReview.business_name}</p>
+              </div>
+              <div className={`text-2xl font-black ${(qaReview.overall_score || 0) >= 7 ? "text-green-600" : (qaReview.overall_score || 0) >= 5 ? "text-amber-600" : "text-red-600"}`}>
+                {qaReview.overall_score || "?"}/10
+              </div>
+            </div>
+
+            {qaReview.summary && (
+              <p className="text-sm text-gray-600 mb-4 bg-gray-50 p-3 rounded-lg">{qaReview.summary}</p>
+            )}
+
+            {qaReview.scores && (
+              <div className="grid grid-cols-3 gap-2 mb-4">
+                {Object.entries(qaReview.scores).map(([key, val]: [string, any]) => (
+                  <div key={key} className="text-center p-2 bg-gray-50 rounded-lg">
+                    <div className={`text-lg font-bold ${val >= 7 ? "text-green-600" : val >= 5 ? "text-amber-600" : "text-red-600"}`}>{val}</div>
+                    <div className="text-[10px] text-gray-500 capitalize">{key.replace("_", " ")}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {qaReview.issues && qaReview.issues.length > 0 && (
+              <div className="mb-4">
+                <h4 className="text-xs font-bold text-gray-700 uppercase mb-2">Issues Found</h4>
+                <div className="space-y-2">
+                  {qaReview.issues.map((issue: any, i: number) => (
+                    <div key={i} className={`text-xs p-2 rounded-lg border-l-3 ${issue.severity === "high" ? "bg-red-50 border-l-red-500" : issue.severity === "medium" ? "bg-amber-50 border-l-amber-500" : "bg-blue-50 border-l-blue-500"}`}>
+                      <span className="font-semibold capitalize">[{issue.area}]</span> {issue.detail}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {qaReview.fixes_needed && qaReview.fixes_needed.length > 0 && (
+              <div className="mb-4">
+                <h4 className="text-xs font-bold text-gray-700 uppercase mb-2">Fixes Applied</h4>
+                <ul className="text-xs text-gray-600 space-y-1">
+                  {qaReview.fixes_needed.map((fix: string, i: number) => (
+                    <li key={i} className="flex items-start gap-2"><span className="text-green-500 mt-0.5">&#10003;</span> {fix}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {qaReview.auto_fixed && (
+              <div className="bg-green-50 border border-green-200 rounded-lg p-2 text-xs text-green-700 font-medium mb-4">
+                &#10003; Issues were auto-fixed by the QA agent
+              </div>
+            )}
+
+            <button onClick={() => setQaReview(null)} className="w-full text-center py-2 text-xs text-gray-400 hover:text-gray-600">Close</button>
+          </div>
+        </div>
+      )}
+
+      
       {/* WhatsApp Message Modal */}
       {waMessage && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setWaMessage(null)}>
