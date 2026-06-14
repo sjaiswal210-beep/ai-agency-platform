@@ -195,24 +195,20 @@ function shareFacebook() {{
     window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(siteUrl) + '&quote=' + encodeURIComponent(document.getElementById('ofTitle').value || bizName + ' Offer'), '_blank');
 }}
 
-async function saveOffer() {{
+function saveOffer() {{
     var data = {{
         title: document.getElementById('ofTitle').value,
         description: document.getElementById('ofDesc').value,
-        image_url: document.getElementById('creativeBg').src,
         discount: document.getElementById('ofDiscount').value,
         valid_till: document.getElementById('ofValid').value,
-        cta_text: 'Visit Now'
+        date: new Date().toISOString()
     }};
-    try {{
-        await fetch('/api/offers/{website_id}/save', {{
-            method: 'POST',
-            headers: {{'Content-Type': 'application/json'}},
-            body: JSON.stringify(data)
-        }});
-        document.getElementById('toast').style.display = 'block';
-        setTimeout(function() {{ document.getElementById('toast').style.display = 'none'; }}, 2500);
-    }} catch(e) {{ alert('Failed'); }}
+    var saved = JSON.parse(localStorage.getItem('offers_' + slug) || '[]');
+    saved.unshift(data);
+    if (saved.length > 20) saved = saved.slice(0, 20);
+    localStorage.setItem('offers_' + slug, JSON.stringify(saved));
+    document.getElementById('toast').style.display = 'block';
+    setTimeout(function() {{ document.getElementById('toast').style.display = 'none'; }}, 2500);
 }}
 </script>
 </body></html>'''
