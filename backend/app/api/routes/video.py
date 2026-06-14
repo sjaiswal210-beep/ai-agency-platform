@@ -106,9 +106,10 @@ Return ONLY a JSON array of scene descriptions. Example:
 
 
 async def stitch_videos(clips: list, website_id: str) -> str:
-    """Download clips and stitch them into one video."""
+    """Download clips and stitch them into one video using ffmpeg."""
     import httpx as _httpx
-    from moviepy import VideoFileClip, concatenate_videoclips
+    import subprocess
+    import shutil
 
     temp_dir = tempfile.mkdtemp()
     clip_files = []
@@ -118,31 +119,52 @@ async def stitch_videos(clips: list, website_id: str) -> str:
         for i, clip in enumerate(clips):
             if not clip.get("url"):
                 continue
-            resp = await client.get(clip["url"], timeout=60)
-            if resp.status_code == 200:
-                path = os.path.join(temp_dir, f"clip_{i}.mp4")
-                with open(path, "wb") as f:
-                    f.write(resp.content)
-                clip_files.append(path)
+            try:
+                resp = await client.get(clip["url"], timeout=60)
+                if resp.status_code == 200:
+                    path = os.path.join(temp_dir, f"clip_{i}.mp4")
+                    with open(path, "wb") as f:
+                        f.write(resp.content)
+                    clip_files.append(path)
+            except Exception:
+                continue
 
-    if len(clip_files) < 2:
+    if len(clip_files) < 1:
         return None
-
-    # Stitch with moviepy
-    video_clips = [VideoFileClip(f) for f in clip_files]
-    final = concatenate_videoclips(video_clips, method="compose")
 
     output_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), "static", "videos")
     os.makedirs(output_dir, exist_ok=True)
     output_path = os.path.join(output_dir, f"{website_id}_combined.mp4")
-    final.write_videofile(output_path, codec="libx264", audio_codec="aac", logger=None)
+
+    if len(clip_files) == 1:
+        shutil.copy2(clip_files[0], output_path)
+    else:
+        # Create concat list for ffmpeg
+        list_file = os.path.join(temp_dir, "concat.txt")
+        with open(list_file, "w") as f:
+            for cf in clip_files:
+                f.write(f"file '{cf}'\n")
+        try:
+            subprocess.run(
+                ["ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", list_file, "-c", "copy", output_path],
+                capture_output=True, text=True, timeout=120
+            )
+            if not os.path.exists(output_path):
+                subprocess.run(
+                    ["ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", list_file, "-c:v", "libx264", "-preset", "fast", "-crf", "23", output_path],
+                    capture_output=True, text=True, timeout=180
+                )
+        except Exception as e:
+            logger.warning("ffmpeg stitch failed", error=str(e))
+            for f in clip_files:
+                try: os.remove(f)
+                except: pass
+            return None
 
     # Cleanup
-    final.close()
-    for vc in video_clips:
-        vc.close()
     for f in clip_files:
-        os.remove(f)
+        try: os.remove(f)
+        except: pass
 
     from app.core.config import get_settings
     settings = get_settings()
