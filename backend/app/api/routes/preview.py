@@ -620,8 +620,39 @@ def generate_html(content: dict, template: str, lead: dict = None, website_id_ov
         elif real_photos and i < len(real_photos) and len(real_photos) >= 3:
             img = real_photos[i]
         else:
-            # Use category gallery images cycling through them
-            img = gallery_images[i % len(gallery_images)]
+            # Use service-specific Unsplash images based on service name keywords
+            svc_name_lower = svc.get("name", "").lower()
+            svc_img_map = {
+                "haircut": "https://images.unsplash.com/photo-1560066984-138dadb4c035?w=600&h=400&fit=crop",
+                "facial": "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=600&h=400&fit=crop",
+                "massage": "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=600&h=400&fit=crop",
+                "yoga": "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600&h=400&fit=crop",
+                "gym": "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&h=400&fit=crop",
+                "training": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=400&fit=crop",
+                "dental": "https://images.unsplash.com/photo-1606265752439-1f18756aa5fc?w=600&h=400&fit=crop",
+                "consult": "https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?w=600&h=400&fit=crop",
+                "food": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&h=400&fit=crop",
+                "cook": "https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=600&h=400&fit=crop",
+                "coffee": "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=600&h=400&fit=crop",
+                "room": "https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=600&h=400&fit=crop",
+                "wedding": "https://images.unsplash.com/photo-1519741497674-611481863552?w=600&h=400&fit=crop",
+                "photo": "https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=600&h=400&fit=crop",
+                "solar": "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=600&h=400&fit=crop",
+                "clean": "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=600&h=400&fit=crop",
+                "repair": "https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=600&h=400&fit=crop",
+                "delivery": "https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=600&h=400&fit=crop",
+                "fitness": "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=600&h=400&fit=crop",
+                "spa": "https://images.unsplash.com/photo-1540555700478-4be289fbec6d?w=600&h=400&fit=crop",
+                "nail": "https://images.unsplash.com/photo-1604654894610-df63bc536371?w=600&h=400&fit=crop",
+                "makeup": "https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=600&h=400&fit=crop",
+            }
+            img = None
+            for kw, url in svc_img_map.items():
+                if kw in svc_name_lower:
+                    img = url
+                    break
+            if not img:
+                img = gallery_images[i % len(gallery_images)]
         svc_cards.append(
             '<article class="service-card" data-aos="fade-up">'
             f'<div class="service-img" style="background-image:url({img})"></div>'
