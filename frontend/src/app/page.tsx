@@ -122,7 +122,7 @@ export default function Dashboard() {
     { name: "Analytics", icon: BarChart3, href: "/analytics" },
     { name: "Notes", icon: StickyNote, href: "/notes" },
     { name: "Ads Manager", icon: BarChart3, href: "https://ai-agency-platform.onrender.com/api/ads/manage" },
-    { name: "QA Agent", icon: Bot, href: "https://ai-agency-platform.onrender.com/api/qa/review-all" },
+    { name: "QA Agent", icon: Bot, href: "/leads" },
   ];
 
   return (
