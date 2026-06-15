@@ -466,7 +466,7 @@ AD_SLOTS = """<div id="dashLoginModal" style="display:none;position:fixed;inset:
 <div style="width:48px;height:48px;background:#6366f1;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
 <h3 style="font-size:1rem;font-weight:700;margin-bottom:4px;color:#1e293b">Business Dashboard</h3>
 <p style="font-size:.75rem;color:#64748b;margin-bottom:16px">Enter your mobile number to access</p>
-<input id="dashPhone" type="tel" placeholder="Enter mobile number" style="width:100%;padding:12px;border:1px solid #e2e8f0;border-radius:10px;font-size:.85rem;outline:none;margin-bottom:12px;text-align:center" maxlength="10">
+<input id="dashPhone" type="tel" placeholder="Enter mobile number" style="width:100%;padding:12px;border:1px solid #e2e8f0;border-radius:10px;font-size:.85rem;outline:none;margin-bottom:12px;text-align:center" maxlength="12">
 <button onclick="verifyDashAccess()" style="width:100%;padding:12px;background:#6366f1;color:#fff;border:none;border-radius:10px;font-weight:700;font-size:.85rem;cursor:pointer">Access Dashboard</button>
 <p id="dashError" style="font-size:.72rem;color:#ef4444;margin-top:8px;display:none"></p>
 </div>
@@ -475,7 +475,7 @@ AD_SLOTS = """<div id="dashLoginModal" style="display:none;position:fixed;inset:
 function openDashLogin(){document.getElementById('dashLoginModal').style.display='flex';}
 function verifyDashAccess(){
 var phone=document.getElementById('dashPhone').value.trim();
-if(!phone||phone.length<10){document.getElementById('dashError').style.display='block';document.getElementById('dashError').textContent='Enter valid 10-digit number';return;}
+if(!phone||phone.length<10||phone.length>12){document.getElementById('dashError').style.display='block';document.getElementById('dashError').textContent='Enter valid 10-digit number';return;}
 var wid="WEBSITE_ID_PLACEHOLDER";
 fetch("/api/dashboard-access",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({phone:phone,website_id:wid})}).then(function(r){return r.json()}).then(function(d){
 if(d.panel_url){window.open(d.panel_url,"_blank");document.getElementById('dashLoginModal').style.display='none';}
