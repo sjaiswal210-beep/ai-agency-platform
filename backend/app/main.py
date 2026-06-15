@@ -79,7 +79,7 @@ async def subdomain_routing(request: Request, call_next):
     # Check if it's a subdomain of city-maps.online
     if ".city-maps.online" in host and not host.startswith("www.") and not host.startswith("api."):
         subdomain = host.split(".city-maps.online")[0].lower().strip()
-        if subdomain and subdomain not in ["www", "api", "admin"]:
+        if subdomain and subdomain not in ["www", "api", "admin"] and not request.url.path.startswith("/api/"):
             # Redirect to the preview by slug
             from app.api.routes.preview import generate_html, _get_real_photos, get_images_for_category, _get_logo_icon, get_maps_embed
             from app.services.website_service import WebsiteService
