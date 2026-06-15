@@ -25,7 +25,9 @@ class AdCampaign(BaseModel):
 
 
 @router.get("/manage", response_class=HTMLResponse)
-def ad_manager_page():
+def ad_manager_page(pwd: str = ""):
+    if pwd != "kalpdev2024":
+        return HTMLResponse("<html><body style=\"font-family:sans-serif;background:#0f172a;display:flex;align-items:center;justify-content:center;min-height:100vh;color:#fff\"><form style=\"background:#1e293b;padding:32px;border-radius:16px;width:300px;text-align:center\" onsubmit=\"event.preventDefault();location.href=\x27/api/ads/manage?pwd=\x27+document.getElementById(\x27p\x27).value\"><h2 style=\"margin-bottom:16px\">Ad Manager</h2><input id=\"p\" type=\"password\" placeholder=\"Password\" style=\"width:100%;padding:12px;border:1px solid #334155;border-radius:8px;background:#0f172a;color:#fff;margin-bottom:12px\"><button style=\"width:100%;padding:12px;background:#00e5ff;color:#000;border:none;border-radius:8px;font-weight:700;cursor:pointer\">Login</button></form></body></html>")
     """Ad Manager dashboard - create, manage, toggle campaigns."""
     from app.core.supabase import get_supabase
     db = get_supabase()
@@ -54,7 +56,7 @@ def ad_manager_page():
         <td style="padding:10px;font-size:.75rem">{c.get('ad_format','banner')}</td>
         <td style="padding:10px;font-size:.75rem">Rs.{c.get('rate',0)}/{c.get('pricing_model','cpm')}</td>
         <td style="padding:10px"><span style="color:{status_color};font-size:.72rem;font-weight:600">{status_text}</span></td>
-        <td style="padding:10px"><button onclick="toggleCampaign('{c.get('id','')}')" style="font-size:.7rem;padding:4px 10px;border-radius:6px;border:1px solid #334155;background:#1e293b;color:#fff;cursor:pointer">{'Pause' if c.get('active') else 'Activate'}</button></td>
+        <td style="padding:10px;white-space:nowrap"><button onclick="toggleCampaign('{c.get('id','')}')" style="font-size:.7rem;padding:4px 8px;border-radius:6px;border:1px solid #334155;background:#1e293b;color:#fff;cursor:pointer;margin-right:4px">{'Pause' if c.get('active') else 'Activate'}</button><button onclick="deleteCampaign('{c.get('id','')}')" style="font-size:.7rem;padding:4px 8px;border-radius:6px;border:1px solid #ef4444;background:transparent;color:#ef4444;cursor:pointer">Del</button></td>
         </tr>"""
 
     html = f'''<!DOCTYPE html><html><head>
@@ -163,6 +165,7 @@ async function createCampaign(e) {{
     if (r.ok) location.reload();
     else alert('Failed');
 }}
+async function deleteCampaign(id) {{if(!confirm('Delete?'))return;await fetch('/api/ads/campaigns/'+id,{{method:'DELETE'}});location.reload();}}
 async function toggleCampaign(id) {{
     await fetch('/api/ads/campaigns/'+id+'/toggle', {{method:'POST'}});
     location.reload();
@@ -539,4 +542,33 @@ h1{{font-size:1.3rem;font-weight:800;margin-bottom:4px}}
 
 <p style="text-align:center;margin-top:24px;font-size:.7rem;color:#475569">City Maps Ad Platform</p>
 </body></html>'''
+    return HTMLResponse(content=html)
+
+@router.delete("/campaigns/{campaign_id}")
+async def delete_campaign(campaign_id: str):
+    """Delete a campaign."""
+    from app.core.supabase import get_supabase
+    db = get_supabase()
+    db.table("ad_campaigns").delete().eq("id", campaign_id).execute()
+    return {"status": "deleted"}
+
+
+@router.get("/analytics", response_class=HTMLResponse)
+def ads_analytics(pwd: str = ""):
+    """Analytics dashboard."""
+    if pwd != "kalpdev2024":
+        return HTMLResponse("<script>location.href='/api/ads/manage'</script>")
+    from app.core.supabase import get_supabase
+    db = get_supabase()
+    campaigns = db.table("ad_campaigns").select("*").execute().data or []
+    ti = sum(c.get("impressions", 0) for c in campaigns)
+    tc = sum(c.get("clicks", 0) for c in campaigns)
+    tr = sum(c.get("spent", 0) for c in campaigns)
+    try:
+        usage = db.table("usage_tracking").select("*").order("created_at", desc=True).limit(50).execute().data or []
+    except Exception:
+        usage = []
+    rc = sum(1 for u in usage if "video" in u.get("service", "").lower())
+    gc = sum(1 for u in usage if "gemini" in u.get("service", "").lower())
+    html = f"<html><head><meta charset=UTF-8><meta name=viewport content='width=device-width,initial-scale=1'><title>Analytics</title><style>*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:20px;max-width:700px;margin:0 auto}}.g{{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}}.c{{background:#1e293b;border:1px solid #334155;border-radius:10px;padding:14px;text-align:center}}.n{{font-size:1.3rem;font-weight:800;color:#00e5ff}}.l{{font-size:.6rem;color:#64748b;margin-top:4px}}</style></head><body><h1 style='font-size:1.2rem;margin-bottom:16px'>Analytics</h1><div class=g><div class=c><div class=n>Rs.{tr:.2f}</div><div class=l>Ad Revenue</div></div><div class=c><div class=n>{ti:,}</div><div class=l>Impressions</div></div><div class=c><div class=n>{tc:,}</div><div class=l>Clicks</div></div></div><div class=g><div class=c><div class=n>${rc*0.5:.2f}</div><div class=l>Replicate Cost</div></div><div class=c><div class=n>{rc}</div><div class=l>Videos Made</div></div><div class=c><div class=n>{gc}</div><div class=l>Sites Generated</div></div></div><p style='margin-top:16px;font-size:.7rem;text-align:center'><a href='/api/ads/manage?pwd=kalpdev2024' style='color:#00e5ff'>Back to Ad Manager</a></p></body></html>"
     return HTMLResponse(content=html)
