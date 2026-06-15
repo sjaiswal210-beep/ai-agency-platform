@@ -113,9 +113,23 @@ input,select,textarea{{width:100%;padding:9px 12px;border:1px solid #334155;bord
 <div class="section">
 <h2>Google AdSense</h2>
 <p style="font-size:.75rem;color:#64748b;margin-bottom:10px">Enter your AdSense publisher ID to enable Google Ads across all sites.</p>
-<div style="display:flex;gap:8px">
+<div style="display:flex;gap:8px;margin-bottom:8px">
 <input id="adsenseId" placeholder="ca-pub-XXXXXXXXXX" style="flex:1">
 <button onclick="saveAdsense()" class="btn btn-secondary">Save</button>
+</div>
+<div style="display:flex;gap:8px">
+<input id="adsenseSlot" placeholder="Ad Slot ID (optional)" style="flex:1">
+<button onclick="saveAdsenseSlot()" class="btn btn-secondary">Save Slot</button>
+</div>
+</div>
+
+<!-- Meta/Facebook Pixel -->
+<div class="section">
+<h2>Meta Pixel (Facebook Ads)</h2>
+<p style="font-size:.75rem;color:#64748b;margin-bottom:10px">Enter your Meta Pixel ID to track conversions from Facebook/Instagram ads.</p>
+<div style="display:flex;gap:8px">
+<input id="metaPixel" placeholder="Pixel ID (e.g., 123456789012345)" style="flex:1">
+<button onclick="saveMetaPixel()" class="btn btn-secondary">Save</button>
 </div>
 </div>
 
@@ -152,6 +166,16 @@ async function createCampaign(e) {{
 async function toggleCampaign(id) {{
     await fetch('/api/ads/campaigns/'+id+'/toggle', {{method:'POST'}});
     location.reload();
+}}
+async function saveAdsenseSlot() {{
+    var id = document.getElementById('adsenseSlot').value;
+    await fetch('/api/ads/adsense', {{method:'POST',headers:{{'Content-Type':'application/json'}},body:JSON.stringify({{publisher_id:id}})}});
+    alert('Ad Slot saved!');
+}}
+async function saveMetaPixel() {{
+    var id = document.getElementById('metaPixel').value;
+    await fetch('/api/ads/meta-pixel', {{method:'POST',headers:{{'Content-Type':'application/json'}},body:JSON.stringify({{pixel_id:id}})}});
+    alert('Meta Pixel saved!');
 }}
 async function saveAdsense() {{
     var id = document.getElementById('adsenseId').value;
@@ -304,3 +328,47 @@ async def track_ad_event(data: dict):
         pass
     
     return {"tracked": True}
+
+@router.get("/adsense-config")
+async def get_adsense_config():
+    """Get AdSense configuration for ad injection."""
+    from app.core.supabase import get_supabase
+    db = get_supabase()
+    try:
+        result = db.table("platform_settings").select("value").eq("key", "adsense_publisher_id").limit(1).execute()
+        pub_id = result.data[0]["value"] if result.data else ""
+        slot_result = db.table("platform_settings").select("value").eq("key", "adsense_ad_slot").limit(1).execute()
+        slot_id = slot_result.data[0]["value"] if slot_result.data else ""
+        return {"publisher_id": pub_id, "ad_slot_id": slot_id}
+    except Exception:
+        return {"publisher_id": "", "ad_slot_id": ""}
+
+
+@router.get("/meta-config")
+async def get_meta_config():
+    """Get Meta/Facebook Pixel configuration."""
+    from app.core.supabase import get_supabase
+    db = get_supabase()
+    try:
+        result = db.table("platform_settings").select("value").eq("key", "meta_pixel_id").limit(1).execute()
+        pixel_id = result.data[0]["value"] if result.data else ""
+        return {"pixel_id": pixel_id}
+    except Exception:
+        return {"pixel_id": ""}
+
+
+@router.post("/meta-pixel")
+async def save_meta_pixel(data: dict):
+    """Save Meta/Facebook Pixel ID."""
+    from app.core.supabase import get_supabase
+    db = get_supabase()
+    pixel_id = data.get("pixel_id", "")
+    try:
+        existing = db.table("platform_settings").select("id").eq("key", "meta_pixel_id").limit(1).execute()
+        if existing.data:
+            db.table("platform_settings").update({"value": pixel_id}).eq("key", "meta_pixel_id").execute()
+        else:
+            db.table("platform_settings").insert({"key": "meta_pixel_id", "value": pixel_id}).execute()
+    except Exception:
+        pass
+    return {"status": "saved"}
