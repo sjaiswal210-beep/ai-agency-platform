@@ -465,9 +465,7 @@ AD_SLOTS = """
 <div id="ad-slot-bottom" style="display:none;position:fixed;bottom:62px;left:8px;right:8px;z-index:998;text-align:center"></div>
 <script data-cfasync="false">
 (function(){
-var el=document.querySelector("[data-wid]");
-var wid=el?el.dataset.wid:"";
-if(!wid){var m=location.pathname.match(/preview\/([^\/]+)/);if(m)wid=m[1];}
+var wid="WEBSITE_ID_PLACEHOLDER";
 if(!wid)return;
 fetch("/api/ads/serve?website_id="+wid).then(function(r){return r.json()}).then(function(d){
 if(!d.ad)return;
@@ -1048,7 +1046,7 @@ body{{padding-bottom:70px}}
         '<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>'
         '<script>document.body.insertAdjacentHTML("beforeend","<div class=lightbox id=lb onclick=this.classList.remove(String.fromCharCode(111,112,101,110))><button class=close onclick=document.getElementById(String.fromCharCode(108,98)).classList.remove(String.fromCharCode(111,112,101,110))>&times;</button><img id=lbImg></div>");function openLb(s){document.getElementById("lbImg").src=s;document.getElementById("lb").classList.add("open")};AOS.init({duration:650,once:true,offset:60});const nav=document.getElementById("mainNav");window.addEventListener("scroll",()=>{nav.classList.toggle("solid",scrollY>60)});if("serviceWorker"in navigator){navigator.serviceWorker.register("data:text/javascript,self.addEventListener(\'fetch\',e=>e.respondWith(fetch(e.request)))").catch(()=>{});}let deferredPrompt;window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;const b=document.createElement("div");b.innerHTML=\'<div style="position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#fff;color:#333;padding:12px 20px;border-radius:50px;box-shadow:0 4px 20px rgba(0,0,0,.15);font-size:.85rem;font-weight:600;z-index:9999;cursor:pointer;display:flex;align-items:center;gap:8px" onclick="this.remove()">\\u2b07\\ufe0f Install App<\\/div>\';document.body.appendChild(b.firstChild);setTimeout(()=>{const el=document.querySelector("[onclick]");if(el)el.addEventListener("click",()=>{deferredPrompt.prompt();})},100)});</script>'
         f'{bottom_nav}'
-        f'{AD_SLOTS}</body></html>'
+        
     )
     return html
 
