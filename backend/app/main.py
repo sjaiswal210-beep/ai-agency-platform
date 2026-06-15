@@ -196,6 +196,37 @@ async def dashboard_access(request: Request):
     panel_url = f"/api/panel/{website_id}" if website_id else ""
     return JSONResponse({"panel_url": panel_url, "phone": phone})
 
+@app.get("/google-site-verification", response_class=HTMLResponse)
+def google_verification():
+    """Serve Google Search Console verification. Update the content value with your code."""
+    return HTMLResponse("google-site-verification: google-site-verification.html")
+
+
+@app.get("/sitemap.xml")
+def sitemap_xml():
+    """Dynamic sitemap for city-maps.online"""
+    from app.core.supabase import get_supabase
+    from fastapi.responses import Response
+    db = get_supabase()
+    
+    urls = ['<url><loc>https://city-maps.online/</loc><priority>1.0</priority></url>']
+    
+    # Add all business websites
+    try:
+        sites = db.table("websites").select("slug").not_.is_("slug", "null").execute()
+        for s in (sites.data or []):
+            slug = s.get("slug", "")
+            if slug:
+                urls.append(f'<url><loc>https://{slug}.city-maps.online</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>')
+    except Exception:
+        pass
+    
+    xml = f'''<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+{"".join(urls)}
+</urlset>'''
+    return Response(content=xml, media_type="application/xml")
+
 @app.get("/", response_class=HTMLResponse)
 def landing_page():
     """City Maps - Premium Digital Presence Platform with 3D depth background."""
