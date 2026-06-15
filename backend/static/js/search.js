@@ -57,3 +57,15 @@ document.addEventListener('mousemove',function(e){
   var g=document.querySelectorAll('.bg-depth .glow-1,.bg-depth .glow-2,.bg-depth .glow-3');
   g.forEach(function(el,i){var f=(i+1)*0.5;el.style.transform='translate('+x*f+'px,'+y*f+'px)';});
 });
+// Auto-detect user location
+if(navigator.geolocation){
+  navigator.geolocation.getCurrentPosition(function(pos){
+    fetch("https://nominatim.openstreetmap.org/reverse?lat="+pos.coords.latitude+"&lon="+pos.coords.longitude+"&format=json").then(function(r){return r.json()}).then(function(d){
+      var city=d.address.city||d.address.town||d.address.village||d.address.county||"";
+      if(city&&document.getElementById("sArea")){
+        document.getElementById("sArea").value=city;
+        document.getElementById("sArea").placeholder=city+" (detected)";
+      }
+    }).catch(function(){});
+  },function(){},{timeout:5000});
+}
