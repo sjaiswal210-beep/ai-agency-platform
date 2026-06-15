@@ -475,7 +475,7 @@ if(!d.ad)return;
 var a=d.ad;
 var slot=a.format==="sticky_footer"?document.getElementById("ad-slot-bottom"):document.getElementById("ad-slot-top");
 if(!slot)return;
-slot.style.display="block";
+slot.style.display="block";var cls=document.createElement("span");cls.textContent="\u00d7";cls.style.cssText="position:absolute;top:-8px;right:-8px;background:#000;color:#fff;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;z-index:999;border:1px solid rgba(255,255,255,.2)";cls.onclick=function(){slot.style.display="none"};slot.style.position="relative";slot.appendChild(cls);
 var link=document.createElement("a");
 link.href=a.destination_url;
 link.target="_blank";
