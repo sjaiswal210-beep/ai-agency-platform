@@ -97,7 +97,7 @@ async def subdomain_routing(request: Request, call_next):
                     lead_service = LeadService()
                     lead = lead_service.get(website["lead_id"]) if website.get("lead_id") else None
                     html = generate_html(content, website.get("template", "store"), lead, website_id_override=website["id"])
-                    return HTMLResponse(content=html)
+                    return HTMLResponse(content=html, headers={"Cache-Control": "no-cache, no-store, must-revalidate", "Pragma": "no-cache"})
             # If no match, continue to normal routing
     response = await call_next(request)
     return response
