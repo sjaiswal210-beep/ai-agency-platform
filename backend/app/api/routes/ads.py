@@ -372,3 +372,171 @@ async def save_meta_pixel(data: dict):
     except Exception:
         pass
     return {"status": "saved"}
+
+@router.get("/campaign/{campaign_id}", response_class=HTMLResponse)
+def campaign_details(campaign_id: str):
+    """Campaign performance details page - accessible by advertiser."""
+    from app.core.supabase import get_supabase
+    from datetime import datetime, timedelta
+    db = get_supabase()
+    
+    try:
+        campaign = db.table("ad_campaigns").select("*").eq("id", campaign_id).limit(1).execute()
+        if not campaign.data:
+            return HTMLResponse("<h1>Campaign not found</h1>", status_code=404)
+        c = campaign.data[0]
+    except Exception as e:
+        return HTMLResponse(f"<h1>Error: {e}</h1>", status_code=500)
+    
+    # Calculate metrics
+    impressions = c.get("impressions", 0)
+    clicks = c.get("clicks", 0)
+    spent = c.get("spent", 0)
+    budget = c.get("budget", 0)
+    rate = c.get("rate", 0)
+    ctr = round((clicks / impressions * 100), 2) if impressions > 0 else 0
+    remaining = round(budget - spent, 2)
+    status = "Active" if c.get("active") else "Paused"
+    status_color = "#22c55e" if c.get("active") else "#f59e0b"
+    
+    # Calculate duration
+    created = c.get("created_at", "")
+    days_active = "N/A"
+    if created:
+        try:
+            from dateutil import parser
+            start = parser.parse(created)
+            days_active = (datetime.utcnow() - start.replace(tzinfo=None)).days
+        except Exception:
+            days_active = "N/A"
+
+    html = f'''<!DOCTYPE html><html><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Campaign: {c.get("name","")} - City Maps Ads</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:'Inter',sans-serif;background:#0f172a;color:#fff;padding:20px;max-width:800px;margin:0 auto}}
+h1{{font-size:1.3rem;font-weight:800;margin-bottom:4px}}
+.sub{{font-size:.75rem;color:#64748b;margin-bottom:24px}}
+.status{{display:inline-block;padding:4px 12px;border-radius:50px;font-size:.7rem;font-weight:600;color:#fff;background:{status_color};margin-bottom:16px}}
+.stats{{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}}
+.stat{{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:16px;text-align:center}}
+.stat .n{{font-size:1.5rem;font-weight:800;color:#00e5ff}}.stat .l{{font-size:.65rem;color:#64748b;margin-top:4px}}
+.section{{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:20px;margin-bottom:16px}}
+.section h2{{font-size:.85rem;font-weight:700;margin-bottom:12px}}
+.row{{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #334155;font-size:.78rem}}
+.row:last-child{{border:none}}
+.row .label{{color:#64748b}}.row .value{{font-weight:600}}
+.creative{{max-width:100%;border-radius:8px;margin-top:12px;border:1px solid #334155}}
+.progress{{background:#334155;border-radius:8px;height:8px;overflow:hidden;margin-top:8px}}
+.progress-bar{{height:100%;background:linear-gradient(90deg,#00e5ff,#7c3aed);border-radius:8px;transition:width .3s}}
+</style></head><body>
+
+<h1>{c.get("name","Campaign")}</h1>
+<p class="sub">Advertiser: {c.get("advertiser_name","")}</p>
+<div class="status">{status}</div>
+
+<div class="stats">
+<div class="stat"><div class="n">{impressions:,}</div><div class="l">Impressions</div></div>
+<div class="stat"><div class="n">{clicks:,}</div><div class="l">Clicks</div></div>
+<div class="stat"><div class="n">{ctr}%</div><div class="l">CTR</div></div>
+</div>
+
+<div class="stats">
+<div class="stat"><div class="n">Rs.{spent:.2f}</div><div class="l">Spent</div></div>
+<div class="stat"><div class="n">Rs.{remaining:.2f}</div><div class="l">Remaining</div></div>
+<div class="stat"><div class="n">{days_active}</div><div class="l">Days Active</div></div>
+</div>
+
+<!-- Budget Progress -->
+<div class="section">
+<h2>Budget Usage</h2>
+<div class="row"><span class="label">Total Budget</span><span class="value">Rs.{budget:.2f}</span></div>
+<div class="row"><span class="label">Amount Spent</span><span class="value">Rs.{spent:.2f}</span></div>
+<div class="row"><span class="label">Remaining</span><span class="value">Rs.{remaining:.2f}</span></div>
+<div class="progress"><div class="progress-bar" style="width:{min(spent/budget*100,100) if budget > 0 else 0}%"></div></div>
+</div>
+
+<!-- Campaign Details -->
+<div class="section">
+<h2>Campaign Settings</h2>
+<div class="row"><span class="label">Pricing Model</span><span class="value">{c.get("pricing_model","").upper()}</span></div>
+<div class="row"><span class="label">Rate</span><span class="value">Rs.{rate} per {'1000 impressions' if c.get("pricing_model")=="cpm" else 'click'}</span></div>
+<div class="row"><span class="label">Ad Format</span><span class="value">{c.get("ad_format","banner").replace("_"," ").title()}</span></div>
+<div class="row"><span class="label">Targeting</span><span class="value">{c.get("targeting_type","all").title()}{": " + c.get("targeting_value","") if c.get("targeting_value") else ""}</span></div>
+<div class="row"><span class="label">Created</span><span class="value">{created[:10] if created else "N/A"}</span></div>
+</div>
+
+<!-- Creative Preview -->
+<div class="section">
+<h2>Ad Creative</h2>
+<div class="row"><span class="label">Destination URL</span><span class="value" style="word-break:break-all">{c.get("destination_url","")}</span></div>
+<img src="{c.get("creative_url","")}" class="creative" alt="Ad creative">
+</div>
+
+<p style="text-align:center;margin-top:20px;font-size:.7rem;color:#475569">City Maps Ad Platform &bull; <a href="/api/ads/manage" style="color:#00e5ff">Back to Ad Manager</a></p>
+</body></html>'''
+    return HTMLResponse(content=html)
+
+
+@router.get("/portal/{advertiser_name}", response_class=HTMLResponse)
+def advertiser_portal(advertiser_name: str):
+    """Advertiser portal - view all campaigns for an advertiser."""
+    from app.core.supabase import get_supabase
+    import urllib.parse
+    db = get_supabase()
+    
+    decoded_name = urllib.parse.unquote(advertiser_name)
+    
+    try:
+        campaigns = db.table("ad_campaigns").select("*").eq("advertiser_name", decoded_name).order("created_at", desc=True).execute().data or []
+    except Exception:
+        campaigns = []
+    
+    total_impressions = sum(c.get("impressions", 0) for c in campaigns)
+    total_clicks = sum(c.get("clicks", 0) for c in campaigns)
+    total_spent = sum(c.get("spent", 0) for c in campaigns)
+    total_budget = sum(c.get("budget", 0) for c in campaigns)
+    
+    campaign_cards = ""
+    for c in campaigns:
+        ctr = round((c.get("clicks",0) / c.get("impressions",1) * 100), 2) if c.get("impressions",0) > 0 else 0
+        status_color = "#22c55e" if c.get("active") else "#64748b"
+        campaign_cards += f'''<a href="/api/ads/campaign/{c.get("id","")}" style="display:block;background:#1e293b;border:1px solid #334155;border-radius:12px;padding:16px;text-decoration:none;color:#fff;transition:all .2s" onmouseover="this.style.borderColor='#00e5ff'" onmouseout="this.style.borderColor='#334155'">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-weight:700;font-size:.85rem">{c.get("name","")}</span><span style="color:{status_color};font-size:.7rem;font-weight:600">{"Active" if c.get("active") else "Paused"}</span></div>
+        <div style="display:flex;gap:16px;font-size:.72rem;color:#94a3b8"><span>{c.get("impressions",0):,} views</span><span>{c.get("clicks",0)} clicks</span><span>{ctr}% CTR</span><span>Rs.{c.get("spent",0):.2f} spent</span></div>
+        </a>'''
+    
+    html = f'''<!DOCTYPE html><html><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>{decoded_name} - Advertiser Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:'Inter',sans-serif;background:#0f172a;color:#fff;padding:20px;max-width:800px;margin:0 auto}}
+h1{{font-size:1.3rem;font-weight:800;margin-bottom:4px}}
+.sub{{font-size:.75rem;color:#64748b;margin-bottom:24px}}
+.stats{{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}}
+.stat{{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:14px;text-align:center}}
+.stat .n{{font-size:1.3rem;font-weight:800;color:#00e5ff}}.stat .l{{font-size:.6rem;color:#64748b;margin-top:4px}}
+.campaigns{{display:flex;flex-direction:column;gap:10px}}
+</style></head><body>
+
+<h1>Advertiser Portal</h1>
+<p class="sub">{decoded_name} &bull; {len(campaigns)} campaign(s)</p>
+
+<div class="stats">
+<div class="stat"><div class="n">{total_impressions:,}</div><div class="l">Total Views</div></div>
+<div class="stat"><div class="n">{total_clicks:,}</div><div class="l">Total Clicks</div></div>
+<div class="stat"><div class="n">Rs.{total_spent:.2f}</div><div class="l">Total Spent</div></div>
+<div class="stat"><div class="n">Rs.{total_budget:.2f}</div><div class="l">Total Budget</div></div>
+</div>
+
+<h2 style="font-size:.85rem;font-weight:700;margin-bottom:12px">Your Campaigns</h2>
+<div class="campaigns">
+{campaign_cards}
+{('<p style="text-align:center;padding:20px;font-size:.75rem;color:#475569">No campaigns yet</p>' if not campaigns else '')}
+</div>
+
+<p style="text-align:center;margin-top:24px;font-size:.7rem;color:#475569">City Maps Ad Platform</p>
+</body></html>'''
+    return HTMLResponse(content=html)
