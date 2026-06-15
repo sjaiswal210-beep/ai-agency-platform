@@ -100,7 +100,12 @@ async def subdomain_routing(request: Request, call_next):
                     # Inject ad slot before </body>
                     wid = website["id"]
                     ad_inject = '<div id="cm-ad" style="display:none;position:fixed;bottom:62px;left:8px;right:8px;z-index:998;text-align:center"></div><script data-cfasync="false">fetch("/api/ads/serve?website_id=' + wid + '").then(function(r){return r.json()}).then(function(d){if(!d.ad)return;var s=document.getElementById("cm-ad");s.style.display="block";s.innerHTML="<a href=\'"+d.ad.destination_url+"\' target=\'_blank\'><img src=\'"+d.ad.creative_url+"\' style=\'max-width:100%;max-height:90px;border-radius:8px\' alt=\'ad\'></a>";fetch("/api/ads/track",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({campaign_id:d.ad.id,event_type:"ad_impression",website_id:"' + wid + '"})})}).catch(function(){});</script>'
-                    if "</body>" in html:
+                    # Inject after <body or after first <div
+                    if "<body" in html:
+                        # Find end of body tag
+                        body_end = html.find(">", html.find("<body")) + 1
+                        html = html[:body_end] + ad_inject + html[body_end:]
+                    elif "</body>" in html:
                         html = html.replace("</body>", ad_inject + "</body>")
                     return HTMLResponse(content=html, headers={"Cache-Control": "no-cache, no-store, must-revalidate", "Pragma": "no-cache"})
             # If no match, continue to normal routing
