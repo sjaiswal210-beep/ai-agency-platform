@@ -460,7 +460,29 @@ MOBILE_CSS = """
 </style>
 """
 
-AD_SLOTS = """
+AD_SLOTS = """<div id="dashLoginModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px">
+<div style="background:#fff;border-radius:16px;padding:28px;max-width:320px;width:100%;text-align:center;position:relative">
+<button onclick="document.getElementById('dashLoginModal').style.display='none'" style="position:absolute;top:12px;right:12px;background:none;border:none;font-size:1.2rem;cursor:pointer;color:#64748b">&times;</button>
+<div style="width:48px;height:48px;background:#6366f1;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
+<h3 style="font-size:1rem;font-weight:700;margin-bottom:4px;color:#1e293b">Business Dashboard</h3>
+<p style="font-size:.75rem;color:#64748b;margin-bottom:16px">Enter your mobile number to access</p>
+<input id="dashPhone" type="tel" placeholder="Enter mobile number" style="width:100%;padding:12px;border:1px solid #e2e8f0;border-radius:10px;font-size:.85rem;outline:none;margin-bottom:12px;text-align:center" maxlength="10">
+<button onclick="verifyDashAccess()" style="width:100%;padding:12px;background:#6366f1;color:#fff;border:none;border-radius:10px;font-weight:700;font-size:.85rem;cursor:pointer">Access Dashboard</button>
+<p id="dashError" style="font-size:.72rem;color:#ef4444;margin-top:8px;display:none"></p>
+</div>
+</div>
+<script data-cfasync="false">
+function openDashLogin(){document.getElementById('dashLoginModal').style.display='flex';}
+function verifyDashAccess(){
+var phone=document.getElementById('dashPhone').value.trim();
+if(!phone||phone.length<10){document.getElementById('dashError').style.display='block';document.getElementById('dashError').textContent='Enter valid 10-digit number';return;}
+var wid="WEBSITE_ID_PLACEHOLDER";
+fetch("/api/dashboard-access",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({phone:phone,website_id:wid})}).then(function(r){return r.json()}).then(function(d){
+if(d.panel_url){window.open(d.panel_url,"_blank");document.getElementById('dashLoginModal').style.display='none';}
+else{document.getElementById('dashError').style.display='block';document.getElementById('dashError').textContent=d.message||'Access denied';}
+}).catch(function(){document.getElementById('dashError').style.display='block';document.getElementById('dashError').textContent='Connection error';});
+}
+</script>
 <div id="ad-slot-top" style="display:none;text-align:center;padding:6px;margin:8px auto;max-width:728px"></div>
 <div id="ad-slot-bottom" style="display:none;position:fixed;bottom:62px;left:8px;right:8px;z-index:998;text-align:center"></div>
 <div id="adsense-slot" style="text-align:center;margin:12px auto;max-width:728px"></div>
@@ -1056,7 +1078,7 @@ body{{padding-bottom:70px}}
         f'{css}<style>{_get_design_css(category)}</style>{MOBILE_CSS}</head><body>'
         f'<nav class="nav" id="mainNav"><div class="nav-brand"><svg width="36" height="36" viewBox="0 0 36 36" style="margin-right:8px;vertical-align:middle"><rect width="36" height="36" rx="8" fill="{primary}"/><text x="18" y="24" text-anchor="middle" fill="white" font-size="18" font-weight="bold" font-family="Playfair Display,serif">{business_name[0]}</text></svg>{business_name}</div>'
         '<div class="nav-links"><a href="#about">About</a><a href="#services">Services</a><a href="#gallery">Gallery</a><a href="#contact">Contact</a></div>'
-        f'<a href="tel:{phone}" class="nav-cta"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></a></nav>'
+        f'<a href="javascript:void(0)" onclick="openDashLogin()" class="nav-cta" title="Business Dashboard"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></a></nav>'
         '<section class="hero"><div class="hero-bg"></div><div class="hero-overlay"></div><div class="hero-glow"></div>'
         f'<div class="hero-content"><div class="hero-pill">&#9733; Trusted by {lead.get("review_count", 100) if lead else 100}+ customers</div><h1>{hero_title}</h1><p>{hero_subtitle}</p>' + (f'<div class="hero-offer">{hero_offer}</div>' if hero_offer else '') +
         f'<div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center"><a href="#contact" class="btn btn-white">{cta_text}</a><a href="https://www.google.com/maps/dir/?api=1&destination={address.replace(" ", "+")}" target="_blank" class="btn btn-glass">&#128205; Get Directions</a></div></div></section>'

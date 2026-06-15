@@ -167,6 +167,35 @@ _static_dir = _os.path.join(_os.path.dirname(_os.path.dirname(_os.path.abspath(_
 if _os.path.isdir(_static_dir):
     app.mount('/static', StaticFiles(directory=_static_dir), name='static')
 
+@app.post("/api/dashboard-access")
+async def dashboard_access(request: Request):
+    """Track and grant dashboard access via mobile number."""
+    from app.core.supabase import get_supabase
+    from datetime import datetime
+    data = await request.json()
+    phone = data.get("phone", "")
+    website_id = data.get("website_id", "")
+    
+    if not phone or len(phone) < 10:
+        return JSONResponse({"message": "Enter valid mobile number"})
+    
+    db = get_supabase()
+    
+    # Log access attempt
+    try:
+        db.table("dashboard_access_logs").insert({
+            "phone": phone,
+            "website_id": website_id,
+            "accessed_at": datetime.utcnow().isoformat(),
+        }).execute()
+    except Exception:
+        # Table might not exist yet - that's ok
+        pass
+    
+    # Return panel URL
+    panel_url = f"/api/panel/{website_id}" if website_id else ""
+    return JSONResponse({"panel_url": panel_url, "phone": phone})
+
 @app.get("/", response_class=HTMLResponse)
 def landing_page():
     """City Maps - Premium Digital Presence Platform with 3D depth background."""
