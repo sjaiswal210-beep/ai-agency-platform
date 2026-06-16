@@ -268,6 +268,12 @@ def google_verification():
     return HTMLResponse("google-site-verification: google-site-verification.html")
 
 
+@app.post("/api/data-deletion")
+@app.get("/api/data-deletion")
+async def data_deletion(request: Request):
+    """Handle user data deletion requests (required by Meta)."""
+    return JSONResponse({"url": "https://city-maps.online/api/data-deletion", "confirmation_code": "citymaps_deletion_confirmed", "status": "Data deletion request received. We will process within 30 days."})
+
 @app.get("/sitemap.xml")
 def sitemap_xml():
     """Dynamic sitemap for city-maps.online"""
