@@ -123,6 +123,8 @@ export default function Dashboard() {
     { name: "Notes", icon: StickyNote, href: "/notes" },
     { name: "Ads Manager", icon: BarChart3, href: "https://ai-agency-platform.onrender.com/api/ads/manage" },
     { name: "QA Agent", icon: Bot, href: "/leads" },
+    { name: "Growth Plan", icon: TrendingUp, href: "https://ai-agency-platform.onrender.com/api/growth-plan" },
+    { name: "All Sites", icon: Globe, href: "https://ai-agency-platform.onrender.com/api/sites" },
   ];
 
   return (
