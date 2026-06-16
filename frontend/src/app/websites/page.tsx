@@ -87,11 +87,11 @@ export default function WebsitesPage() {
             {websites.map((site) => (
               <div key={site.id} className="bg-white rounded-xl border border-gray-100 overflow-hidden hover-lift">
                 {/* Preview thumbnail */}
-                <div className="relative h-40 bg-gray-100 overflow-hidden border-b">
-                  <iframe
+                <div className="relative h-28 bg-gradient-to-br from-purple-50 to-indigo-50 border-b flex items-center justify-center">
+                  <div style="display:none"><iframe
                     src={site.slug ? `${API_BASE}/api/preview/by-slug/${site.slug}` : `${API_BASE}/api/preview/${site.id}`}
-                    className="w-full h-full border-0 pointer-events-none"
-                    style={{ transform: "scale(0.4)", transformOrigin: "top left", width: "250%", height: "250%" }}
+                    className="hidden"
+                    style={{ transform: "scale(0.4)", transformOrigin: "top left", width: "250%", height: "250%" }} loading="lazy"
                     title={site.business_name || site.template}
                   />
                 </div>
