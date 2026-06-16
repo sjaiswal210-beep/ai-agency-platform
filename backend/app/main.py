@@ -786,6 +786,79 @@ a{{text-decoration:none;color:inherit}}
 </body></html>'''
     return HTMLResponse(content=html)
 
+@app.get("/api/health-check", response_class=HTMLResponse)
+async def full_health_check():
+    """Bot that checks if all features are working."""
+    import httpx
+    import time
+    
+    base = "https://ai-agency-platform.onrender.com"
+    results = []
+    
+    checks = [
+        ("Backend Health", f"{base}/health", "GET"),
+        ("Landing Page", f"{base}/", "GET"),
+        ("Sitemap", f"{base}/sitemap.xml", "GET"),
+        ("Ad Manager", f"{base}/api/ads/manage?pwd=kalpdev2024", "GET"),
+        ("Ad Serve", f"{base}/api/ads/serve?website_id=test", "GET"),
+        ("Analytics", f"{base}/api/ads/analytics?pwd=kalpdev2024", "GET"),
+        ("Ad Creator", f"{base}/api/ads/create-ad", "GET"),
+        ("Growth Plan", f"{base}/api/growth-plan", "GET"),
+        ("Sites List", f"{base}/api/sites", "GET"),
+        ("Category Page", f"{base}/category/salon", "GET"),
+        ("City Page", f"{base}/city/pune", "GET"),
+        ("Data Deletion", f"{base}/api/data-deletion", "GET"),
+        ("Search API", f"{base}/api/leads/public-search?query=test", "GET"),
+        ("Dashboard Access", f"{base}/api/dashboard-access", "POST"),
+    ]
+    
+    async with httpx.AsyncClient(timeout=10) as client:
+        for name, url, method in checks:
+            start = time.time()
+            try:
+                if method == "POST":
+                    r = await client.post(url, json={"phone": "test", "website_id": "test"})
+                else:
+                    r = await client.get(url)
+                ms = int((time.time() - start) * 1000)
+                status = "ok" if r.status_code < 500 else "fail"
+                results.append({"name": name, "status": status, "code": r.status_code, "ms": ms})
+            except Exception as e:
+                results.append({"name": name, "status": "fail", "code": 0, "ms": 0, "error": str(e)[:50]})
+    
+    # Check subdomain
+    try:
+        async with httpx.AsyncClient(timeout=10) as client:
+            r = await client.get("https://plusfitnessmumbaicentral.city-maps.online/")
+            results.append({"name": "Subdomain Site", "status": "ok" if r.status_code == 200 else "fail", "code": r.status_code, "ms": 0})
+    except Exception as e:
+        results.append({"name": "Subdomain Site", "status": "fail", "code": 0, "error": str(e)[:50]})
+    
+    # Check www
+    try:
+        async with httpx.AsyncClient(timeout=10) as client:
+            r = await client.get("https://www.city-maps.online/")
+            results.append({"name": "WWW Premium Site", "status": "ok" if r.status_code == 200 else "fail", "code": r.status_code, "ms": 0})
+    except Exception as e:
+        results.append({"name": "WWW Premium Site", "status": "fail", "code": 0, "error": str(e)[:50]})
+    
+    ok = sum(1 for r in results if r["status"] == "ok")
+    total = len(results)
+    
+    rows = ""
+    for r in results:
+        color = "#22c55e" if r["status"] == "ok" else "#ef4444"
+        rows += f'<tr><td style="padding:8px;font-size:.78rem">{r["name"]}</td><td style="padding:8px"><span style="color:{color};font-weight:700;font-size:.75rem">{"✓" if r["status"]=="ok" else "✗"} {r["code"]}</span></td><td style="padding:8px;font-size:.72rem;color:#64748b">{r.get("ms","")}ms</td></tr>'
+    
+    html = f'''<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Health Check</title><style>*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:16px;max-width:600px;margin:0 auto}}table{{width:100%;border-collapse:collapse;background:#1e293b;border-radius:10px;overflow:hidden;margin-top:16px}}th{{text-align:left;padding:10px;font-size:.7rem;color:#64748b;border-bottom:1px solid #334155}}tr:hover{{background:#334155}}</style></head><body>
+<h1 style="font-size:1.2rem">{ok}/{total} Features Working</h1>
+<p style="font-size:.75rem;color:#64748b;margin-top:4px">Last checked: just now</p>
+<div style="background:#334155;border-radius:8px;height:8px;margin-top:12px;overflow:hidden"><div style="height:100%;background:{'#22c55e' if ok==total else '#f59e0b'};width:{ok/total*100}%;border-radius:8px"></div></div>
+<table><thead><tr><th>Feature</th><th>Status</th><th>Response</th></tr></thead><tbody>{rows}</tbody></table>
+<p style="text-align:center;margin-top:16px;font-size:.7rem"><a href="/api/health-check" style="color:#00e5ff">Refresh</a></p>
+</body></html>'''
+    return HTMLResponse(content=html)
+
 @app.get("/health")
 def health():
     return {"status": "ok", "service": "ai-agency-platform"}
