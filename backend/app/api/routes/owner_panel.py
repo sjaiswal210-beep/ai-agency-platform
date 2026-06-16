@@ -36,12 +36,12 @@ def owner_panel(website_id: str):
 <title>{business_name} - Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:Inter,sans-serif;background:#f8fafc;color:#1e293b;padding:16px;max-width:500px;margin:0 auto}}
+*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:Inter,sans-serif;background:#0f172a;color:#fff;padding:16px;max-width:500px;margin:0 auto}}
 .hdr{{text-align:center;padding:20px 0 16px}}.hdr h1{{font-size:1.2rem;font-weight:800}}.hdr p{{font-size:.78rem;color:#64748b;margin-top:4px}}.hdr a{{display:inline-block;margin-top:8px;color:#6366f1;font-size:.78rem;font-weight:600}}
-.stats{{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}}.stat{{background:#fff;border-radius:12px;padding:14px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.04)}}.stat .n{{font-size:1.3rem;font-weight:800;color:#6366f1}}.stat .l{{font-size:.65rem;color:#94a3b8;margin-top:2px}}
+.stats{{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}}.stat{{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:14px;text-align:center}}.stat .n{{font-size:1.3rem;font-weight:800;color:#6366f1}}.stat .l{{font-size:.65rem;color:#94a3b8;margin-top:2px}}
 .section-title{{font-size:.72rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin:16px 0 8px;padding-left:4px}}
-.tools{{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}}.tool{{background:#fff;border-radius:12px;padding:14px;text-align:center;text-decoration:none;color:#1e293b;box-shadow:0 1px 3px rgba(0,0,0,.04);transition:all .15s}}.tool:hover{{transform:translateY(-2px);box-shadow:0 4px 12px rgba(99,102,241,.08)}}.tool .emoji{{font-size:1.5rem;margin-bottom:6px}}.tool .name{{font-size:.78rem;font-weight:600}}.tool .desc{{font-size:.65rem;color:#94a3b8;margin-top:2px}}
-.wa-bar{{position:fixed;bottom:0;left:0;right:0;background:#fff;padding:12px 16px;box-shadow:0 -2px 8px rgba(0,0,0,.05);display:flex;gap:8px;max-width:500px;margin:0 auto}}.wa-bar a{{flex:1;text-align:center;padding:10px;border-radius:10px;font-weight:700;font-size:.8rem}}.wa-bar .green{{background:#25D366;color:#fff}}.wa-bar .blue{{background:#6366f1;color:#fff}}
+.tools{{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}}.tool{{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:14px;text-align:center;text-decoration:none;color:#fff;transition:all .15s}}.tool:hover{{transform:translateY(-2px);border-color:#6366f1;box-shadow:0 4px 12px rgba(99,102,241,.15)}}.tool .emoji{{font-size:1.5rem;margin-bottom:6px}}.tool .name{{font-size:.78rem;font-weight:600}}.tool .desc{{font-size:.65rem;color:#94a3b8;margin-top:2px}}
+.wa-bar{{position:fixed;bottom:0;left:0;right:0;background:#0f172a;border-top:1px solid #334155;padding:12px 16px;display:flex;gap:8px;max-width:500px;margin:0 auto}}.wa-bar a{{flex:1;text-align:center;padding:10px;border-radius:10px;font-weight:700;font-size:.8rem;text-decoration:none}}.wa-bar .green{{background:#25D366;color:#fff}}.wa-bar .blue{{background:#6366f1;color:#fff}}
 body{{padding-bottom:70px}}
 </style></head><body>
 <div class="hdr">
@@ -76,7 +76,7 @@ body{{padding-bottom:70px}}
 <a href="https://city-maps.online/api/campaigns/{website_id}/festival/diwali" target="_blank" class="tool"><div class="emoji">&#127878;</div><div class="name">Festival Offers</div><div class="desc">Campaign templates</div></a>
 </div>
 
-<div id="editorPanel" style="display:none;background:#fff;border-radius:12px;padding:16px;margin-top:12px;box-shadow:0 1px 3px rgba(0,0,0,.04)">
+<div id="editorPanel" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;display:none;align-items:center;justify-content:center;padding:16px"><div style="background:#fff;border-radius:16px;padding:20px;width:100%;max-width:400px;position:relative"><button onclick="closeModals()" style="position:absolute;top:10px;right:12px;background:none;border:none;font-size:1.2rem;cursor:pointer">&times;</button>
 <h3 style="font-size:.85rem;font-weight:700;margin-bottom:10px">Edit Website Content</h3>
 <p style="font-size:.72rem;color:#64748b;margin-bottom:8px">Type what you want to change (e.g., "Change phone number to 9876543210" or "Add Diwali offer 20% off")</p>
 <textarea id="editPrompt" rows="3" placeholder="Type your edit here..." style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;font-size:.82rem;font-family:inherit;resize:none;margin-bottom:8px"></textarea>
@@ -84,7 +84,7 @@ body{{padding-bottom:70px}}
 <p id="editResult" style="font-size:.75rem;color:#64748b;margin-top:8px"></p>
 </div>
 
-<div id="socialPanel" style="display:none;background:#fff;border-radius:12px;padding:16px;margin-top:12px;box-shadow:0 1px 3px rgba(0,0,0,.04)">
+<div id="socialPanel" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;display:none;align-items:center;justify-content:center;padding:16px"><div style="background:#fff;border-radius:16px;padding:20px;width:100%;max-width:400px;position:relative"><button onclick="closeModals()" style="position:absolute;top:10px;right:12px;background:none;border:none;font-size:1.2rem;cursor:pointer">&times;</button>
 <h3 style="font-size:.85rem;font-weight:700;margin-bottom:10px">Social Media Links</h3>
 <input id="instaUrl" placeholder="Instagram URL" style="width:100%;padding:9px;border:1px solid #e2e8f0;border-radius:8px;font-size:.8rem;margin-bottom:6px">
 <input id="fbUrl" placeholder="Facebook URL" style="width:100%;padding:9px;border:1px solid #e2e8f0;border-radius:8px;font-size:.8rem;margin-bottom:6px">
@@ -162,7 +162,7 @@ def video_creator_page(website_id: str):
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{{margin:0;padding:0;box-sizing:border-box}}
-body{{font-family:Inter,sans-serif;background:#f8fafc;color:#1e293b;padding:16px;max-width:500px;margin:0 auto}}
+body{{font-family:Inter,sans-serif;background:#0f172a;color:#fff;padding:16px;max-width:500px;margin:0 auto}}
 .hdr{{text-align:center;padding:16px 0}}.hdr h1{{font-size:1.1rem;font-weight:800}}.hdr p{{font-size:.72rem;color:#64748b;margin-top:4px}}
 .step{{background:#fff;border-radius:14px;padding:18px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.04);border:1px solid #e2e8f0}}
 .step h2{{font-size:.85rem;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px}}
