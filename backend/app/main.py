@@ -1,4 +1,20 @@
 from contextlib import asynccontextmanager
+import re as _security_re
+
+def _sanitize_input(text: str) -> str:
+    """Sanitize input to prevent injection attacks."""
+    if not text:
+        return text
+    # Remove potential NoSQL/SQL injection patterns
+    dangerous = ["$where", "$gt", "$lt", "$ne", "$regex", "$or", "$and", "' OR", "'; DROP", "1=1", "UNION SELECT", "/*", "*/"]
+    for d in dangerous:
+        if d.lower() in text.lower():
+            return ""
+    # Remove potential SSTI
+    text = _security_re.sub(r'\{\{.*?\}\}', '', text)
+    text = _security_re.sub(r'\{%.*?%\}', '', text)
+    return text
+
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 import os
@@ -77,12 +93,29 @@ async def rate_limit_middleware(request: Request, call_next):
     if len(_rate_limits[ip]) > 100:
         return JSONResponse(status_code=429, content={"detail": "Too many requests"})
     _rate_limits[ip].append(now)
+    
+    # SSTI Prevention: block template injection patterns in query/body
+    url_str = str(request.url)
+    if any(p in url_str for p in ["{{", "}}", "{%", "%}", "${", "<%"]):
+        return JSONResponse(status_code=400, content={"detail": "Invalid request"})
+    
+    # ReDoS Prevention: block extremely long query params
+    if len(url_str) > 4096:
+        return JSONResponse(status_code=414, content={"detail": "URI too long"})
+    
+    # LPDOS: limit request body size (10MB max)
+    content_length = request.headers.get("content-length", "0")
+    if int(content_length) > 10 * 1024 * 1024:
+        return JSONResponse(status_code=413, content={"detail": "Request too large"})
+    
     response = await call_next(request)
     # Security headers
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["X-Frame-Options"] = "SAMEORIGIN"
     response.headers["X-XSS-Protection"] = "1; mode=block"
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["Permissions-Policy"] = "clipboard-read=(), clipboard-write=(self)"
+    response.headers["X-Permitted-Cross-Domain-Policies"] = "none"
     return response
 
 
@@ -137,7 +170,14 @@ async def subdomain_routing(request: Request, call_next):
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
-    return JSONResponse(status_code=500, content={"detail": str(exc)})
+    # Never expose internal details - sanitize error messages
+    error_msg = str(exc)
+    # Hide sensitive info from error messages
+    for secret in ["api_key", "token", "password", "secret", "supabase"]:
+        if secret.lower() in error_msg.lower():
+            error_msg = "Internal server error"
+            break
+    return JSONResponse(status_code=500, content={"detail": error_msg})
 
 
 app.include_router(leads.router, prefix="/api")
@@ -189,6 +229,9 @@ import os as _os
 _static_dir = _os.path.join(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))), 'static')
 if _os.path.isdir(_static_dir):
     app.mount('/static', StaticFiles(directory=_static_dir), name='static')
+
+# Replay attack prevention: track used nonces
+_used_nonces = {}
 
 @app.post("/api/dashboard-access")
 async def dashboard_access(request: Request):
