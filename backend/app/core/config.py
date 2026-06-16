@@ -8,6 +8,8 @@ class Settings(BaseSettings):
     supabase_anon_key: str = ""
     gemini_api_key: str = ""
     google_places_key: str = ""
+    whatsapp_token: str = ""
+    whatsapp_phone_id: str = ""
     openrouter_api_key: str = ""
     groq_api_key: str = ""
     openrouter_model: str = "gemini-2.5-flash-lite"
