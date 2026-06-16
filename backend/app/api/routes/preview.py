@@ -415,20 +415,20 @@ MOBILE_CSS = """
   .nav-cta{display:flex!important;background:transparent!important;box-shadow:none!important;color:#fff!important;font-size:1rem!important;padding:6px 10px!important;border:1.5px solid rgba(255,255,255,.5)!important;border-radius:8px!important;width:auto!important;height:auto!important;align-items:center!important;justify-content:center!important}
   .hero{min-height:auto;padding-top:80px!important;padding-bottom:40px!important}
   .hero-content{padding:60px 16px 24px!important;margin:0!important}
-  .hero h1{font-size:1.4rem!important;margin-bottom:8px!important}
+  .hero h1{font-size:1.25rem!important;margin-bottom:6px!important;line-height:1.15!important}
   .hero p{font-size:.82rem!important;margin-bottom:10px!important}
   .hero-btns{flex-direction:column!important;gap:10px!important;align-items:stretch!important}
   .hero-btns .btn,.btn-white,.btn-glass{text-align:center;justify-content:center;padding:12px 20px!important;font-size:.9rem!important}
   .stats-section .stats-grid,.stats-grid{grid-template-columns:repeat(2,1fr)!important;gap:12px!important;padding:0 16px}
   .stat-number{font-size:1.5rem!important}
-  .section,.sec{padding:36px 16px!important}
-  .section-header h2,.sec-head h2{font-size:1.3rem!important}
+  .section,.sec{padding:24px 14px!important}
+  .section-header h2,.sec-head h2{font-size:1.1rem!important}
   .about-grid{grid-template-columns:1fr!important;gap:24px!important}
   .about-img img{height:280px!important;border-radius:14px!important}
   .about-badge{bottom:-14px!important;left:10px!important;padding:12px 16px!important}
   .services-grid{grid-template-columns:1fr!important;gap:10px!important}
   .service-card{display:flex!important;flex-direction:row!important;border-radius:12px!important}
-  .service-img{width:90px!important;min-width:90px!important;height:90px!important;min-height:90px!important;border-radius:12px 0 0 12px!important}
+  .service-img{width:70px!important;min-width:70px!important;height:70px!important;min-height:70px!important;border-radius:10px 0 0 10px!important}
   .service-content{padding:12px 14px!important}
   .service-content h3{font-size:.92rem!important;margin-bottom:4px!important}
   .service-content p{font-size:.8rem!important;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}

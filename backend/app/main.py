@@ -227,6 +227,33 @@ def sitemap_xml():
 </urlset>'''
     return Response(content=xml, media_type="application/xml")
 
+@app.get("/api/sites", response_class=HTMLResponse)
+def all_sites_page():
+    """Plain list of all generated websites."""
+    from app.core.supabase import get_supabase
+    db = get_supabase()
+    sites = db.table("websites").select("id,slug,lead_id,created_at").not_.is_("slug", "null").order("created_at", desc=True).execute().data or []
+    
+    # Get lead names
+    leads = {}
+    try:
+        all_leads = db.table("leads").select("id,business_name,category,address").execute().data or []
+        leads = {l["id"]: l for l in all_leads}
+    except Exception:
+        pass
+    
+    rows = ""
+    for i, s in enumerate(sites):
+        lead = leads.get(s.get("lead_id", ""), {})
+        name = lead.get("business_name", "Unknown")
+        cat = lead.get("category", "")
+        addr = lead.get("address", "")[:40]
+        slug = s.get("slug", "")
+        rows += f'<tr><td style="padding:8px;font-size:.78rem">{i+1}</td><td style="padding:8px;font-size:.78rem;font-weight:600">{name}</td><td style="padding:8px;font-size:.72rem;color:#64748b">{cat}</td><td style="padding:8px;font-size:.72rem;color:#64748b">{addr}</td><td style="padding:8px"><a href="https://{slug}.city-maps.online" target="_blank" style="font-size:.72rem;color:#00e5ff">{slug}.city-maps.online</a></td></tr>'
+    
+    html = f'''<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>All Sites - City Maps</title><style>*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:16px}}h1{{font-size:1.2rem;margin-bottom:4px}}.sub{{font-size:.75rem;color:#64748b;margin-bottom:16px}}table{{width:100%;border-collapse:collapse;background:#1e293b;border-radius:10px;overflow:hidden}}th{{text-align:left;padding:10px;font-size:.7rem;color:#64748b;border-bottom:1px solid #334155}}tr:hover{{background:#334155}}</style></head><body><h1>All Generated Sites ({len(sites)})</h1><p class="sub">Plain list of all business websites</p><table><thead><tr><th>#</th><th>Business</th><th>Category</th><th>Area</th><th>URL</th></tr></thead><tbody>{rows}</tbody></table></body></html>'''
+    return HTMLResponse(content=html)
+
 @app.get("/", response_class=HTMLResponse)
 def landing_page():
     """City Maps - Premium Digital Presence Platform with 3D depth background."""

@@ -30,6 +30,19 @@ export default function NotesPage() {
     { name: "Notes", icon: StickyNote, href: "/notes", active: true },
   ];
 
+    const toggleNote = async (note: Note) => {
+    const isDone = note.note.startsWith("[DONE] ");
+    const newText = isDone ? note.note.replace("[DONE] ", "") : "[DONE] " + note.note;
+    try {
+      await fetch(`${API_BASE}/api/admin/notes/${note.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ note: newText }),
+      });
+      loadNotes();
+    } catch (err) { console.error(err); }
+  };
+
   const loadNotes = async () => {
     try {
       const res = await fetch(`${API_BASE}/api/admin/notes`);
@@ -139,7 +152,13 @@ export default function NotesPage() {
             {notes.map((note) => (
               <div key={note.id} className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm group hover:border-purple-200 transition">
                 <div className="flex items-start justify-between gap-3">
-                  <p className="text-sm text-gray-700 whitespace-pre-wrap flex-1">{note.note}</p>
+                  <div className="flex items-start gap-2 flex-1">
+                      <input type="checkbox" 
+                        checked={note.note.startsWith("[DONE] ")}
+                        onChange={() => toggleNote(note)}
+                        className="mt-1 w-4 h-4 accent-purple-600 cursor-pointer flex-shrink-0" />
+                      <p className={`text-sm whitespace-pre-wrap ${note.note.startsWith("[DONE] ") ? "text-gray-400 line-through" : "text-gray-700"}`}>{note.note.replace("[DONE] ", "")}</p>
+                    </div>
                   <button
                     onClick={() => deleteNote(note.id)}
                     className="opacity-0 group-hover:opacity-100 p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition"
