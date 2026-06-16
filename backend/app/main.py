@@ -461,30 +461,54 @@ def city_page(city: str):
 
 @app.get("/api/sites", response_class=HTMLResponse)
 def all_sites_page():
-    """Plain list of all generated websites."""
+    """All generated websites grouped by category, city."""
     from app.core.supabase import get_supabase
     db = get_supabase()
     sites = db.table("websites").select("id,slug,lead_id,created_at").not_.is_("slug", "null").order("created_at", desc=True).execute().data or []
+    leads_data = db.table("leads").select("id,business_name,category,address").execute().data or []
+    leads = {l["id"]: l for l in leads_data}
     
-    # Get lead names
-    leads = {}
-    try:
-        all_leads = db.table("leads").select("id,business_name,category,address").execute().data or []
-        leads = {l["id"]: l for l in all_leads}
-    except Exception:
-        pass
-    
-    rows = ""
-    for i, s in enumerate(sites):
+    # Group by category and city
+    by_category = {}
+    by_city = {}
+    for s in sites:
         lead = leads.get(s.get("lead_id", ""), {})
-        name = lead.get("business_name", "Unknown")
-        cat = lead.get("category", "")
-        addr = lead.get("address", "")[:40]
-        slug = s.get("slug", "")
-        rows += f'<tr><td style="padding:8px;font-size:.78rem">{i+1}</td><td style="padding:8px;font-size:.78rem;font-weight:600">{name}</td><td style="padding:8px;font-size:.72rem;color:#64748b">{cat}</td><td style="padding:8px;font-size:.72rem;color:#64748b">{addr}</td><td style="padding:8px"><a href="https://{slug}.city-maps.online" target="_blank" style="font-size:.72rem;color:#00e5ff">{slug}.city-maps.online</a></td></tr>'
+        cat = lead.get("category", "other").lower().strip()
+        addr = lead.get("address", "")
+        # Extract city from address (last meaningful part)
+        parts = [p.strip() for p in addr.split(",") if p.strip()]
+        city = parts[-2] if len(parts) >= 2 else (parts[-1] if parts else "unknown")
+        city = city.strip().title()
+        
+        entry = {"slug": s.get("slug",""), "name": lead.get("business_name","Unknown"), "category": cat, "city": city}
+        by_category.setdefault(cat, []).append(entry)
+        by_city.setdefault(city, []).append(entry)
     
-    html = f'''<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>All Sites - City Maps</title><style>*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:16px}}h1{{font-size:1.2rem;margin-bottom:4px}}.sub{{font-size:.75rem;color:#64748b;margin-bottom:16px}}table{{width:100%;border-collapse:collapse;background:#1e293b;border-radius:10px;overflow:hidden}}th{{text-align:left;padding:10px;font-size:.7rem;color:#64748b;border-bottom:1px solid #334155}}tr:hover{{background:#334155}}</style></head><body><h1>All Generated Sites ({len(sites)})</h1><p class="sub">Plain list of all business websites</p><table><thead><tr><th>#</th><th>Business</th><th>Category</th><th>Area</th><th>URL</th></tr></thead><tbody>{rows}</tbody></table></body></html>'''
+    # Build HTML with tabs
+    cat_sections = ""
+    for cat, items in sorted(by_category.items(), key=lambda x: -len(x[1])):
+        links = "".join([f'<a href="https://{e["slug"]}.city-maps.online" target="_blank" style="display:block;padding:6px 0;font-size:.75rem;color:#00e5ff;border-bottom:1px solid #334155">{e["name"]}</a>' for e in items])
+        cat_sections += f'<div style="margin-bottom:16px"><h3 style="font-size:.8rem;font-weight:700;text-transform:capitalize;margin-bottom:6px;color:#94a3b8">{cat} ({len(items)})</h3>{links}</div>'
+    
+    city_sections = ""
+    for city, items in sorted(by_city.items(), key=lambda x: -len(x[1])):
+        links = "".join([f'<a href="https://{e["slug"]}.city-maps.online" target="_blank" style="display:block;padding:6px 0;font-size:.75rem;color:#00e5ff;border-bottom:1px solid #334155">{e["name"]} <span style="color:#64748b;font-size:.65rem">({e["category"]})</span></a>' for e in items])
+        city_sections += f'<div style="margin-bottom:16px"><h3 style="font-size:.8rem;font-weight:700;margin-bottom:6px;color:#94a3b8">{city} ({len(items)})</h3>{links}</div>'
+    
+    html = f'''<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>All Sites</title><style>*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:16px;max-width:800px;margin:0 auto}}.tabs{{display:flex;gap:8px;margin:16px 0}}.tab{{padding:8px 16px;border-radius:8px;font-size:.75rem;font-weight:600;cursor:pointer;border:1px solid #334155;background:#1e293b;color:#94a3b8}}.tab.active{{background:#6366f1;color:#fff;border-color:#6366f1}}.panel{{display:none}}.panel.active{{display:block}}</style></head><body>
+<h1 style="font-size:1.2rem;margin-bottom:4px">All Sites ({len(sites)})</h1>
+<div class="tabs">
+<div class="tab active" onclick="showTab('cat')">By Category</div>
+<div class="tab" onclick="showTab('city')">By City</div>
+<div class="tab" onclick="showTab('all')">All</div>
+</div>
+<div class="panel active" id="panel-cat">{cat_sections}</div>
+<div class="panel" id="panel-city">{city_sections}</div>
+<div class="panel" id="panel-all">{''.join([f'<a href="https://{s.get("slug","")}.city-maps.online" target="_blank" style="display:flex;justify-content:space-between;padding:8px 0;font-size:.75rem;color:#00e5ff;border-bottom:1px solid #334155"><span>{leads.get(s.get("lead_id",""),{{}}).get("business_name","?")}</span><span style="color:#64748b;font-size:.65rem">{s.get("slug","")}.city-maps.online</span></a>' for s in sites])}</div>
+<script>function showTab(t){{document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));document.getElementById('panel-'+t).classList.add('active');event.target.classList.add('active');}}</script>
+</body></html>'''
     return HTMLResponse(content=html)
+
 
 @app.get("/", response_class=HTMLResponse)
 def landing_page():
