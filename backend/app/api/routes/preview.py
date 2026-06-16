@@ -415,13 +415,13 @@ MOBILE_CSS = """
   .nav-cta{display:flex!important;background:transparent!important;box-shadow:none!important;color:#fff!important;font-size:1rem!important;padding:6px 10px!important;border:1.5px solid rgba(255,255,255,.5)!important;border-radius:8px!important;width:auto!important;height:auto!important;align-items:center!important;justify-content:center!important}
   .hero{min-height:auto;padding-top:80px!important;padding-bottom:40px!important}
   .hero-content{padding:60px 16px 24px!important;margin:0!important}
-  .hero h1{font-size:1.25rem!important;margin-bottom:6px!important;line-height:1.15!important}
+  .hero h1{font-size:1.2rem!important;margin-bottom:4px!important;line-height:1.12!important}
   .hero p{font-size:.82rem!important;margin-bottom:10px!important}
   .hero-btns{flex-direction:column!important;gap:10px!important;align-items:stretch!important}
   .hero-btns .btn,.btn-white,.btn-glass{text-align:center;justify-content:center;padding:12px 20px!important;font-size:.9rem!important}
   .stats-section .stats-grid,.stats-grid{grid-template-columns:repeat(2,1fr)!important;gap:12px!important;padding:0 16px}
   .stat-number{font-size:1.5rem!important}
-  .section,.sec{padding:24px 14px!important}
+  .section,.sec{padding:20px 12px!important}.products-section{order:-1!important}
   .section-header h2,.sec-head h2{font-size:1.1rem!important}
   .about-grid{grid-template-columns:1fr!important;gap:24px!important}
   .about-img img{height:280px!important;border-radius:14px!important}
@@ -433,11 +433,11 @@ MOBILE_CSS = """
   .service-content h3{font-size:.92rem!important;margin-bottom:4px!important}
   .service-content p{font-size:.8rem!important;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
   .features-grid{grid-template-columns:repeat(2,1fr)!important;gap:10px!important}
-  .feature-item{padding:16px 12px!important;border-radius:12px!important}
+  .feature-item{padding:12px 10px!important;border-radius:10px!important}
   .feature-icon{width:40px!important;height:40px!important;font-size:1.2rem!important;margin-bottom:8px!important}
   .feature-item h3{font-size:.82rem!important}
   .feature-item p{font-size:.72rem!important}
-  .gallery-grid{grid-template-columns:repeat(2,1fr)!important;gap:8px!important}
+  .gallery-grid{grid-template-columns:repeat(3,1fr)!important;gap:4px!important}.gallery-item{border-radius:6px!important}
   .gallery-item{border-radius:10px!important}
   .testimonials-grid{grid-template-columns:1fr!important;gap:12px!important}
   .testimonial-card{padding:20px!important}
