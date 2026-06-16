@@ -497,6 +497,7 @@ def all_sites_page():
     
     html = f'''<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>All Sites</title><style>*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:16px;max-width:800px;margin:0 auto}}.tabs{{display:flex;gap:8px;margin:16px 0}}.tab{{padding:8px 16px;border-radius:8px;font-size:.75rem;font-weight:600;cursor:pointer;border:1px solid #334155;background:#1e293b;color:#94a3b8}}.tab.active{{background:#6366f1;color:#fff;border-color:#6366f1}}.panel{{display:none}}.panel.active{{display:block}}</style></head><body>
 <h1 style="font-size:1.2rem;margin-bottom:4px">All Sites ({len(sites)})</h1>
+<input id="searchBox" placeholder="Search business name..." oninput="filterSites()" style="width:100%;padding:10px 14px;border:1px solid #334155;border-radius:8px;background:#1e293b;color:#fff;font-size:.8rem;outline:none;margin-bottom:12px">
 <div class="tabs">
 <div class="tab active" onclick="showTab('cat')">By Category</div>
 <div class="tab" onclick="showTab('city')">By City</div>
@@ -505,7 +506,8 @@ def all_sites_page():
 <div class="panel active" id="panel-cat">{cat_sections}</div>
 <div class="panel" id="panel-city">{city_sections}</div>
 <div class="panel" id="panel-all">{''.join([f'<a href="https://{s.get("slug","")}.city-maps.online" target="_blank" style="display:flex;justify-content:space-between;padding:8px 0;font-size:.75rem;color:#00e5ff;border-bottom:1px solid #334155"><span>{leads.get(s.get("lead_id",""),{{}}).get("business_name","?")}</span><span style="color:#64748b;font-size:.65rem">{s.get("slug","")}.city-maps.online</span></a>' for s in sites])}</div>
-<script>function showTab(t){{document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));document.getElementById('panel-'+t).classList.add('active');event.target.classList.add('active');}}</script>
+<script>function filterSites(){{var q=document.getElementById('searchBox').value.toLowerCase();document.querySelectorAll('.panel a').forEach(function(a){{a.style.display=a.textContent.toLowerCase().includes(q)?'':'none'}});}}
+function showTab(t){{document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));document.getElementById('panel-'+t).classList.add('active');event.target.classList.add('active');}}</script>
 </body></html>'''
     return HTMLResponse(content=html)
 
