@@ -180,11 +180,7 @@ export default function LeadsPage() {
                       </span>
                     </td>
                     <td className="px-4 py-3">
-                      <div className="flex flex-wrap gap-1 mb-1">
-                        {lead.status !== "new" && <span className="text-[10px] px-1.5 py-0.5 bg-purple-100 text-purple-700 rounded">Analyzed ✓</span>}
-                        {(lead.status === "outreach_sent" || lead.status === "converted") && <span className="text-[10px] px-1.5 py-0.5 bg-green-100 text-green-700 rounded">Outreach ✓</span>}
-                        {lead.status === "converted" && <span className="text-[10px] px-1.5 py-0.5 bg-emerald-100 text-emerald-700 rounded">Converted ✓</span>}
-                      </div>
+                      
                       <div className="flex gap-2">
                         {lead.status === "new" && (
                           <button
@@ -319,11 +315,7 @@ export default function LeadsPage() {
             <div className="bg-gray-50 rounded-lg p-3 text-sm whitespace-pre-wrap mb-4 max-h-60 overflow-y-auto border">
               {waMessage.message}
             </div>
-            <div className="flex flex-wrap gap-1 mb-1">
-                        {lead.status !== "new" && <span className="text-[10px] px-1.5 py-0.5 bg-purple-100 text-purple-700 rounded">Analyzed ✓</span>}
-                        {(lead.status === "outreach_sent" || lead.status === "converted") && <span className="text-[10px] px-1.5 py-0.5 bg-green-100 text-green-700 rounded">Outreach ✓</span>}
-                        {lead.status === "converted" && <span className="text-[10px] px-1.5 py-0.5 bg-emerald-100 text-emerald-700 rounded">Converted ✓</span>}
-                      </div>
+            
                       <div className="flex gap-2">
               <a href={waMessage.link} target="_blank" rel="noopener noreferrer"
                 className="flex-1 flex items-center justify-center gap-2 bg-green-500 text-white py-2.5 rounded-xl text-sm font-medium hover:bg-green-600">
