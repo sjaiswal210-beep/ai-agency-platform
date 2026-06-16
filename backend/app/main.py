@@ -250,6 +250,166 @@ def sitemap_xml():
 </urlset>'''
     return Response(content=xml, media_type="application/xml")
 
+@app.get("/api/growth-plan", response_class=HTMLResponse)
+def growth_plan_page():
+    """Self-growth plan with AI-powered action items."""
+    html = '''<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Growth Plan - City Maps</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:sans-serif;background:#0f172a;color:#fff;padding:16px;max-width:600px;margin:0 auto}h1{font-size:1.2rem;margin-bottom:4px}.sub{font-size:.75rem;color:#64748b;margin-bottom:20px}.card{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:16px;margin-bottom:10px}.item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid #334155}.item:last-child{border:none}.item input[type=checkbox]{margin-top:3px;width:16px;height:16px;accent-color:#6366f1;cursor:pointer}.item-text{font-size:.8rem;flex:1}.item-text.done{text-decoration:line-through;color:#64748b}.ai-input{display:flex;gap:8px;margin-bottom:16px}input{flex:1;padding:10px;border:1px solid #334155;border-radius:8px;background:#1e293b;color:#fff;font-size:.8rem;outline:none}button{padding:10px 16px;background:#6366f1;color:#fff;border:none;border-radius:8px;font-weight:700;font-size:.8rem;cursor:pointer}.btn-ai{background:linear-gradient(135deg,#6366f1,#8b5cf6)}</style></head><body>
+<h1>Growth Plan</h1>
+<p class="sub">AI-powered action items & progress tracking</p>
+
+<div class="ai-input">
+<input id="goalInput" placeholder="What do you want to achieve? (e.g., Get 50 more leads this month)">
+<button class="btn-ai" onclick="generatePlan()">AI Plan</button>
+</div>
+
+<div class="card">
+<h3 style="font-size:.85rem;margin-bottom:12px">Action Items</h3>
+<div id="actionItems"></div>
+<div style="display:flex;gap:8px;margin-top:12px">
+<input id="newItem" placeholder="Add custom action item..." style="flex:1">
+<button onclick="addItem()">Add</button>
+</div>
+</div>
+
+<div class="card">
+<h3 style="font-size:.85rem;margin-bottom:8px">Progress</h3>
+<div id="progress" style="font-size:.8rem;color:#64748b">0 of 0 completed</div>
+<div style="background:#334155;border-radius:8px;height:8px;margin-top:8px;overflow:hidden"><div id="progressBar" style="height:100%;background:linear-gradient(90deg,#6366f1,#00e5ff);width:0%;transition:width .3s"></div></div>
+</div>
+
+<script>
+var items = JSON.parse(localStorage.getItem("growth_items") || "[]");
+renderItems();
+
+function renderItems(){
+var el=document.getElementById("actionItems");
+el.innerHTML="";
+items.forEach(function(item,i){
+el.innerHTML+="<div class=item><input type=checkbox "+(item.done?"checked":"")+" onchange=toggleItem("+i+")><span class='item-text "+(item.done?"done":"")+"'>"+item.text+"</span><button onclick=removeItem("+i+") style='background:none;border:none;color:#ef4444;cursor:pointer;font-size:.8rem'>x</button></div>";
+});
+var done=items.filter(function(i){return i.done}).length;
+document.getElementById("progress").textContent=done+" of "+items.length+" completed";
+document.getElementById("progressBar").style.width=(items.length?done/items.length*100:0)+"%";
+}
+
+function addItem(){
+var t=document.getElementById("newItem").value.trim();
+if(!t)return;
+items.push({text:t,done:false});
+localStorage.setItem("growth_items",JSON.stringify(items));
+document.getElementById("newItem").value="";
+renderItems();
+}
+
+function toggleItem(i){items[i].done=!items[i].done;localStorage.setItem("growth_items",JSON.stringify(items));renderItems();}
+function removeItem(i){items.splice(i,1);localStorage.setItem("growth_items",JSON.stringify(items));renderItems();}
+
+async function generatePlan(){
+var goal=document.getElementById("goalInput").value.trim();
+if(!goal)return;
+document.getElementById("goalInput").value="Generating...";
+try{
+var r=await fetch("/api/growth-plan/generate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({goal:goal})});
+var data=await r.json();
+if(data.actions){
+data.actions.forEach(function(a){items.push({text:a,done:false});});
+localStorage.setItem("growth_items",JSON.stringify(items));
+renderItems();
+}
+}catch(e){}
+document.getElementById("goalInput").value="";
+}
+</script>
+</body></html>'''
+    return HTMLResponse(content=html)
+
+
+@app.post("/api/growth-plan/generate")
+async def generate_growth_plan(request: Request):
+    """Generate AI-powered growth action items."""
+    from app.core.llm import chat_completion
+    import json
+    data = await request.json()
+    goal = data.get("goal", "")
+    
+    prompt = f"""Generate 5-7 specific, actionable growth tasks for this business goal: "{goal}"
+
+Each task should be:
+- Specific and measurable
+- Achievable in 1-7 days
+- Focused on digital growth (SEO, leads, visibility)
+
+Return ONLY a JSON array of strings:
+["Task 1 description", "Task 2 description", ...]"""
+    
+    try:
+        result = await chat_completion([{"role": "user", "content": prompt}])
+        cleaned = result.strip()
+        if "```json" in cleaned:
+            cleaned = cleaned.split("```json")[1].split("```")[0].strip()
+        elif "```" in cleaned:
+            cleaned = cleaned.split("```")[1].split("```")[0].strip()
+        actions = json.loads(cleaned)
+        return {"actions": actions}
+    except Exception as e:
+        return {"actions": [f"Set up Google Business Profile", "Optimize website for local keywords", "Collect 5 customer reviews", "Create social media content calendar", "Run first lead generation campaign"], "note": "AI unavailable, using defaults"}
+
+@app.get("/category/{category}", response_class=HTMLResponse)
+def category_page(category: str):
+    """SEO page listing businesses by category."""
+    from app.core.supabase import get_supabase
+    db = get_supabase()
+    leads = db.table("leads").select("id,business_name,address,phone,category").ilike("category", f"%{category}%").limit(50).execute().data or []
+    websites = db.table("websites").select("slug,lead_id").not_.is_("slug", "null").execute().data or []
+    slug_map = {w["lead_id"]: w["slug"] for w in websites}
+    
+    cards = ""
+    for l in leads:
+        slug = slug_map.get(l["id"], "")
+        link = f"https://{slug}.city-maps.online" if slug else "#"
+        cards += f'<a href="{link}" target="_blank" style="display:block;background:#1e293b;border:1px solid #334155;border-radius:10px;padding:14px;text-decoration:none;color:#fff;margin-bottom:8px"><b style="font-size:.85rem">{l.get("business_name","")}</b><p style="font-size:.7rem;color:#64748b;margin-top:4px">{l.get("address","")[:50]}</p></a>'
+    
+    html = f'''<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Best {category.title()} Businesses | City Maps</title>
+<meta name="description" content="Find the best {category} businesses near you. Professional websites, reviews, and contact details.">
+<style>*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:20px;max-width:700px;margin:0 auto}}</style></head><body>
+<h1 style="font-size:1.3rem;margin-bottom:4px">Best {category.title()} Businesses</h1>
+<p style="font-size:.75rem;color:#64748b;margin-bottom:20px">{len(leads)} businesses found</p>
+{cards or '<p style="color:#475569">No businesses found in this category.</p>'}
+<p style="text-align:center;margin-top:20px;font-size:.7rem"><a href="/" style="color:#00e5ff">Back to City Maps</a></p>
+</body></html>'''
+    return HTMLResponse(content=html)
+
+
+@app.get("/city/{city}", response_class=HTMLResponse)
+def city_page(city: str):
+    """SEO page listing businesses by city."""
+    from app.core.supabase import get_supabase
+    db = get_supabase()
+    leads = db.table("leads").select("id,business_name,address,phone,category").ilike("address", f"%{city}%").limit(50).execute().data or []
+    websites = db.table("websites").select("slug,lead_id").not_.is_("slug", "null").execute().data or []
+    slug_map = {w["lead_id"]: w["slug"] for w in websites}
+    
+    cards = ""
+    for l in leads:
+        slug = slug_map.get(l["id"], "")
+        link = f"https://{slug}.city-maps.online" if slug else "#"
+        cards += f'<a href="{link}" target="_blank" style="display:block;background:#1e293b;border:1px solid #334155;border-radius:10px;padding:14px;text-decoration:none;color:#fff;margin-bottom:8px"><b style="font-size:.85rem">{l.get("business_name","")}</b><p style="font-size:.7rem;color:#64748b;margin-top:4px">{l.get("category","").title()} | {l.get("address","")[:40]}</p></a>'
+    
+    html = f'''<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Businesses in {city.title()} | City Maps</title>
+<meta name="description" content="Find local businesses in {city.title()}. Professional websites, contact details, and reviews.">
+<style>*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:20px;max-width:700px;margin:0 auto}}</style></head><body>
+<h1 style="font-size:1.3rem;margin-bottom:4px">Businesses in {city.title()}</h1>
+<p style="font-size:.75rem;color:#64748b;margin-bottom:20px">{len(leads)} businesses found</p>
+{cards or '<p style="color:#475569">No businesses found in this city.</p>'}
+<p style="text-align:center;margin-top:20px;font-size:.7rem"><a href="/" style="color:#00e5ff">Back to City Maps</a></p>
+</body></html>'''
+    return HTMLResponse(content=html)
+
+
 @app.get("/api/sites", response_class=HTMLResponse)
 def all_sites_page():
     """Plain list of all generated websites."""
