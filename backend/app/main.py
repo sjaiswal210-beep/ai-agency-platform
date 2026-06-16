@@ -63,6 +63,29 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# Security: Rate limiting (simple in-memory)
+from collections import defaultdict
+import time as _time
+_rate_limits = defaultdict(list)
+
+@app.middleware("http")
+async def rate_limit_middleware(request: Request, call_next):
+    """Basic rate limiting - 100 requests per minute per IP."""
+    ip = request.client.host if request.client else "unknown"
+    now = _time.time()
+    _rate_limits[ip] = [t for t in _rate_limits[ip] if now - t < 60]
+    if len(_rate_limits[ip]) > 100:
+        return JSONResponse(status_code=429, content={"detail": "Too many requests"})
+    _rate_limits[ip].append(now)
+    response = await call_next(request)
+    # Security headers
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "SAMEORIGIN"
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    return response
+
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],

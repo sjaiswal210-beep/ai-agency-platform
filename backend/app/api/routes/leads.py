@@ -145,10 +145,9 @@ async def public_create_site(data: dict):
         whatsapp_sent = False
         if phone and slug:
             try:
-                clean_phone = phone.replace(" ", "").replace("-", "").replace("+", "")
-                if not clean_phone.startswith("91") and len(clean_phone) == 10:
-                    clean_phone = "91" + clean_phone
-                whatsapp_sent = True
+                from app.services.whatsapp_auto import send_site_created_message
+                wa_result = await send_site_created_message(business_name, phone, slug)
+                whatsapp_sent = wa_result.get("sent", False) or bool(wa_result.get("link"))
             except Exception:
                 pass
         
