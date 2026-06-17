@@ -1,4 +1,3 @@
-// Build: 202606171853
 "use client";
 
 const API_BASE = "https://ai-agency-platform.onrender.com";
