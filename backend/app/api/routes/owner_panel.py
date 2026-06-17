@@ -72,8 +72,8 @@ body{{padding-bottom:70px}}
 <div class="section-title">Edit Your Website</div>
 <div class="tools">
 <a href="#" onclick="showEditor()" class="tool"><div class="emoji">&#9998;</div><div class="name">Edit Website</div><div class="desc">Change text & info</div></a>
-<a href="#" onclick="showSocial()" class="tool"><div class="emoji">&#128279;</div><div class="name">Social Links</div><div class="desc">Instagram & Facebook</div></a>
-<a href="#" onclick="showGallery()" class="tool"><div class="emoji">&#128444;</div><div class="name">Gallery Photos</div><div class="desc">Add your photos</div></a>
+<a href="/api/panel/{website_id}/social-links" target="_blank" class="tool"><div class="emoji">&#128279;</div><div class="name">Social Links</div><div class="desc">Instagram & Facebook</div></a>
+<a href="/api/panel/{website_id}/gallery" target="_blank" class="tool"><div class="emoji">&#128444;</div><div class="name">Gallery Photos</div><div class="desc">Add your photos</div></a>
 <a href="/api/offers/{website_id}" target="_blank" class="tool"><div class="emoji">&#127878;</div><div class="name">Festival Offers</div><div class="desc">Campaign templates</div></a>
 </div>
 
@@ -112,6 +112,19 @@ async function submitEdit(){{var p=document.getElementById("editPrompt").value;i
 async function saveSocial(){{try{{await fetch("https://city-maps.online/api/panel/{website_id}/social-links",{{method:"POST",headers:{{"Content-Type":"application/json"}},body:JSON.stringify({{instagram:document.getElementById("instaUrl").value,facebook:document.getElementById("fbUrl").value,youtube:document.getElementById("ytUrl").value}})}});alert("Social links saved!");}}catch{{alert("Failed");}}}}
 async function saveGallery(){{var urls=document.getElementById("galUrls").value.split(String.fromCharCode(10)).filter(function(u){{return u.trim()}});try{{await fetch("https://city-maps.online/api/panel/{website_id}/gallery",{{method:"POST",headers:{{"Content-Type":"application/json"}},body:JSON.stringify({{urls:urls}})}});alert("Gallery saved! "+urls.length+" photos added.");}}catch{{alert("Failed");}}}}
 </script><div id="toolModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9999;align-items:center;justify-content:center;padding:10px"><div style="background:#fff;border-radius:16px;width:100%;max-width:480px;height:85vh;position:relative;overflow:hidden"><button onclick="closeTool()" style="position:absolute;top:8px;right:12px;background:rgba(0,0,0,.6);color:#fff;border:none;width:28px;height:28px;border-radius:50%;font-size:1rem;cursor:pointer;z-index:10">&times;</button><iframe id="toolFrame" style="width:100%;height:100%;border:none;border-radius:16px" src=""></iframe></div></div></body></html>'''
+    return HTMLResponse(content=html)
+
+@router.get("/{website_id}/social-links", response_class=HTMLResponse)
+def social_links_page(website_id: str):
+    """Social links editor page."""
+    html = f'''<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Social Links</title><style>*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:20px;max-width:400px;margin:0 auto}}h2{{font-size:1rem;margin-bottom:16px}}input{{width:100%;padding:10px;border:1px solid #334155;border-radius:8px;background:#1e293b;color:#fff;font-size:.8rem;margin-bottom:10px;outline:none}}button{{width:100%;padding:12px;background:#6366f1;color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:.85rem}}</style></head><body><h2>Social Media Links</h2><input id="instaUrl" placeholder="Instagram URL"><input id="fbUrl" placeholder="Facebook URL"><input id="ytUrl" placeholder="YouTube URL"><button onclick="save()">Save Links</button><p id="msg" style="margin-top:10px;font-size:.75rem;color:#22c55e"></p><script>async function save(){{try{{await fetch("/api/panel/{website_id}/social-links",{{method:"POST",headers:{{"Content-Type":"application/json"}},body:JSON.stringify({{instagram:document.getElementById("instaUrl").value,facebook:document.getElementById("fbUrl").value,youtube:document.getElementById("ytUrl").value}})}});document.getElementById("msg").textContent="Saved!"}}catch{{alert("Failed")}}}}</script></body></html>'''
+    return HTMLResponse(content=html)
+
+
+@router.get("/{website_id}/gallery", response_class=HTMLResponse)
+def gallery_page(website_id: str):
+    """Gallery photos editor page."""
+    html = f'''<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Gallery Photos</title><style>*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:20px;max-width:400px;margin:0 auto}}h2{{font-size:1rem;margin-bottom:8px}}p{{font-size:.75rem;color:#64748b;margin-bottom:12px}}textarea{{width:100%;padding:10px;border:1px solid #334155;border-radius:8px;background:#1e293b;color:#fff;font-size:.8rem;min-height:150px;margin-bottom:10px;outline:none;resize:vertical}}button{{width:100%;padding:12px;background:#6366f1;color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:.85rem}}</style></head><body><h2>Gallery Photos</h2><p>Add image URLs (one per line). Use Google Drive or Imgur links.</p><textarea id="galUrls" placeholder="https://drive.google.com/...&#10;https://i.imgur.com/...&#10;https://..."></textarea><button onclick="save()">Save Gallery</button><p id="msg" style="margin-top:10px;font-size:.75rem;color:#22c55e"></p><script>async function save(){{var urls=document.getElementById("galUrls").value.split("\\n").filter(function(u){{return u.trim()}});try{{await fetch("/api/panel/{website_id}/gallery",{{method:"POST",headers:{{"Content-Type":"application/json"}},body:JSON.stringify({{urls:urls}})}});document.getElementById("msg").textContent="Saved! "+urls.length+" photos added."}}catch{{alert("Failed")}}}}</script></body></html>'''
     return HTMLResponse(content=html)
 
 @router.post("/{website_id}/social-links")
