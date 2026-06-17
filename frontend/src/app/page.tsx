@@ -1,3 +1,4 @@
+// Build: 202606171853
 "use client";
 
 const API_BASE = "https://ai-agency-platform.onrender.com";
@@ -289,7 +290,7 @@ export default function Dashboard() {
                   <div key={lead.id} className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium">{lead.business_name}</p>
-                      <p className="text-xs text-gray-400">{lead.address?.split(",").slice(0, 2).join(",") || lead.category} {lead.phone ? `· ${lead.phone}` : ""}</p>
+                      <p className="text-xs text-gray-400">{lead.address?.split(",").slice(0, 2).join(",") || lead.category} {lead.phone ? `┬╖ ${lead.phone}` : ""}</p>
                     </div>
                     <span className={`text-xs px-2 py-0.5 rounded-full ${
                       lead.status === "new" ? "bg-blue-50 text-blue-600" :
