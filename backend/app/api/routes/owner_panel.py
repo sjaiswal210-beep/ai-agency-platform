@@ -59,11 +59,11 @@ body{{padding-bottom:70px}}
 <div class="section-title">Manage Your Business</div>
 <div class="tools">
 <a href="https://city-maps.online/api/store/{website_id}/manage" target="_blank" class="tool"><div class="emoji">&#128722;</div><div class="name">Products</div><div class="desc">Add & manage items</div></a>
-<a href="#" onclick="openTool('/api/branding/{website_id}/social-post/preview')" class="tool"><div class="emoji">&#128247;</div><div class="name">Social Post</div><div class="desc">Create & download</div></a>
-<a href="#" onclick="openTool('/api/qr/{website_id}')" class="tool"><div class="emoji">&#128248;</div><div class="name">QR Code</div><div class="desc">For cards & banners</div></a>
-<a href="#" onclick="openTool('/api/owner-analytics/{website_id}')" class="tool"><div class="emoji">&#128200;</div><div class="name">Analytics</div><div class="desc">Visitors & calls</div></a>
-<a href="#" onclick="openTool('/api/daily/{website_id}')" class="tool"><div class="emoji">&#128197;</div><div class="name">Daily Content</div><div class="desc">Ready to share</div></a>
-<a href="#" onclick="openTool('/api/offers/{website_id}')" class="tool"><div class="emoji">&#127873;</div><div class="name">Create Offer</div><div class="desc">Share deals & ads</div></a>
+<a href="javascript:void(0)" onclick="openTool('/api/branding/{website_id}/social-post/preview')" class="tool"><div class="emoji">&#128247;</div><div class="name">Social Post</div><div class="desc">Create & download</div></a>
+<a href="javascript:void(0)" onclick="openTool('/api/qr/{website_id}')" class="tool"><div class="emoji">&#128248;</div><div class="name">QR Code</div><div class="desc">For cards & banners</div></a>
+<a href="javascript:void(0)" onclick="openTool('/api/owner-analytics/{website_id}')" class="tool"><div class="emoji">&#128200;</div><div class="name">Analytics</div><div class="desc">Visitors & calls</div></a>
+<a href="javascript:void(0)" onclick="openTool('/api/daily/{website_id}')" class="tool"><div class="emoji">&#128197;</div><div class="name">Daily Content</div><div class="desc">Ready to share</div></a>
+<a href="javascript:void(0)" onclick="openTool('/api/offers/{website_id}')" class="tool"><div class="emoji">&#127873;</div><div class="name">Create Offer</div><div class="desc">Share deals & ads</div></a>
 <a href="https://city-maps.online/api/google-profile/{website_id}/setup-guide" target="_blank" class="tool"><div class="emoji">&#128205;</div><div class="name">Google Setup</div><div class="desc">Get on Maps</div></a>
 <a href="https://city-maps.online/api/panel/{website_id}/video-creator" target="_blank" class="tool"><div class="emoji">&#127916;</div><div class="name">Promo Videos</div><div class="desc">Make promo videos</div></a>
 </div>
@@ -73,7 +73,7 @@ body{{padding-bottom:70px}}
 <a href="#" onclick="showEditor()" class="tool"><div class="emoji">&#9998;</div><div class="name">Edit Website</div><div class="desc">Change text & info</div></a>
 <a href="#" onclick="showSocial()" class="tool"><div class="emoji">&#128279;</div><div class="name">Social Links</div><div class="desc">Instagram & Facebook</div></a>
 <a href="#" onclick="showGallery()" class="tool"><div class="emoji">&#128444;</div><div class="name">Gallery Photos</div><div class="desc">Add your photos</div></a>
-<a href="#" onclick="openTool('/api/offers/{website_id}')" class="tool"><div class="emoji">&#127878;</div><div class="name">Festival Offers</div><div class="desc">Campaign templates</div></a>
+<a href="javascript:void(0)" onclick="openTool('/api/offers/{website_id}')" class="tool"><div class="emoji">&#127878;</div><div class="name">Festival Offers</div><div class="desc">Campaign templates</div></a>
 </div>
 
 <div id="editorPanel" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;align-items:center;justify-content:center;padding:16px"><div style="background:#fff;border-radius:16px;padding:20px;width:100%;max-width:400px;position:relative"><button onclick="closeModals()" style="position:absolute;top:10px;right:12px;background:none;border:none;font-size:1.2rem;cursor:pointer">&times;</button>
@@ -103,10 +103,10 @@ body{{padding-bottom:70px}}
 <a href="{site_url}" target="_blank" class="blue">View Website</a>
 <a href="https://wa.me/917350785606?text=Hi%2C%20I%20need%20help%20with%20my%20business%20page" target="_blank" class="green">Get Help</a>
 </div>
-<script>function openTool(url){{document.getElementById('toolModal').style.display='flex';document.getElementById('toolFrame').src=url;}}function closeTool(){{document.getElementById('toolModal').style.display='none';document.getElementById('toolFrame').src='';}}function closeModals(){{document.querySelectorAll("#editorPanel,#socialPanel,#galleryPanel").forEach(function(p){{p.style.display="none"}})}}
-function showEditor(){{document.getElementById("editorPanel").style.display="block";document.getElementById("socialPanel").style.display="none";document.getElementById("galleryPanel").style.display="none";}}
-function showSocial(){{document.getElementById("socialPanel").style.display="block";document.getElementById("editorPanel").style.display="none";document.getElementById("galleryPanel").style.display="none";}}
-function showGallery(){{document.getElementById("galleryPanel").style.display="block";document.getElementById("editorPanel").style.display="none";document.getElementById("socialPanel").style.display="none";}}
+<script>function openTool(url){{var m=document.getElementById('toolModal');m.style.display='flex';m.style.visibility='visible';document.getElementById('toolFrame').src=url;}}function closeTool(){{document.getElementById('toolModal').style.display='none';document.getElementById('toolFrame').src='';}}function closeModals(){{document.querySelectorAll("#editorPanel,#socialPanel,#galleryPanel").forEach(function(p){{p.style.display="none"}})}}
+function showEditor(){{document.getElementById("editorPanel").style.display="flex";document.getElementById("socialPanel").style.display="none";document.getElementById("galleryPanel").style.display="none";}}
+function showSocial(){{document.getElementById("socialPanel").style.display="flex";document.getElementById("editorPanel").style.display="none";document.getElementById("galleryPanel").style.display="none";}}
+function showGallery(){{document.getElementById("galleryPanel").style.display="flex";document.getElementById("editorPanel").style.display="none";document.getElementById("socialPanel").style.display="none";}}
 async function submitEdit(){{var p=document.getElementById("editPrompt").value;if(!p)return;document.getElementById("editResult").textContent="Applying...";try{{var r=await fetch("https://city-maps.online/api/editor/{website_id}/edit",{{method:"POST",headers:{{"Content-Type":"application/json"}},body:JSON.stringify({{prompt:p}})}});var d=await r.json();document.getElementById("editResult").textContent=d.message||"Done! Refresh your website to see changes.";}}catch{{document.getElementById("editResult").textContent="Failed. Try again.";}}}}
 async function saveSocial(){{try{{await fetch("https://city-maps.online/api/panel/{website_id}/social-links",{{method:"POST",headers:{{"Content-Type":"application/json"}},body:JSON.stringify({{instagram:document.getElementById("instaUrl").value,facebook:document.getElementById("fbUrl").value,youtube:document.getElementById("ytUrl").value}})}});alert("Social links saved!");}}catch{{alert("Failed");}}}}
 async function saveGallery(){{var urls=document.getElementById("galUrls").value.split(String.fromCharCode(10)).filter(function(u){{return u.trim()}});try{{await fetch("https://city-maps.online/api/panel/{website_id}/gallery",{{method:"POST",headers:{{"Content-Type":"application/json"}},body:JSON.stringify({{urls:urls}})}});alert("Gallery saved! "+urls.length+" photos added.");}}catch{{alert("Failed");}}}}
@@ -244,7 +244,7 @@ body{{font-family:Inter,sans-serif;background:#0f172a;color:#fff;padding:16px;ma
 </div>
 </div>
 
-<script>function openTool(url){{document.getElementById('toolModal').style.display='flex';document.getElementById('toolFrame').src=url;}}function closeTool(){{document.getElementById('toolModal').style.display='none';document.getElementById('toolFrame').src='';}}function closeModals(){{document.querySelectorAll("#editorPanel,#socialPanel,#galleryPanel").forEach(function(p){{p.style.display="none"}})}}
+<script>function openTool(url){{var m=document.getElementById('toolModal');m.style.display='flex';m.style.visibility='visible';document.getElementById('toolFrame').src=url;}}function closeTool(){{document.getElementById('toolModal').style.display='none';document.getElementById('toolFrame').src='';}}function closeModals(){{document.querySelectorAll("#editorPanel,#socialPanel,#galleryPanel").forEach(function(p){{p.style.display="none"}})}}
 let photos=[];let textOverlay="";let textPos="center";let textSize="medium";let selectedMusic=0;let videoBlob=null;let videoUrl=null;
 
 const MUSIC_TRACKS=[
