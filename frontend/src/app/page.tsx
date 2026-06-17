@@ -222,12 +222,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Quick Actions */}
-          {/* Agent Status */}
-          
-              </div>
-            </div>
-          )}
+          {/* Quick Actions */
 
           <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Quick Actions</p>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6 stagger-children">
