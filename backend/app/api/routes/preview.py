@@ -443,7 +443,7 @@ MOBILE_CSS = """
   .testimonial-card{padding:20px!important}
   .contact-container{grid-template-columns:1fr!important;gap:20px!important}
   .contact-section{padding:36px 16px!important}
-  .footer{padding:30px 16px 80px!important}
+  .footer{padding:30px 16px 80px!important}iframe{height:200px!important;border-radius:10px!important}
   .bottom-nav{display:block!important}
   .bottom-nav a{padding:8px 14px!important;font-size:.7rem!important}
   .bn-icon{font-size:1.5rem!important}
