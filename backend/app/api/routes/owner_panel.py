@@ -59,13 +59,13 @@ body{{padding-bottom:70px}}
 <div class="section-title">Manage Your Business</div>
 <div class="tools">
 <a href="https://city-maps.online/api/store/{website_id}/manage" target="_blank" class="tool"><div class="emoji">&#128722;</div><div class="name">Products</div><div class="desc">Add & manage items</div></a>
-<a href="javascript:void(0)" onclick="openTool('/api/branding/{website_id}/social-post/preview')" class="tool"><div class="emoji">&#128247;</div><div class="name">Social Post</div><div class="desc">Create & download</div></a>
-<a href="javascript:void(0)" onclick="openTool('/api/qr/{website_id}')" class="tool"><div class="emoji">&#128248;</div><div class="name">QR Code</div><div class="desc">For cards & banners</div></a>
-<a href="javascript:void(0)" onclick="openTool('/api/owner-analytics/{website_id}')" class="tool"><div class="emoji">&#128200;</div><div class="name">Analytics</div><div class="desc">Visitors & calls</div></a>
-<a href="javascript:void(0)" onclick="openTool('/api/daily/{website_id}')" class="tool"><div class="emoji">&#128197;</div><div class="name">Daily Content</div><div class="desc">Ready to share</div></a>
-<a href="javascript:void(0)" onclick="openTool('/api/offers/{website_id}')" class="tool"><div class="emoji">&#127873;</div><div class="name">Create Offer</div><div class="desc">Share deals & ads</div></a>
+<a href="/api/branding/{website_id}/social-post/preview" target="_blank" class="tool"><div class="emoji">&#128247;</div><div class="name">Social Post</div><div class="desc">Create & download</div></a>
+<a href="/api/qr/{website_id}" target="_blank" class="tool"><div class="emoji">&#128248;</div><div class="name">QR Code</div><div class="desc">For cards & banners</div></a>
+<a href="/api/owner-analytics/{website_id}" target="_blank" class="tool"><div class="emoji">&#128200;</div><div class="name">Analytics</div><div class="desc">Visitors & calls</div></a>
+<a href="/api/daily/{website_id}" target="_blank" class="tool"><div class="emoji">&#128197;</div><div class="name">Daily Content</div><div class="desc">Ready to share</div></a>
+<a href="/api/offers/{website_id}" target="_blank" class="tool"><div class="emoji">&#127873;</div><div class="name">Create Offer</div><div class="desc">Share deals & ads</div></a>
 <a href="https://city-maps.online/api/google-profile/{website_id}/setup-guide" target="_blank" class="tool"><div class="emoji">&#128205;</div><div class="name">Google Setup</div><div class="desc">Get on Maps</div></a>
-<a href="javascript:void(0)" onclick="openTool('/api/logo-gen/{website_id}/preview')" class="tool"><div class="emoji">&#127912;</div><div class="name">Logo</div><div class="desc">Generate logo</div></a>
+<a href="/api/logo-gen/{website_id}/preview" target="_blank" class="tool"><div class="emoji">&#127912;</div><div class="name">Logo</div><div class="desc">Generate logo</div></a>
 <a href="https://city-maps.online/api/panel/{website_id}/video-creator" target="_blank" class="tool"><div class="emoji">&#127916;</div><div class="name">Promo Videos</div><div class="desc">Make promo videos</div></a>
 </div>
 
@@ -74,7 +74,7 @@ body{{padding-bottom:70px}}
 <a href="#" onclick="showEditor()" class="tool"><div class="emoji">&#9998;</div><div class="name">Edit Website</div><div class="desc">Change text & info</div></a>
 <a href="#" onclick="showSocial()" class="tool"><div class="emoji">&#128279;</div><div class="name">Social Links</div><div class="desc">Instagram & Facebook</div></a>
 <a href="#" onclick="showGallery()" class="tool"><div class="emoji">&#128444;</div><div class="name">Gallery Photos</div><div class="desc">Add your photos</div></a>
-<a href="javascript:void(0)" onclick="openTool('/api/offers/{website_id}')" class="tool"><div class="emoji">&#127878;</div><div class="name">Festival Offers</div><div class="desc">Campaign templates</div></a>
+<a href="/api/offers/{website_id}" target="_blank" class="tool"><div class="emoji">&#127878;</div><div class="name">Festival Offers</div><div class="desc">Campaign templates</div></a>
 </div>
 
 <div id="editorPanel" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;align-items:center;justify-content:center;padding:16px"><div style="background:#fff;border-radius:16px;padding:20px;width:100%;max-width:400px;position:relative"><button onclick="closeModals()" style="position:absolute;top:10px;right:12px;background:none;border:none;font-size:1.2rem;cursor:pointer">&times;</button>
