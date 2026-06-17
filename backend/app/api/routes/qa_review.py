@@ -40,7 +40,7 @@ async def get_review(website_id: str):
     return {"error": "No review found", "website_id": website_id}
 
 
-@router.post("/review-all")
+@router.get("/review-all")
 async def review_all(limit: int = 5):
     """Review recent websites that haven't been reviewed."""
     from app.agents.qa_review.agent import review_all_recent
