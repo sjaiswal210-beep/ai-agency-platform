@@ -121,10 +121,11 @@ export default function Dashboard() {
     { name: "Growth", icon: TrendingUp, href: "/growth" },
     { name: "Analytics", icon: BarChart3, href: "/analytics" },
     { name: "Notes", icon: StickyNote, href: "/notes" },
-    { name: "Ads Manager", icon: BarChart3, href: "https://ai-agency-platform.onrender.com/api/ads/manage" },
-    { name: "QA Agent", icon: Bot, href: "/leads" },
+    { name: "Ads Manager", icon: BarChart3, href: "https://ai-agency-platform.onrender.com/api/ads/manage?pwd=kalpdev2024" },
     { name: "Growth Plan", icon: TrendingUp, href: "https://ai-agency-platform.onrender.com/api/growth-plan" },
     { name: "All Sites", icon: Globe, href: "https://ai-agency-platform.onrender.com/api/sites" },
+    { name: "Ads Manager", icon: BarChart3, href: "https://ai-agency-platform.onrender.com/api/ads/manage" },
+    { name: "QA Agent", icon: Bot, href: "https://ai-agency-platform.onrender.com/api/qa/review-all" },
   ];
 
   return (
@@ -221,7 +222,26 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Quick Actions */
+          {/* Quick Actions */}
+          {/* Agent Status */}
+          {agentStatus && (
+            <div className="glass-card-solid p-4 mb-6">
+              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">AI Agents</h3>
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
+                {Object.entries(agentStatus.agents || {}).map(([key, agent]: [string, any]) => (
+                  <div key={key} className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg">
+                    <span className="text-lg">{agent.icon}</span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-medium truncate">{agent.name}</p>
+                      <p className={`text-[10px] ${agent.status === "active" ? "text-green-600" : "text-gray-400"}`}>
+                        {agent.status === "active" ? "\u25cf Working" : "\u25cb Idle"}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Quick Actions</p>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6 stagger-children">
@@ -284,7 +304,7 @@ export default function Dashboard() {
                   <div key={lead.id} className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium">{lead.business_name}</p>
-                      <p className="text-xs text-gray-400">{lead.address?.split(",").slice(0, 2).join(",") || lead.category} {lead.phone ? `┬╖ ${lead.phone}` : ""}</p>
+                      <p className="text-xs text-gray-400">{lead.address?.split(",").slice(0, 2).join(",") || lead.category} {lead.phone ? `· ${lead.phone}` : ""}</p>
                     </div>
                     <span className={`text-xs px-2 py-0.5 rounded-full ${
                       lead.status === "new" ? "bg-blue-50 text-blue-600" :
