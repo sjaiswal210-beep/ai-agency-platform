@@ -77,7 +77,7 @@ body{{padding-bottom:70px}}
 </div>
 
 <div id="editorPanel" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;display:none;align-items:center;justify-content:center;padding:16px"><div style="background:#fff;border-radius:16px;padding:20px;width:100%;max-width:400px;position:relative"><button onclick="closeModals()" style="position:absolute;top:10px;right:12px;background:none;border:none;font-size:1.2rem;cursor:pointer">&times;</button>
-<h3 style="font-size:.85rem;font-weight:700;margin-bottom:10px">Edit Website Content</h3>
+<div style="background:#fff;border-radius:16px;padding:20px;width:100%;max-width:400px"><button onclick="closeModals()" style="float:right;background:none;border:none;font-size:1.3rem;cursor:pointer">&times;</button><h3 style="font-size:.85rem;font-weight:700;margin-bottom:10px">Edit Website Content</h3>
 <p style="font-size:.72rem;color:#64748b;margin-bottom:8px">Type what you want to change (e.g., "Change phone number to 9876543210" or "Add Diwali offer 20% off")</p>
 <textarea id="editPrompt" rows="3" placeholder="Type your edit here..." style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;font-size:.82rem;font-family:inherit;resize:none;margin-bottom:8px"></textarea>
 <button onclick="submitEdit()" style="background:#6366f1;color:#fff;border:none;padding:9px 16px;border-radius:8px;font-weight:700;font-size:.78rem;cursor:pointer;width:100%">Apply Changes</button>
@@ -85,7 +85,7 @@ body{{padding-bottom:70px}}
 </div>
 
 <div id="socialPanel" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;display:none;align-items:center;justify-content:center;padding:16px"><div style="background:#fff;border-radius:16px;padding:20px;width:100%;max-width:400px;position:relative"><button onclick="closeModals()" style="position:absolute;top:10px;right:12px;background:none;border:none;font-size:1.2rem;cursor:pointer">&times;</button>
-<h3 style="font-size:.85rem;font-weight:700;margin-bottom:10px">Social Media Links</h3>
+<div style="background:#fff;border-radius:16px;padding:20px;width:100%;max-width:400px"><button onclick="closeModals()" style="float:right;background:none;border:none;font-size:1.3rem;cursor:pointer">&times;</button><h3 style="font-size:.85rem;font-weight:700;margin-bottom:10px">Social Media Links</h3>
 <input id="instaUrl" placeholder="Instagram URL" style="width:100%;padding:9px;border:1px solid #e2e8f0;border-radius:8px;font-size:.8rem;margin-bottom:6px">
 <input id="fbUrl" placeholder="Facebook URL" style="width:100%;padding:9px;border:1px solid #e2e8f0;border-radius:8px;font-size:.8rem;margin-bottom:6px">
 <input id="ytUrl" placeholder="YouTube URL" style="width:100%;padding:9px;border:1px solid #e2e8f0;border-radius:8px;font-size:.8rem;margin-bottom:8px">
@@ -103,7 +103,7 @@ body{{padding-bottom:70px}}
 <a href="{site_url}" target="_blank" class="blue">View Website</a>
 <a href="https://wa.me/917350785606?text=Hi%2C%20I%20need%20help%20with%20my%20business%20page" target="_blank" class="green">Get Help</a>
 </div>
-<script>
+<script>function closeModals(){{document.querySelectorAll("#editorPanel,#socialPanel,#galleryPanel").forEach(function(p){{p.style.display="none"}})}}
 function showEditor(){{document.getElementById("editorPanel").style.display="block";document.getElementById("socialPanel").style.display="none";document.getElementById("galleryPanel").style.display="none";}}
 function showSocial(){{document.getElementById("socialPanel").style.display="block";document.getElementById("editorPanel").style.display="none";document.getElementById("galleryPanel").style.display="none";}}
 function showGallery(){{document.getElementById("galleryPanel").style.display="block";document.getElementById("editorPanel").style.display="none";document.getElementById("socialPanel").style.display="none";}}
@@ -244,7 +244,7 @@ body{{font-family:Inter,sans-serif;background:#0f172a;color:#fff;padding:16px;ma
 </div>
 </div>
 
-<script>
+<script>function closeModals(){{document.querySelectorAll("#editorPanel,#socialPanel,#galleryPanel").forEach(function(p){{p.style.display="none"}})}}
 let photos=[];let textOverlay="";let textPos="center";let textSize="medium";let selectedMusic=0;let videoBlob=null;let videoUrl=null;
 
 const MUSIC_TRACKS=[
