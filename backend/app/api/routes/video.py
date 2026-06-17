@@ -92,7 +92,7 @@ Return ONLY a JSON array of scene descriptions. Example:
     combined_url = None
     if len([v for v in video_urls if v.get("url")]) > 1:
         try:
-            combined_url = await stitch_videos(video_urls, website_id)
+            combined_url = await stitch_videos(video_urls, website_id, business_name, phone if lead else "")
         except Exception as e:
             logger.warning("Stitching failed, returning individual clips", error=str(e))
 
@@ -105,8 +105,8 @@ Return ONLY a JSON array of scene descriptions. Example:
     }
 
 
-async def stitch_videos(clips: list, website_id: str) -> str:
-    """Download clips and stitch them into one video using ffmpeg."""
+async def stitch_videos(clips: list, website_id: str, business_name: str = "", phone: str = "") -> str:
+    """Download clips, stitch into one video with business branding using ffmpeg."""
     import httpx as _httpx
     import subprocess
     import shutil
@@ -137,9 +137,10 @@ async def stitch_videos(clips: list, website_id: str) -> str:
     output_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), "static", "videos")
     os.makedirs(output_dir, exist_ok=True)
     output_path = os.path.join(output_dir, f"{website_id}_combined.mp4")
+    concat_path = os.path.join(output_dir, f"{website_id}_concat.mp4")
 
     if len(clip_files) == 1:
-        shutil.copy2(clip_files[0], output_path)
+        shutil.copy2(clip_files[0], concat_path)
     else:
         # Create concat list for ffmpeg
         list_file = os.path.join(temp_dir, "concat.txt")
@@ -147,21 +148,52 @@ async def stitch_videos(clips: list, website_id: str) -> str:
             for cf in clip_files:
                 f.write(f"file '{cf}'\n")
         try:
-            subprocess.run(
-                ["ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", list_file, "-c", "copy", output_path],
+            result = subprocess.run(
+                ["ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", list_file, "-c", "copy", concat_path],
                 capture_output=True, text=True, timeout=120
             )
-            if not os.path.exists(output_path):
+            if not os.path.exists(concat_path) or os.path.getsize(concat_path) < 1000:
+                # Fallback: re-encode
                 subprocess.run(
-                    ["ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", list_file, "-c:v", "libx264", "-preset", "fast", "-crf", "23", output_path],
+                    ["ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", list_file, "-c:v", "libx264", "-preset", "fast", "-crf", "23", concat_path],
                     capture_output=True, text=True, timeout=180
                 )
         except Exception as e:
-            logger.warning("ffmpeg stitch failed", error=str(e))
+            logger.warning("ffmpeg concat failed", error=str(e))
             for f in clip_files:
                 try: os.remove(f)
                 except: pass
             return None
+
+    # Add text overlay with business name, phone, and branding
+    brand_text = business_name or "Business"
+    phone_text = phone or ""
+    branding = "Powered by City-Maps.online"
+    
+    # Build drawtext filter
+    drawtext_filters = []
+    # Business name - top left
+    drawtext_filters.append(f"drawtext=text='{brand_text}':fontsize=24:fontcolor=white:x=20:y=20:shadowcolor=black:shadowx=2:shadowy=2")
+    # Phone - top right
+    if phone_text:
+        drawtext_filters.append(f"drawtext=text='{phone_text}':fontsize=18:fontcolor=white:x=w-tw-20:y=20:shadowcolor=black:shadowx=2:shadowy=2")
+    # Branding - bottom center
+    drawtext_filters.append(f"drawtext=text='{branding}':fontsize=16:fontcolor=white:x=(w-tw)/2:y=h-40:shadowcolor=black:shadowx=2:shadowy=2")
+    
+    filter_str = ",".join(drawtext_filters)
+    
+    try:
+        result = subprocess.run(
+            ["ffmpeg", "-y", "-i", concat_path, "-vf", filter_str, "-c:a", "copy", "-preset", "fast", output_path],
+            capture_output=True, text=True, timeout=180
+        )
+        if not os.path.exists(output_path) or os.path.getsize(output_path) < 1000:
+            # If drawtext fails (font not available), just use the concat without text
+            logger.warning("drawtext failed, using concat without branding")
+            shutil.copy2(concat_path, output_path)
+    except Exception as e:
+        logger.warning("ffmpeg drawtext failed, using concat", error=str(e))
+        shutil.copy2(concat_path, output_path)
 
     # Verify output exists
     if not os.path.exists(output_path):
@@ -177,6 +209,8 @@ async def stitch_videos(clips: list, website_id: str) -> str:
     for f in clip_files:
         try: os.remove(f)
         except: pass
+    try: os.remove(concat_path)
+    except: pass
 
     from app.core.config import get_settings
     settings = get_settings()
