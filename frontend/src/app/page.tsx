@@ -224,7 +224,7 @@ export default function Dashboard() {
 
           {/* Quick Actions */}
           {/* Agent Status */}
-          {agentStatus && (
+          {false && agentStatus && (
             <div className="glass-card-solid p-4 mb-6">
               <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">AI Agents</h3>
               <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
