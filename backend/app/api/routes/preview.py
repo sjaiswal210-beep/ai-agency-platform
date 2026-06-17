@@ -413,18 +413,18 @@ MOBILE_CSS = """
   .nav-links{display:none}
   .nav{padding:12px 16px}
   .nav-cta{display:flex!important;background:transparent!important;box-shadow:none!important;color:#fff!important;font-size:1rem!important;padding:6px 10px!important;border:1.5px solid rgba(255,255,255,.5)!important;border-radius:8px!important;width:auto!important;height:auto!important;align-items:center!important;justify-content:center!important}
-  .hero{min-height:auto;padding-top:80px!important;padding-bottom:40px!important}
-  .hero-content{padding:60px 16px 24px!important;margin:0!important}
-  .hero h1{font-size:1.2rem!important;margin-bottom:4px!important;line-height:1.12!important}
-  .hero p{font-size:.82rem!important;margin-bottom:10px!important}
+  .hero{min-height:auto;padding-top:60px!important;padding-bottom:24px!important}
+  .hero-content{padding:50px 14px 16px!important;margin:0!important}
+  .hero h1{font-size:1.1rem!important;margin-bottom:4px!important;line-height:1.1!important}
+  .hero p{font-size:.78rem!important;margin-bottom:8px!important}
   .hero-btns{flex-direction:column!important;gap:10px!important;align-items:stretch!important}
-  .hero-btns .btn,.btn-white,.btn-glass{text-align:center;justify-content:center;padding:12px 20px!important;font-size:.9rem!important}
+  .hero-btns .btn,.btn-white,.btn-glass{text-align:center;justify-content:center;padding:9px 16px!important;font-size:.78rem!important}
   .stats-section .stats-grid,.stats-grid{grid-template-columns:repeat(2,1fr)!important;gap:12px!important;padding:0 16px}
   .stat-number{font-size:1.5rem!important}
   .section,.sec{padding:20px 12px!important}.products-section{order:-1!important}
   .section-header h2,.sec-head h2{font-size:1.1rem!important}
   .about-grid{grid-template-columns:1fr!important;gap:24px!important}
-  .about-img img{height:280px!important;border-radius:14px!important}
+  .about-img img{height:180px!important;border-radius:12px!important}
   .about-badge{bottom:-14px!important;left:10px!important;padding:12px 16px!important}
   .services-grid{grid-template-columns:1fr!important;gap:10px!important}
   .service-card{display:flex!important;flex-direction:row!important;border-radius:12px!important}
@@ -437,9 +437,9 @@ MOBILE_CSS = """
   .feature-icon{width:40px!important;height:40px!important;font-size:1.2rem!important;margin-bottom:8px!important}
   .feature-item h3{font-size:.82rem!important}
   .feature-item p{font-size:.72rem!important}
-  .gallery-grid{grid-template-columns:repeat(3,1fr)!important;gap:4px!important}.gallery-item{border-radius:6px!important}
+  .gallery-grid{grid-template-columns:repeat(3,1fr)!important;gap:4px!important}.testimonial-card{padding:14px!important}.testimonial-card blockquote{font-size:.75rem!important;margin-bottom:10px!important}.testimonial-card cite{font-size:.72rem!important}.gallery-item{border-radius:6px!important}
   .gallery-item{border-radius:10px!important}
-  .testimonials-grid{grid-template-columns:1fr!important;gap:12px!important}
+  .testimonials-grid{grid-template-columns:1fr!important;gap:8px!important}
   .testimonial-card{padding:20px!important}
   .contact-container{grid-template-columns:1fr!important;gap:20px!important}
   .contact-section{padding:36px 16px!important}
