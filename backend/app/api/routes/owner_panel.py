@@ -76,7 +76,7 @@ body{{padding-bottom:70px}}
 <a href="https://city-maps.online/api/offers/{website_id}" target="_blank" class="tool"><div class="emoji">&#127878;</div><div class="name">Festival Offers</div><div class="desc">Campaign templates</div></a>
 </div>
 
-<div id="editorPanel" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;display:none;align-items:center;justify-content:center;padding:16px"><div style="background:#fff;border-radius:16px;padding:20px;width:100%;max-width:400px;position:relative"><button onclick="closeModals()" style="position:absolute;top:10px;right:12px;background:none;border:none;font-size:1.2rem;cursor:pointer">&times;</button>
+<div id="editorPanel" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;align-items:center;justify-content:center;padding:16px"><div style="background:#fff;border-radius:16px;padding:20px;width:100%;max-width:400px;position:relative"><button onclick="closeModals()" style="position:absolute;top:10px;right:12px;background:none;border:none;font-size:1.2rem;cursor:pointer">&times;</button>
 <div style="background:#fff;border-radius:16px;padding:20px;width:100%;max-width:400px"><button onclick="closeModals()" style="float:right;background:none;border:none;font-size:1.3rem;cursor:pointer">&times;</button><h3 style="font-size:.85rem;font-weight:700;margin-bottom:10px">Edit Website Content</h3>
 <p style="font-size:.72rem;color:#64748b;margin-bottom:8px">Type what you want to change (e.g., "Change phone number to 9876543210" or "Add Diwali offer 20% off")</p>
 <textarea id="editPrompt" rows="3" placeholder="Type your edit here..." style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;font-size:.82rem;font-family:inherit;resize:none;margin-bottom:8px"></textarea>
@@ -84,7 +84,7 @@ body{{padding-bottom:70px}}
 <p id="editResult" style="font-size:.75rem;color:#64748b;margin-top:8px"></p>
 </div>
 
-<div id="socialPanel" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;display:none;align-items:center;justify-content:center;padding:16px"><div style="background:#fff;border-radius:16px;padding:20px;width:100%;max-width:400px;position:relative"><button onclick="closeModals()" style="position:absolute;top:10px;right:12px;background:none;border:none;font-size:1.2rem;cursor:pointer">&times;</button>
+<div id="socialPanel" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;align-items:center;justify-content:center;padding:16px"><div style="background:#fff;border-radius:16px;padding:20px;width:100%;max-width:400px;position:relative"><button onclick="closeModals()" style="position:absolute;top:10px;right:12px;background:none;border:none;font-size:1.2rem;cursor:pointer">&times;</button>
 <div style="background:#fff;border-radius:16px;padding:20px;width:100%;max-width:400px"><button onclick="closeModals()" style="float:right;background:none;border:none;font-size:1.3rem;cursor:pointer">&times;</button><h3 style="font-size:.85rem;font-weight:700;margin-bottom:10px">Social Media Links</h3>
 <input id="instaUrl" placeholder="Instagram URL" style="width:100%;padding:9px;border:1px solid #e2e8f0;border-radius:8px;font-size:.8rem;margin-bottom:6px">
 <input id="fbUrl" placeholder="Facebook URL" style="width:100%;padding:9px;border:1px solid #e2e8f0;border-radius:8px;font-size:.8rem;margin-bottom:6px">
