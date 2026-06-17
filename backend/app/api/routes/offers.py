@@ -187,7 +187,7 @@ function shareWhatsApp() {{
     var msg = '*' + bizName + ' - ' + title + '*';
     if (desc) msg += '\\n' + desc;
     if (discount) msg += '\\n\\n' + discount;
-    msg += '\\n\\n\\u{1F310} Visit our website: ' + siteUrl + '\\n\\nPowered by City Maps';
+    msg += '\\n\\nVisit: ' + siteUrl + '\\n\\nPowered by City Maps';
     window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
 }}
 
