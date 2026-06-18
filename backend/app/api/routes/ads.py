@@ -569,8 +569,23 @@ def ads_analytics(pwd: str = ""):
     except Exception:
         usage = []
     rc = sum(1 for u in usage if "video" in u.get("service", "").lower())
+    # Fetch real Replicate billing
+    replicate_billing = {}
+    try:
+        import httpx
+        import os
+        rep_token = os.environ.get("REPLICATE_TOKEN", "")
+        if rep_token:
+            import httpx as _hx
+            with _hx.Client(timeout=10) as client:
+                resp = client.get("https://api.replicate.com/v1/predictions", headers={"Authorization": f"Token {rep_token}"}, params={"limit": 50})
+                if resp.status_code == 200:
+                    preds = resp.json().get("results", [])
+                    replicate_billing = {"total_predictions": len(preds), "recent": [{"id": p.get("id","")[:8], "model": p.get("model","").split("/")[-1][:20], "status": p.get("status",""), "created": p.get("created_at","")[:10]} for p in preds[:10]]}
+    except Exception:
+        pass
     gc = sum(1 for u in usage if "gemini" in u.get("service", "").lower())
-    html = f"<html><head><meta charset=UTF-8><meta name=viewport content='width=device-width,initial-scale=1'><title>Analytics</title><style>*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:20px;max-width:700px;margin:0 auto}}.g{{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}}.c{{background:#1e293b;border:1px solid #334155;border-radius:10px;padding:14px;text-align:center}}.n{{font-size:1.3rem;font-weight:800;color:#00e5ff}}.l{{font-size:.6rem;color:#64748b;margin-top:4px}}</style></head><body><h1 style='font-size:1.2rem;margin-bottom:16px'>Analytics</h1><div class=g><div class=c><div class=n>Rs.{tr:.2f}</div><div class=l>Ad Revenue</div></div><div class=c><div class=n>{ti:,}</div><div class=l>Impressions</div></div><div class=c><div class=n>{tc:,}</div><div class=l>Clicks</div></div></div><div class=g><div class=c><div class=n>${rc*0.5:.2f}</div><div class=l>Replicate Cost</div></div><div class=c><div class=n>{rc}</div><div class=l>Videos Made</div></div><div class=c><div class=n>{gc}</div><div class=l>Sites Generated</div></div></div><p style='margin-top:16px;font-size:.7rem;text-align:center'><a href='/api/ads/manage?pwd=kalpdev2024' style='color:#00e5ff'>Back to Ad Manager</a></p></body></html>"
+    html = f"<html><head><meta charset=UTF-8><meta name=viewport content='width=device-width,initial-scale=1'><title>Analytics</title><style>*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:20px;max-width:700px;margin:0 auto}}.g{{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}}.c{{background:#1e293b;border:1px solid #334155;border-radius:10px;padding:14px;text-align:center}}.n{{font-size:1.3rem;font-weight:800;color:#00e5ff}}.l{{font-size:.6rem;color:#64748b;margin-top:4px}}</style></head><body><h1 style='font-size:1.2rem;margin-bottom:16px'>Analytics</h1><div class=g><div class=c><div class=n>Rs.{tr:.2f}</div><div class=l>Ad Revenue</div></div><div class=c><div class=n>{ti:,}</div><div class=l>Impressions</div></div><div class=c><div class=n>{tc:,}</div><div class=l>Clicks</div></div></div><div class=g><div class=c><div class=n>${rc*0.5:.2f}</div><div class=l>Replicate Cost</div></div><div class=c><div class=n>{replicate_billing.get("total_predictions", rc)}</div><div class=l>Replicate Calls</div></div><div class=c><div class=n>{gc}</div><div class=l>Sites Generated</div></div></div><p style='margin-top:16px;font-size:.7rem;text-align:center'><a href='/api/ads/manage?pwd=kalpdev2024' style='color:#00e5ff'>Back to Ad Manager</a></p></body></html>"
     return HTMLResponse(content=html)
 
 @router.get("/campaign/{campaign_id}", response_class=HTMLResponse)
