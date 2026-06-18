@@ -708,12 +708,12 @@ a{{text-decoration:none;color:inherit}}
 <h1>Your Business Website Is <span>Ready</span></h1>
 <p>Find your free business website by searching your business name and area. Your professional website with WhatsApp orders and Google visibility is already live.</p>
 
-<div class="search-box glass" style="max-width:560px;margin:16px auto 0;padding:10px 12px;border-radius:12px;box-shadow:0 8px 32px rgba(0,229,255,.08)">
+<div class="search-box" style="max-width:560px;margin:20px auto 0;padding:14px 16px;border-radius:16px;background:rgba(255,255,255,.04);border:1.5px solid rgba(0,229,255,.15);box-shadow:0 12px 40px rgba(0,229,255,.1),inset 0 1px 0 rgba(255,255,255,.05);backdrop-filter:blur(12px)">
 <div style="display:flex;gap:8px;flex-wrap:wrap">
 <select id="sCountry" style="padding:9px 12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-size:.75rem;outline:none;min-width:70px"><option value="India">IN</option><option value="USA">US</option><option value="UK">UK</option><option value="UAE">UAE</option><option value="Australia">AU</option></select>
 <input id="sBiz" placeholder="Your business name" style="flex:1;min-width:120px;padding:9px 12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-size:.75rem;outline:none">
 <input id="sArea" placeholder="Area or City" style="flex:1;min-width:100px;padding:9px 12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-size:.75rem;outline:none" onkeydown="if(event.key==='Enter')pubSearch()">
-<button type="button" onclick="pubSearch()" style="padding:9px 18px;background:linear-gradient(135deg,#00e5ff,#00b4d8);color:#020817;border:none;border-radius:8px;font-weight:700;font-size:.75rem;cursor:pointer;white-space:nowrap" style="white-space:nowrap">Find My Website</button>
+<button type="button" onclick="pubSearch()" style="padding:9px 18px;background:linear-gradient(135deg,#00e5ff,#00b4d8);color:#020817;border:none;border-radius:8px;font-weight:700;font-size:.75rem;cursor:pointer;white-space:nowrap" style="white-space:nowrap;padding:10px 20px;background:linear-gradient(135deg,#00e5ff,#0ea5e9);color:#020817;border:none;border-radius:10px;font-weight:800;font-size:.8rem;cursor:pointer;box-shadow:0 4px 14px rgba(0,229,255,.3);transition:all .2s">Find My Website</button>
 </div>
 </div>
 <div id="searchResult" style="max-width:560px;margin:10px auto 0"></div>
