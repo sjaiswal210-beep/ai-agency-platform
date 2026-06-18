@@ -32,7 +32,7 @@ async def public_search(query: str = ""):
             if resp.status_code != 200:
                 return {"results": []}
             
-            places = resp.json().get("results", [])[:8]
+            places = resp.json().get("results", [])[:15]
             results = []
             
             for place in places:
