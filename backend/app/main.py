@@ -706,7 +706,10 @@ a{{text-decoration:none;color:inherit}}
 <div class="hero-inner">
 
 
-<p style="font-size:1rem;font-weight:600;margin-bottom:16px;color:#e2e8f0">Find your free business website by searching</p><img src="/static/images/hero-banner.png" alt="City Maps - Create Free Websites" style="max-width:100%;border-radius:12px;margin-bottom:16px">
+<div class="badge"><span class="dot"></span>{count}+ businesses already online</div>
+<h1>Your Business Website Is <span>Ready</span></h1>
+<p style="font-size:.95rem;color:#94a3b8;margin-bottom:16px">Find your free business website by searching your business name and area.</p>
+<img src="/static/images/hero-banner.png" alt="City Maps - Create Free Websites" style="max-width:100%;border-radius:12px;margin-bottom:16px">
 
 <div class="search-box" style="max-width:560px;margin:20px auto 0;padding:14px 16px;border-radius:16px;background:rgba(255,255,255,.04);border:1.5px solid rgba(0,229,255,.15);box-shadow:0 12px 40px rgba(0,229,255,.1),inset 0 1px 0 rgba(255,255,255,.05);backdrop-filter:blur(12px)">
 <div style="display:flex;gap:8px;flex-wrap:wrap">
