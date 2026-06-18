@@ -82,3 +82,35 @@ async def get_review_for_lead(lead_id: str):
     from app.agents.qa_review.agent import review_website
     result = await review_website(website_id)
     return result
+
+@router.get("/dashboard", response_class=HTMLResponse)
+async def qa_dashboard():
+    """QA Review Dashboard - readable format."""
+    from app.core.supabase import get_supabase
+    db = get_supabase()
+    
+    # Get recent websites with their QA data
+    websites = db.table("websites").select("id,slug,content,lead_id").order("created_at", desc=True).limit(20).execute().data or []
+    leads_data = db.table("leads").select("id,business_name").execute().data or []
+    leads = {l["id"]: l.get("business_name", "Unknown") for l in leads_data if isinstance(l.get("id"), str)}
+    
+    cards = ""
+    for w in websites:
+        name = leads.get(w.get("lead_id", ""), "Unknown")
+        slug = w.get("slug", "")
+        content = w.get("content", {})
+        review = content.get("_qa_review", {}) if isinstance(content, dict) else {}
+        score = review.get("overall_score", "?")
+        summary = review.get("summary", "Not reviewed yet")
+        issues = review.get("issues", [])
+        color = "#22c55e" if isinstance(score, int) and score >= 7 else "#f59e0b" if isinstance(score, int) and score >= 5 else "#ef4444" if isinstance(score, int) else "#64748b"
+        
+        issues_html = ""
+        for iss in issues[:3]:
+            sev_color = "#ef4444" if iss.get("severity") == "high" else "#f59e0b" if iss.get("severity") == "medium" else "#3b82f6"
+            issues_html += f'<div style="font-size:.68rem;color:#94a3b8;padding:4px 0;border-left:2px solid {sev_color};padding-left:8px;margin-top:4px">[{iss.get("area","")}] {iss.get("detail","")[:80]}...</div>'
+        
+        cards += f'<div style="background:#1e293b;border:1px solid #334155;border-radius:10px;padding:14px;margin-bottom:8px"><div style="display:flex;justify-content:space-between;align-items:center"><div><b style="font-size:.82rem">{name}</b><br><span style="font-size:.65rem;color:#64748b">{slug}.city-maps.online</span></div><div style="font-size:1.3rem;font-weight:900;color:{color}">{score}</div></div><p style="font-size:.7rem;color:#94a3b8;margin-top:8px">{summary[:120]}</p>{issues_html}</div>'
+    
+    html = f'''<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>QA Dashboard</title><style>*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:16px;max-width:700px;margin:0 auto}}</style></head><body><h1 style="font-size:1.2rem;margin-bottom:4px">QA Review Dashboard</h1><p style="font-size:.75rem;color:#64748b;margin-bottom:16px">{len(websites)} recent sites</p><a href="/api/qa/review-all" style="display:inline-block;padding:8px 16px;background:#6366f1;color:#fff;border-radius:8px;font-size:.75rem;font-weight:700;text-decoration:none;margin-bottom:16px">Run QA on All</a>{cards}</body></html>'''
+    return HTMLResponse(content=html)

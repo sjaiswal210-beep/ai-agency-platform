@@ -131,7 +131,7 @@ RESPOND AS JSON:
             pass
     
     # Auto-fix if score is low
-    if review.get("overall_score", 10) < 6:
+    if review.get("overall_score", 10) < 8:
         try:
             await auto_fix_website(website_id, review, content, lead)
             review["auto_fixed"] = True
