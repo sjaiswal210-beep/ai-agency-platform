@@ -49,11 +49,18 @@ export default function LeadsPage() {
   const handleQaReview = async (lead: Lead) => {
     setQaLoading(lead.id);
     try {
-      const res = await fetch(`${API_BASE}/api/qa/lead/${lead.id}`);
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 60000);
+      const res = await fetch(`${API_BASE}/api/qa/lead/${lead.id}`, { signal: controller.signal });
+      clearTimeout(timeout);
       const data = await res.json();
       setQaReview({ ...data, business_name: lead.business_name });
-    } catch (err) {
-      alert("QA review failed");
+    } catch (err: any) {
+      if (err?.name === "AbortError") {
+        alert("QA review timed out (>60s). Try again later.");
+      } else {
+        alert("QA review failed");
+      }
     } finally {
       setQaLoading("");
     }
