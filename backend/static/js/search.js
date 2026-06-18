@@ -54,7 +54,7 @@ if(navigator.geolocation){
     fetch("https://nominatim.openstreetmap.org/reverse?lat="+pos.coords.latitude+"&lon="+pos.coords.longitude+"&format=json").then(function(r){return r.json()}).then(function(d){
       var city=d.address.city||d.address.town||d.address.village||d.address.county||"";
       if(city&&document.getElementById("sArea")){
-        document.getElementById("sArea").value=city;
+        document.getElementById("sArea").placeholder=city+" (nearby)";
       }
     }).catch(function(){});
   },function(){},{timeout:5000});
