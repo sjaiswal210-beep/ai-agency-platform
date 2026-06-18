@@ -205,9 +205,7 @@ async def review_all_recent(limit: int = 10) -> list:
     results = []
     for w in (websites.data or []):
         content = w.get("content", {})
-        # Skip if already reviewed
-        if isinstance(content, dict) and content.get("_qa_review"):
-            continue
+        # Review all (re-review allowed)
         
         try:
             review = await review_website(w["id"])
