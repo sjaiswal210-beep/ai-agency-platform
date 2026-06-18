@@ -412,7 +412,7 @@ MOBILE_CSS = """
 @media(max-width:768px){
   .nav-links{display:none}
   .nav{padding:12px 16px}
-  .nav-cta{display:flex!important;background:#000!important;box-shadow:0 2px 8px rgba(0,0,0,.3)!important;color:#fff!important;font-size:1rem!important;padding:6px 10px!important;border:1.5px solid rgba(255,255,255,.7)!important;border-radius:8px!important;width:auto!important;height:auto!important;align-items:center!important;justify-content:center!important}
+  .nav-cta{display:flex!important;background:rgba(0,0,0,.5)!important;backdrop-filter:blur(8px)!important;box-shadow:0 2px 8px rgba(0,0,0,.2)!important;color:#fff!important;font-size:1rem!important;padding:6px 10px!important;border:1.5px solid rgba(255,255,255,.7)!important;border-radius:8px!important;width:auto!important;height:auto!important;align-items:center!important;justify-content:center!important}
   .hero{min-height:auto;padding-top:60px!important;padding-bottom:24px!important}
   .hero-content{padding:50px 14px 16px!important;margin:0!important}
   .hero h1{font-size:1.1rem!important;margin-bottom:4px!important;line-height:1.1!important}
@@ -867,7 +867,7 @@ a{{text-decoration:none;color:inherit}}
 .nav-brand{{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:1.15rem;color:#fff;display:flex;align-items:center;gap:10px}}
 .nav-brand .logo{{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--p),var(--ps));display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px color-mix(in srgb,var(--p) 40%,transparent)}}
 .nav-links{{display:flex;gap:28px}}.nav-links a{{font-size:.88rem;font-weight:600;color:rgba(255,255,255,.85);transition:color .2s}}.nav-links a:hover{{color:#fff}}.nav.solid .nav-links a:hover{{color:var(--p)}}
-.nav-cta{{background:#000;color:#fff!important;padding:8px 16px;border-radius:8px;font-weight:700;font-size:.85rem;display:flex;align-items:center;gap:6px;border:1.5px solid rgba(255,255,255,.7);transition:all .25s;box-shadow:0 2px 8px rgba(0,0,0,.3)}}.nav-cta:hover{{background:#111;transform:translateY(-1px);border-color:#fff}}
+.nav-cta{{background:rgba(0,0,0,.5);color:#fff!important;padding:8px 16px;border-radius:8px;font-weight:700;font-size:.85rem;display:flex;align-items:center;gap:6px;border:1.5px solid rgba(255,255,255,.7);transition:all .25s;box-shadow:0 2px 8px rgba(0,0,0,.2);backdrop-filter:blur(8px)}}.nav-cta:hover{{background:rgba(0,0,0,.7);transform:translateY(-1px);border-color:#fff}}
 
 /* HERO */
 .hero{{position:relative;min-height:100vh;display:flex;align-items:center;overflow:hidden}}
