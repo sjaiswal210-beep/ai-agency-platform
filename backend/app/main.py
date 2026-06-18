@@ -535,28 +535,31 @@ body{{font-family:'Inter',system-ui,sans-serif;background:#020817;color:#fff;ove
 a{{text-decoration:none;color:inherit}}
 
 /* === 3D DEPTH BACKGROUND === */
-.bg-depth{{position:fixed;inset:0;z-index:0;overflow:hidden}}
-.bg-depth .base{{position:absolute;inset:0;background:
-  radial-gradient(ellipse 120% 80% at 50% 50%, rgba(6,24,56,.95) 0%, #020817 70%),
-  repeating-linear-gradient(0deg, transparent, transparent 49px, rgba(0,229,255,.02) 50px),
-  repeating-linear-gradient(90deg, transparent, transparent 49px, rgba(0,229,255,.02) 50px);
-  filter:blur(0.5px)}}
-.bg-depth .overlay{{position:absolute;inset:0;background:linear-gradient(180deg,rgba(2,8,23,.3) 0%,rgba(2,8,23,.6) 40%,rgba(2,8,23,.8) 70%,rgba(2,8,23,.95) 100%)}}
-.bg-depth .glow-1{{position:absolute;top:-20%;left:20%;width:600px;height:600px;background:radial-gradient(circle,rgba(0,229,255,.08),transparent 60%);filter:blur(60px);animation:drift1 25s ease-in-out infinite}}
-.bg-depth .glow-2{{position:absolute;bottom:-10%;right:15%;width:500px;height:500px;background:radial-gradient(circle,rgba(124,58,237,.1),transparent 60%);filter:blur(70px);animation:drift2 20s ease-in-out infinite}}
-.bg-depth .glow-3{{position:absolute;top:40%;left:50%;width:400px;height:400px;background:radial-gradient(circle,rgba(6,182,212,.06),transparent 55%);filter:blur(80px);animation:drift3 22s ease-in-out infinite}}
-.bg-depth .routes{{position:absolute;inset:0;background:
-  linear-gradient(45deg, transparent 48%, rgba(0,229,255,.03) 49%, rgba(0,229,255,.03) 51%, transparent 52%),
-  linear-gradient(-45deg, transparent 48%, rgba(124,58,237,.02) 49%, rgba(124,58,237,.02) 51%, transparent 52%);
-  background-size:80px 80px;animation:routeShift 30s linear infinite}}
-.bg-depth .particles{{position:absolute;inset:0}}
-.particle{{position:absolute;width:3px;height:3px;background:#00e5ff;border-radius:50%;opacity:0;animation:particleFade 4s ease-in-out infinite}}
-.pin{{position:absolute;width:8px;height:8px;border-radius:50%;background:rgba(0,229,255,.3);box-shadow:0 0 12px rgba(0,229,255,.2);animation:pinPulse 3s ease-in-out infinite}}
+.bg-depth{{position:fixed;inset:0;z-index:0;overflow:hidden;perspective:1200px;transform-style:preserve-3d}}
+.bg-depth .base{{position:absolute;inset:-20%;background:
+  radial-gradient(ellipse 100% 60% at 50% 40%, rgba(6,24,80,.98) 0%, rgba(2,8,23,.99) 60%),
+  repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(0,229,255,.04) 40px),
+  repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(0,229,255,.04) 40px);
+  transform:rotateX(15deg) scale(1.3);transform-origin:center 60%;animation:basePerspective 40s ease-in-out infinite}}
+.bg-depth .overlay{{position:absolute;inset:0;background:linear-gradient(180deg,rgba(2,8,23,.02) 0%,rgba(2,8,23,.25) 30%,rgba(2,8,23,.6) 60%,rgba(2,8,23,.85) 100%)}}
+.bg-depth .glow-1{{position:absolute;top:-15%;left:15%;width:900px;height:900px;background:radial-gradient(circle,rgba(0,229,255,.18),rgba(0,229,255,.03) 40%,transparent 65%);filter:blur(35px);animation:drift1 20s ease-in-out infinite}}
+.bg-depth .glow-2{{position:absolute;bottom:-5%;right:10%;width:750px;height:750px;background:radial-gradient(circle,rgba(124,58,237,.2),rgba(124,58,237,.04) 40%,transparent 65%);filter:blur(40px);animation:drift2 18s ease-in-out infinite}}
+.bg-depth .glow-3{{position:absolute;top:30%;left:55%;width:650px;height:650px;background:radial-gradient(circle,rgba(6,182,212,.14),rgba(6,182,212,.02) 40%,transparent 60%);filter:blur(45px);animation:drift3 22s ease-in-out infinite}}
+.bg-depth .routes{{position:absolute;inset:-10%;background:
+  linear-gradient(45deg, transparent 47%, rgba(0,229,255,.04) 48%, rgba(0,229,255,.06) 50%, rgba(0,229,255,.04) 52%, transparent 53%),
+  linear-gradient(-45deg, transparent 47%, rgba(124,58,237,.03) 48%, rgba(124,58,237,.05) 50%, rgba(124,58,237,.03) 52%, transparent 53%),
+  linear-gradient(90deg, transparent 47%, rgba(0,229,255,.02) 49%, rgba(0,229,255,.02) 51%, transparent 53%);
+  background-size:45px 45px;transform:rotateX(28deg) rotateZ(-1deg) scale(1.6);transform-origin:center 70%;animation:routeShift 25s linear infinite}}
+.bg-depth .particles{{position:absolute;inset:0;transform:translateZ(30px)}}
+.particle{{position:absolute;width:2px;height:2px;background:#00e5ff;border-radius:50%;opacity:0;box-shadow:0 0 8px rgba(0,229,255,.6),0 0 20px rgba(0,229,255,.2);animation:particleFade 5s ease-in-out infinite}}
+.pin{{position:absolute;width:6px;height:6px;border-radius:50%;background:rgba(0,229,255,.4);box-shadow:0 0 15px rgba(0,229,255,.5),0 0 35px rgba(0,229,255,.2);animation:pinPulse 3s ease-in-out infinite}}
+@keyframes basePerspective{{0%,100%{{transform:rotateX(15deg) scale(1.3)}}50%{{transform:rotateX(12deg) scale(1.35)}}}}
 
 @keyframes drift1{{0%,100%{{transform:translate(0,0)}}50%{{transform:translate(30px,-25px)}}}}
 @keyframes drift2{{0%,100%{{transform:translate(0,0)}}50%{{transform:translate(-20px,30px)}}}}
 @keyframes drift3{{0%,100%{{transform:translate(0,0)}}33%{{transform:translate(25px,15px)}}66%{{transform:translate(-15px,-20px)}}}}
-@keyframes routeShift{{to{{background-position:80px 80px}}}}
+@keyframes routeShift{{to{{background-position:50px 50px}}}}
+@keyframes baseTilt{{0%,100%{{transform:rotateX(15deg) scale(1.3)}}50%{{transform:rotateX(11deg) scale(1.35)}}}}
 @keyframes particleFade{{0%,100%{{opacity:0;transform:translateY(0)}}50%{{opacity:.6;transform:translateY(-20px)}}}}
 @keyframes pinPulse{{0%,100%{{transform:scale(1);opacity:.4}}50%{{transform:scale(1.5);opacity:.8}}}}
 
@@ -667,7 +670,7 @@ a{{text-decoration:none;color:inherit}}
 .journey-grid{{grid-template-columns:1fr}}
 }}
 </style>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script data-cfasync="false" src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head><body>
 
 <!-- 3D Depth Background -->
@@ -679,19 +682,25 @@ a{{text-decoration:none;color:inherit}}
 <div class="glow-2"></div>
 <div class="glow-3"></div>
 <div class="particles">
-<div class="particle" style="top:15%;left:20%;animation-delay:0s"></div>
-<div class="particle" style="top:35%;left:70%;animation-delay:1s"></div>
-<div class="particle" style="top:55%;left:40%;animation-delay:2s"></div>
-<div class="particle" style="top:75%;left:85%;animation-delay:3s"></div>
-<div class="particle" style="top:25%;left:55%;animation-delay:1.5s"></div>
-<div class="particle" style="top:65%;left:15%;animation-delay:2.5s"></div>
-<div class="particle" style="top:85%;left:60%;animation-delay:0.5s"></div>
-<div class="particle" style="top:45%;left:90%;animation-delay:3.5s"></div>
-<div class="pin" style="top:20%;left:30%;animation-delay:0s"></div>
-<div class="pin" style="top:50%;left:75%;animation-delay:1s"></div>
-<div class="pin" style="top:70%;left:25%;animation-delay:2s"></div>
-<div class="pin" style="top:35%;left:85%;animation-delay:1.5s"></div>
-<div class="pin" style="top:80%;left:55%;animation-delay:2.5s"></div>
+<div class="particle" style="top:10%;left:15%;animation-delay:0s"></div>
+<div class="particle" style="top:20%;left:45%;animation-delay:0.7s"></div>
+<div class="particle" style="top:30%;left:70%;animation-delay:1.2s"></div>
+<div class="particle" style="top:40%;left:25%;animation-delay:1.8s"></div>
+<div class="particle" style="top:50%;left:85%;animation-delay:2.3s"></div>
+<div class="particle" style="top:60%;left:35%;animation-delay:2.8s"></div>
+<div class="particle" style="top:70%;left:60%;animation-delay:3.2s"></div>
+<div class="particle" style="top:80%;left:10%;animation-delay:3.7s"></div>
+<div class="particle" style="top:15%;left:90%;animation-delay:0.4s"></div>
+<div class="particle" style="top:45%;left:50%;animation-delay:1.5s"></div>
+<div class="particle" style="top:65%;left:80%;animation-delay:2.6s"></div>
+<div class="particle" style="top:85%;left:40%;animation-delay:4s"></div>
+<div class="pin" style="top:18%;left:28%;animation-delay:0s"></div>
+<div class="pin" style="top:38%;left:65%;animation-delay:0.8s"></div>
+<div class="pin" style="top:55%;left:80%;animation-delay:1.6s"></div>
+<div class="pin" style="top:72%;left:20%;animation-delay:2.2s"></div>
+<div class="pin" style="top:45%;left:42%;animation-delay:1s"></div>
+<div class="pin" style="top:82%;left:70%;animation-delay:2.8s"></div>
+<div class="pin" style="top:25%;left:55%;animation-delay:0.5s"></div>
 </div>
 </div>
 
@@ -811,7 +820,7 @@ a{{text-decoration:none;color:inherit}}
 <a href="https://wa.me/917350785606" target="_blank" class="wa-float"><svg width="24" height="24" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492l4.625-1.476A11.929 11.929 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.75c-2.115 0-4.09-.57-5.793-1.564l-.415-.248-2.74.875.876-2.672-.27-.43A9.71 9.71 0 012.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75z"/></svg></a>
 
 <!-- Parallax + Search Script -->
-<script src="/static/js/search.js"></script>
+<script data-cfasync="false" src="/static/js/search.js?v=2"></script>
 </body></html>'''
     return HTMLResponse(content=html)
 
