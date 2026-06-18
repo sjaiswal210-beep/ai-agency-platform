@@ -573,7 +573,7 @@ a{{text-decoration:none;color:inherit}}
 .nav-btn{{padding:8px 16px;font-size:.72rem;font-weight:600;border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;transition:all .2s;background:rgba(255,255,255,.03);backdrop-filter:blur(10px)}}.nav-btn:hover{{background:rgba(255,255,255,.08)}}
 
 /* Hero */
-.hero{{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:100px 24px 60px}}
+.hero{{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:60px 24px 40px}}
 .hero-inner{{max-width:700px}}
 .badge{{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:50px;font-size:.72rem;font-weight:600;color:#00e5ff;margin-bottom:24px;background:rgba(0,229,255,.05);border:1px solid rgba(0,229,255,.15);backdrop-filter:blur(10px)}}
 .badge .dot{{width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 8px #22c55e;animation:pinPulse 2s infinite}}
