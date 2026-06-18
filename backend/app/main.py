@@ -704,9 +704,9 @@ a{{text-decoration:none;color:inherit}}
 <!-- Hero -->
 <section class="hero">
 <div class="hero-inner">
-<div class="badge"><span class="dot"></span>{count}+ businesses already online</div>
-<h1>Your Business Website Is <span>Ready</span></h1>
-<p>Find your free business website by searching your business name and area. Your professional website with WhatsApp orders and Google visibility is already live.</p>
+
+
+<p style="font-size:1rem;font-weight:600;margin-bottom:16px">Find your free business website by searching your business name and area.</p><div style="display:flex;justify-content:center;gap:12px;margin-bottom:20px;flex-wrap:wrap"><div style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);padding:8px 14px;border-radius:50px;font-size:.72rem;color:#94a3b8"><span style="color:#22c55e">&#10003;</span> Free Website</div><div style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);padding:8px 14px;border-radius:50px;font-size:.72rem;color:#94a3b8"><span style="color:#22c55e">&#10003;</span> WhatsApp Orders</div><div style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);padding:8px 14px;border-radius:50px;font-size:.72rem;color:#94a3b8"><span style="color:#22c55e">&#10003;</span> Google Visibility</div></div>
 
 <div class="search-box" style="max-width:560px;margin:20px auto 0;padding:14px 16px;border-radius:16px;background:rgba(255,255,255,.04);border:1.5px solid rgba(0,229,255,.15);box-shadow:0 12px 40px rgba(0,229,255,.1),inset 0 1px 0 rgba(255,255,255,.05);backdrop-filter:blur(12px)">
 <div style="display:flex;gap:8px;flex-wrap:wrap">
