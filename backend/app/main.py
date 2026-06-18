@@ -713,7 +713,7 @@ a{{text-decoration:none;color:inherit}}
 <select id="sCountry" style="padding:9px 12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-size:.75rem;outline:none;min-width:70px"><option value="India">IN</option><option value="USA">US</option><option value="UK">UK</option><option value="UAE">UAE</option><option value="Australia">AU</option></select>
 <input id="sBiz" placeholder="Your business name" style="flex:1;min-width:120px;padding:9px 12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-size:.75rem;outline:none">
 <input id="sArea" placeholder="Area or City" style="flex:1;min-width:100px;padding:9px 12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-size:.75rem;outline:none" onkeydown="if(event.key==='Enter')pubSearch()">
-<button type="button" onclick="pubSearch()" style="padding:9px 18px;background:linear-gradient(135deg,#00e5ff,#00b4d8);color:#020817;border:none;border-radius:8px;font-weight:700;font-size:.75rem;cursor:pointer;white-space:nowrap">Search</button>
+<button type="button" onclick="pubSearch()" style="padding:9px 18px;background:linear-gradient(135deg,#00e5ff,#00b4d8);color:#020817;border:none;border-radius:8px;font-weight:700;font-size:.75rem;cursor:pointer;white-space:nowrap" style="white-space:nowrap">Find My Website</button>
 </div>
 </div>
 <div id="searchResult" style="max-width:560px;margin:10px auto 0"></div>
