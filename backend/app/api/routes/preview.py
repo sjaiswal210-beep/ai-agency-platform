@@ -1068,7 +1068,7 @@ body{{padding-bottom:70px}}
 
     html = (
         '<!DOCTYPE html><html lang="en"><head>'
-        f'<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><meta name="theme-color" content="{primary}">'
+        f'<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"><meta name="theme-color" content="{primary}">'
         f'<title>{seo_title}</title><meta name="description" content="{seo_desc}">'
         f'<meta property="og:image" content="{hero_img}">'
         '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">'
