@@ -705,14 +705,14 @@ a{{text-decoration:none;color:inherit}}
 <section class="hero">
 <div class="hero-inner">
 <div class="badge"><span class="dot"></span>{count}+ businesses already online</div>
-<h1>Take Your Business <span>Online</span> In 5 Minutes</h1>
-<p>Professional website, WhatsApp orders, Google visibility, and customer growth tools. Everything your business needs from one platform.</p>
-<div class="hero-btns"><a href="https://wa.me/917350785606?text=Hi%20City%20Maps%2C%20I%20want%20to%20create%20my%20business%20website" target="_blank" class="btn-primary">Create My Website &mdash; Free</a></div>
+<h1>Your Business Website Is <span>Ready</span></h1>
+<p>Find your free business website by searching your business name and area. Your professional website with WhatsApp orders and Google visibility is already live.</p>
+<div class="hero-btns"><a href="https://wa.me/917350785606?text=Hi%20City%20Maps%2C%20I%20want%20to%20create%20my%20business%20website" target="_blank" class="btn-primary">Find My Website</a></div>
 <div class="search-box glass" style="max-width:560px;margin:16px auto 0;padding:10px 12px;border-radius:12px;box-shadow:0 8px 32px rgba(0,229,255,.08)">
 <div style="display:flex;gap:8px;flex-wrap:wrap">
 <select id="sCountry" style="padding:9px 12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-size:.75rem;outline:none;min-width:70px"><option value="India">IN</option><option value="USA">US</option><option value="UK">UK</option><option value="UAE">UAE</option><option value="Australia">AU</option></select>
-<input id="sBiz" placeholder="Business name or type" style="flex:1;min-width:120px;padding:9px 12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-size:.75rem;outline:none">
-<input id="sArea" placeholder="Area / City" style="flex:1;min-width:100px;padding:9px 12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-size:.75rem;outline:none" onkeydown="if(event.key==='Enter')pubSearch()">
+<input id="sBiz" placeholder="Your business name" style="flex:1;min-width:120px;padding:9px 12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-size:.75rem;outline:none">
+<input id="sArea" placeholder="Area or City" style="flex:1;min-width:100px;padding:9px 12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-size:.75rem;outline:none" onkeydown="if(event.key==='Enter')pubSearch()">
 <button type="button" onclick="pubSearch()" style="padding:9px 18px;background:linear-gradient(135deg,#00e5ff,#00b4d8);color:#020817;border:none;border-radius:8px;font-weight:700;font-size:.75rem;cursor:pointer;white-space:nowrap">Search</button>
 </div>
 </div>
