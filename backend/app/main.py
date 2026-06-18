@@ -564,16 +564,16 @@ a{{text-decoration:none;color:inherit}}
 @keyframes pinPulse{{0%,100%{{transform:scale(1);opacity:.4}}50%{{transform:scale(1.5);opacity:.8}}}}
 
 /* === MOVING ANIMATIONS === */
-.shooting-star{{position:absolute;width:80px;height:1px;background:linear-gradient(90deg,rgba(0,229,255,.8),transparent);border-radius:50%;opacity:0;animation:shoot 4s ease-in-out infinite}}
-.shooting-star:nth-child(2){{width:60px;animation-duration:5s;animation-delay:1.5s}}
-.shooting-star:nth-child(3){{width:100px;animation-duration:3.5s;animation-delay:3s}}
-.shooting-star:nth-child(4){{width:50px;background:linear-gradient(90deg,rgba(124,58,237,.7),transparent);animation-duration:6s;animation-delay:2s}}
-.floating-orb{{position:absolute;border-radius:50%;opacity:0;animation:floatOrb 8s ease-in-out infinite}}
-.light-trail{{position:absolute;width:2px;height:0;background:linear-gradient(180deg,rgba(0,229,255,.6),transparent);animation:trailMove 6s linear infinite;opacity:0}}
-.pulse-ring{{position:absolute;border-radius:50%;border:1px solid rgba(0,229,255,.2);animation:pulseExpand 4s ease-out infinite;opacity:0}}
-@keyframes shoot{{0%{{transform:translateX(-100px) translateY(0);opacity:0}}10%{{opacity:1}}90%{{opacity:1}}100%{{transform:translateX(calc(100vw + 100px)) translateY(150px);opacity:0}}}}
-@keyframes floatOrb{{0%,100%{{opacity:0;transform:translate(0,0) scale(.8)}}20%{{opacity:.6}}50%{{opacity:.8;transform:translate(30px,-40px) scale(1.2)}}80%{{opacity:.4}}}}
-@keyframes trailMove{{0%{{height:0;opacity:0;transform:translateY(-50px)}}15%{{opacity:.7;height:60px}}85%{{opacity:.5;height:40px}}100%{{opacity:0;height:0;transform:translateY(calc(100vh + 50px))}}}}
+.shooting-star{{position:absolute;width:80px;height:1px;background:linear-gradient(90deg,rgba(0,229,255,.6),transparent);border-radius:50%;opacity:0;animation:shoot 12s ease-in-out infinite}}
+.shooting-star:nth-child(2){{width:60px;animation-duration:16s;animation-delay:4s}}
+.shooting-star:nth-child(3){{width:100px;animation-duration:14s;animation-delay:7s}}
+.shooting-star:nth-child(4){{width:50px;background:linear-gradient(90deg,rgba(124,58,237,.5),transparent);animation-duration:20s;animation-delay:10s}}
+.floating-orb{{position:absolute;border-radius:50%;opacity:0;animation:floatOrb 16s ease-in-out infinite}}
+.light-trail{{position:absolute;width:2px;height:0;background:linear-gradient(180deg,rgba(0,229,255,.4),transparent);animation:trailMove 14s linear infinite;opacity:0}}
+.pulse-ring{{position:absolute;border-radius:50%;border:1px solid rgba(0,229,255,.15);animation:pulseExpand 10s ease-out infinite;opacity:0}}
+@keyframes shoot{{0%{{transform:translateX(-100px) translateY(0);opacity:0}}5%{{opacity:.7}}85%{{opacity:.5}}100%{{transform:translateX(calc(100vw + 100px)) translateY(100px);opacity:0}}}}
+@keyframes floatOrb{{0%,100%{{opacity:0;transform:translate(0,0) scale(.8)}}25%{{opacity:.4}}50%{{opacity:.5;transform:translate(20px,-25px) scale(1.1)}}75%{{opacity:.3}}}}
+@keyframes trailMove{{0%{{height:0;opacity:0;transform:translateY(-50px)}}10%{{opacity:.5;height:50px}}90%{{opacity:.3;height:30px}}100%{{opacity:0;height:0;transform:translateY(calc(100vh + 50px))}}}}
 @keyframes pulseExpand{{0%{{transform:scale(0);opacity:.6}}50%{{opacity:.3}}100%{{transform:scale(3);opacity:0}}}}
 @keyframes waveFloat{{0%,100%{{transform:translateX(0) scaleY(1)}}50%{{transform:translateX(20px) scaleY(1.1)}}}}
 
