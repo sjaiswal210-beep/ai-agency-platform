@@ -823,13 +823,7 @@ def generate_html(content: dict, template: str, lead: dict = None, website_id_ov
     hero_offer = content.get("hero_offer", "")
     trust_badges = content.get("trust_badges", [])
 
-    maps_section = ""
-    if maps_url:
-        maps_section = (
-            '<section style="max-width:1200px;margin:0 auto;padding:0 24px 80px">'
-            f'<iframe src="{maps_url}" width="100%" height="400" '
-            'style="border:0;border-radius:16px" allowfullscreen loading="lazy"></iframe></section>'
-        )
+    maps_section = ""  # Map is now in the contact section
 
     wa_link = ""
     bottom_nav = ""
