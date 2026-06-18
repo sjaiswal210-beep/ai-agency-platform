@@ -4,7 +4,7 @@ async function pubSearch(){
   var country=document.getElementById("sCountry").value;
   if(!biz)return;
   var r=document.getElementById("searchResult");
-  r.innerHTML="<p style='text-align:center;color:#64748b;font-size:.75rem'>Finding your website...</p>";
+  r.innerHTML="";Swal.fire({title:"Finding your website...",html:"<div style='margin-top:12px;width:40px;height:40px;border:3px solid rgba(0,229,255,.2);border-top:3px solid #00e5ff;border-radius:50%;animation:spin 1s linear infinite;margin:12px auto'></div><style>@keyframes spin{to{transform:rotate(360deg)}}</style>",showConfirmButton:false,allowOutsideClick:false,background:"#0f172a",color:"#fff"});
   try{
     var query=biz+(area?" "+area:"")+(country?" "+country:"");
     var resp=await fetch("/api/leads/public-search?query="+encodeURIComponent(query));
@@ -22,10 +22,10 @@ async function pubSearch(){
       r.innerHTML="";
       Swal.fire({title:data.results.length+" businesses found",html:html,showConfirmButton:false,showCloseButton:true,background:"#0f172a",color:"#fff",width:"92%"});
     }else{
-      r.innerHTML="<div style='padding:12px;margin-top:8px;text-align:center;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px'><p style='font-size:.78rem;color:#e2e8f0;margin-bottom:6px'>No results found</p><p style='font-size:.7rem;color:#64748b'>Try a different name or area</p></div>";
+      Swal.fire({icon:"info",title:"No results found",text:"Try a different business name or area.",background:"#0f172a",color:"#fff"});
     }
   }catch(e){
-    r.innerHTML="<div style='padding:12px;margin-top:8px;text-align:center'><p style='font-size:.75rem;color:#ef4444'>Search failed. Try again.</p></div>";
+    Swal.fire({icon:"error",title:"Search failed",text:"Please try again.",background:"#0f172a",color:"#fff"});
   }
 }
 
