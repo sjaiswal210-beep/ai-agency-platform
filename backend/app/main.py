@@ -302,7 +302,7 @@ def sitemap_xml():
 @app.get("/api/growth-plan", response_class=HTMLResponse)
 def growth_plan_page():
     """Self-growth plan with AI-powered action items."""
-    html = '''<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+    html = '''<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <title>Growth Plan - City Maps</title>
 <style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:sans-serif;background:#0f172a;color:#fff;padding:16px;max-width:600px;margin:0 auto}h1{font-size:1.2rem;margin-bottom:4px}.sub{font-size:.75rem;color:#64748b;margin-bottom:20px}.card{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:16px;margin-bottom:10px}.item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid #334155}.item:last-child{border:none}.item input[type=checkbox]{margin-top:3px;width:16px;height:16px;accent-color:#6366f1;cursor:pointer}.item-text{font-size:.8rem;flex:1}.item-text.done{text-decoration:line-through;color:#64748b}.ai-input{display:flex;gap:8px;margin-bottom:16px}input{flex:1;padding:10px;border:1px solid #334155;border-radius:8px;background:#1e293b;color:#fff;font-size:.8rem;outline:none}button{padding:10px 16px;background:#6366f1;color:#fff;border:none;border-radius:8px;font-weight:700;font-size:.8rem;cursor:pointer}.btn-ai{background:linear-gradient(135deg,#6366f1,#8b5cf6)}</style></head><body>
 <h1>Growth Plan</h1>
@@ -420,7 +420,7 @@ def category_page(category: str):
         link = f"https://{slug}.city-maps.online" if slug else "#"
         cards += f'<a href="{link}" target="_blank" style="display:block;background:#1e293b;border:1px solid #334155;border-radius:10px;padding:14px;text-decoration:none;color:#fff;margin-bottom:8px"><b style="font-size:.85rem">{l.get("business_name","")}</b><p style="font-size:.7rem;color:#64748b;margin-top:4px">{l.get("address","")[:50]}</p></a>'
     
-    html = f'''<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+    html = f'''<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <title>Best {category.title()} Businesses | City Maps</title>
 <meta name="description" content="Find the best {category} businesses near you. Professional websites, reviews, and contact details.">
 <style>*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:20px;max-width:700px;margin:0 auto}}</style></head><body>
@@ -447,7 +447,7 @@ def city_page(city: str):
         link = f"https://{slug}.city-maps.online" if slug else "#"
         cards += f'<a href="{link}" target="_blank" style="display:block;background:#1e293b;border:1px solid #334155;border-radius:10px;padding:14px;text-decoration:none;color:#fff;margin-bottom:8px"><b style="font-size:.85rem">{l.get("business_name","")}</b><p style="font-size:.7rem;color:#64748b;margin-top:4px">{l.get("category","").title()} | {l.get("address","")[:40]}</p></a>'
     
-    html = f'''<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+    html = f'''<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <title>Businesses in {city.title()} | City Maps</title>
 <meta name="description" content="Find local businesses in {city.title()}. Professional websites, contact details, and reviews.">
 <style>*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:20px;max-width:700px;margin:0 auto}}</style></head><body>
@@ -495,7 +495,7 @@ def all_sites_page():
         links = "".join([f'<a href="https://{e["slug"]}.city-maps.online" target="_blank" style="display:block;padding:6px 0;font-size:.75rem;color:#00e5ff;border-bottom:1px solid #334155">{e["name"]} <span style="color:#64748b;font-size:.65rem">({e["category"]})</span></a>' for e in items])
         city_sections += f'<div style="margin-bottom:16px"><h3 style="font-size:.8rem;font-weight:700;margin-bottom:6px;color:#94a3b8">{city} ({len(items)})</h3>{links}</div>'
     
-    html = f'''<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>All Sites</title><style>*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:16px;max-width:800px;margin:0 auto}}.tabs{{display:flex;gap:8px;margin:16px 0}}.tab{{padding:8px 16px;border-radius:8px;font-size:.75rem;font-weight:600;cursor:pointer;border:1px solid #334155;background:#1e293b;color:#94a3b8}}.tab.active{{background:#6366f1;color:#fff;border-color:#6366f1}}.panel{{display:none}}.panel.active{{display:block}}</style></head><body>
+    html = f'''<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"><title>All Sites</title><style>*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:16px;max-width:800px;margin:0 auto}}.tabs{{display:flex;gap:8px;margin:16px 0}}.tab{{padding:8px 16px;border-radius:8px;font-size:.75rem;font-weight:600;cursor:pointer;border:1px solid #334155;background:#1e293b;color:#94a3b8}}.tab.active{{background:#6366f1;color:#fff;border-color:#6366f1}}.panel{{display:none}}.panel.active{{display:block}}</style></head><body>
 <h1 style="font-size:1.2rem;margin-bottom:4px">All Sites ({len(sites)})</h1>
 <input id="searchBox" placeholder="Search business name..." oninput="filterSites()" style="width:100%;padding:10px 14px;border:1px solid #334155;border-radius:8px;background:#1e293b;color:#fff;font-size:.8rem;outline:none;margin-bottom:12px">
 <div class="tabs">
@@ -524,7 +524,7 @@ def landing_page():
         count = 0
 
     html = f'''<!DOCTYPE html><html lang="en"><head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <title>City Maps - Digital Growth Platform for Local Businesses</title>
 <meta name="description" content="Take your business online in 5 minutes. Professional website, WhatsApp orders, Google visibility, customer growth tools.">
 <meta name="theme-color" content="#020817"><meta name="google-site-verification" content="39nzaqNCoWxNXFyhZTNOUSSWZiHY9rCEpDFzvEakUo4">
@@ -652,7 +652,7 @@ a{{text-decoration:none;color:inherit}}
 .wa-float{{position:fixed;bottom:20px;right:20px;width:50px;height:50px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(37,211,102,.35);z-index:99;animation:wab 3s ease-in-out infinite}}@keyframes wab{{0%,100%{{transform:translateY(0)}}50%{{transform:translateY(-4px)}}}}
 
 /* Mobile */
-@media(max-width:768px){{.search-box div{{flex-wrap:wrap;justify-content:center}}.search-box input,.search-box select{{min-width:100%!important;margin-bottom:4px}}.search-box button{{width:100%;margin-top:4px}}
+@media(max-width:768px){{input,select,textarea{{font-size:16px!important}}.search-box div{{flex-wrap:wrap;justify-content:center}}.search-box input,.search-box select{{min-width:100%!important;margin-bottom:4px}}.search-box button{{width:100%;margin-top:4px}}
 .feat-grid{{grid-template-columns:repeat(2,1fr)}}
 .cat-grid{{grid-template-columns:repeat(3,1fr)}}
 .journey-grid{{grid-template-columns:repeat(2,1fr)}}
@@ -708,7 +708,7 @@ a{{text-decoration:none;color:inherit}}
 <h1>Take Your Business <span>Online</span> In 5 Minutes</h1>
 <p>Professional website, WhatsApp orders, Google visibility, and customer growth tools. Everything your business needs from one platform.</p>
 <div class="hero-btns"><a href="https://wa.me/917350785606?text=Hi%20City%20Maps%2C%20I%20want%20to%20create%20my%20business%20website" target="_blank" class="btn-primary">Create My Website &mdash; Free</a></div>
-<div class="search-box glass" style="max-width:560px;margin:24px auto 0;padding:14px 16px;border-radius:16px;box-shadow:0 8px 32px rgba(0,229,255,.08)">
+<div class="search-box glass" style="max-width:560px;margin:16px auto 0;padding:10px 12px;border-radius:12px;box-shadow:0 8px 32px rgba(0,229,255,.08)">
 <div style="display:flex;gap:8px;flex-wrap:wrap">
 <select id="sCountry" style="padding:9px 12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-size:.75rem;outline:none;min-width:70px"><option value="India">IN</option><option value="USA">US</option><option value="UK">UK</option><option value="UAE">UAE</option><option value="Australia">AU</option></select>
 <input id="sBiz" placeholder="Business name or type" style="flex:1;min-width:120px;padding:9px 12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-size:.75rem;outline:none">
@@ -876,7 +876,7 @@ async def full_health_check():
         color = "#22c55e" if r["status"] == "ok" else "#ef4444"
         rows += f'<tr><td style="padding:8px;font-size:.78rem">{r["name"]}</td><td style="padding:8px"><span style="color:{color};font-weight:700;font-size:.75rem">{"✓" if r["status"]=="ok" else "✗"} {r["code"]}</span></td><td style="padding:8px;font-size:.72rem;color:#64748b">{r.get("ms","")}ms</td></tr>'
     
-    html = f'''<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Health Check</title><style>*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:16px;max-width:600px;margin:0 auto}}table{{width:100%;border-collapse:collapse;background:#1e293b;border-radius:10px;overflow:hidden;margin-top:16px}}th{{text-align:left;padding:10px;font-size:.7rem;color:#64748b;border-bottom:1px solid #334155}}tr:hover{{background:#334155}}</style></head><body>
+    html = f'''<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"><title>Health Check</title><style>*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:16px;max-width:600px;margin:0 auto}}table{{width:100%;border-collapse:collapse;background:#1e293b;border-radius:10px;overflow:hidden;margin-top:16px}}th{{text-align:left;padding:10px;font-size:.7rem;color:#64748b;border-bottom:1px solid #334155}}tr:hover{{background:#334155}}</style></head><body>
 <h1 style="font-size:1.2rem">{ok}/{total} Features Working</h1>
 <p style="font-size:.75rem;color:#64748b;margin-top:4px">Last checked: just now</p>
 <div style="background:#334155;border-radius:8px;height:8px;margin-top:12px;overflow:hidden"><div style="height:100%;background:{'#22c55e' if ok==total else '#f59e0b'};width:{ok/total*100}%;border-radius:8px"></div></div>
