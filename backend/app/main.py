@@ -466,7 +466,7 @@ def all_sites_page():
     db = get_supabase()
     sites = db.table("websites").select("id,slug,lead_id,created_at").not_.is_("slug", "null").order("created_at", desc=True).execute().data or []
     leads_data = db.table("leads").select("id,business_name,category,address").execute().data or []
-    leads = {l["id"]: l for l in leads_data}
+    leads = {l["id"]: l for l in leads_data if isinstance(l.get("id"), str)}
     
     # Group by category and city
     by_category = {}
