@@ -707,7 +707,7 @@ a{{text-decoration:none;color:inherit}}
 <div class="badge"><span class="dot"></span>{count}+ businesses already online</div>
 <h1>Your Business Website Is <span>Ready</span></h1>
 <p>Find your free business website by searching your business name and area. Your professional website with WhatsApp orders and Google visibility is already live.</p>
-<div class="hero-btns"><a href="https://wa.me/917350785606?text=Hi%20City%20Maps%2C%20I%20want%20to%20create%20my%20business%20website" target="_blank" class="btn-primary">Find My Website</a></div>
+
 <div class="search-box glass" style="max-width:560px;margin:16px auto 0;padding:10px 12px;border-radius:12px;box-shadow:0 8px 32px rgba(0,229,255,.08)">
 <div style="display:flex;gap:8px;flex-wrap:wrap">
 <select id="sCountry" style="padding:9px 12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-size:.75rem;outline:none;min-width:70px"><option value="India">IN</option><option value="USA">US</option><option value="UK">UK</option><option value="UAE">UAE</option><option value="Australia">AU</option></select>
