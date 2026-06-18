@@ -39,7 +39,7 @@ async function selectBiz(el){
     var resp=await fetch("/api/leads/public-create-site",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({business_name:name,phone:phone,address:address,category:category})});
     var data=await resp.json();
     if(data.slug){
-      Swal.fire({icon:"success",title:"Website Ready!",html:"<p style='font-size:.85rem'>Check your <b>WhatsApp</b> for details.</p><p style='font-size:.75rem;color:#64748b;margin-top:8px'>"+data.slug+".city-maps.online</p>",confirmButtonText:"Open Website",confirmButtonColor:"#00e5ff",showCancelButton:true,cancelButtonText:"Close",background:"#0f172a",color:"#fff"}).then(function(result){if(result.isConfirmed){window.open("https://"+data.slug+".city-maps.online","_blank");}});
+      Swal.fire({icon:"success",title:"Your Website Is Ready!",html:"<p style='font-size:.9rem;margin-bottom:10px'>Your website is:<br><b style='color:#00e5ff;font-size:1rem'>"+data.slug+".city-maps.online</b></p><p style='font-size:.75rem;color:#64748b'>Details shared on WhatsApp</p>",confirmButtonText:"Open Website",confirmButtonColor:"#22c55e",showCancelButton:true,cancelButtonText:"Close",background:"#0f172a",color:"#fff"}).then(function(result){if(result.isConfirmed){window.open("https://"+data.slug+".city-maps.online","_blank");}});
     }else{
       Swal.fire({icon:"info",title:"Processing",text:data.message||"Website creation in progress.",background:"#0f172a",color:"#fff"});
     }
