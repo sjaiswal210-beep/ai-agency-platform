@@ -585,48 +585,9 @@ def ads_analytics(pwd: str = ""):
     except Exception:
         pass
     gc = sum(1 for u in usage if "gemini" in u.get("service", "").lower())
-    html = f"<html><head><meta charset=UTF-8><meta name=viewport content='width=device-width,initial-scale=1'><title>Analytics</title><style>*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:20px;max-width:700px;margin:0 auto}}.g{{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}}.c{{background:#1e293b;border:1px solid #334155;border-radius:10px;padding:14px;text-align:center}}.n{{font-size:1.3rem;font-weight:800;color:#00e5ff}}.l{{font-size:.6rem;color:#64748b;margin-top:4px}}</style></head><body><h1 style='font-size:1.2rem;margin-bottom:16px'>Analytics</h1><div class=g><div class=c><div class=n>Rs.{tr:.2f}</div><div class=l>Ad Revenue</div></div><div class=c><div class=n>{ti:,}</div><div class=l>Impressions</div></div><div class=c><div class=n>{tc:,}</div><div class=l>Clicks</div></div></div><div class=g><div class=c><div class=n>${rc*0.5:.2f}</div><div class=l>Replicate Cost</div></div><div class=c><div class=n>{replicate_billing.get("total_predictions", rc)}</div><div class=l>Replicate Calls</div></div><div class=c><div class=n>{gc}</div><div class=l>Sites Generated</div></div></div><p style='margin-top:16px;font-size:.7rem;text-align:center'><a href='/api/ads/manage?pwd=kalpdev2024' style='color:#00e5ff'>Back to Ad Manager</a></p></body></html>"
+    rep_total = replicate_billing.get("total_predictions", rc) if replicate_billing else rc
+    html = f"<html><head><meta charset=UTF-8><meta name=viewport content='width=device-width,initial-scale=1'><title>Analytics</title><style>*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:20px;max-width:700px;margin:0 auto}}.g{{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}}.c{{background:#1e293b;border:1px solid #334155;border-radius:10px;padding:14px;text-align:center}}.n{{font-size:1.3rem;font-weight:800;color:#00e5ff}}.l{{font-size:.6rem;color:#64748b;margin-top:4px}}</style></head><body><h1 style='font-size:1.2rem;margin-bottom:16px'>Analytics</h1><div class=g><div class=c><div class=n>Rs.{tr:.2f}</div><div class=l>Ad Revenue</div></div><div class=c><div class=n>{ti:,}</div><div class=l>Impressions</div></div><div class=c><div class=n>{tc:,}</div><div class=l>Clicks</div></div></div><div class=g><div class=c><div class=n>${rc*0.5:.2f}</div><div class=l>Replicate Cost</div></div><div class=c><div class=n>{rep_total}</div><div class=l>Replicate Calls</div></div><div class=c><div class=n>{gc}</div><div class=l>Sites Generated</div></div></div><p style='margin-top:16px;font-size:.7rem;text-align:center'><a href='/api/ads/manage?pwd=kalpdev2024' style='color:#00e5ff'>Back to Ad Manager</a></p></body></html>"
     return HTMLResponse(content=html)
-
-@router.get("/campaign/{campaign_id}", response_class=HTMLResponse)
-def campaign_details(campaign_id: str):
-    """Campaign performance details."""
-    from app.core.supabase import get_supabase
-    db = get_supabase()
-    try:
-        c = db.table("ad_campaigns").select("*").eq("id", campaign_id).limit(1).execute().data[0]
-    except Exception:
-        return HTMLResponse("<h1>Not found</h1>", status_code=404)
-    imp = c.get("impressions", 0)
-    clk = c.get("clicks", 0)
-    spent = c.get("spent", 0)
-    budget = c.get("budget", 0)
-    ctr = round(clk/imp*100, 2) if imp > 0 else 0
-    rem = round(budget - spent, 2)
-    active = "Active" if c.get("active") else "Paused"
-    pct = min(spent/budget*100, 100) if budget > 0 else 0
-    html = f"<html><head><meta charset=UTF-8><meta name=viewport content='width=device-width,initial-scale=1'><title>{c.get('name','')}</title><style>*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:20px;max-width:700px;margin:0 auto}}.g{{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}}.c{{background:#1e293b;border:1px solid #334155;border-radius:10px;padding:14px;text-align:center}}.n{{font-size:1.2rem;font-weight:800;color:#00e5ff}}.l{{font-size:.6rem;color:#64748b;margin-top:4px}}.sec{{background:#1e293b;border:1px solid #334155;border-radius:10px;padding:16px;margin:12px 0}}.r{{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #334155;font-size:.78rem}}.r:last-child{{border:none}}.bar{{background:#334155;border-radius:8px;height:8px;margin-top:8px}}.bar-fill{{height:100%;background:linear-gradient(90deg,#00e5ff,#7c3aed);border-radius:8px}}</style></head><body><h1 style='font-size:1.2rem'>{c.get('name','')}</h1><p style='font-size:.75rem;color:#64748b;margin:4px 0 16px'>Advertiser: {c.get('advertiser_name','')} | Status: {active}</p><div class=g><div class=c><div class=n>{imp:,}</div><div class=l>Impressions</div></div><div class=c><div class=n>{clk:,}</div><div class=l>Clicks</div></div><div class=c><div class=n>{ctr}%</div><div class=l>CTR</div></div></div><div class=g><div class=c><div class=n>Rs.{spent:.2f}</div><div class=l>Spent</div></div><div class=c><div class=n>Rs.{rem:.2f}</div><div class=l>Remaining</div></div><div class=c><div class=n>Rs.{budget:.2f}</div><div class=l>Budget</div></div></div><div class=sec><h3 style='font-size:.8rem;margin-bottom:8px'>Budget Progress</h3><div class=bar><div class=bar-fill style='width:{pct}%'></div></div><p style='font-size:.7rem;color:#64748b;margin-top:6px'>{pct:.1f}% used</p></div><div class=sec><h3 style='font-size:.8rem;margin-bottom:8px'>Settings</h3><div class=r><span style='color:#64748b'>Pricing</span><span>{c.get('pricing_model','').upper()} - Rs.{c.get('rate',0)}</span></div><div class=r><span style='color:#64748b'>Format</span><span>{c.get('ad_format','').replace('_',' ').title()}</span></div><div class=r><span style='color:#64748b'>Targeting</span><span>{c.get('targeting_type','all').title()} {c.get('targeting_value','')}</span></div></div><div class=sec><h3 style='font-size:.8rem;margin-bottom:8px'>Creative</h3><img src='{c.get('creative_url','')}' style='max-width:100%;border-radius:8px;margin-top:8px'><p style='font-size:.7rem;color:#64748b;margin-top:6px;word-break:break-all'>Destination: {c.get('destination_url','')}</p></div><p style='text-align:center;margin-top:16px;font-size:.7rem'><a href='/api/ads/manage?pwd=kalpdev2024' style='color:#00e5ff'>Back</a></p></body></html>"
-    return HTMLResponse(content=html)
-
-
-@router.get("/portal/{advertiser_name}", response_class=HTMLResponse)
-def advertiser_portal(advertiser_name: str):
-    """Advertiser portal - view all campaigns."""
-    from app.core.supabase import get_supabase
-    import urllib.parse
-    db = get_supabase()
-    name = urllib.parse.unquote(advertiser_name)
-    campaigns = db.table("ad_campaigns").select("*").eq("advertiser_name", name).order("created_at", desc=True).execute().data or []
-    ti = sum(c.get("impressions", 0) for c in campaigns)
-    tc = sum(c.get("clicks", 0) for c in campaigns)
-    ts = sum(c.get("spent", 0) for c in campaigns)
-    cards = ""
-    for c in campaigns:
-        ctr = round(c.get("clicks",0)/c.get("impressions",1)*100, 2) if c.get("impressions",0) > 0 else 0
-        cards += f"<a href='/api/ads/campaign/{c.get('id','')}' style='display:block;background:#1e293b;border:1px solid #334155;border-radius:10px;padding:14px;text-decoration:none;color:#fff;margin-bottom:8px'><div style='display:flex;justify-content:space-between'><b style='font-size:.85rem'>{c.get('name','')}</b><span style='font-size:.7rem;color:{'#22c55e' if c.get('active') else '#64748b'}'>{'Active' if c.get('active') else 'Paused'}</span></div><div style='font-size:.7rem;color:#94a3b8;margin-top:4px'>{c.get('impressions',0):,} views | {c.get('clicks',0)} clicks | {ctr}% CTR | Rs.{c.get('spent',0):.2f} spent</div></a>"
-    html = f"<html><head><meta charset=UTF-8><meta name=viewport content='width=device-width,initial-scale=1'><title>{name} - Portal</title><style>*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:20px;max-width:700px;margin:0 auto}}.g{{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}}.c{{background:#1e293b;border:1px solid #334155;border-radius:10px;padding:14px;text-align:center}}.n{{font-size:1.2rem;font-weight:800;color:#00e5ff}}.l{{font-size:.6rem;color:#64748b;margin-top:4px}}</style></head><body><h1 style='font-size:1.2rem'>Advertiser Portal</h1><p style='font-size:.75rem;color:#64748b;margin:4px 0 16px'>{name} | {len(campaigns)} campaigns</p><div class=g><div class=c><div class=n>{ti:,}</div><div class=l>Total Views</div></div><div class=c><div class=n>{tc:,}</div><div class=l>Total Clicks</div></div><div class=c><div class=n>Rs.{ts:.2f}</div><div class=l>Total Spent</div></div></div><h3 style='font-size:.8rem;margin:16px 0 8px'>Campaigns</h3>{cards or '<p style=font-size:.75rem;color:#475569>No campaigns</p>'}</body></html>"
-    return HTMLResponse(content=html)
-
 
 @router.get("/create-ad", response_class=HTMLResponse)
 def create_ad_page():

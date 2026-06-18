@@ -652,7 +652,7 @@ a{{text-decoration:none;color:inherit}}
 .wa-float{{position:fixed;bottom:20px;right:20px;width:50px;height:50px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(37,211,102,.35);z-index:99;animation:wab 3s ease-in-out infinite}}@keyframes wab{{0%,100%{{transform:translateY(0)}}50%{{transform:translateY(-4px)}}}}
 
 /* Mobile */
-@media(max-width:768px){{input,select,textarea{{font-size:16px!important}}.search-box div{{flex-wrap:wrap;justify-content:center}}.search-box input,.search-box select{{min-width:100%!important;margin-bottom:4px}}.search-box button{{width:100%;margin-top:4px}}
+@media(max-width:768px){{.hero{{min-height:auto;padding:80px 16px 30px}}.hero img{{max-width:320px!important}}.hero-inner{{max-width:100%}}input,select,textarea{{font-size:16px!important}}.search-box{{margin:12px auto 0!important;padding:10px 12px!important}}.search-box div{{flex-wrap:wrap;justify-content:center}}.search-box input,.search-box select{{min-width:100%!important;margin-bottom:4px}}.search-box button{{width:100%;margin-top:4px}}
 .feat-grid{{grid-template-columns:repeat(2,1fr)}}
 .cat-grid{{grid-template-columns:repeat(3,1fr)}}
 .journey-grid{{grid-template-columns:repeat(2,1fr)}}
@@ -709,14 +709,14 @@ a{{text-decoration:none;color:inherit}}
 <div class="badge"><span class="dot"></span>{count}+ businesses already online</div>
 <h1>Your Business Website Is <span>Ready</span></h1>
 <p style="font-size:.95rem;color:#94a3b8;margin-bottom:16px">Find Or Create Your Website Free</p>
-<img src="/static/images/hero-banner.png" alt="City Maps - Create Free Websites" style="max-width:500px;border-radius:10px;margin-bottom:10px">
+<img src="/static/images/hero-banner.png" alt="City Maps - Create Free Websites" style="max-width:500px;width:100%;border-radius:10px;margin-bottom:10px">
 
 <div class="search-box" style="max-width:560px;margin:20px auto 0;padding:14px 16px;border-radius:16px;background:rgba(255,255,255,.04);border:1.5px solid rgba(0,229,255,.15);box-shadow:0 12px 40px rgba(0,229,255,.1),inset 0 1px 0 rgba(255,255,255,.05);backdrop-filter:blur(12px)">
 <div style="display:flex;gap:8px;flex-wrap:wrap">
 <select id="sCountry" style="padding:9px 12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-size:.75rem;outline:none;min-width:70px"><option value="India">IN</option><option value="USA">US</option><option value="UK">UK</option><option value="UAE">UAE</option><option value="Australia">AU</option></select>
 <input id="sBiz" placeholder="Your business name" style="flex:1;min-width:120px;padding:9px 12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-size:.75rem;outline:none">
 <input id="sArea" placeholder="Area or City" style="flex:1;min-width:100px;padding:9px 12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-size:.75rem;outline:none" onkeydown="if(event.key==='Enter')pubSearch()">
-<button type="button" onclick="pubSearch()" style="padding:9px 18px;background:linear-gradient(135deg,#00e5ff,#00b4d8);color:#020817;border:none;border-radius:8px;font-weight:700;font-size:.75rem;cursor:pointer;white-space:nowrap" style="white-space:nowrap;padding:10px 20px;background:linear-gradient(135deg,#00e5ff,#0ea5e9);color:#020817;border:none;border-radius:10px;font-weight:800;font-size:.8rem;cursor:pointer;box-shadow:0 4px 14px rgba(0,229,255,.3);transition:all .2s">Find My Website</button>
+<button type="button" onclick="pubSearch()" style="white-space:nowrap;padding:10px 20px;background:linear-gradient(135deg,#00e5ff,#0ea5e9);color:#020817;border:none;border-radius:10px;font-weight:800;font-size:.8rem;cursor:pointer;box-shadow:0 4px 14px rgba(0,229,255,.3);transition:all .2s">Find My Website</button>
 </div>
 </div>
 <div id="searchResult" style="max-width:560px;margin:10px auto 0"></div>
