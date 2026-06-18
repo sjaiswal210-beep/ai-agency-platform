@@ -749,7 +749,7 @@ a{{text-decoration:none;color:inherit}}
 
 <!-- Categories -->
 <section class="sec">
-<div class="sec-label">Industries</div><div class="sec-title">Built For Every Business Type</div><div class="sec-desc">We design the perfect website tailored to your industry.</div>
+<div class="sec-label">Real Results</div><div class="sec-title">Websites We Have Built</div><div class="sec-desc">See real business websites created by our platform.</div>
 <div class="cat-grid">
 <div class="cat-item glass glass-hover"><div class="emoji">&#127858;</div><div class="name">Restaurants</div><div class="cnt">28+ sites</div></div>
 <div class="cat-item glass glass-hover"><div class="emoji">&#128135;</div><div class="name">Salons</div><div class="cnt">22+ sites</div></div>
@@ -769,19 +769,19 @@ a{{text-decoration:none;color:inherit}}
 <section class="sec" style="border-top:1px solid rgba(255,255,255,.04)">
 <div class="sec-label">How It Works</div><div class="sec-title">Live In 4 Simple Steps</div><div class="sec-desc">No coding. No design skills. No hassle.</div>
 <div class="journey-grid">
-<div class="step-card glass glass-hover"><div class="icon">&#128221;</div><div class="step-num">Step 01</div><h3>Tell Us Your Business</h3><p>Share your business name and location. That is all we need.</p></div>
-<div class="step-card glass glass-hover"><div class="icon">&#9889;</div><div class="step-num">Step 02</div><h3>We Build Your Site</h3><p>We create a stunning website with SEO, products, and all features in 5 minutes.</p></div>
-<div class="step-card glass glass-hover"><div class="icon">&#128640;</div><div class="step-num">Step 03</div><h3>Go Live on Google</h3><p>Your site goes live instantly. Customers find you on Google Maps.</p></div>
-<div class="step-card glass glass-hover"><div class="icon">&#128176;</div><div class="step-num">Step 04</div><h3>Receive Orders</h3><p>Customers call, WhatsApp, and order directly. Watch your business grow.</p></div>
+<div class="step-card glass glass-hover"><div class="icon"><img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=80&h=80&fit=crop" style="width:48px;height:48px;border-radius:10px;object-fit:cover"></div><div class="step-num">Step 01</div><h3>Tell Us Your Business</h3><p>Share your business name and location. That is all we need.</p></div>
+<div class="step-card glass glass-hover"><div class="icon"><img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=80&h=80&fit=crop" style="width:48px;height:48px;border-radius:10px;object-fit:cover"></div><div class="step-num">Step 02</div><h3>We Build Your Site</h3><p>We create a stunning website with SEO, products, and all features in 5 minutes.</p></div>
+<div class="step-card glass glass-hover"><div class="icon"><img src="https://images.unsplash.com/photo-1432888622747-4eb9a8efeb07?w=80&h=80&fit=crop" style="width:48px;height:48px;border-radius:10px;object-fit:cover"></div><div class="step-num">Step 03</div><h3>Go Live on Google</h3><p>Your site goes live instantly. Customers find you on Google Maps.</p></div>
+<div class="step-card glass glass-hover"><div class="icon"><img src="https://images.unsplash.com/photo-1556742111-a301076d9d18?w=80&h=80&fit=crop" style="width:48px;height:48px;border-radius:10px;object-fit:cover"></div><div class="step-num">Step 04</div><h3>Receive Orders</h3><p>Customers call, WhatsApp, and order directly. Watch your business grow.</p></div>
 </div></section>
 
 <!-- Testimonials -->
 <section class="sec">
 <div class="sec-label">Success Stories</div><div class="sec-title">Loved By Business Owners</div>
 <div class="test-grid">
-<div class="test-card glass glass-hover"><div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><blockquote>&ldquo;Within 2 weeks of going live, I started getting WhatsApp enquiries from new customers who found me on Google. Best Rs.49 I ever spent!&rdquo;</blockquote><div class="author"><div class="avatar">P</div><div><div class="name">Priya Sharma</div><div class="biz">Glow Salon, Pune</div></div></div></div>
-<div class="test-card glass glass-hover"><div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><blockquote>&ldquo;My patients now book appointments directly from my website. The analytics show 200+ visits per month. Incredible value.&rdquo;</blockquote><div class="author"><div class="avatar">R</div><div><div class="name">Rajesh Patil</div><div class="biz">Patil Dental Clinic, Kothrud</div></div></div></div>
-<div class="test-card glass glass-hover"><div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><blockquote>&ldquo;My website was built with precision and looks better than what I paid Rs.15000 for before. WhatsApp orders for supplements are a bonus!&rdquo;</blockquote><div class="author"><div class="avatar">A</div><div><div class="name">Amit Gupta</div><div class="biz">FitZone Gym, Wakad</div></div></div></div>
+<div class="test-card glass glass-hover"><div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><blockquote>&ldquo;Within 2 weeks of going live, I started getting WhatsApp enquiries from new customers who found me on Google. Best Rs.49 I ever spent!&rdquo;</blockquote><div class="author"><div class="avatar" style="background:url(https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=40&h=40&fit=crop) center/cover;border-radius:50%"></div><div><div class="name">Priya Sharma</div><div class="biz">Glow Salon, Pune</div></div></div></div>
+<div class="test-card glass glass-hover"><div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><blockquote>&ldquo;My patients now book appointments directly from my website. The analytics show 200+ visits per month. Incredible value.&rdquo;</blockquote><div class="author"><div class="avatar" style="background:url(https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop) center/cover;border-radius:50%"></div><div><div class="name">Rajesh Patil</div><div class="biz">Patil Dental Clinic, Kothrud</div></div></div></div>
+<div class="test-card glass glass-hover"><div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><blockquote>&ldquo;My website was built with precision and looks better than what I paid Rs.15000 for before. WhatsApp orders for supplements are a bonus!&rdquo;</blockquote><div class="author"><div class="avatar" style="background:url(https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop) center/cover;border-radius:50%"></div><div><div class="name">Amit Gupta</div><div class="biz">FitZone Gym, Wakad</div></div></div></div>
 </div></section>
 
 <!-- Pricing -->
