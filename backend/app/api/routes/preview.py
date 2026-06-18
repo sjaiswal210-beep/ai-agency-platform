@@ -876,7 +876,7 @@ a{{text-decoration:none;color:inherit}}
 .hero-bg{{animation:heroZ 20s ease-in-out infinite alternate,heroPan 30s ease-in-out infinite}}
 @keyframes heroPan{{0%,100%{{transform:scale(1.05) translate(0,0)}}25%{{transform:scale(1.08) translate(-1%,-1%)}}50%{{transform:scale(1.05) translate(1%,0)}}75%{{transform:scale(1.07) translate(-0.5%,1%)}}}}
 .gallery-item img{{transition:transform .8s cubic-bezier(.16,1,.3,1),filter .4s}}.gallery-item:hover img{{transform:scale(1.1) translateZ(10px);filter:brightness(1.1) contrast(1.05)}}
-.stats-section{{position:relative;overflow:hidden}}.stats-section::after{{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,0,0,.1) 25%,transparent 25%,transparent 50%,rgba(0,0,0,.1) 50%,rgba(0,0,0,.1) 75%,transparent 75%);background-size:4px 4px;pointer-events:none;opacity:.3}}
+
 .about-img img{{transition:transform .6s cubic-bezier(.16,1,.3,1)}}.about-img:hover img{{transform:scale(1.04) rotate(.5deg)}}
 .hero-overlay{{position:absolute;inset:0;background:linear-gradient(125deg,rgba(5,5,20,.84) 0%,rgba(5,5,20,.5) 50%,rgba(5,5,20,.3) 100%)}}.hero::after{{content:'';position:absolute;bottom:0;left:0;right:0;height:5px;background:linear-gradient(90deg,var(--p),var(--ps),var(--ac));z-index:3}}
 .hero-glow{{position:absolute;top:-20%;right:-10%;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--p) 40%,transparent),transparent 65%);filter:blur(40px);opacity:.6}}
@@ -894,8 +894,8 @@ a{{text-decoration:none;color:inherit}}
 .hero-badge{{display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);padding:8px 16px;border-radius:50px;font-size:.85rem;margin-bottom:24px;backdrop-filter:blur(4px)}}
 
 /* STATS */
-.stats-section{{background:url('{real_photos[1] if len(real_photos) > 1 else (real_photos[0] if real_photos else about_img)}') center/cover;padding:36px 24px;position:relative;overflow:hidden}}.stats-section::before{{content:'';position:absolute;inset:0;background:rgba(15,23,42,.75);backdrop-filter:blur(2px)}}.stats-section::before{{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 70% 20%,rgba(255,255,255,.12),transparent 55%)}}
-.stats-grid{{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:16px;max-width:1000px;margin:0 auto;text-align:center}}.stat-item{{color:#fff}}.stat-number{{font-size:clamp(1.4rem,2.5vw,2rem);font-weight:800}}.stat-label{{font-size:.82rem;opacity:.75;margin-top:4px;font-weight:500}}
+.stats-section{{background:url('{real_photos[1] if len(real_photos) > 1 else (real_photos[0] if real_photos else about_img)}') center/cover fixed;padding:48px 24px;position:relative;overflow:hidden;filter:none}}.stats-section::before{{content:'';position:absolute;inset:0;background:rgba(10,15,30,.85);backdrop-filter:blur(6px) grayscale(.8) contrast(1.4)}}.stats-section::after{{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,0,0,.1) 25%,transparent 25%,transparent 50%,rgba(0,0,0,.1) 50%,rgba(0,0,0,.1) 75%,transparent 75%);background-size:3px 3px;pointer-events:none;opacity:.4;mix-blend-mode:overlay}}
+.stats-grid{{position:relative;z-index:2;display:grid;grid-template-columns:repeat(4,1fr);gap:16px;max-width:1000px;margin:0 auto;text-align:center}}.stat-item{{color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.5)}}.stat-number{{font-size:clamp(1.4rem,2.5vw,2rem);font-weight:800;text-shadow:0 2px 12px rgba(0,0,0,.6)}}.stat-label{{font-size:.82rem;opacity:.9;margin-top:4px;font-weight:500}}
 
 /* SECTIONS */
 .section{{padding:60px 24px;max-width:1180px;margin:0 auto}}
