@@ -563,6 +563,20 @@ a{{text-decoration:none;color:inherit}}
 @keyframes particleFade{{0%,100%{{opacity:0;transform:translateY(0)}}50%{{opacity:.6;transform:translateY(-20px)}}}}
 @keyframes pinPulse{{0%,100%{{transform:scale(1);opacity:.4}}50%{{transform:scale(1.5);opacity:.8}}}}
 
+/* === MOVING ANIMATIONS === */
+.shooting-star{{position:absolute;width:80px;height:1px;background:linear-gradient(90deg,rgba(0,229,255,.8),transparent);border-radius:50%;opacity:0;animation:shoot 4s ease-in-out infinite}}
+.shooting-star:nth-child(2){{width:60px;animation-duration:5s;animation-delay:1.5s}}
+.shooting-star:nth-child(3){{width:100px;animation-duration:3.5s;animation-delay:3s}}
+.shooting-star:nth-child(4){{width:50px;background:linear-gradient(90deg,rgba(124,58,237,.7),transparent);animation-duration:6s;animation-delay:2s}}
+.floating-orb{{position:absolute;border-radius:50%;opacity:0;animation:floatOrb 8s ease-in-out infinite}}
+.light-trail{{position:absolute;width:2px;height:0;background:linear-gradient(180deg,rgba(0,229,255,.6),transparent);animation:trailMove 6s linear infinite;opacity:0}}
+.pulse-ring{{position:absolute;border-radius:50%;border:1px solid rgba(0,229,255,.2);animation:pulseExpand 4s ease-out infinite;opacity:0}}
+@keyframes shoot{{0%{{transform:translateX(-100px) translateY(0);opacity:0}}10%{{opacity:1}}90%{{opacity:1}}100%{{transform:translateX(calc(100vw + 100px)) translateY(150px);opacity:0}}}}
+@keyframes floatOrb{{0%,100%{{opacity:0;transform:translate(0,0) scale(.8)}}20%{{opacity:.6}}50%{{opacity:.8;transform:translate(30px,-40px) scale(1.2)}}80%{{opacity:.4}}}}
+@keyframes trailMove{{0%{{height:0;opacity:0;transform:translateY(-50px)}}15%{{opacity:.7;height:60px}}85%{{opacity:.5;height:40px}}100%{{opacity:0;height:0;transform:translateY(calc(100vh + 50px))}}}}
+@keyframes pulseExpand{{0%{{transform:scale(0);opacity:.6}}50%{{opacity:.3}}100%{{transform:scale(3);opacity:0}}}}
+@keyframes waveFloat{{0%,100%{{transform:translateX(0) scaleY(1)}}50%{{transform:translateX(20px) scaleY(1.1)}}}}
+
 /* === GLASS CARDS === */
 .glass{{background:rgba(255,255,255,.03);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.06);border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,.3)}}
 .glass-hover{{transition:all .35s cubic-bezier(.4,0,.2,1)}}.glass-hover:hover{{border-color:rgba(0,229,255,.15);transform:translateY(-4px);box-shadow:0 16px 48px rgba(0,229,255,.06)}}
@@ -702,6 +716,26 @@ a{{text-decoration:none;color:inherit}}
 <div class="pin" style="top:82%;left:70%;animation-delay:2.8s"></div>
 <div class="pin" style="top:25%;left:55%;animation-delay:0.5s"></div>
 </div>
+<!-- Shooting Stars -->
+<div class="shooting-star" style="top:12%;left:-80px;transform:rotate(15deg)"></div>
+<div class="shooting-star" style="top:35%;left:-60px;transform:rotate(8deg)"></div>
+<div class="shooting-star" style="top:58%;left:-100px;transform:rotate(20deg)"></div>
+<div class="shooting-star" style="top:78%;left:-50px;transform:rotate(5deg)"></div>
+<!-- Floating Orbs -->
+<div class="floating-orb" style="top:20%;left:30%;width:12px;height:12px;background:radial-gradient(circle,rgba(0,229,255,.4),transparent);animation-delay:0s"></div>
+<div class="floating-orb" style="top:50%;left:70%;width:8px;height:8px;background:radial-gradient(circle,rgba(124,58,237,.5),transparent);animation-delay:2s"></div>
+<div class="floating-orb" style="top:70%;left:20%;width:10px;height:10px;background:radial-gradient(circle,rgba(6,182,212,.4),transparent);animation-delay:4s"></div>
+<div class="floating-orb" style="top:35%;left:85%;width:6px;height:6px;background:radial-gradient(circle,rgba(0,229,255,.5),transparent);animation-delay:1s"></div>
+<div class="floating-orb" style="top:85%;left:55%;width:14px;height:14px;background:radial-gradient(circle,rgba(124,58,237,.3),transparent);animation-delay:3s"></div>
+<!-- Light Trails -->
+<div class="light-trail" style="left:25%;animation-delay:0s"></div>
+<div class="light-trail" style="left:55%;animation-delay:2s;background:linear-gradient(180deg,rgba(124,58,237,.5),transparent)"></div>
+<div class="light-trail" style="left:80%;animation-delay:4s"></div>
+<div class="light-trail" style="left:40%;animation-delay:1.5s;background:linear-gradient(180deg,rgba(6,182,212,.4),transparent)"></div>
+<!-- Pulse Rings -->
+<div class="pulse-ring" style="top:30%;left:45%;width:30px;height:30px;animation-delay:0s"></div>
+<div class="pulse-ring" style="top:60%;left:75%;width:20px;height:20px;animation-delay:2s;border-color:rgba(124,58,237,.2)"></div>
+<div class="pulse-ring" style="top:80%;left:25%;width:25px;height:25px;animation-delay:4s"></div>
 </div>
 
 <!-- Content -->
