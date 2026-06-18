@@ -708,7 +708,7 @@ a{{text-decoration:none;color:inherit}}
 
 <div class="badge"><span class="dot"></span>{count}+ businesses already online</div>
 <h1>Your Business Website Is <span>Ready</span></h1>
-<p style="font-size:.95rem;color:#94a3b8;margin-bottom:16px">Find and Create your website free</p>
+<p style="font-size:.95rem;color:#94a3b8;margin-bottom:16px">Find Or Create Your Website Free</p>
 <img src="/static/images/hero-banner.png" alt="City Maps - Create Free Websites" style="max-width:320px;border-radius:10px;margin-bottom:20px">
 
 <div class="search-box" style="max-width:560px;margin:20px auto 0;padding:14px 16px;border-radius:16px;background:rgba(255,255,255,.04);border:1.5px solid rgba(0,229,255,.15);box-shadow:0 12px 40px rgba(0,229,255,.1),inset 0 1px 0 rgba(255,255,255,.05);backdrop-filter:blur(12px)">
