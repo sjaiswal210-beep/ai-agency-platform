@@ -366,7 +366,7 @@ async function generateVideo(){{
 
 @router.get("/{website_id}/ai-video", response_class=HTMLResponse)
 def ai_video_page(website_id: str):
-    """Video Creator - generates 20-sec video with script and branding."""
+    """Video Creator page."""
     service = WebsiteService()
     lead_service = LeadService()
     website = service.get(website_id)
@@ -376,125 +376,92 @@ def ai_video_page(website_id: str):
     business_name = lead.get("business_name", "Business") if lead else "Business"
     category = lead.get("category", "business") if lead else "business"
 
-    html = f"""<!DOCTYPE html><html><head>
+    html = f'''<!DOCTYPE html><html><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <title>{business_name} - Video Creator</title>
 <style>
-*{{margin:0;padding:0;box-sizing:border-box}}input,select,textarea{{font-size:16px!important}}
+*{{margin:0;padding:0;box-sizing:border-box}}
 body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:16px;max-width:500px;margin:0 auto}}
+input,select,textarea{{font-size:16px!important}}
 h1{{font-size:1.1rem;font-weight:800;text-align:center;margin-bottom:4px}}
 .sub{{font-size:.72rem;color:#64748b;text-align:center;margin-bottom:20px}}
 .card{{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:16px;margin-bottom:12px}}
 .card h2{{font-size:.82rem;font-weight:700;margin-bottom:8px}}
 .card p{{font-size:.7rem;color:#64748b;margin-bottom:10px}}
-textarea,.text-input{{width:100%;padding:10px;border:1px solid #334155;border-radius:8px;background:#0f172a;color:#fff;font-size:.8rem;outline:none}}
-textarea{{resize:none;min-height:150px}}
-.gen-btn{{width:100%;padding:14px;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border:none;border-radius:10px;font-weight:700;font-size:.88rem;cursor:pointer;margin-top:12px}}
-.gen-btn:disabled{{opacity:.5;cursor:not-allowed}}
-.script-btn{{width:100%;padding:10px;background:#334155;color:#fff;border:none;border-radius:8px;font-weight:600;font-size:.8rem;cursor:pointer;margin-bottom:10px}}
-.script-btn:hover{{background:#475569}}
-.status{{text-align:center;padding:16px;font-size:.78rem;color:#94a3b8}}
-.result{{text-align:center;margin-top:12px}}
-.result video{{width:100%;border-radius:10px;margin-bottom:10px}}
-.dl-btn{{display:inline-block;padding:10px 20px;background:#22c55e;color:#fff;border-radius:8px;font-weight:700;font-size:.8rem;text-decoration:none}}
-.script-preview{{background:#0f172a;border:1px solid #334155;border-radius:8px;padding:10px;margin-top:10px;font-size:.68rem;color:#94a3b8;white-space:pre-wrap;display:none;max-height:120px;overflow-y:auto}}
+textarea{{width:100%;padding:10px;border:1px solid #334155;border-radius:8px;background:#0f172a;color:#fff;font-size:14px;outline:none;resize:none;min-height:140px}}
+.text-input{{width:100%;padding:10px;border:1px solid #334155;border-radius:8px;background:#0f172a;color:#fff;font-size:14px;outline:none}}
+.btn{{width:100%;padding:12px;border:none;border-radius:10px;font-weight:700;font-size:.85rem;cursor:pointer;margin-top:8px}}
+.btn-purple{{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff}}
+.btn-green{{background:#22c55e;color:#fff}}
+.btn:disabled{{opacity:.5;cursor:not-allowed}}
 .note{{font-size:.6rem;color:#475569;text-align:center;margin-top:12px}}
 </style></head><body>
 <h1>&#127916; Video Creator</h1>
-<p class="sub">{business_name} - Create a 30-second promotional video</p>
+<p class="sub">{business_name}</p>
 
 <div class="card">
 <h2>Step 1: Video Script</h2>
-<p>Add keywords or a brief idea. We will generate a full 4-scene script for your video.</p>
-<textarea id="blurb" placeholder="Type keywords (e.g., festive sale, grand opening) and click Generate Script. Or write your own scenes here."></textarea>
-<button class="script-btn" id="scriptBtn" onclick="generateScript()">&#9998; Generate Video Script</button>
-
+<p>Type keywords then tap Generate Script. Edit the scenes before creating video.</p>
+<textarea id="blurb" placeholder="Type keywords like: festive sale, new arrivals, grand opening..."></textarea>
+<button class="btn btn-purple" id="scriptBtn" onclick="genScript()">Generate Script</button>
 </div>
 
 <div class="card">
 <h2>Step 2: Text on Video</h2>
-<p>This text will appear on your video along with your business name.</p>
-<input type="text" class="text-input" id="customText" placeholder="e.g., 50% OFF This Week! | Call Now" maxlength="60">
-<p style="margin-top:6px;font-size:.6rem;color:#475569">Business name &amp; website will be added automatically</p>
+<input type="text" class="text-input" id="customText" placeholder="Custom text: 50% OFF! | Free Delivery" maxlength="60">
+<p style="margin-top:6px;font-size:.6rem;color:#475569">Business name added automatically</p>
 </div>
 
-<button class="gen-btn" id="genBtn" onclick="generateVideo()" disabled>&#127916; Generate 30-sec Video</button>
-
-<div id="status" class="status" style="display:none"></div>
-<div id="result" class="result" style="display:none"></div>
-
-<p class="note">Creates a 20-second video (4 scenes x 5 sec). May take 4-6 minutes.</p>
+<button class="btn btn-green" id="genBtn" onclick="genVideo()">Generate 30-sec Video</button>
+<p class="note">Creates 6 scenes. Takes 4-6 minutes.</p>
 
 <script>
-var generatedScript = '';
+var ws_id="{website_id}";
+var biz_name="{business_name}";
+var biz_cat="{category}";
 
-async function generateScript(){{
-  var blurb = document.getElementById('blurb').value.trim();
-  if(!blurb) blurb = '{category} business promotional video';
-  var btn = document.getElementById('scriptBtn');
-  
-  btn.disabled = true; btn.textContent = 'Generating script...';
-  document.getElementById('blurb').value = 'Generating 6 scenes... please wait (10-20 sec)';
-  document.getElementById('blurb').style.opacity = '0.6';
-  try{{
-    var r = await fetch('/api/video/{website_id}/generate-script', {{
-      method: 'POST',
-      headers: {{'Content-Type': 'application/json'}},
-      body: JSON.stringify({{blurb: blurb, business_name: '{business_name}', category: '{category}'}})
-    }});
-    var data = await r.json();
-    if(data.script){{
-      generatedScript = data.script.join(String.fromCharCode(10));
-      document.getElementById('blurb').style.opacity = '1';document.getElementById('blurb').value = data.script.map(function(s,i){{return 'Scene '+(i+1)+': '+s}}).join(String.fromCharCode(10));
-      document.getElementById('genBtn').disabled = false;
-    }}
-  }}catch(e){{
-    document.getElementById('blurb').style.opacity = '1';document.getElementById('blurb').value = 'Failed to generate. Type your own scenes.';
-  }}
-  btn.disabled = false; btn.textContent = '\u270e Generate Video Script';
+function genScript(){{
+  var b=document.getElementById("blurb");
+  var btn=document.getElementById("scriptBtn");
+  var kw=b.value.trim()||biz_cat;
+  btn.disabled=true;btn.textContent="Generating...";
+  b.value="Generating 6 scenes...";b.style.opacity="0.5";
+  fetch("/api/video/"+ws_id+"/generate-script",{{method:"POST",headers:{{"Content-Type":"application/json"}},body:JSON.stringify({{blurb:kw,business_name:biz_name,category:biz_cat}})}}).then(function(r){{return r.json()}}).then(function(d){{
+    b.style.opacity="1";
+    if(d.script){{b.value=d.script.map(function(s,i){{return"Scene "+(i+1)+": "+s}}).join("\n\n");}}
+    else{{b.value="Could not generate. Write your own scenes.";}}
+    btn.disabled=false;btn.textContent="Generate Script";
+  }}).catch(function(){{
+    b.style.opacity="1";b.value="Error. Try again or write your own.";
+    btn.disabled=false;btn.textContent="Generate Script";
+  }});
 }}
 
-async function generateVideo(){{
-  var btn = document.getElementById('genBtn');
-  var status = document.getElementById('status');
-  var result = document.getElementById('result');
-  var customText = document.getElementById('customText').value.trim();
-  btn.disabled = true; btn.textContent = 'Creating video...';
-  status.style.display = 'none';
-  var popup = document.createElement('div');
-  popup.id='genPopup';
-  popup.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:9999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px)';
-  popup.innerHTML='<div style="background:#1e293b;border:1px solid #334155;border-radius:16px;padding:28px;text-align:center;max-width:300px;width:90%"><div style="width:40px;height:40px;border:3px solid rgba(99,102,241,.2);border-top:3px solid #6366f1;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 14px"></div><p style="font-size:.85rem;font-weight:700;color:#fff;margin-bottom:6px">Generating Video</p><p id="genMsg" style="font-size:.7rem;color:#94a3b8">Creating 6 scenes... (4-6 min)</p><style>@keyframes spin{{to{{transform:rotate(360deg)}}}}</style></div>';
-  document.body.appendChild(popup);
-  result.style.display='none';
-  try{{
-    var r = await fetch('/api/video/{website_id}/generate-free', {{
-      method: 'POST',
-      headers: {{'Content-Type': 'application/json'}},
-      body: JSON.stringify({{prompt: generatedScript || document.getElementById('blurb').value, custom_text: customText}})
-    }});
-    var data = await r.json();
-    if(data.status === 'completed'){{
-      result.style.display = 'block';
-      var bname=data.business_name||'';var surl=data.site_url||'';var ctxt=data.custom_text||'';
-      var gp=document.getElementById('genPopup');
-      if(data.video_url){{
-        if(gp)gp.innerHTML='<div style="background:#1e293b;border:1px solid #334155;border-radius:16px;padding:16px;max-width:400px;width:92%;max-height:90vh;overflow-y:auto;position:relative"><button onclick="this.parentNode.parentNode.remove()" style="position:absolute;top:8px;right:12px;background:none;border:none;color:#94a3b8;font-size:1.2rem;cursor:pointer">&times;</button><p style="font-size:.85rem;font-weight:700;color:#fff;text-align:center;margin-bottom:10px">Video Ready!</p><video src="'+data.video_url+'" controls autoplay playsinline style="width:100%;border-radius:10px;margin-bottom:10px"></video><p style="font-size:.68rem;color:#94a3b8;text-align:center;margin-bottom:10px">'+(data.total_duration||'20 sec')+' | '+(data.total_clips||4)+' scenes</p><a href="'+data.video_url+'" download style="display:block;text-align:center;padding:12px;background:#22c55e;border-radius:10px;color:#fff;font-weight:700;font-size:.85rem;text-decoration:none">Download Video</a></div>';
-      }}else if(data.clips && data.clips.length > 0){{var clips=data.clips;
-        if(gp)gp.innerHTML='<div style="background:#1e293b;border:1px solid #334155;border-radius:16px;padding:16px;max-width:400px;width:92%;max-height:90vh;overflow-y:auto;position:relative"><button onclick="this.parentNode.parentNode.remove()" style="position:absolute;top:8px;right:12px;background:none;border:none;color:#94a3b8;font-size:1.2rem;cursor:pointer">&times;</button><p style="font-size:.85rem;font-weight:700;color:#fff;text-align:center;margin-bottom:10px">Video Clips Ready!</p><video id="mainVid" src="'+clips[0]+'" controls autoplay playsinline style="width:100%;border-radius:10px;margin-bottom:8px"></video><p id="clipStatus" style="font-size:.68rem;color:#94a3b8;text-align:center;margin-bottom:8px">Clip 1/'+clips.length+'</p><div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center">'+clips.map(function(u,i){{return\'<a href="\'+u+\'" download style="padding:5px 10px;background:#334155;border-radius:6px;color:#00e5ff;font-size:.65rem;text-decoration:none">Clip \'+(i+1)+\'</a>\'}}).join('')+'</div></div>';
-      
-      status.style.display = 'none';
-    }}else if(data.status === 'loading' || data.status === 'timeout'){{var gp2=document.getElementById('genPopup');if(gp2)gp2.remove();
-      status.innerHTML = '<p>&#9203; '+(data.message||'Model is loading. Try again in 2 min.')+'</p>';
+function genVideo(){{
+  var btn=document.getElementById("genBtn");
+  var ct=document.getElementById("customText").value.trim();
+  var prompt=document.getElementById("blurb").value.trim();
+  if(!prompt){{alert("Add a script first");return;}}
+  btn.disabled=true;btn.textContent="Generating...";
+  var ov=document.createElement("div");ov.id="vidOverlay";
+  ov.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px";
+  ov.innerHTML="<div style=\"background:#1e293b;border-radius:16px;padding:24px;text-align:center;max-width:300px;width:90%\"><div style=\"width:36px;height:36px;border:3px solid rgba(99,102,241,.2);border-top:3px solid #6366f1;border-radius:50%;animation:sp 1s linear infinite;margin:0 auto 12px\"></div><p style=\"font-size:.85rem;font-weight:700;color:#fff\">Generating Video</p><p style=\"font-size:.7rem;color:#94a3b8;margin-top:6px\">Creating 6 scenes (4-6 min)</p><style>@keyframes sp{{to{{transform:rotate(360deg)}}}}</style></div>";
+  document.body.appendChild(ov);
+  fetch("/api/video/"+ws_id+"/generate-free",{{method:"POST",headers:{{"Content-Type":"application/json"}},body:JSON.stringify({{prompt:prompt,custom_text:ct}})}}).then(function(r){{return r.json()}}).then(function(d){{
+    var ov2=document.getElementById("vidOverlay");
+    if(d.status==="completed"&&(d.video_url||d.clips)){{
+      var vurl=d.video_url||(d.clips&&d.clips[0])||"";
+      ov2.innerHTML="<div style=\"background:#1e293b;border-radius:16px;padding:16px;max-width:380px;width:92%;text-align:center;position:relative\"><button onclick=\"this.parentNode.parentNode.remove()\" style=\"position:absolute;top:8px;right:12px;background:none;border:none;color:#94a3b8;font-size:1.2rem;cursor:pointer\">&times;</button><p style=\"font-size:.9rem;font-weight:700;color:#fff;margin:8px 0 10px\">Video Ready!</p><video src=\""+vurl+"\" controls autoplay playsinline style=\"width:100%;border-radius:10px;margin-bottom:10px\"></video><a href=\""+vurl+"\" download style=\"display:block;padding:12px;background:#22c55e;border-radius:10px;color:#fff;font-weight:700;text-decoration:none\">Download Video</a></div>";
     }}else{{
-      var gp3=document.getElementById('genPopup');if(gp3)gp3.remove();status.style.display='block';status.innerHTML = '<p style="color:#ef4444">'+(data.message||data.detail||'Generation failed. Try again.')+'</p>';
+      ov2.innerHTML="<div style=\"background:#1e293b;border-radius:16px;padding:20px;max-width:280px;width:90%;text-align:center\"><p style=\"color:#ef4444;font-weight:600\">Failed</p><p style=\"font-size:.72rem;color:#94a3b8;margin:8px 0\">"+(d.message||"Try again")+"</p><button onclick=\"this.parentNode.parentNode.remove()\" style=\"padding:8px 16px;background:#334155;border:none;border-radius:8px;color:#fff;cursor:pointer\">Close</button></div>";
     }}
-  }}catch(e){{
-    status.innerHTML = '<p style="color:#ef4444">Error: '+e.message+'</p>';
-  }}
-  btn.disabled = false; btn.textContent = '\U0001f3ac Generate 30-sec Video';
+    btn.disabled=false;btn.textContent="Generate 30-sec Video";
+  }}).catch(function(e){{
+    var ov3=document.getElementById("vidOverlay");
+    if(ov3)ov3.innerHTML="<div style=\"background:#1e293b;border-radius:16px;padding:20px;max-width:280px;width:90%;text-align:center\"><p style=\"color:#ef4444\">Error</p><button onclick=\"this.parentNode.parentNode.remove()\" style=\"margin-top:10px;padding:8px 16px;background:#334155;border:none;border-radius:8px;color:#fff;cursor:pointer\">Close</button></div>";
+    btn.disabled=false;btn.textContent="Generate 30-sec Video";
+  }});
 }}
 </script>
-</body></html>"""
+</body></html>'''
     return HTMLResponse(content=html)
-
