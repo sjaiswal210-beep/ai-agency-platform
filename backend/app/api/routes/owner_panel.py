@@ -550,7 +550,12 @@ textarea{{width:100%;padding:10px;border:1px solid #334155;border-radius:8px;bac
 </div>
 </div>
 
-<button class="gen-btn" id="genBtn" onclick="generateVideo()">&#127916; Generate AI Video (Free)</button>
+<div class="card">
+<h2>Custom Text on Video (optional)</h2>
+<input type="text" class="text-input" id="customText" placeholder="e.g., 50% OFF This Week! or your tagline..." maxlength="60" style="width:100%;padding:10px;border:1px solid #334155;border-radius:8px;background:#0f172a;color:#fff;font-size:.8rem">
+</div>
+
+<button class="gen-btn" id="genBtn" onclick="generateVideo()">&#127916; Generate 20-sec AI Video (Free)</button>
 
 <div id="status" class="status" style="display:none"></div>
 <div id="result" class="result" style="display:none"></div>
@@ -566,14 +571,14 @@ async function generateVideo(){{
   var status=document.getElementById('status');
   var result=document.getElementById('result');
   btn.disabled=true;btn.textContent='Generating...';
-  status.style.display='block';status.innerHTML='<div style="margin:12px auto;width:30px;height:30px;border:3px solid rgba(99,102,241,.2);border-top:3px solid #6366f1;border-radius:50%;animation:spin 1s linear infinite"></div><p>Creating your video with AI...</p><p style="font-size:.65rem;margin-top:4px">This may take 1-3 minutes</p><style>@keyframes spin{{to{{transform:rotate(360deg)}}}}</style>';
+  status.style.display='block';status.innerHTML='<div style="margin:12px auto;width:30px;height:30px;border:3px solid rgba(99,102,241,.2);border-top:3px solid #6366f1;border-radius:50%;animation:spin 1s linear infinite"></div><p>Creating 4 scenes (20 sec total)...</p><p style="font-size:.65rem;margin-top:4px">Generating script + 4 clips. May take 3-5 min</p><style>@keyframes spin{{to{{transform:rotate(360deg)}}}}</style>';
   result.style.display='none';
   try{{
     var r=await fetch('/api/video/{website_id}/generate-free',{{method:'POST',headers:{{'Content-Type':'application/json'}},body:JSON.stringify({{prompt:prompt}})}});
     var data=await r.json();
     if(data.status==='completed'&&data.video_url){{
       result.style.display='block';
-      result.innerHTML='<video src="'+data.video_url+'" controls autoplay playsinline style="width:100%;border-radius:10px;margin-bottom:10px"></video><a href="'+data.video_url+'" download class="dl-btn">Download Video</a><p style="font-size:.65rem;color:#64748b;margin-top:8px">Source: '+(data.source||'AI')+'</p>';
+      result.innerHTML='<video src="'+data.video_url+'" controls autoplay playsinline style="width:100%;border-radius:10px;margin-bottom:10px"></video><a href="'+data.video_url+'" download class="dl-btn">Download Video</a><p style="font-size:.65rem;color:#64748b;margin-top:8px">'+(data.total_duration||'20 seconds')+' | '+(data.clips_generated||4)+' scenes | Source: '+(data.source||'AI')+'</p>';
       status.style.display='none';
     }}else if(data.status==='loading'){{
       status.innerHTML='<p>&#9203; '+data.message+'</p>';
