@@ -526,7 +526,7 @@ h1{{font-size:1.1rem;font-weight:800;text-align:center;margin-bottom:4px}}
 .card h2{{font-size:.82rem;font-weight:700;margin-bottom:8px}}
 .card p{{font-size:.7rem;color:#64748b;margin-bottom:10px}}
 textarea,.text-input{{width:100%;padding:10px;border:1px solid #334155;border-radius:8px;background:#0f172a;color:#fff;font-size:.8rem;outline:none}}
-textarea{{resize:none;min-height:100px}}
+textarea{{resize:none;min-height:150px}}
 .gen-btn{{width:100%;padding:14px;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border:none;border-radius:10px;font-weight:700;font-size:.88rem;cursor:pointer;margin-top:12px}}
 .gen-btn:disabled{{opacity:.5;cursor:not-allowed}}
 .script-btn{{width:100%;padding:10px;background:#334155;color:#fff;border:none;border-radius:8px;font-weight:600;font-size:.8rem;cursor:pointer;margin-bottom:10px}}
@@ -544,9 +544,9 @@ textarea{{resize:none;min-height:100px}}
 <div class="card">
 <h2>Step 1: Video Script</h2>
 <p>Add keywords or a brief idea. We will generate a full 4-scene script for your video.</p>
-<textarea id="blurb" placeholder="e.g., festive sale, new collection arrived, grand opening, best services in town..."></textarea>
+<textarea id="blurb" placeholder="Type keywords (e.g., festive sale, grand opening) and click Generate Script. Or write your own scenes here."></textarea>
 <button class="script-btn" id="scriptBtn" onclick="generateScript()">&#9998; Generate Video Script</button>
-<div class="script-preview" id="scriptPreview"></div>
+
 </div>
 
 <div class="card">
@@ -570,9 +570,9 @@ async function generateScript(){{
   var blurb = document.getElementById('blurb').value.trim();
   if(!blurb) blurb = '{category} business promotional video';
   var btn = document.getElementById('scriptBtn');
-  var preview = document.getElementById('scriptPreview');
+  
   btn.disabled = true; btn.textContent = 'Generating script...';
-  preview.style.display = 'none';
+  
   try{{
     var r = await fetch('/api/video/{website_id}/generate-script', {{
       method: 'POST',
@@ -582,13 +582,11 @@ async function generateScript(){{
     var data = await r.json();
     if(data.script){{
       generatedScript = data.script.join(String.fromCharCode(10));
-      preview.style.display = 'block';
-      preview.innerHTML = '<b style="color:#fff;font-size:.75rem">Video Script (6 scenes):</b><br><br>' + data.script.map(function(s,i){{return '<b style="color:#00e5ff">Scene '+(i+1)+':</b> '+s}}).join('<br><br>');
+      document.getElementById('blurb').value = data.script.map(function(s,i){{return 'Scene '+(i+1)+': '+s}}).join(String.fromCharCode(10));
       document.getElementById('genBtn').disabled = false;
     }}
   }}catch(e){{
-    preview.style.display = 'block';
-    preview.textContent = 'Failed to generate script. Try again.';
+    document.getElementById('blurb').value = 'Failed to generate. Type your own scenes.';
   }}
   btn.disabled = false; btn.textContent = '\u270e Generate Video Script';
 }}
