@@ -405,6 +405,47 @@ class HFVideoRequest(BaseModel):
     custom_text: str = ""
 
 
+
+class ScriptRequest(BaseModel):
+    blurb: str = ""
+    business_name: str = "Business"
+    category: str = "business"
+
+
+@router.post("/{website_id}/generate-script")
+async def generate_video_script(website_id: str, req: ScriptRequest):
+    """Generate a 4-scene video script from a blurb/keywords."""
+    import json as _json
+    
+    prompt = f"""Create a 4-scene video script for a 20-second promotional video.
+Business: {req.business_name}, Category: {req.category}
+Theme/Keywords: {req.blurb if req.blurb else req.category + ' business promotional'}
+
+Each scene is 5 seconds. Write vivid, cinematic visual descriptions.
+Focus on what the CAMERA sees - colors, movement, angles, people, products.
+
+Return ONLY a JSON array of 4 scene descriptions:
+["Scene 1 visual description", "Scene 2...", "Scene 3...", "Scene 4..."]"""
+
+    try:
+        result = await chat_completion([{"role": "user", "content": prompt}])
+        cleaned = result.strip()
+        if "```json" in cleaned:
+            cleaned = cleaned.split("```json")[1].split("```")[0].strip()
+        elif "```" in cleaned:
+            cleaned = cleaned.split("```")[1].split("```")[0].strip()
+        scenes = _json.loads(cleaned)
+        return {"script": scenes[:4]}
+    except Exception:
+        # Fallback script
+        return {"script": [
+            f"Wide shot of {req.business_name} exterior, welcoming entrance, golden hour lighting",
+            f"Interior of {req.business_name}, modern setup, customers browsing, warm atmosphere",
+            f"Close-up of key products/services, professional quality, vibrant colors",
+            f"Happy customers at {req.business_name}, smiles, satisfaction, business card visible"
+        ]}
+
+
 @router.post("/{website_id}/generate-free")
 async def generate_free_video(website_id: str, req: HFVideoRequest):
     """Generate a 20-sec AI video (4 x 5-sec clips) with script, branding, and custom text."""
