@@ -605,7 +605,7 @@ async function generateVideo(){{
   popup.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:9999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px)';
   popup.innerHTML='<div style="background:#1e293b;border:1px solid #334155;border-radius:16px;padding:28px;text-align:center;max-width:300px;width:90%"><div style="width:40px;height:40px;border:3px solid rgba(99,102,241,.2);border-top:3px solid #6366f1;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 14px"></div><p style="font-size:.85rem;font-weight:700;color:#fff;margin-bottom:6px">Generating Video</p><p id="genMsg" style="font-size:.7rem;color:#94a3b8">Creating 4 scenes... (3-5 min)</p><style>@keyframes spin{{to{{transform:rotate(360deg)}}}}</style></div>';
   document.body.appendChild(popup);
-  result.style.display = 'none';
+  result.style.display='none';
   try{{
     var r = await fetch('/api/video/{website_id}/generate-free', {{
       method: 'POST',
@@ -616,10 +616,11 @@ async function generateVideo(){{
     if(data.status === 'completed'){{
       result.style.display = 'block';
       var bname=data.business_name||'';var surl=data.site_url||'';var ctxt=data.custom_text||'';
-      var gp=document.getElementById('genPopup');if(gp)gp.remove();
+      var gp=document.getElementById('genPopup');
       if(data.video_url){{
-        result.innerHTML='<div style="position:relative;width:100%;border-radius:10px;overflow:hidden;margin-bottom:10px"><video src="'+data.video_url+'" controls autoplay playsinline style="width:100%;display:block;border-radius:10px"></video></div><p style="font-size:.72rem;color:#94a3b8;text-align:center;margin:8px 0">'+(data.total_duration||'20 seconds')+' | '+(data.total_clips||4)+' scenes stitched</p><a href="'+data.video_url+'" download style="display:block;text-align:center;padding:10px 20px;background:#22c55e;border-radius:8px;color:#fff;font-weight:700;font-size:.8rem;text-decoration:none;max-width:200px;margin:0 auto">Download Video</a>';
+        if(gp)gp.innerHTML='<div style="background:#1e293b;border:1px solid #334155;border-radius:16px;padding:16px;max-width:400px;width:92%;max-height:90vh;overflow-y:auto;position:relative"><button onclick="document.getElementById(\'genPopup\').remove()" style="position:absolute;top:8px;right:12px;background:none;border:none;color:#94a3b8;font-size:1.2rem;cursor:pointer">&times;</button><p style="font-size:.85rem;font-weight:700;color:#fff;text-align:center;margin-bottom:10px">Video Ready!</p><video src="'+data.video_url+'" controls autoplay playsinline style="width:100%;border-radius:10px;margin-bottom:10px"></video><p style="font-size:.68rem;color:#94a3b8;text-align:center;margin-bottom:10px">'+(data.total_duration||'20 sec')+' | '+(data.total_clips||4)+' scenes</p><a href="'+data.video_url+'" download style="display:block;text-align:center;padding:12px;background:#22c55e;border-radius:10px;color:#fff;font-weight:700;font-size:.85rem;text-decoration:none">Download Video</a></div>';
       }}else if(data.clips && data.clips.length > 0){{var clips=data.clips;
+        if(gp)gp.innerHTML='<div style="background:#1e293b;border:1px solid #334155;border-radius:16px;padding:16px;max-width:400px;width:92%;max-height:90vh;overflow-y:auto;position:relative"><button onclick="document.getElementById(\'genPopup\').remove()" style="position:absolute;top:8px;right:12px;background:none;border:none;color:#94a3b8;font-size:1.2rem;cursor:pointer">&times;</button><p style="font-size:.85rem;font-weight:700;color:#fff;text-align:center;margin-bottom:10px">Video Clips Ready!</p><video id="mainVid" src="'+clips[0]+'" controls autoplay playsinline style="width:100%;border-radius:10px;margin-bottom:8px"></video><p id="clipStatus" style="font-size:.68rem;color:#94a3b8;text-align:center;margin-bottom:8px">Clip 1/'+clips.length+'</p><div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center">'+clips.map(function(u,i){{return\'<a href="\'+u+\'" download style="padding:5px 10px;background:#334155;border-radius:6px;color:#00e5ff;font-size:.65rem;text-decoration:none">Clip \'+(i+1)+\'</a>\'}}).join('')+'</div></div>';
       var gp=document.getElementById('genPopup');if(gp)gp.remove();
       var vh='<div style="position:relative;width:100%;border-radius:10px;overflow:hidden;margin-bottom:10px;background:#000">';
       vh+='<video id="mainVid" playsinline autoplay style="width:100%;display:block;border-radius:10px"></video>';
