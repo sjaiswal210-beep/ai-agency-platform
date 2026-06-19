@@ -32,7 +32,7 @@ def owner_panel(website_id: str):
     except Exception:
         views = calls = wa = 0
 
-    html = f'''<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+    html = f'''<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <title>{business_name} - Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -118,14 +118,14 @@ async function saveGallery(){{var urls=document.getElementById("galUrls").value.
 @router.get("/{website_id}/social-links", response_class=HTMLResponse)
 def social_links_page(website_id: str):
     """Social links editor page."""
-    html = f'''<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Social Links</title><style>*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:20px;max-width:400px;margin:0 auto}}h2{{font-size:1rem;margin-bottom:16px}}input{{width:100%;padding:10px;border:1px solid #334155;border-radius:8px;background:#1e293b;color:#fff;font-size:.8rem;margin-bottom:10px;outline:none}}button{{width:100%;padding:12px;background:#6366f1;color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:.85rem}}</style></head><body><h2>Social Media Links</h2><input id="instaUrl" placeholder="Instagram URL"><input id="fbUrl" placeholder="Facebook URL"><input id="ytUrl" placeholder="YouTube URL"><button onclick="save()">Save Links</button><p id="msg" style="margin-top:10px;font-size:.75rem;color:#22c55e"></p><script>async function save(){{try{{await fetch("/api/panel/{website_id}/social-links",{{method:"POST",headers:{{"Content-Type":"application/json"}},body:JSON.stringify({{instagram:document.getElementById("instaUrl").value,facebook:document.getElementById("fbUrl").value,youtube:document.getElementById("ytUrl").value}})}});document.getElementById("msg").textContent="Saved!"}}catch{{alert("Failed")}}}}</script></body></html>'''
+    html = f'''<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"><title>Social Links</title><style>*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:20px;max-width:400px;margin:0 auto}}h2{{font-size:1rem;margin-bottom:16px}}input{{width:100%;padding:10px;border:1px solid #334155;border-radius:8px;background:#1e293b;color:#fff;font-size:.8rem;margin-bottom:10px;outline:none}}button{{width:100%;padding:12px;background:#6366f1;color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:.85rem}}</style></head><body><h2>Social Media Links</h2><input id="instaUrl" placeholder="Instagram URL"><input id="fbUrl" placeholder="Facebook URL"><input id="ytUrl" placeholder="YouTube URL"><button onclick="save()">Save Links</button><p id="msg" style="margin-top:10px;font-size:.75rem;color:#22c55e"></p><script>async function save(){{try{{await fetch("/api/panel/{website_id}/social-links",{{method:"POST",headers:{{"Content-Type":"application/json"}},body:JSON.stringify({{instagram:document.getElementById("instaUrl").value,facebook:document.getElementById("fbUrl").value,youtube:document.getElementById("ytUrl").value}})}});document.getElementById("msg").textContent="Saved!"}}catch{{alert("Failed")}}}}</script></body></html>'''
     return HTMLResponse(content=html)
 
 
 @router.get("/{website_id}/gallery", response_class=HTMLResponse)
 def gallery_page(website_id: str):
     """Gallery photos editor page."""
-    html = f'''<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Gallery Photos</title><style>*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:20px;max-width:400px;margin:0 auto}}h2{{font-size:1rem;margin-bottom:8px}}p{{font-size:.75rem;color:#64748b;margin-bottom:12px}}textarea{{width:100%;padding:10px;border:1px solid #334155;border-radius:8px;background:#1e293b;color:#fff;font-size:.8rem;min-height:150px;margin-bottom:10px;outline:none;resize:vertical}}button{{width:100%;padding:12px;background:#6366f1;color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:.85rem}}</style></head><body><h2>Gallery Photos</h2><p>Add image URLs (one per line). Use Google Drive or Imgur links.</p><textarea id="galUrls" placeholder="https://drive.google.com/...&#10;https://i.imgur.com/...&#10;https://..."></textarea><button onclick="save()">Save Gallery</button><p id="msg" style="margin-top:10px;font-size:.75rem;color:#22c55e"></p><script>async function save(){{var urls=document.getElementById("galUrls").value.split("\\n").filter(function(u){{return u.trim()}});try{{await fetch("/api/panel/{website_id}/gallery",{{method:"POST",headers:{{"Content-Type":"application/json"}},body:JSON.stringify({{urls:urls}})}});document.getElementById("msg").textContent="Saved! "+urls.length+" photos added."}}catch{{alert("Failed")}}}}</script></body></html>'''
+    html = f'''<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"><title>Gallery Photos</title><style>*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:20px;max-width:400px;margin:0 auto}}h2{{font-size:1rem;margin-bottom:8px}}p{{font-size:.75rem;color:#64748b;margin-bottom:12px}}textarea{{width:100%;padding:10px;border:1px solid #334155;border-radius:8px;background:#1e293b;color:#fff;font-size:.8rem;min-height:150px;margin-bottom:10px;outline:none;resize:vertical}}button{{width:100%;padding:12px;background:#6366f1;color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:.85rem}}</style></head><body><h2>Gallery Photos</h2><p>Add image URLs (one per line). Use Google Drive or Imgur links.</p><textarea id="galUrls" placeholder="https://drive.google.com/...&#10;https://i.imgur.com/...&#10;https://..."></textarea><button onclick="save()">Save Gallery</button><p id="msg" style="margin-top:10px;font-size:.75rem;color:#22c55e"></p><script>async function save(){{var urls=document.getElementById("galUrls").value.split("\\n").filter(function(u){{return u.trim()}});try{{await fetch("/api/panel/{website_id}/gallery",{{method:"POST",headers:{{"Content-Type":"application/json"}},body:JSON.stringify({{urls:urls}})}});document.getElementById("msg").textContent="Saved! "+urls.length+" photos added."}}catch{{alert("Failed")}}}}</script></body></html>'''
     return HTMLResponse(content=html)
 
 @router.post("/{website_id}/social-links")
@@ -172,11 +172,11 @@ def video_creator_page(website_id: str):
     business_name = lead.get("business_name", "Business") if lead else "Business"
 
     html = f'''<!DOCTYPE html><html lang="en"><head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <title>{business_name} - Video Creator</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-*{{margin:0;padding:0;box-sizing:border-box}}
+*{{margin:0;padding:0;box-sizing:border-box}}input,select,textarea{{font-size:16px!important}}
 body{{font-family:Inter,sans-serif;background:#0f172a;color:#fff;padding:16px;max-width:500px;margin:0 auto}}
 .hdr{{text-align:center;padding:16px 0}}.hdr h1{{font-size:1.1rem;font-weight:800}}.hdr p{{font-size:.72rem;color:#64748b;margin-top:4px}}
 .step{{background:#fff;border-radius:14px;padding:18px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.04);border:1px solid #e2e8f0}}
@@ -515,10 +515,10 @@ def ai_video_page(website_id: str):
     category = lead.get("category", "business") if lead else "business"
 
     html = f"""<!DOCTYPE html><html><head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <title>{business_name} - Video Creator</title>
 <style>
-*{{margin:0;padding:0;box-sizing:border-box}}
+*{{margin:0;padding:0;box-sizing:border-box}}input,select,textarea{{font-size:16px!important}}
 body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:16px;max-width:500px;margin:0 auto}}
 h1{{font-size:1.1rem;font-weight:800;text-align:center;margin-bottom:4px}}
 .sub{{font-size:.72rem;color:#64748b;text-align:center;margin-bottom:20px}}

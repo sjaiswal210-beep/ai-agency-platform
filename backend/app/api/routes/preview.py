@@ -410,7 +410,7 @@ MOBILE_CSS = """
 <style>
 .lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:9999;align-items:center;justify-content:center;padding:20px}.lightbox.open{display:flex}.lightbox img{max-width:90%;max-height:80vh;border-radius:12px;object-fit:contain}.lightbox .close{position:absolute;top:16px;right:20px;color:#fff;font-size:2rem;cursor:pointer;background:none;border:none}
 @media(max-width:768px){
-  .nav-links{display:none}
+  input,select,textarea{font-size:16px!important}.nav-links{display:none}
   .nav{padding:12px 16px}
   .nav-cta{display:flex!important;background:rgba(0,0,0,.5)!important;backdrop-filter:blur(8px)!important;box-shadow:0 2px 8px rgba(0,0,0,.2)!important;color:#fff!important;font-size:1rem!important;padding:6px 10px!important;border:1.5px solid rgba(255,255,255,.7)!important;border-radius:8px!important;width:auto!important;height:auto!important;align-items:center!important;justify-content:center!important}
   .hero{min-height:auto;padding-top:60px!important;padding-bottom:24px!important}
