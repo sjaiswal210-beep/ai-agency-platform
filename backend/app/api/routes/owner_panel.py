@@ -613,9 +613,13 @@ async function generateVideo(){{
       body: JSON.stringify({{prompt: generatedScript || document.getElementById('blurb').value, custom_text: customText}})
     }});
     var data = await r.json();
-    if(data.status === 'completed' && data.clips && data.clips.length > 0){{
+    if(data.status === 'completed'){{
       result.style.display = 'block';
-      var clips=data.clips;var bname=data.business_name||'';var surl=data.site_url||'';var ctxt=data.custom_text||'';
+      var bname=data.business_name||'';var surl=data.site_url||'';var ctxt=data.custom_text||'';
+      var gp=document.getElementById('genPopup');if(gp)gp.remove();
+      if(data.video_url){{
+        result.innerHTML='<div style="position:relative;width:100%;border-radius:10px;overflow:hidden;margin-bottom:10px"><video src="'+data.video_url+'" controls autoplay playsinline style="width:100%;display:block;border-radius:10px"></video></div><p style="font-size:.72rem;color:#94a3b8;text-align:center;margin:8px 0">'+(data.total_duration||'20 seconds')+' | '+(data.total_clips||4)+' scenes stitched</p><a href="'+data.video_url+'" download style="display:block;text-align:center;padding:10px 20px;background:#22c55e;border-radius:8px;color:#fff;font-weight:700;font-size:.8rem;text-decoration:none;max-width:200px;margin:0 auto">Download Video</a>';
+      }}else if(data.clips && data.clips.length > 0){{var clips=data.clips;
       var gp=document.getElementById('genPopup');if(gp)gp.remove();
       var vh='<div style="position:relative;width:100%;border-radius:10px;overflow:hidden;margin-bottom:10px;background:#000">';
       vh+='<video id="mainVid" playsinline autoplay style="width:100%;display:block;border-radius:10px"></video>';
@@ -629,7 +633,7 @@ async function generateVideo(){{
       result.innerHTML=vh;
       var vid=document.getElementById('mainVid');var cc=0;
       vid.src=clips[0];
-      vid.onended=function(){{cc++;if(cc<clips.length){{vid.src=clips[cc];vid.play();document.getElementById('clipStatus').textContent='Playing clip '+(cc+1)+'/'+clips.length;}}else{{document.getElementById('clipStatus').innerHTML='<span style="color:#22c55e">All clips played!</span> Download clips above.';}}}};
+      vid.onended=function(){{cc++;if(cc<clips.length){{vid.src=clips[cc];vid.play();document.getElementById('clipStatus').textContent='Playing clip '+(cc+1)+'/'+clips.length;}}else{{document.getElementById('clipStatus').innerHTML='<span style="color:#22c55e">All clips played!</span> Download clips above.';}}}};}}
       status.style.display = 'none';
     }}else if(data.status === 'loading' || data.status === 'timeout'){{var gp2=document.getElementById('genPopup');if(gp2)gp2.remove();
       status.innerHTML = '<p>&#9203; '+(data.message||'Model is loading. Try again in 2 min.')+'</p>';
