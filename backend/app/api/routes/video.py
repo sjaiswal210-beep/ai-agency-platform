@@ -417,7 +417,7 @@ async def generate_video_script(website_id: str, req: ScriptRequest):
     """Generate a 4-scene video script from a blurb/keywords."""
     import json as _json
     
-    prompt = f"""Create a 4-scene video script for a 20-second promotional video.
+    prompt = f"""Create a 6-scene video script for a 30-second promotional video.
 Business: {req.business_name}, Category: {req.category}
 Theme/Keywords: {req.blurb if req.blurb else req.category + ' business promotional'}
 
@@ -435,14 +435,16 @@ Return ONLY a JSON array of 4 scene descriptions:
         elif "```" in cleaned:
             cleaned = cleaned.split("```")[1].split("```")[0].strip()
         scenes = _json.loads(cleaned)
-        return {"script": scenes[:4]}
+        return {"script": scenes[:6]}
     except Exception:
         # Fallback script
         return {"script": [
             f"Wide shot of {req.business_name} exterior, welcoming entrance, golden hour lighting",
             f"Interior of {req.business_name}, modern setup, customers browsing, warm atmosphere",
             f"Close-up of key products/services, professional quality, vibrant colors",
-            f"Happy customers at {req.business_name}, smiles, satisfaction, business card visible"
+            f"Happy customers at {req.business_name}, smiles, satisfaction",
+            f"Team members providing service, professional and friendly",
+            f"Business signage and contact info, inviting viewers to visit"
         ]}
 
 
@@ -470,9 +472,9 @@ async def generate_free_video(website_id: str, req: HFVideoRequest):
     # Generate script if needed
     import json as _json
     if not req.prompt or len(req.prompt) < 50:
-        script_prompt = f"""Create 4 short scene descriptions for a promotional video.
+        script_prompt = f"""Create 6 short scene descriptions for a promotional video.
 Business: {business_name}, Category: {category}, Theme: {req.prompt or category}
-Each scene = 5 seconds. Return ONLY a JSON array: ["scene1","scene2","scene3","scene4"]"""
+Each scene = 5 seconds. Return ONLY a JSON array: ["scene1","scene2","scene3","scene4","scene5","scene6"]"""
         try:
             raw = await chat_completion([{"role": "user", "content": script_prompt}])
             cleaned = raw.strip()
@@ -480,10 +482,10 @@ Each scene = 5 seconds. Return ONLY a JSON array: ["scene1","scene2","scene3","s
             elif "```" in cleaned: cleaned = cleaned.split("```")[1].split("```")[0].strip()
             scenes = _json.loads(cleaned)[:4]
         except Exception:
-            scenes = [f"Exterior of {business_name}", f"Interior with customers", f"Products/services close-up", f"Happy customers"]
+            scenes = [f"Exterior of {business_name}", f"Interior with customers", f"Products/services close-up", f"Happy customers smiling", f"Team at work, professional service", f"Business logo and contact details"]
     else:
         scenes = [s.strip() for s in req.prompt.split(chr(10)) if s.strip()][:4]
-        if len(scenes) < 4: scenes = [req.prompt] * 4
+        if len(scenes) < 6: scenes = (scenes * 6)[:6]
 
     # Generate clips via Replicate
     if not REPLICATE_TOKEN:
@@ -491,7 +493,7 @@ Each scene = 5 seconds. Return ONLY a JSON array: ["scene1","scene2","scene3","s
 
     rep_client = replicate.Client(api_token=REPLICATE_TOKEN)
     clip_urls = []
-    for i, scene in enumerate(scenes[:4]):
+    for i, scene in enumerate(scenes[:6]):
         try:
             output = rep_client.run("lightricks/ltx-2-distilled", input={"prompt": scene})
             url = output.url if hasattr(output, "url") else str(output[0]) if isinstance(output, list) else str(output)

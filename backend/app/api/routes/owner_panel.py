@@ -539,7 +539,7 @@ textarea{{resize:none;min-height:100px}}
 .note{{font-size:.6rem;color:#475569;text-align:center;margin-top:12px}}
 </style></head><body>
 <h1>&#127916; Video Creator</h1>
-<p class="sub">{business_name} - Create a 20-second promotional video</p>
+<p class="sub">{business_name} - Create a 30-second promotional video</p>
 
 <div class="card">
 <h2>Step 1: Video Script</h2>
@@ -556,12 +556,12 @@ textarea{{resize:none;min-height:100px}}
 <p style="margin-top:6px;font-size:.6rem;color:#475569">Business name &amp; website will be added automatically</p>
 </div>
 
-<button class="gen-btn" id="genBtn" onclick="generateVideo()" disabled>&#127916; Generate 20-sec Video</button>
+<button class="gen-btn" id="genBtn" onclick="generateVideo()" disabled>&#127916; Generate 30-sec Video</button>
 
 <div id="status" class="status" style="display:none"></div>
 <div id="result" class="result" style="display:none"></div>
 
-<p class="note">Creates a 20-second video (4 scenes x 5 sec). May take 3-5 minutes.</p>
+<p class="note">Creates a 20-second video (4 scenes x 5 sec). May take 4-6 minutes.</p>
 
 <script>
 var generatedScript = '';
@@ -583,7 +583,7 @@ async function generateScript(){{
     if(data.script){{
       generatedScript = data.script.join(String.fromCharCode(10));
       preview.style.display = 'block';
-      preview.innerHTML = '<b style="color:#fff;font-size:.75rem">Video Script (4 scenes):</b><br><br>' + data.script.map(function(s,i){{return '<b style="color:#00e5ff">Scene '+(i+1)+':</b> '+s}}).join('<br><br>');
+      preview.innerHTML = '<b style="color:#fff;font-size:.75rem">Video Script (6 scenes):</b><br><br>' + data.script.map(function(s,i){{return '<b style="color:#00e5ff">Scene '+(i+1)+':</b> '+s}}).join('<br><br>');
       document.getElementById('genBtn').disabled = false;
     }}
   }}catch(e){{
@@ -603,7 +603,7 @@ async function generateVideo(){{
   var popup = document.createElement('div');
   popup.id='genPopup';
   popup.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:9999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px)';
-  popup.innerHTML='<div style="background:#1e293b;border:1px solid #334155;border-radius:16px;padding:28px;text-align:center;max-width:300px;width:90%"><div style="width:40px;height:40px;border:3px solid rgba(99,102,241,.2);border-top:3px solid #6366f1;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 14px"></div><p style="font-size:.85rem;font-weight:700;color:#fff;margin-bottom:6px">Generating Video</p><p id="genMsg" style="font-size:.7rem;color:#94a3b8">Creating 4 scenes... (3-5 min)</p><style>@keyframes spin{{to{{transform:rotate(360deg)}}}}</style></div>';
+  popup.innerHTML='<div style="background:#1e293b;border:1px solid #334155;border-radius:16px;padding:28px;text-align:center;max-width:300px;width:90%"><div style="width:40px;height:40px;border:3px solid rgba(99,102,241,.2);border-top:3px solid #6366f1;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 14px"></div><p style="font-size:.85rem;font-weight:700;color:#fff;margin-bottom:6px">Generating Video</p><p id="genMsg" style="font-size:.7rem;color:#94a3b8">Creating 6 scenes... (4-6 min)</p><style>@keyframes spin{{to{{transform:rotate(360deg)}}}}</style></div>';
   document.body.appendChild(popup);
   result.style.display='none';
   try{{
@@ -644,7 +644,7 @@ async function generateVideo(){{
   }}catch(e){{
     status.innerHTML = '<p style="color:#ef4444">Error: '+e.message+'</p>';
   }}
-  btn.disabled = false; btn.textContent = '\U0001f3ac Generate 20-sec Video';
+  btn.disabled = false; btn.textContent = '\U0001f3ac Generate 30-sec Video';
 }}
 </script>
 </body></html>"""
