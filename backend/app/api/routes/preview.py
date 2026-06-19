@@ -792,7 +792,7 @@ def generate_html(content: dict, template: str, lead: dict = None, website_id_ov
                 f'<div class="hiw-item"><div class="hiw-number">{step.get("step","")}</div>'
                 f'<h3>{step.get("title","")}</h3><p>{step.get("description","")}</p></div>'
             )
-        hiw_html = f'<section class="section" style="background:#f8fafc;max-width:100%"><div style="max-width:1100px;margin:0 auto;padding:60px 24px"><div class="section-header"><h2>How It Works</h2></div><div class="hiw-grid">{hiw_items}</div><div style="display:flex;gap:20px;margin-top:32px;flex-wrap:wrap">' + f'<div style="text-align:center"><span style="font-size:1.5rem;font-weight:800;display:block">{lead.get("rating", "4.8") if lead else "4.8"}</span><span style="font-size:.7rem;opacity:.7">Rating</span></div><div style="text-align:center"><span style="font-size:1.5rem;font-weight:800;display:block">{lead.get("review_count", "50") if lead else "50"}+</span><span style="font-size:.7rem;opacity:.7">Reviews</span></div><div style="text-align:center"><span style="font-size:1.5rem;font-weight:800;display:block">5+</span><span style="font-size:.7rem;opacity:.7">Years</span></div>' + '</div></div></section>'
+        hiw_html = f'<section class="section" style="background:#f8fafc;max-width:100%"><div style="max-width:1100px;margin:0 auto;padding:60px 24px"><div class="section-header"><h2>How It Works</h2></div><div class="hiw-grid">{hiw_items}</div></div></div></section>'
 
     # Benefits section
     benefits = content.get("benefits", [])
