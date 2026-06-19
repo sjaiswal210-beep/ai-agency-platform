@@ -67,7 +67,7 @@ body{{padding-bottom:70px}}
 <a href="https://city-maps.online/api/google-profile/{website_id}/setup-guide" target="_blank" class="tool"><div class="emoji">&#128205;</div><div class="name">Google Setup</div><div class="desc">Get on Maps</div></a>
 <a href="/api/logo-gen/{website_id}/preview" target="_blank" class="tool"><div class="emoji">&#127912;</div><div class="name">Logo</div><div class="desc">Generate logo</div></a>
 <a href="https://city-maps.online/api/panel/{website_id}/video-creator" target="_blank" class="tool"><div class="emoji">&#127916;</div><div class="name">Promo Videos</div><div class="desc">Photo slideshow</div></a>
-<a href="https://city-maps.online/api/panel/{website_id}/ai-video" target="_blank" class="tool"><div class="emoji">&#129302;</div><div class="name">AI Video</div><div class="desc">Auto generate</div></a>
+<a href="https://city-maps.online/api/panel/{website_id}/ai-video" target="_blank" class="tool"><div class="emoji">&#129302;</div><div class="name">Video Creator</div><div class="desc">Create promo video</div></a>
 </div>
 
 <div class="section-title">Edit Your Website</div>
@@ -516,7 +516,7 @@ def ai_video_page(website_id: str):
 
     html = f"""<!DOCTYPE html><html><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>{business_name} - AI Video Generator</title>
+<title>{business_name} - Video Creator</title>
 <style>
 *{{margin:0;padding:0;box-sizing:border-box}}
 body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:16px;max-width:500px;margin:0 auto}}
@@ -536,8 +536,8 @@ textarea{{width:100%;padding:10px;border:1px solid #334155;border-radius:8px;bac
 .dl-btn{{display:inline-block;padding:10px 20px;background:#22c55e;color:#fff;border-radius:8px;font-weight:700;font-size:.8rem;text-decoration:none}}
 .note{{font-size:.6rem;color:#475569;text-align:center;margin-top:12px}}
 </style></head><body>
-<h1>&#129302; AI Video Generator</h1>
-<p class="sub">{business_name} - Generate promotional videos with AI</p>
+<h1>&#127916; Video Creator</h1>
+<p class="sub">{business_name} - Generate promotional videos for your business</p>
 
 <div class="card">
 <h2>Describe your video</h2>
@@ -555,12 +555,12 @@ textarea{{width:100%;padding:10px;border:1px solid #334155;border-radius:8px;bac
 <input type="text" class="text-input" id="customText" placeholder="e.g., 50% OFF This Week! or your tagline..." maxlength="60" style="width:100%;padding:10px;border:1px solid #334155;border-radius:8px;background:#0f172a;color:#fff;font-size:.8rem">
 </div>
 
-<button class="gen-btn" id="genBtn" onclick="generateVideo()">&#127916; Generate 20-sec AI Video (Free)</button>
+<button class="gen-btn" id="genBtn" onclick="generateVideo()">&#127916; Generate 20-sec Video</button>
 
 <div id="status" class="status" style="display:none"></div>
 <div id="result" class="result" style="display:none"></div>
 
-<p class="note">Video generation takes 1-3 minutes. Uses AI to create a 5-second clip from your description. Free tier - no cost.</p>
+<p class="note">Video generation takes 3-5 minutes. Creates a 20-second promotional video from your description.</p>
 
 <script>
 function setPrompt(p){{document.getElementById('prompt').value=p}}
@@ -571,7 +571,7 @@ async function generateVideo(){{
   var status=document.getElementById('status');
   var result=document.getElementById('result');
   btn.disabled=true;btn.textContent='Generating...';
-  status.style.display='block';status.innerHTML='<div style="margin:12px auto;width:30px;height:30px;border:3px solid rgba(99,102,241,.2);border-top:3px solid #6366f1;border-radius:50%;animation:spin 1s linear infinite"></div><p>Creating 4 scenes (20 sec total)...</p><p style="font-size:.65rem;margin-top:4px">Generating script + 4 clips. May take 3-5 min</p><style>@keyframes spin{{to{{transform:rotate(360deg)}}}}</style>';
+  status.style.display='block';status.innerHTML='<div style="margin:12px auto;width:30px;height:30px;border:3px solid rgba(99,102,241,.2);border-top:3px solid #6366f1;border-radius:50%;animation:spin 1s linear infinite"></div><p>Creating your video...</p><p style="font-size:.65rem;margin-top:4px">This may take 3-5 minutes</p><style>@keyframes spin{{to{{transform:rotate(360deg)}}}}</style>';
   result.style.display='none';
   try{{
     var r=await fetch('/api/video/{website_id}/generate-free',{{method:'POST',headers:{{'Content-Type':'application/json'}},body:JSON.stringify({{prompt:prompt}})}});
@@ -590,7 +590,7 @@ async function generateVideo(){{
   }}catch(e){{
     status.innerHTML='<p style="color:#ef4444">Error: '+e.message+'</p>';
   }}
-  btn.disabled=false;btn.textContent='\U0001f3ac Generate AI Video (Free)';
+  btn.disabled=false;btn.textContent='\U0001f3ac Generate Video';
 }}
 </script>
 </body></html>"""
