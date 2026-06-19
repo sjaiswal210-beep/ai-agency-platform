@@ -397,3 +397,77 @@ Format as a numbered list. Return ONLY the list."""
 
 
 
+
+
+class HFVideoRequest(BaseModel):
+    prompt: str = ""
+    website_id: str = ""
+
+
+@router.post("/{website_id}/generate-free")
+async def generate_free_video(website_id: str, req: HFVideoRequest):
+    """Generate a video using Hugging Face free inference API (Wan2.1 model)."""
+    import httpx as _hx
+    service = WebsiteService()
+    lead_service = LeadService()
+    website = service.get(website_id)
+    if not website:
+        raise HTTPException(404, "Website not found")
+
+    lead = lead_service.get(website["lead_id"]) if website.get("lead_id") else None
+    business_name = lead.get("business_name", "Business") if lead else "Business"
+    category = lead.get("category", "business") if lead else "business"
+
+    # Generate prompt if not provided
+    if not req.prompt:
+        prompt_gen = f"""Write a short video description for a promotional video:
+Business: {business_name}, Category: {category}
+Return ONLY 1-2 sentences describing the scene. Be cinematic and professional."""
+        video_prompt = await chat_completion([{"role": "user", "content": prompt_gen}])
+        video_prompt = video_prompt.strip().strip('"')
+    else:
+        video_prompt = req.prompt
+
+    # Call Hugging Face Inference API
+    hf_token = os.environ.get("HF_TOKEN", "")
+    if not hf_token:
+        raise HTTPException(500, "HF_TOKEN not configured")
+
+    headers = {"Authorization": f"Bearer {hf_token}", "Content-Type": "application/json"}
+    
+    try:
+        async with _hx.AsyncClient(timeout=300) as client:
+            resp = await client.post(
+                "https://router.huggingface.co/hf-inference/models/Wan-AI/Wan2.1-T2V-1.3B",
+                headers=headers,
+                json={"inputs": video_prompt},
+            )
+            
+            if resp.status_code == 503:
+                # Model is loading
+                return {"status": "loading", "message": "Video model is loading. Please try again in 1-2 minutes.", "prompt": video_prompt}
+            
+            if resp.status_code != 200:
+                # Fallback to Replicate if HF fails
+                if REPLICATE_TOKEN:
+                    client_rep = replicate.Client(api_token=REPLICATE_TOKEN)
+                    output = client_rep.run("lightricks/ltx-2-distilled", input={"prompt": video_prompt})
+                    video_url = output.url if hasattr(output, "url") else str(output[0]) if isinstance(output, list) else str(output)
+                    return {"status": "completed", "video_url": video_url, "prompt": video_prompt, "source": "replicate", "business": business_name}
+                raise HTTPException(resp.status_code, f"Video generation failed: {resp.text[:100]}")
+            
+            # Save video file
+            output_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), "static", "videos")
+            os.makedirs(output_dir, exist_ok=True)
+            video_path = os.path.join(output_dir, f"{website_id}_hf.mp4")
+            
+            with open(video_path, "wb") as f:
+                f.write(resp.content)
+            
+            video_url = f"/static/videos/{website_id}_hf.mp4"
+            return {"status": "completed", "video_url": video_url, "prompt": video_prompt, "source": "huggingface", "business": business_name}
+    
+    except _hx.TimeoutException:
+        return {"status": "timeout", "message": "Video generation is taking longer than expected. It may be in queue. Try again in a few minutes.", "prompt": video_prompt}
+    except Exception as e:
+        raise HTTPException(500, f"Video generation error: {str(e)[:100]}")
