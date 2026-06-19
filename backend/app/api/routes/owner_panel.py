@@ -572,7 +572,8 @@ async function generateScript(){{
   var btn = document.getElementById('scriptBtn');
   
   btn.disabled = true; btn.textContent = 'Generating script...';
-  
+  document.getElementById('blurb').value = 'Generating 6 scenes... please wait (10-20 sec)';
+  document.getElementById('blurb').style.opacity = '0.6';
   try{{
     var r = await fetch('/api/video/{website_id}/generate-script', {{
       method: 'POST',
@@ -582,11 +583,11 @@ async function generateScript(){{
     var data = await r.json();
     if(data.script){{
       generatedScript = data.script.join(String.fromCharCode(10));
-      document.getElementById('blurb').value = data.script.map(function(s,i){{return 'Scene '+(i+1)+': '+s}}).join(String.fromCharCode(10));
+      document.getElementById('blurb').style.opacity = '1';document.getElementById('blurb').value = data.script.map(function(s,i){{return 'Scene '+(i+1)+': '+s}}).join(String.fromCharCode(10));
       document.getElementById('genBtn').disabled = false;
     }}
   }}catch(e){{
-    document.getElementById('blurb').value = 'Failed to generate. Type your own scenes.';
+    document.getElementById('blurb').style.opacity = '1';document.getElementById('blurb').value = 'Failed to generate. Type your own scenes.';
   }}
   btn.disabled = false; btn.textContent = '\u270e Generate Video Script';
 }}
