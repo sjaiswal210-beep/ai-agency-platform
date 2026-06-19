@@ -337,168 +337,30 @@ function setPos(p){{textPos=p;document.querySelectorAll("[id^=pos-]").forEach(b=
 function setSize(s){{textSize=s;document.querySelectorAll("[id^=sz-]").forEach(b=>b.classList.remove("active"));document.getElementById("sz-"+s).classList.add("active");}}
 
 async function generateVideo(){{
-const btn=document.getElementById("genBtn");
-btn.disabled=true;btn.textContent="Generating...";
-document.getElementById("progressWrap").classList.remove("hidden");
-document.getElementById("statusText").textContent="Creating canvas frames...";
-
-textOverlay=document.getElementById("textInput").value;
-
-const W=1280,H=720,FPS=30,SLIDE_SEC=3,TRANS_SEC=0.5;
-const totalFrames=photos.length*SLIDE_SEC*FPS;
-const canvas=document.createElement("canvas");
-canvas.width=W;canvas.height=H;
-const ctx=canvas.getContext("2d");
-
-// Load images
-const imgs=[];
-for(let p of photos){{
-const img=new Image();
-img.src=p.data;
-await new Promise(r=>{{img.onload=r;}});
-imgs.push(img);
+  var btn=document.getElementById('genBtn');
+  var customText=document.getElementById('customText').value.trim();
+  btn.disabled=true;btn.textContent='Creating video...';
+  var popup=document.createElement('div');popup.id='genPopup';
+  popup.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:9999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px)';
+  popup.innerHTML='<div style="background:#1e293b;border:1px solid #334155;border-radius:16px;padding:28px;text-align:center;max-width:300px;width:90%"><div style="width:40px;height:40px;border:3px solid rgba(99,102,241,.2);border-top:3px solid #6366f1;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 14px"></div><p style="font-size:.85rem;font-weight:700;color:#fff;margin-bottom:6px">Generating Video</p><p style="font-size:.7rem;color:#94a3b8">Creating 6 scenes... (4-6 min)</p><style>@keyframes spin{{to{{transform:rotate(360deg)}}}}</style></div>';
+  document.body.appendChild(popup);
+  try{{
+    var r=await fetch('/api/video/{website_id}/generate-free',{{method:'POST',headers:{{'Content-Type':'application/json'}},body:JSON.stringify({{prompt:generatedScript||document.getElementById('blurb').value,custom_text:customText}})}});
+    var data=await r.json();
+    var gp=document.getElementById('genPopup');
+    if(data.status==='completed' && (data.video_url||data.clips)){{
+      var vurl=data.video_url||(data.clips&&data.clips[0])||'';
+      if(gp)gp.innerHTML='<div style="background:#1e293b;border:1px solid #334155;border-radius:16px;padding:16px;max-width:400px;width:92%;max-height:90vh;overflow-y:auto;position:relative;text-align:center"><button onclick="this.parentNode.parentNode.remove()" style="position:absolute;top:8px;right:12px;background:none;border:none;color:#94a3b8;font-size:1.3rem;cursor:pointer">&times;</button><p style="font-size:.9rem;font-weight:700;color:#fff;margin:8px 0 12px">Video Ready!</p><video src="'+vurl+'" controls autoplay playsinline style="width:100%;border-radius:10px;margin-bottom:10px"></video><p style="font-size:.68rem;color:#94a3b8;margin-bottom:10px">'+(data.total_duration||'30 sec')+'</p><a href="'+vurl+'" download style="display:block;padding:12px;background:#22c55e;border-radius:10px;color:#fff;font-weight:700;font-size:.85rem;text-decoration:none">Download Video</a></div>';
+    }}else{{
+      if(gp)gp.innerHTML='<div style="background:#1e293b;border:1px solid #334155;border-radius:16px;padding:20px;max-width:300px;width:90%;text-align:center"><p style="color:#ef4444;font-size:.85rem;font-weight:600;margin-bottom:8px">Generation Failed</p><p style="font-size:.72rem;color:#94a3b8">'+(data.message||'Please try again')+'</p><button onclick="this.parentNode.parentNode.remove()" style="margin-top:12px;padding:8px 16px;background:#334155;border:none;border-radius:8px;color:#fff;font-size:.75rem;cursor:pointer">Close</button></div>';
+    }}
+  }}catch(e){{
+    var gp=document.getElementById('genPopup');
+    if(gp)gp.innerHTML='<div style="background:#1e293b;border:1px solid #334155;border-radius:16px;padding:20px;max-width:300px;width:90%;text-align:center"><p style="color:#ef4444;font-size:.85rem">Error: '+e.message+'</p><button onclick="this.parentNode.parentNode.remove()" style="margin-top:12px;padding:8px 16px;background:#334155;border:none;border-radius:8px;color:#fff;font-size:.75rem;cursor:pointer">Close</button></div>';
+  }}
+  btn.disabled=false;btn.textContent='Generate 30-sec Video';
 }}
 
-// Generate frames as blob array
-const frames=[];
-let frameCount=0;
-
-for(let i=0;i<imgs.length;i++){{
-const slideFrames=SLIDE_SEC*FPS;
-const transFrames=TRANS_SEC*FPS;
-
-for(let f=0;f<slideFrames;f++){{
-ctx.fillStyle="#000";ctx.fillRect(0,0,W,H);
-
-// Draw current image (cover fit)
-drawCover(ctx,imgs[i],W,H);
-
-// Transition: fade in from previous at start
-if(i>0&&f<transFrames){{
-const alpha=f/transFrames;
-ctx.globalAlpha=1-alpha;
-drawCover(ctx,imgs[i-1],W,H);
-ctx.globalAlpha=1;
-// Redraw current with alpha
-ctx.globalAlpha=alpha;
-drawCover(ctx,imgs[i],W,H);
-ctx.globalAlpha=1;
-}}
-
-// Text overlay
-if(textOverlay){{
-const fontSize=textSize==="small"?28:textSize==="large"?52:38;
-ctx.font=`bold ${{fontSize}}px Inter,sans-serif`;
-ctx.textAlign="center";
-ctx.fillStyle="#fff";
-ctx.shadowColor="rgba(0,0,0,.7)";ctx.shadowBlur=8;
-let y=textPos==="top"?80:textPos==="bottom"?H-40:H/2;
-ctx.fillText(textOverlay,W/2,y);
-ctx.shadowBlur=0;
-}}
-
-frames.push(canvas.toDataURL("image/jpeg",0.8));
-frameCount++;
-const pct=Math.round(frameCount/totalFrames*70);
-document.getElementById("progressBar").style.width=pct+"%";
-// Yield to prevent freezing
-if(frameCount%10===0)await new Promise(r=>setTimeout(r,0));
-}}
-}}
-
-document.getElementById("statusText").textContent="Encoding video... (this may take a moment)";
-document.getElementById("progressBar").style.width="75%";
-
-// Use canvas captureStream + MediaRecorder for video encoding
-const stream=canvas.captureStream(FPS);
-
-// Add audio
-let audioStream=null;
-try{{
-const audioCtx=new AudioContext();
-const audioResp=await fetch(MUSIC_TRACKS[selectedMusic].url);
-const audioBuffer=await audioCtx.decodeAudioData(await audioResp.arrayBuffer());
-const source=audioCtx.createBufferSource();
-source.buffer=audioBuffer;
-source.loop=true;
-const dest=audioCtx.createMediaStreamDestination();
-source.connect(dest);
-source.start();
-audioStream=dest.stream;
-stream.addTrack(audioStream.getAudioTracks()[0]);
-}}catch(e){{console.log("Audio failed, continuing without:",e);}}
-
-const recorder=new MediaRecorder(stream,{{mimeType:"video/webm;codecs=vp9",videoBitsPerSecond:2500000}});
-const chunks=[];
-recorder.ondataavailable=(e)=>{{if(e.data.size>0)chunks.push(e.data);}};
-
-recorder.start();
-
-// Play back frames to canvas
-for(let i=0;i<frames.length;i++){{
-const img=new Image();
-img.src=frames[i];
-await new Promise(r=>{{img.onload=r;}});
-ctx.drawImage(img,0,0);
-const pct=75+Math.round(i/frames.length*20);
-document.getElementById("progressBar").style.width=pct+"%";
-await new Promise(r=>setTimeout(r,1000/FPS));
-}}
-
-recorder.stop();
-await new Promise(r=>{{recorder.onstop=r;}});
-
-document.getElementById("progressBar").style.width="100%";
-document.getElementById("statusText").textContent="Done!";
-
-videoBlob=new Blob(chunks,{{type:"video/webm"}});
-videoUrl=URL.createObjectURL(videoBlob);
-
-// Show result
-document.getElementById("step1").classList.add("hidden");
-document.getElementById("step2").classList.add("hidden");
-document.getElementById("step3").classList.add("hidden");
-document.getElementById("step4").classList.add("hidden");
-document.getElementById("step5").classList.remove("hidden");
-document.getElementById("resultVideo").src=videoUrl;
-
-// Free frame memory
-frames.length=0;
-}}
-
-function drawCover(ctx,img,W,H){{
-const ratio=Math.max(W/img.width,H/img.height);
-const w=img.width*ratio,h=img.height*ratio;
-ctx.drawImage(img,(W-w)/2,(H-h)/2,w,h);
-}}
-
-function downloadVideo(){{
-const a=document.createElement("a");
-a.href=videoUrl;
-a.download="{business_name.replace(" ","_")}_promo.webm";
-a.click();
-}}
-
-function resetAll(){{
-// Cleanup
-if(videoUrl)URL.revokeObjectURL(videoUrl);
-videoBlob=null;videoUrl=null;photos=[];
-document.getElementById("thumbs").innerHTML="";
-document.getElementById("textInput").value="";
-document.getElementById("step1").classList.remove("hidden");
-document.getElementById("step2").classList.add("hidden");
-document.getElementById("step3").classList.add("hidden");
-document.getElementById("step4").classList.add("hidden");
-document.getElementById("step5").classList.add("hidden");
-document.getElementById("genBtn").disabled=false;
-document.getElementById("genBtn").textContent="\U0001f3ac Create Video";
-document.getElementById("progressWrap").classList.add("hidden");
-document.getElementById("progressBar").style.width="0%";
-document.getElementById("statusText").textContent="";
-if(audioEl){{audioEl.pause();audioEl=null;}}
-}}
-
-initMusic();
 </script><div id="toolModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9999;align-items:center;justify-content:center;padding:10px"><div style="background:#fff;border-radius:16px;width:100%;max-width:480px;height:85vh;position:relative;overflow:hidden"><button onclick="closeTool()" style="position:absolute;top:8px;right:12px;background:rgba(0,0,0,.6);color:#fff;border:none;width:28px;height:28px;border-radius:50%;font-size:1rem;cursor:pointer;z-index:10">&times;</button><iframe id="toolFrame" style="width:100%;height:100%;border:none;border-radius:16px" src=""></iframe></div></div></body></html>'''
     return HTMLResponse(content=html)
 
