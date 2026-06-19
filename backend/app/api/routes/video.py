@@ -552,18 +552,28 @@ Return ONLY a JSON array: ["Scene 1...", "Scene 2...", "Scene 3...", "Scene 4...
                 continue
 
     if not clip_files:
-        # Fallback to Replicate if HF produced nothing
+        # Fallback to Replicate - generate all 4 clips
         if REPLICATE_TOKEN:
-            try:
-                rep_client = replicate.Client(api_token=REPLICATE_TOKEN)
-                output = rep_client.run("lightricks/ltx-2-distilled", input={"prompt": scenes[0]})
-                video_url = output.url if hasattr(output, "url") else str(output[0]) if isinstance(output, list) else str(output)
-                shutil.rmtree(temp_dir, ignore_errors=True)
-                return {"status": "completed", "video_url": video_url, "prompt": scenes[0], "source": "replicate", "business": business_name, "scenes": scenes}
-            except Exception:
-                pass
-        shutil.rmtree(temp_dir, ignore_errors=True)
-        return {"status": "failed", "message": "Video generation failed. The model may be loading - try again in 2 minutes.", "scenes": scenes}
+            import httpx as _dl
+            rep_client = replicate.Client(api_token=REPLICATE_TOKEN)
+            for i, scene in enumerate(scenes):
+                try:
+                    output = rep_client.run("lightricks/ltx-2-distilled", input={"prompt": scene})
+                    vid_url = output.url if hasattr(output, "url") else str(output[0]) if isinstance(output, list) else str(output)
+                    if vid_url:
+                        async with _dl.AsyncClient(timeout=60) as dl_client:
+                            resp = await dl_client.get(vid_url)
+                            if resp.status_code == 200 and len(resp.content) > 1000:
+                                path = os.path.join(temp_dir, f"clip_{i}.mp4")
+                                with open(path, "wb") as fout:
+                                    fout.write(resp.content)
+                                clip_files.append(path)
+                except Exception as e:
+                    logger.warning(f"Replicate clip {i} failed: {str(e)[:50]}")
+                    continue
+        if not clip_files:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+            return {"status": "failed", "message": "Video generation failed. Try again in a few minutes.", "scenes": scenes}
 
     # Step 3: Stitch clips together with ffmpeg
     output_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), "static", "videos")
