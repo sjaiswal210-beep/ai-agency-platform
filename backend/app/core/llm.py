@@ -52,6 +52,40 @@ async def _call_groq(messages: list[dict], api_key: str) -> str:
         return data["choices"][0]["message"]["content"]
 
 
+
+
+async def _call_freellmapi(messages: list[dict], base_url: str, api_key: str = "") -> str:
+    """Try FreeLLMAPI - OpenAI-compatible proxy with free tier providers."""
+    # Trim messages to fit
+    trimmed = []
+    for msg in messages:
+        content = msg.get("content", "")
+        if len(content) > 6000:
+            content = content[:6000] + "\n\n[Content trimmed. Generate based on above.]"
+        trimmed.append({"role": msg["role"], "content": content})
+    
+    headers = {"Content-Type": "application/json"}
+    if api_key:
+        headers["Authorization"] = f"Bearer {api_key}"
+    
+    async with httpx.AsyncClient() as client:
+        resp = await client.post(
+            f"{base_url.rstrip('/')}/v1/chat/completions",
+            json={
+                "model": "auto",
+                "messages": trimmed,
+                "temperature": 0.7,
+                "max_tokens": 4096,
+            },
+            headers=headers,
+            timeout=120,
+        )
+        if resp.status_code == 429:
+            raise Exception("RATE_LIMITED")
+        resp.raise_for_status()
+        data = resp.json()
+        return data["choices"][0]["message"]["content"]
+
 async def chat_completion(messages: list[dict], model: str | None = None) -> str:
     """Call LLM - tries Gemini first, falls back to Groq if rate limited."""
     settings = get_settings()
@@ -80,13 +114,22 @@ async def chat_completion(messages: list[dict], model: str | None = None) -> str
                 except Exception:
                     pass  # Fall through to Groq
 
-    # Fallback to Groq (free Llama 3)
-    await asyncio.sleep(1)  # Brief pause before fallback
+    # Fallback 1: FreeLLMAPI (free multi-provider proxy)
+    freellm_url = getattr(settings, 'freellmapi_url', '') or ''
+    freellm_key = getattr(settings, 'freellmapi_key', '') or ''
+    if freellm_url:
+        try:
+            return await _call_freellmapi(messages, freellm_url, freellm_key)
+        except Exception:
+            pass  # Fall through to Groq
+
+    # Fallback 2: Groq (free Llama 3)
+    await asyncio.sleep(1)
     groq_key = getattr(settings, 'groq_api_key', '') or ''
     if groq_key:
         try:
             return await _call_groq(messages, groq_key)
         except Exception as e:
-            raise Exception(f"Both Gemini and Groq failed. Groq error: {str(e)[:100]}")
+            raise Exception(f"All LLM providers failed. Last error: {str(e)[:100]}")
 
-    raise Exception("LLM unavailable - Gemini rate limited and no Groq API key configured. Set GROQ_API_KEY env var.")
+    raise Exception("LLM unavailable - all providers failed or not configured.")
