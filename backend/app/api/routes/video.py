@@ -524,9 +524,9 @@ Return ONLY a JSON array: ["Scene 1...", "Scene 2...", "Scene 3...", "Scene 4...
         for i, scene in enumerate(scenes):
             try:
                 resp = await client.post(
-                    "https://router.huggingface.co/hf-inference/models/Wan-AI/Wan2.1-T2V-1.3B",
+                    "https://router.huggingface.co/fal-ai/models/Wan-AI/Wan2.1-T2V-1.3B",
                     headers=headers,
-                    json={"inputs": scene},
+                    json={"inputs": scene, "parameters": {"num_frames": 30}},
                 )
                 if resp.status_code == 200 and len(resp.content) > 1000:
                     path = os.path.join(temp_dir, f"clip_{i}.mp4")
@@ -538,9 +538,9 @@ Return ONLY a JSON array: ["Scene 1...", "Scene 2...", "Scene 3...", "Scene 4...
                     import asyncio
                     await asyncio.sleep(30)
                     resp2 = await client.post(
-                        "https://router.huggingface.co/hf-inference/models/Wan-AI/Wan2.1-T2V-1.3B",
+                        "https://router.huggingface.co/fal-ai/models/Wan-AI/Wan2.1-T2V-1.3B",
                         headers=headers,
-                        json={"inputs": scene},
+                        json={"inputs": scene, "parameters": {"num_frames": 30}},
                     )
                     if resp2.status_code == 200 and len(resp2.content) > 1000:
                         path = os.path.join(temp_dir, f"clip_{i}.mp4")
