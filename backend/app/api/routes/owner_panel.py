@@ -535,7 +535,7 @@ textarea{{resize:none;min-height:100px}}
 .result{{text-align:center;margin-top:12px}}
 .result video{{width:100%;border-radius:10px;margin-bottom:10px}}
 .dl-btn{{display:inline-block;padding:10px 20px;background:#22c55e;color:#fff;border-radius:8px;font-weight:700;font-size:.8rem;text-decoration:none}}
-.script-preview{{background:#0f172a;border:1px solid #334155;border-radius:8px;padding:12px;margin-top:10px;font-size:.7rem;color:#94a3b8;white-space:pre-wrap;display:none}}
+.script-preview{{background:#0f172a;border:1px solid #334155;border-radius:8px;padding:10px;margin-top:10px;font-size:.68rem;color:#94a3b8;white-space:pre-wrap;display:none;max-height:120px;overflow-y:auto}}
 .note{{font-size:.6rem;color:#475569;text-align:center;margin-top:12px}}
 </style></head><body>
 <h1>&#127916; Video Creator</h1>
@@ -599,8 +599,12 @@ async function generateVideo(){{
   var result = document.getElementById('result');
   var customText = document.getElementById('customText').value.trim();
   btn.disabled = true; btn.textContent = 'Creating video...';
-  status.style.display = 'block';
-  status.innerHTML = '<div style="margin:12px auto;width:30px;height:30px;border:3px solid rgba(99,102,241,.2);border-top:3px solid #6366f1;border-radius:50%;animation:spin 1s linear infinite"></div><p>Generating 4 scenes & combining...</p><p style="font-size:.65rem;margin-top:4px">This takes 3-5 minutes</p><style>@keyframes spin{{to{{transform:rotate(360deg)}}}}</style>';
+  status.style.display = 'none';
+  var popup = document.createElement('div');
+  popup.id='genPopup';
+  popup.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:9999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px)';
+  popup.innerHTML='<div style="background:#1e293b;border:1px solid #334155;border-radius:16px;padding:28px;text-align:center;max-width:300px;width:90%"><div style="width:40px;height:40px;border:3px solid rgba(99,102,241,.2);border-top:3px solid #6366f1;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 14px"></div><p style="font-size:.85rem;font-weight:700;color:#fff;margin-bottom:6px">Generating Video</p><p id="genMsg" style="font-size:.7rem;color:#94a3b8">Creating 4 scenes... (3-5 min)</p><style>@keyframes spin{{to{{transform:rotate(360deg)}}}}</style></div>';
+  document.body.appendChild(popup);
   result.style.display = 'none';
   try{{
     var r = await fetch('/api/video/{website_id}/generate-free', {{
@@ -631,13 +635,13 @@ async function generateVideo(){{
       vid.crossOrigin='anonymous';
       vid.onplay=function(){{drawFrame();}};
       vid.onended=function(){{cc++;if(cc<clips.length){{document.getElementById('recStatus').textContent='Recording clip '+(cc+1)+'/'+clips.length+'...';vid.src=clips[cc];vid.play();}}else{{recorder.stop();document.getElementById('recStatus').textContent='Stitching complete! Ready to download.';}}}};
-      vid.src=clips[0];vid.play();recorder.start();
+      vid.src=clips[0];vid.play();recorder.start();var gp=document.getElementById('genPopup');if(gp)gp.remove();
       window.downloadStitched=function(){{var blob=new Blob(chunks,{{type:'video/webm'}});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download=bname.replace(/\s+/g,'_')+'_promo.webm';a.click();URL.revokeObjectURL(url);}};
       status.style.display = 'none';
-    }}else if(data.status === 'loading' || data.status === 'timeout'){{
+    }}else if(data.status === 'loading' || data.status === 'timeout'){{var gp2=document.getElementById('genPopup');if(gp2)gp2.remove();
       status.innerHTML = '<p>&#9203; '+(data.message||'Model is loading. Try again in 2 min.')+'</p>';
     }}else{{
-      status.innerHTML = '<p style="color:#ef4444">'+(data.message||data.detail||'Generation failed. Try again.')+'</p>';
+      var gp3=document.getElementById('genPopup');if(gp3)gp3.remove();status.style.display='block';status.innerHTML = '<p style="color:#ef4444">'+(data.message||data.detail||'Generation failed. Try again.')+'</p>';
     }}
   }}catch(e){{
     status.innerHTML = '<p style="color:#ef4444">Error: '+e.message+'</p>';
