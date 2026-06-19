@@ -448,12 +448,7 @@ Return ONLY a JSON array of 4 scene descriptions:
 
 @router.post("/{website_id}/generate-free")
 async def generate_free_video(website_id: str, req: HFVideoRequest):
-    """Generate a 20-sec AI video (4 x 5-sec clips) with script, branding, and custom text."""
-    import httpx as _hx
-    import subprocess
-    import tempfile
-    import shutil
-    
+    """Generate a 20-sec video (4 x 5-sec clips) and return all clip URLs."""
     service = WebsiteService()
     lead_service = LeadService()
     website = service.get(website_id)
@@ -463,174 +458,72 @@ async def generate_free_video(website_id: str, req: HFVideoRequest):
     lead = lead_service.get(website["lead_id"]) if website.get("lead_id") else None
     business_name = lead.get("business_name", "Business") if lead else "Business"
     category = lead.get("category", "business") if lead else "business"
-    phone = lead.get("phone", "") if lead else ""
     slug = website.get("slug", "")
     site_url = f"{slug}.city-maps.online" if slug else "city-maps.online"
-    custom_text = req.custom_text if hasattr(req, 'custom_text') and req.custom_text else ""
+    custom_text = req.custom_text if hasattr(req, "custom_text") and req.custom_text else ""
 
-    # Step 1: Generate AI script (4 scenes)
-    if not req.prompt:
-        script_prompt = f"""Create a 4-scene video script for a 20-second promotional video.
+    # Generate script if only blurb provided
+    import json as _json
+    if not req.prompt or len(req.prompt) < 50:
+        script_prompt = f"""Create 4 short scene descriptions for a promotional video.
 Business: {business_name}, Category: {category}
-Each scene is 5 seconds. Describe what should be visually shown.
-Return ONLY a JSON array of 4 scene descriptions:
-["Scene 1...", "Scene 2...", "Scene 3...", "Scene 4..."]"""
-        script_raw = await chat_completion([{"role": "user", "content": script_prompt}])
-        import json as _json
-        cleaned = script_raw.strip()
-        if "```json" in cleaned:
-            cleaned = cleaned.split("```json")[1].split("```")[0].strip()
-        elif "```" in cleaned:
-            cleaned = cleaned.split("```")[1].split("```")[0].strip()
+Theme: {req.prompt or category}
+Each scene = 5 seconds. Return ONLY a JSON array:
+["scene1", "scene2", "scene3", "scene4"]"""
         try:
-            scenes = _json.loads(cleaned)
+            raw = await chat_completion([{"role": "user", "content": script_prompt}])
+            cleaned = raw.strip()
+            if "```json" in cleaned:
+                cleaned = cleaned.split("```json")[1].split("```")[0].strip()
+            elif "```" in cleaned:
+                cleaned = cleaned.split("```")[1].split("```")[0].strip()
+            scenes = _json.loads(cleaned)[:4]
         except Exception:
             scenes = [
-                f"Exterior of {business_name}, welcoming entrance, daytime",
-                f"Interior of {business_name}, modern setup, customers enjoying",
-                f"Close-up of products/services at {business_name}, professional quality",
-                f"Happy customers leaving {business_name}, satisfied smiles"
+                f"Exterior of {business_name}, welcoming entrance",
+                f"Interior, modern setup, customers enjoying",
+                f"Close-up of products at {business_name}",
+                f"Happy satisfied customers leaving"
             ]
     else:
-        # Split user prompt into 4 scenes
-        script_prompt = f"""Split this video concept into 4 scenes (each 5 seconds):
-"{req.prompt}"
-Business: {business_name} ({category})
-Return ONLY a JSON array: ["Scene 1...", "Scene 2...", "Scene 3...", "Scene 4..."]"""
-        script_raw = await chat_completion([{"role": "user", "content": script_prompt}])
-        import json as _json
-        cleaned = script_raw.strip()
-        if "```json" in cleaned:
-            cleaned = cleaned.split("```json")[1].split("```")[0].strip()
-        elif "```" in cleaned:
-            cleaned = cleaned.split("```")[1].split("```")[0].strip()
-        try:
-            scenes = _json.loads(cleaned)
-        except Exception:
+        # Split provided script by newlines into scenes
+        scenes = [s.strip() for s in req.prompt.split(chr(10)) if s.strip()][:4]
+        if len(scenes) < 4:
             scenes = [req.prompt] * 4
 
-    scenes = scenes[:4]  # Max 4 clips
+    # Generate all 4 clips via Replicate (reliable)
+    if not REPLICATE_TOKEN:
+        raise HTTPException(500, "Video service not configured")
+
+    clip_urls = []
+    rep_client = replicate.Client(api_token=REPLICATE_TOKEN)
     
-    # Step 2: Generate each 5-sec clip via HF
-    hf_token = os.environ.get("HF_TOKEN", "")
-    if not hf_token:
-        raise HTTPException(500, "HF_TOKEN not configured")
-
-    headers = {"Authorization": f"Bearer {hf_token}", "Content-Type": "application/json"}
-    clip_files = []
-    temp_dir = tempfile.mkdtemp()
-    
-    async with _hx.AsyncClient(timeout=300) as client:
-        for i, scene in enumerate(scenes):
-            try:
-                resp = await client.post(
-                    "https://router.huggingface.co/fal-ai/models/Wan-AI/Wan2.1-T2V-1.3B",
-                    headers=headers,
-                    json={"inputs": scene, "parameters": {"num_frames": 30}},
-                )
-                if resp.status_code == 200 and len(resp.content) > 1000:
-                    path = os.path.join(temp_dir, f"clip_{i}.mp4")
-                    with open(path, "wb") as f:
-                        f.write(resp.content)
-                    clip_files.append(path)
-                elif resp.status_code == 503:
-                    # Model loading - try once more after wait
-                    import asyncio
-                    await asyncio.sleep(30)
-                    resp2 = await client.post(
-                        "https://router.huggingface.co/fal-ai/models/Wan-AI/Wan2.1-T2V-1.3B",
-                        headers=headers,
-                        json={"inputs": scene, "parameters": {"num_frames": 30}},
-                    )
-                    if resp2.status_code == 200 and len(resp2.content) > 1000:
-                        path = os.path.join(temp_dir, f"clip_{i}.mp4")
-                        with open(path, "wb") as f:
-                            f.write(resp2.content)
-                        clip_files.append(path)
-            except Exception as e:
-                logger.warning(f"HF clip {i} failed: {str(e)[:50]}")
-                continue
-
-    if not clip_files:
-        # Fallback to Replicate - generate all 4 clips
-        if REPLICATE_TOKEN:
-            import httpx as _dl
-            rep_client = replicate.Client(api_token=REPLICATE_TOKEN)
-            for i, scene in enumerate(scenes):
-                try:
-                    output = rep_client.run("lightricks/ltx-2-distilled", input={"prompt": scene})
-                    vid_url = output.url if hasattr(output, "url") else str(output[0]) if isinstance(output, list) else str(output)
-                    if vid_url:
-                        async with _dl.AsyncClient(timeout=60) as dl_client:
-                            resp = await dl_client.get(vid_url)
-                            if resp.status_code == 200 and len(resp.content) > 1000:
-                                path = os.path.join(temp_dir, f"clip_{i}.mp4")
-                                with open(path, "wb") as fout:
-                                    fout.write(resp.content)
-                                clip_files.append(path)
-                except Exception as e:
-                    logger.warning(f"Replicate clip {i} failed: {str(e)[:50]}")
-                    continue
-        if not clip_files:
-            shutil.rmtree(temp_dir, ignore_errors=True)
-            return {"status": "failed", "message": "Video generation failed. Try again in a few minutes.", "scenes": scenes}
-
-    # Step 3: Stitch clips together with ffmpeg
-    output_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), "static", "videos")
-    os.makedirs(output_dir, exist_ok=True)
-    concat_path = os.path.join(temp_dir, "concat.mp4")
-    final_path = os.path.join(output_dir, f"{website_id}_ai.mp4")
-
-    if len(clip_files) == 1:
-        shutil.copy2(clip_files[0], concat_path)
-    else:
-        list_file = os.path.join(temp_dir, "list.txt")
-        with open(list_file, "w") as f:
-            for cf in clip_files:
-                f.write(f"file '{cf}'\n")
+    for i, scene in enumerate(scenes[:4]):
         try:
-            subprocess.run(
-                ["ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", list_file, "-c", "copy", concat_path],
-                capture_output=True, text=True, timeout=120
-            )
-            if not os.path.exists(concat_path) or os.path.getsize(concat_path) < 1000:
-                subprocess.run(
-                    ["ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", list_file, "-c:v", "libx264", "-preset", "fast", concat_path],
-                    capture_output=True, text=True, timeout=180
-                )
-        except Exception:
-            shutil.copy2(clip_files[0], concat_path)
+            output = rep_client.run("lightricks/ltx-2-distilled", input={"prompt": scene})
+            if hasattr(output, "url"):
+                clip_urls.append(output.url)
+            elif isinstance(output, list) and len(output) > 0:
+                clip_urls.append(str(output[0]))
+            else:
+                url = str(output)
+                if url.startswith("http"):
+                    clip_urls.append(url)
+        except Exception as e:
+            logger.warning(f"Clip {i} generation failed: {str(e)[:50]}")
+            continue
 
-    # Step 4: Add text overlay (business name + website + custom text)
-    overlay_text = custom_text if custom_text else business_name
-    drawtext_filters = [
-        f"drawtext=text='{overlay_text}':fontsize=22:fontcolor=white:x=20:y=20:shadowcolor=black:shadowx=2:shadowy=2",
-        f"drawtext=text='{site_url}':fontsize=16:fontcolor=white:x=(w-tw)/2:y=h-35:shadowcolor=black:shadowx=2:shadowy=2",
-    ]
-    filter_str = ",".join(drawtext_filters)
+    if not clip_urls:
+        return {"status": "failed", "message": "Video generation failed. Please try again."}
 
-    try:
-        subprocess.run(
-            ["ffmpeg", "-y", "-i", concat_path, "-vf", filter_str, "-c:a", "copy", "-preset", "fast", final_path],
-            capture_output=True, text=True, timeout=180
-        )
-        if not os.path.exists(final_path) or os.path.getsize(final_path) < 1000:
-            shutil.copy2(concat_path, final_path)
-    except Exception:
-        shutil.copy2(concat_path, final_path)
-
-    # Cleanup
-    shutil.rmtree(temp_dir, ignore_errors=True)
-
-    video_url = f"/static/videos/{website_id}_ai.mp4"
     return {
         "status": "completed",
-        "video_url": video_url,
-        "prompt": scenes[0] if scenes else "",
-        "scenes": scenes,
-        "source": "huggingface",
-        "business": business_name,
-        "clips_generated": len(clip_files),
-        "total_duration": f"{len(clip_files) * 5} seconds"
+        "clips": clip_urls,
+        "scenes": scenes[:len(clip_urls)],
+        "business_name": business_name,
+        "site_url": site_url,
+        "custom_text": custom_text,
+        "total_clips": len(clip_urls),
+        "total_duration": f"{len(clip_urls) * 5} seconds"
     }
 

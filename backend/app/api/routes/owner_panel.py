@@ -609,9 +609,13 @@ async function generateVideo(){{
       body: JSON.stringify({{prompt: generatedScript || document.getElementById('blurb').value, custom_text: customText}})
     }});
     var data = await r.json();
-    if(data.status === 'completed' && data.video_url){{
+    if(data.status === 'completed' && data.clips && data.clips.length > 0){{
       result.style.display = 'block';
-      result.innerHTML = '<video src="'+data.video_url+'" controls autoplay playsinline style="width:100%;border-radius:10px;margin-bottom:10px"></video><a href="'+data.video_url+'" download class="dl-btn">Download Video</a><p style="font-size:.65rem;color:#64748b;margin-top:8px">'+(data.total_duration||'20 seconds')+' | '+(data.clips_generated||4)+' scenes</p>';
+      var clips=data.clips;var bname=data.business_name||'';var surl=data.site_url||'';var ctxt=data.custom_text||'';
+      var vh='<div style="position:relative;width:100%;border-radius:10px;overflow:hidden;margin-bottom:10px"><video id="mainVid" src="'+clips[0]+'" controls autoplay playsinline style="width:100%;display:block"></video><div style="position:absolute;top:10px;left:12px;color:#fff;font-size:.8rem;font-weight:700;text-shadow:0 2px 6px rgba(0,0,0,.7)">'+(ctxt||bname)+'</div><div style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);color:#fff;font-size:.65rem;font-weight:600;text-shadow:0 1px 4px rgba(0,0,0,.7)">'+surl+'</div></div>';
+      vh+='<p style="font-size:.7rem;color:#94a3b8;margin-bottom:8px;text-align:center">Clip <span id="clipNum">1</span>/'+clips.length+' ('+data.total_duration+')</p>';
+      vh+='<div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:10px">';for(var ci=0;ci<clips.length;ci++){{vh+='<a href="'+clips[ci]+'" target="_blank" style="padding:4px 10px;background:#334155;border-radius:6px;color:#00e5ff;font-size:.65rem;text-decoration:none">Clip '+(ci+1)+'</a>';}}vh+='</div>';
+      result.innerHTML=vh;var vid=document.getElementById('mainVid');var cc=0;vid.onended=function(){{cc++;if(cc<clips.length){{vid.src=clips[cc];vid.play();document.getElementById('clipNum').textContent=cc+1;}}else{{cc=0;vid.src=clips[0];document.getElementById('clipNum').textContent='1';}}}};
       status.style.display = 'none';
     }}else if(data.status === 'loading' || data.status === 'timeout'){{
       status.innerHTML = '<p>&#9203; '+(data.message||'Model is loading. Try again in 2 min.')+'</p>';
