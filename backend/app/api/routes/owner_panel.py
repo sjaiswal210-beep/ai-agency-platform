@@ -581,7 +581,7 @@ async function generateScript(){{
     }});
     var data = await r.json();
     if(data.script){{
-      generatedScript = data.script.join('\n');
+      generatedScript = data.script.join(String.fromCharCode(10));
       preview.style.display = 'block';
       preview.innerHTML = '<b style="color:#fff;font-size:.75rem">Video Script (4 scenes):</b><br><br>' + data.script.map(function(s,i){{return '<b style="color:#00e5ff">Scene '+(i+1)+':</b> '+s}}).join('<br><br>');
       document.getElementById('genBtn').disabled = false;
