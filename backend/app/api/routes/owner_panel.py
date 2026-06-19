@@ -428,7 +428,7 @@ function genScript(){{
   b.value="Generating 6 scenes...";b.style.opacity="0.5";
   fetch("/api/video/"+ws_id+"/generate-script",{{method:"POST",headers:{{"Content-Type":"application/json"}},body:JSON.stringify({{blurb:kw,business_name:biz_name,category:biz_cat}})}}).then(function(r){{return r.json()}}).then(function(d){{
     b.style.opacity="1";
-    if(d.script){{b.value=d.script.map(function(s,i){{return"Scene "+(i+1)+": "+s}}).join("\n\n");}}
+    if(d.script){{b.value=d.script.map(function(s,i){{return"Scene "+(i+1)+": "+s}}).join(String.fromCharCode(10,10));}}
     else{{b.value="Could not generate. Write your own scenes.";}}
     btn.disabled=false;btn.textContent="Generate Script";
   }}).catch(function(){{
