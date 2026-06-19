@@ -612,10 +612,27 @@ async function generateVideo(){{
     if(data.status === 'completed' && data.clips && data.clips.length > 0){{
       result.style.display = 'block';
       var clips=data.clips;var bname=data.business_name||'';var surl=data.site_url||'';var ctxt=data.custom_text||'';
-      var vh='<div style="position:relative;width:100%;border-radius:10px;overflow:hidden;margin-bottom:10px"><video id="mainVid" src="'+clips[0]+'" controls autoplay playsinline style="width:100%;display:block"></video><div style="position:absolute;top:10px;left:12px;color:#fff;font-size:.8rem;font-weight:700;text-shadow:0 2px 6px rgba(0,0,0,.7)">'+(ctxt||bname)+'</div><div style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);color:#fff;font-size:.65rem;font-weight:600;text-shadow:0 1px 4px rgba(0,0,0,.7)">'+surl+'</div></div>';
-      vh+='<p style="font-size:.7rem;color:#94a3b8;margin-bottom:8px;text-align:center">Clip <span id="clipNum">1</span>/'+clips.length+' ('+data.total_duration+')</p>';
-      vh+='<div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:10px">';for(var ci=0;ci<clips.length;ci++){{vh+='<a href="'+clips[ci]+'" target="_blank" style="padding:4px 10px;background:#334155;border-radius:6px;color:#00e5ff;font-size:.65rem;text-decoration:none">Clip '+(ci+1)+'</a>';}}vh+='</div>';
-      result.innerHTML=vh;var vid=document.getElementById('mainVid');var cc=0;vid.onended=function(){{cc++;if(cc<clips.length){{vid.src=clips[cc];vid.play();document.getElementById('clipNum').textContent=cc+1;}}else{{cc=0;vid.src=clips[0];document.getElementById('clipNum').textContent='1';}}}};
+      var vh='<div style="position:relative;width:100%;border-radius:10px;overflow:hidden;margin-bottom:10px;background:#000">';
+      vh+='<canvas id="recCanvas" style="width:100%;display:block;border-radius:10px"></canvas>';
+      vh+='<video id="mainVid" crossorigin="anonymous" style="display:none"></video>';
+      vh+='</div>';
+      vh+='<p id="recStatus" style="font-size:.72rem;color:#94a3b8;text-align:center;margin:8px 0">Playing & recording clip 1/'+clips.length+'...</p>';
+      vh+='<button id="dlBtn" class="dl-btn" style="display:none;margin:10px auto;cursor:pointer" onclick="downloadStitched()">Download Full Video ('+data.total_duration+')</button>';
+      result.innerHTML=vh;
+      var canvas=document.getElementById('recCanvas');var ctx=canvas.getContext('2d');
+      var vid=document.getElementById('mainVid');
+      canvas.width=640;canvas.height=360;
+      var recorder;var chunks=[];var cc=0;
+      var stream=canvas.captureStream(30);
+      recorder=new MediaRecorder(stream,{{mimeType:'video/webm;codecs=vp9'}});
+      recorder.ondataavailable=function(e){{if(e.data.size>0)chunks.push(e.data);}};
+      recorder.onstop=function(){{document.getElementById('recStatus').textContent='Video ready! ('+data.total_duration+')';document.getElementById('dlBtn').style.display='block';}};
+      function drawFrame(){{ctx.drawImage(vid,0,0,canvas.width,canvas.height);ctx.fillStyle='rgba(0,0,0,0.4)';ctx.fillRect(0,0,canvas.width,30);ctx.fillRect(0,canvas.height-28,canvas.width,28);ctx.font='bold 16px sans-serif';ctx.fillStyle='#fff';ctx.textBaseline='middle';ctx.fillText(ctxt||bname,10,16);ctx.font='12px sans-serif';ctx.textAlign='center';ctx.fillText(surl,canvas.width/2,canvas.height-14);ctx.textAlign='start';if(!vid.paused)requestAnimationFrame(drawFrame);}}
+      vid.crossOrigin='anonymous';
+      vid.onplay=function(){{drawFrame();}};
+      vid.onended=function(){{cc++;if(cc<clips.length){{document.getElementById('recStatus').textContent='Recording clip '+(cc+1)+'/'+clips.length+'...';vid.src=clips[cc];vid.play();}}else{{recorder.stop();document.getElementById('recStatus').textContent='Stitching complete! Ready to download.';}}}};
+      vid.src=clips[0];vid.play();recorder.start();
+      window.downloadStitched=function(){{var blob=new Blob(chunks,{{type:'video/webm'}});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download=bname.replace(/\s+/g,'_')+'_promo.webm';a.click();URL.revokeObjectURL(url);}};
       status.style.display = 'none';
     }}else if(data.status === 'loading' || data.status === 'timeout'){{
       status.innerHTML = '<p>&#9203; '+(data.message||'Model is loading. Try again in 2 min.')+'</p>';
