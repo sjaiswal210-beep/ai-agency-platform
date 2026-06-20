@@ -64,6 +64,18 @@ from app.core.logging import setup_logging
 
 setup_logging()
 
+async def _ping_google_sitemap(slug: str):
+    """Notify Google about sitemap update for a subdomain."""
+    try:
+        import httpx
+        url = f"http://www.google.com/ping?sitemap=https://{slug}.city-maps.online/sitemap.xml"
+        async with httpx.AsyncClient(timeout=10) as client:
+            await client.get(url)
+    except Exception:
+        pass
+
+
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -141,6 +153,21 @@ app.add_middleware(
 )
 
 
+
+@app.get("/robots.txt")
+def robots_txt(request: Request):
+    """Dynamic robots.txt - includes subdomain sitemap if on subdomain."""
+    host = request.headers.get("host", "")
+    if ".city-maps.online" in host and not host.startswith("www."):
+        subdomain = host.split(".city-maps.online")[0].lower().strip()
+        if subdomain and subdomain not in ["www", "api", "admin"]:
+            txt = f"User-agent: *\nAllow: /\nSitemap: https://{subdomain}.city-maps.online/sitemap.xml"
+            from fastapi.responses import PlainTextResponse
+            return PlainTextResponse(content=txt)
+    # Main domain robots.txt
+    from fastapi.responses import PlainTextResponse
+    return PlainTextResponse(content="User-agent: *\nAllow: /\nSitemap: https://city-maps.online/sitemap.xml")
+
 @app.middleware("http")
 async def subdomain_routing(request: Request, call_next):
     """Route subdomain requests to the correct website."""
@@ -149,6 +176,17 @@ async def subdomain_routing(request: Request, call_next):
     if ".city-maps.online" in host and not host.startswith("www.") and not host.startswith("api."):
         subdomain = host.split(".city-maps.online")[0].lower().strip()
         if subdomain and subdomain not in ["www", "api", "admin"] and not request.url.path.startswith("/api/"):
+            # Serve subdomain-specific sitemap
+            if request.url.path == "/sitemap.xml":
+                from fastapi.responses import Response
+                slug_url = f"https://{subdomain}.city-maps.online"
+                sub_xml = f'''<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<url><loc>{slug_url}</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+<url><loc>{slug_url}/#services</loc><priority>0.8</priority></url>
+<url><loc>{slug_url}/#contact</loc><priority>0.7</priority></url>
+</urlset>'''
+                return Response(content=sub_xml, media_type="application/xml")
             # Redirect to the preview by slug
             from app.api.routes.preview import generate_html, _get_real_photos, get_images_for_category, _get_logo_icon, get_maps_embed
             from app.services.website_service import WebsiteService
