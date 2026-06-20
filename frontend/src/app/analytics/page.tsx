@@ -25,10 +25,12 @@ interface UsageData {
 export default function AnalyticsPage() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [usage, setUsage] = useState<UsageData | null>(null);
+  const [replicateUsage, setReplicateUsage] = useState<any>(null);
 
   const fetchData = () => {
     api.dashboard.stats().then(setStats).catch(console.error);
     fetch(`${API_BASE}/api/dashboard/usage`).then(r => r.json()).then(setUsage).catch(console.error);
+    fetch(`${API_BASE}/api/dashboard/replicate-usage`).then(r => r.json()).then(setReplicateUsage).catch(console.error);
   };
 
   useEffect(() => { fetchData(); }, []);

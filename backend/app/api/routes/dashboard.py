@@ -58,3 +58,50 @@ def reset_usage_stats():
     from app.services.usage_tracker import reset_usage
     reset_usage()
     return {"status": "reset"}
+
+@router.get("/replicate-usage")
+async def replicate_usage():
+    """Get real Replicate API usage and costs from their API."""
+    import os
+    import httpx
+    token = os.environ.get("REPLICATE_TOKEN", "")
+    if not token:
+        return {"predictions": 0, "total_cost": 0, "items": []}
+    
+    try:
+        async with httpx.AsyncClient(timeout=15) as client:
+            resp = await client.get(
+                "https://api.replicate.com/v1/predictions",
+                headers={"Authorization": f"Token {token}"},
+                params={"limit": 50}
+            )
+            if resp.status_code != 200:
+                return {"predictions": 0, "total_cost": 0, "error": "API error"}
+            
+            data = resp.json()
+            preds = data.get("results", [])
+            
+            total_cost = 0
+            items = []
+            for p in preds:
+                metrics = p.get("metrics", {}) or {}
+                predict_time = metrics.get("predict_time", 0) or 0
+                # LTX-2 distilled runs on Nvidia A40 at $0.000725/sec
+                cost = round(predict_time * 0.000725, 4)
+                total_cost += cost
+                items.append({
+                    "id": p.get("id", "")[:8],
+                    "model": (p.get("model", "") or "").split("/")[-1][:25],
+                    "status": p.get("status", ""),
+                    "time": round(predict_time, 1),
+                    "cost": cost,
+                    "created": (p.get("created_at", "") or "")[:10],
+                })
+            
+            return {
+                "predictions": len(preds),
+                "total_cost": round(total_cost, 4),
+                "items": items[:20],
+            }
+    except Exception as e:
+        return {"predictions": 0, "total_cost": 0, "error": str(e)[:50]}
