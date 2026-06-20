@@ -102,7 +102,7 @@ export default function AnalyticsPage() {
         {/* Live usage table */}
         <div className="bg-white/[0.03] backdrop-blur-xl border-white/[0.06] rounded-xl border border-white/5 overflow-hidden mb-6">
           <div className="p-4 border-b border-white/5">
-            <h2 className="font-semibold text-sm">Live API Usage (This Session)</h2>
+            <h2 className="font-semibold text-sm text-white">Live API Usage (This Session)</h2>
           </div>
           <table className="w-full text-sm text-slate-300">
             <thead className="bg-[#020817]">
@@ -136,7 +136,7 @@ export default function AnalyticsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           {/* Pipeline */}
           <div className="bg-white/[0.03] backdrop-blur-xl border-white/[0.06] rounded-xl border border-white/5 p-5">
-            <h3 className="font-semibold text-sm mb-4">Pipeline Funnel</h3>
+            <h3 className="font-semibold text-sm mb-4 text-white">Pipeline Funnel</h3>
             <div className="space-y-3">
               {[
                 { label: "Discovered", count: totalLeads, color: "bg-blue-500" },
@@ -160,7 +160,7 @@ export default function AnalyticsPage() {
 
           {/* Replicate Video costs */}
           <div className="bg-white/[0.03] backdrop-blur-xl border-white/[0.06] rounded-xl border border-white/5 p-5">
-            <h3 className="font-semibold text-sm mb-4">API Pricing & Free Tiers</h3>
+            <h3 className="font-semibold text-sm mb-4 text-white">API Pricing & Free Tiers</h3>
             <div className="space-y-4 text-xs">
               <div>
                 <p className="font-medium text-slate-300 mb-1">Google Places API</p>
