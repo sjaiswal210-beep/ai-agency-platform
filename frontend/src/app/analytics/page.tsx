@@ -104,7 +104,7 @@ export default function AnalyticsPage() {
           <div className="p-4 border-b border-white/5">
             <h2 className="font-semibold text-sm">Live API Usage (This Session)</h2>
           </div>
-          <table className="w-full text-sm">
+          <table className="w-full text-sm text-slate-300">
             <thead className="bg-[#020817]">
               <tr>
                 <th className="text-left px-4 py-2.5 text-xs font-medium text-slate-300">API Action</th>
@@ -115,7 +115,7 @@ export default function AnalyticsPage() {
             </thead>
             <tbody>
               {usage?.items.map((item, i) => (
-                <tr key={i} className={`border-t border-gray-50 ${item.calls > 0 ? "bg-white/[0.03]" : "bg-white/[0.02]/50 opacity-60"}`}>
+                <tr key={i} className={`border-t border-white/5 ${item.calls > 0 ? "bg-white/[0.03]" : "bg-white/[0.02]/50 opacity-60"}`}>
                   <td className="px-4 py-2.5 capitalize">{item.action.replace(/_/g, " ")}</td>
                   <td className="px-4 py-2.5 text-right font-mono">{item.calls}</td>
                   <td className="px-4 py-2.5 text-right font-mono text-xs text-slate-300">${item.cost_per_call}</td>
