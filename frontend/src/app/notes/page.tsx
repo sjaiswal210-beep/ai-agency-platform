@@ -140,7 +140,7 @@ export default function NotesPage() {
           {navItems.map((item) => (
             <a key={item.name} href={item.href}
               className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition ${
-                item.active ? "bg-white/10 text-white font-medium" : "text-slate-400 hover:bg-white/5 hover:text-white"
+                item.active ? "bg-white/10 text-white font-medium" : "text-slate-300 hover:bg-white/5 hover:text-white"
               }`}>
               <item.icon className="w-4 h-4 flex-shrink-0" />
               {!collapsed && <span>{item.name}</span>}
@@ -149,7 +149,7 @@ export default function NotesPage() {
         </nav>
         <div className="border-t border-white/10 p-2">
           <button onClick={() => setCollapsed(!collapsed)}
-            className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-500 hover:bg-white/5 hover:text-white w-full">
+            className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-400 hover:bg-white/5 hover:text-white w-full">
             <ChevronLeft className={`w-4 h-4 transition ${collapsed ? "rotate-180" : ""}`} />
             {!collapsed && <span>Collapse</span>}
           </button>
@@ -160,7 +160,7 @@ export default function NotesPage() {
       <main className={`flex-1 ${collapsed ? "ml-16" : "ml-56"} transition-all duration-200`}>
         <header className="bg-[#0f172a]/80 backdrop-blur-lg border-b border-white/5 px-6 py-3 sticky top-0 z-10">
           <h1 className="text-xl font-bold text-white">Notes & Conversations</h1>
-          <p className="text-xs text-slate-400">Notes, tasks, and team conversations</p>
+          <p className="text-xs text-slate-300">Notes, tasks, and team conversations</p>
         </header>
 
         <div className="p-6 max-w-3xl">
@@ -175,7 +175,7 @@ export default function NotesPage() {
               onKeyDown={(e) => { if (e.key === "Enter" && e.ctrlKey) saveNote(); }}
             />
             <div className="flex items-center justify-between">
-              <span className="text-xs text-slate-500">Ctrl+Enter to save</span>
+              <span className="text-xs text-slate-400">Ctrl+Enter to save</span>
               <button
                 onClick={saveNote}
                 disabled={saving || !text.trim()}
@@ -189,7 +189,7 @@ export default function NotesPage() {
           {/* Notes List */}
           <div className="space-y-3">
             {notes.length === 0 && (
-              <p className="text-center text-slate-500 text-sm py-8">No notes yet. Write your first note above.</p>
+              <p className="text-center text-slate-400 text-sm py-8">No notes yet. Write your first note above.</p>
             )}
             {notes.map((note) => {
               const { mainNote, replies, isDone } = parseNoteAndReplies(note.note);
@@ -201,7 +201,7 @@ export default function NotesPage() {
                       className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-purple-400/30 resize-none mb-2" />
                     <div className="flex gap-2">
                       <button onClick={saveEdit} className="px-3 py-1.5 bg-purple-600 text-white rounded-lg text-xs font-medium">Save</button>
-                      <button onClick={() => setEditingId(null)} className="px-3 py-1.5 bg-white/5 text-slate-400 rounded-lg text-xs border border-white/10">Cancel</button>
+                      <button onClick={() => setEditingId(null)} className="px-3 py-1.5 bg-white/5 text-slate-300 rounded-lg text-xs border border-white/10">Cancel</button>
                     </div>
                   </div>
                 ) : (
@@ -210,16 +210,16 @@ export default function NotesPage() {
                       <div className="flex items-start gap-2 flex-1">
                         <input type="checkbox" checked={isDone} onChange={() => toggleNote(note)}
                           className="mt-1 w-4 h-4 accent-purple-600 cursor-pointer flex-shrink-0" />
-                        <p className={`text-sm whitespace-pre-wrap ${isDone ? "text-slate-500 line-through" : "text-slate-200"}`}>{mainNote}</p>
+                        <p className={`text-sm whitespace-pre-wrap ${isDone ? "text-slate-400 line-through" : "text-white"}`}>{mainNote}</p>
                       </div>
                       <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition">
-                        <button onClick={() => startEdit(note)} className="p-1.5 text-slate-400 hover:text-purple-400 hover:bg-purple-500/10 rounded-lg transition">
+                        <button onClick={() => startEdit(note)} className="p-1.5 text-slate-300 hover:text-purple-400 hover:bg-purple-500/10 rounded-lg transition">
                           <Edit3 className="w-3.5 h-3.5" />
                         </button>
-                        <button onClick={() => setReplyingId(replyingId === note.id ? null : note.id)} className="p-1.5 text-slate-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition">
+                        <button onClick={() => setReplyingId(replyingId === note.id ? null : note.id)} className="p-1.5 text-slate-300 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition">
                           <MessageCircle className="w-3.5 h-3.5" />
                         </button>
-                        <button onClick={() => deleteNote(note.id)} className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition">
+                        <button onClick={() => deleteNote(note.id)} className="p-1.5 text-slate-300 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition">
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </div>
@@ -229,7 +229,7 @@ export default function NotesPage() {
                     {replies.length > 0 && (
                       <div className="mt-3 ml-6 space-y-2 border-l-2 border-purple-500/20 pl-3">
                         {replies.map((reply, i) => (
-                          <p key={i} className="text-xs text-slate-400">{reply}</p>
+                          <p key={i} className="text-xs text-slate-300">{reply}</p>
                         ))}
                       </div>
                     )}

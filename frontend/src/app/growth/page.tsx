@@ -45,9 +45,9 @@ export default function GrowthPage() {
       <header className="bg-[#0f172a]/80 backdrop-blur-lg border-b border-white/5 px-6 py-3 sticky top-0 z-10">
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           <div className="flex items-center gap-3">
-            <a href="/" className="text-slate-500 hover:text-slate-400"><ArrowLeft className="w-5 h-5" /></a>
+            <a href="/" className="text-slate-400 hover:text-slate-300"><ArrowLeft className="w-5 h-5" /></a>
             <Bot className="w-7 h-7 text-primary" />
-            <h1 className="text-lg font-bold">Growth Tools</h1>
+            <h1 className="text-lg font-bold text-white">Growth Tools</h1>
           </div>
           <select value={selectedLead} onChange={(e) => setSelectedLead(e.target.value)}
             className="px-3 py-1.5 border border-white/10 rounded-lg text-sm bg-white max-w-xs">
@@ -61,7 +61,7 @@ export default function GrowthPage() {
 
       <main className="max-w-7xl mx-auto px-6 py-6">
         {!selectedLead ? (
-          <div className="text-center py-20 text-slate-500">
+          <div className="text-center py-20 text-slate-400">
             <TrendingUp className="w-12 h-12 mx-auto mb-3 opacity-50" />
             <p>Select a business above to access growth tools</p>
           </div>
@@ -78,7 +78,7 @@ export default function GrowthPage() {
                     <span className="text-2xl">{tool.icon}</span>
                     <div>
                       <p className="text-sm font-semibold text-white">{tool.name}</p>
-                      <p className="text-xs text-slate-400">{tool.desc}</p>
+                      <p className="text-xs text-slate-300">{tool.desc}</p>
                     </div>
                   </div>
                 </button>
@@ -97,8 +97,8 @@ export default function GrowthPage() {
                 )}
               </div>
               <div className="flex-1 p-4 overflow-y-auto">
-                {loading && <div className="flex items-center justify-center h-full"><div className="text-center"><div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full mx-auto mb-3"></div><p className="text-sm text-slate-400">Generating strategy...</p></div></div>}
-                {!loading && !result && <div className="flex items-center justify-center h-full text-slate-500 text-sm">Click a tool to generate growth strategy</div>}
+                {loading && <div className="flex items-center justify-center h-full"><div className="text-center"><div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full mx-auto mb-3"></div><p className="text-sm text-slate-300">Generating strategy...</p></div></div>}
+                {!loading && !result && <div className="flex items-center justify-center h-full text-slate-400 text-sm">Click a tool to generate growth strategy</div>}
                 {!loading && result && <pre className="whitespace-pre-wrap text-sm text-slate-300 leading-relaxed font-sans">{result}</pre>}
               </div>
             </div>

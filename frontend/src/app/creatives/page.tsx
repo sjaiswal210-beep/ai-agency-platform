@@ -46,9 +46,9 @@ export default function CreativesPage() {
     <div className="min-h-screen bg-[#020817]">
       <header className="bg-[#0f172a]/80 backdrop-blur-lg border-b border-white/5 px-6 py-3 sticky top-0 z-10">
         <div className="flex items-center gap-3 max-w-7xl mx-auto">
-          <a href="/" className="text-slate-500 hover:text-slate-400"><ArrowLeft className="w-5 h-5" /></a>
+          <a href="/" className="text-slate-400 hover:text-slate-300"><ArrowLeft className="w-5 h-5" /></a>
           <Bot className="w-7 h-7 text-primary" />
-          <h1 className="text-lg font-bold">Ad Creatives</h1>
+          <h1 className="text-lg font-bold text-white">Ad Creatives</h1>
         </div>
       </header>
 
@@ -63,7 +63,7 @@ export default function CreativesPage() {
             </select>
 
             <div className="bg-white/[0.03] backdrop-blur-xl border-white/[0.06] rounded-xl border border-white/5 p-4">
-              <p className="text-xs font-medium text-slate-400 mb-2">Template</p>
+              <p className="text-xs font-medium text-slate-300 mb-2">Template</p>
               <div className="grid grid-cols-2 gap-2">
                 {TEMPLATES.map((t) => (
                   <button key={t.id} onClick={() => setTemplate(t.id)}
@@ -76,11 +76,11 @@ export default function CreativesPage() {
             </div>
 
             <div className="bg-white/[0.03] backdrop-blur-xl border-white/[0.06] rounded-xl border border-white/5 p-4">
-              <p className="text-xs font-medium text-slate-400 mb-2">Platform</p>
+              <p className="text-xs font-medium text-slate-300 mb-2">Platform</p>
               <div className="space-y-1">
                 {PLATFORMS.map((p) => (
                   <button key={p.id} onClick={() => setPlatform(p.id)}
-                    className={`w-full text-left px-3 py-2 rounded-lg text-xs transition ${platform === p.id ? "bg-primary/10 text-primary font-medium" : "text-slate-400 hover:bg-[#020817]"}`}>
+                    className={`w-full text-left px-3 py-2 rounded-lg text-xs transition ${platform === p.id ? "bg-primary/10 text-primary font-medium" : "text-slate-300 hover:bg-[#020817]"}`}>
                     {p.name}
                   </button>
                 ))}
@@ -88,7 +88,7 @@ export default function CreativesPage() {
             </div>
 
             <div className="bg-white/[0.03] backdrop-blur-xl border-white/[0.06] rounded-xl border border-white/5 p-4">
-              <p className="text-xs font-medium text-slate-400 mb-2">Custom Text (optional)</p>
+              <p className="text-xs font-medium text-slate-300 mb-2">Custom Text (optional)</p>
               <input type="text" value={customText} onChange={(e) => setCustomText(e.target.value)}
                 placeholder="e.g., 20% off this week, Diwali special..."
                 className="w-full px-3 py-2 border border-white/10 rounded-lg text-sm" />
@@ -105,7 +105,7 @@ export default function CreativesPage() {
             {previewUrl ? (
               <iframe src={previewUrl} className="w-full h-full border-0 min-h-[600px]" title="Creative Preview" />
             ) : (
-              <div className="text-center text-slate-400">
+              <div className="text-center text-slate-300">
                 <Image className="w-12 h-12 mx-auto mb-3 opacity-30" />
                 <p className="text-sm">Select a website and template to generate</p>
               </div>

@@ -47,9 +47,9 @@ export default function AnalyticsPage() {
       <header className="bg-white/[0.03] backdrop-blur-xl border-white/[0.06] border-b border-white/10 px-6 py-3">
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           <div className="flex items-center gap-3">
-            <a href="/" className="text-slate-500 hover:text-slate-400"><ArrowLeft className="w-5 h-5" /></a>
+            <a href="/" className="text-slate-400 hover:text-slate-300"><ArrowLeft className="w-5 h-5" /></a>
             <Bot className="w-7 h-7 text-primary" />
-            <h1 className="text-lg font-bold">Analytics & Costs</h1>
+            <h1 className="text-lg font-bold text-white">Analytics & Costs</h1>
           </div>
           <div className="flex gap-2">
             <button onClick={fetchData} className="flex items-center gap-1 px-3 py-1.5 text-xs bg-white/5 rounded-lg hover:bg-white/10">
@@ -68,34 +68,34 @@ export default function AnalyticsPage() {
           <div className="bg-white/[0.03] backdrop-blur-xl border-white/[0.06] rounded-xl border border-white/5 p-5">
             <div className="flex items-center gap-2 mb-2">
               <DollarSign className="w-4 h-4 text-green-500" />
-              <span className="text-xs font-medium text-slate-400">Total Spend</span>
+              <span className="text-xs font-medium text-slate-300">Total Spend</span>
             </div>
-            <p className="text-2xl font-bold">${usage?.total_cost?.toFixed(3) ?? "0.000"}</p>
-            <p className="text-xs text-slate-500 mt-1">This session</p>
+            <p className="text-2xl font-bold text-white">${usage?.total_cost?.toFixed(3) ?? "0.000"}</p>
+            <p className="text-xs text-slate-400 mt-1">This session</p>
           </div>
           <div className="bg-white/[0.03] backdrop-blur-xl border-white/[0.06] rounded-xl border border-white/5 p-5">
             <div className="flex items-center gap-2 mb-2">
               <Search className="w-4 h-4 text-blue-500" />
-              <span className="text-xs font-medium text-slate-400">Google Places</span>
+              <span className="text-xs font-medium text-slate-300">Google Places</span>
             </div>
-            <p className="text-2xl font-bold">${usage?.total_google_cost?.toFixed(3) ?? "0.000"}</p>
+            <p className="text-2xl font-bold text-white">${usage?.total_google_cost?.toFixed(3) ?? "0.000"}</p>
             <p className="text-xs text-green-600 mt-1">${usage?.google_free_remaining?.toFixed(2) ?? "200.00"} free remaining</p>
           </div>
           <div className="bg-white/[0.03] backdrop-blur-xl border-white/[0.06] rounded-xl border border-white/5 p-5">
             <div className="flex items-center gap-2 mb-2">
               <Zap className="w-4 h-4 text-amber-500" />
-              <span className="text-xs font-medium text-slate-400">Gemini AI</span>
+              <span className="text-xs font-medium text-slate-300">Gemini AI</span>
             </div>
-            <p className="text-2xl font-bold">${usage?.total_gemini_cost?.toFixed(3) ?? "0.000"}</p>
+            <p className="text-2xl font-bold text-white">${usage?.total_gemini_cost?.toFixed(3) ?? "0.000"}</p>
             <p className="text-xs text-green-600 mt-1">{usage?.gemini_free ? "Within free tier" : "Paid usage"}</p>
           </div>
           <div className="bg-white/[0.03] backdrop-blur-xl border-white/[0.06] rounded-xl border border-white/5 p-5">
             <div className="flex items-center gap-2 mb-2">
               <DollarSign className="w-4 h-4 text-primary" />
-              <span className="text-xs font-medium text-slate-400">Cost Per Lead</span>
+              <span className="text-xs font-medium text-slate-300">Cost Per Lead</span>
             </div>
-            <p className="text-2xl font-bold">${totalLeads > 0 ? ((usage?.total_cost ?? 0) / totalLeads).toFixed(3) : "0.000"}</p>
-            <p className="text-xs text-slate-500 mt-1">{totalLeads} leads total</p>
+            <p className="text-2xl font-bold text-white">${totalLeads > 0 ? ((usage?.total_cost ?? 0) / totalLeads).toFixed(3) : "0.000"}</p>
+            <p className="text-xs text-slate-400 mt-1">{totalLeads} leads total</p>
           </div>
         </div>
 
@@ -107,10 +107,10 @@ export default function AnalyticsPage() {
           <table className="w-full text-sm">
             <thead className="bg-[#020817]">
               <tr>
-                <th className="text-left px-4 py-2.5 text-xs font-medium text-slate-400">API Action</th>
-                <th className="text-right px-4 py-2.5 text-xs font-medium text-slate-400">Calls</th>
-                <th className="text-right px-4 py-2.5 text-xs font-medium text-slate-400">Cost/Call</th>
-                <th className="text-right px-4 py-2.5 text-xs font-medium text-slate-400">Total Cost</th>
+                <th className="text-left px-4 py-2.5 text-xs font-medium text-slate-300">API Action</th>
+                <th className="text-right px-4 py-2.5 text-xs font-medium text-slate-300">Calls</th>
+                <th className="text-right px-4 py-2.5 text-xs font-medium text-slate-300">Cost/Call</th>
+                <th className="text-right px-4 py-2.5 text-xs font-medium text-slate-300">Total Cost</th>
               </tr>
             </thead>
             <tbody>
@@ -118,7 +118,7 @@ export default function AnalyticsPage() {
                 <tr key={i} className={`border-t border-gray-50 ${item.calls > 0 ? "bg-white/[0.03]" : "bg-white/[0.02]/50 opacity-60"}`}>
                   <td className="px-4 py-2.5 capitalize">{item.action.replace(/_/g, " ")}</td>
                   <td className="px-4 py-2.5 text-right font-mono">{item.calls}</td>
-                  <td className="px-4 py-2.5 text-right font-mono text-xs text-slate-400">${item.cost_per_call}</td>
+                  <td className="px-4 py-2.5 text-right font-mono text-xs text-slate-300">${item.cost_per_call}</td>
                   <td className="px-4 py-2.5 text-right font-mono font-medium">${item.total_cost.toFixed(4)}</td>
                 </tr>
               ))}
@@ -147,7 +147,7 @@ export default function AnalyticsPage() {
               ].map((item) => (
                 <div key={item.label}>
                   <div className="flex justify-between text-xs mb-1">
-                    <span className="text-slate-400">{item.label}</span>
+                    <span className="text-slate-300">{item.label}</span>
                     <span className="font-medium">{item.count}</span>
                   </div>
                   <div className="h-2 bg-white/5 rounded-full overflow-hidden">
@@ -164,7 +164,7 @@ export default function AnalyticsPage() {
             <div className="space-y-4 text-xs">
               <div>
                 <p className="font-medium text-slate-300 mb-1">Google Places API</p>
-                <ul className="space-y-1 text-slate-400">
+                <ul className="space-y-1 text-slate-300">
                   <li className="flex justify-between"><span>Text Search</span><span className="font-mono">$32 / 1000 calls</span></li>
                   <li className="flex justify-between"><span>Place Details</span><span className="font-mono">$17 / 1000 calls</span></li>
                   <li className="flex justify-between"><span>Place Photos</span><span className="font-mono">$7 / 1000 calls</span></li>
@@ -174,7 +174,7 @@ export default function AnalyticsPage() {
               </div>
               <div>
                 <p className="font-medium text-slate-300 mb-1">Google Gemini API</p>
-                <ul className="space-y-1 text-slate-400">
+                <ul className="space-y-1 text-slate-300">
                   <li className="flex justify-between"><span>Input tokens</span><span className="font-mono">$0.075 / 1M</span></li>
                   <li className="flex justify-between"><span>Output tokens</span><span className="font-mono">$0.30 / 1M</span></li>
                   <li className="flex justify-between text-green-600 font-medium"><span>Free tier</span><span>15 req/min</span></li>
@@ -183,7 +183,7 @@ export default function AnalyticsPage() {
               </div>
               <div>
                 <p className="font-medium text-slate-300 mb-1">Supabase</p>
-                <ul className="space-y-1 text-slate-400">
+                <ul className="space-y-1 text-slate-300">
                   <li className="flex justify-between text-green-600 font-medium"><span>Database</span><span>Free (500MB)</span></li>
                   <li className="flex justify-between text-green-600"><span>API requests</span><span>Unlimited</span></li>
                 </ul>

@@ -121,9 +121,9 @@ export default function EditorPage() {
       <header className="bg-white/[0.03] backdrop-blur-xl border-white/[0.06] border-b border-white/10 px-6 py-3">
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           <div className="flex items-center gap-3">
-            <a href="/" className="text-slate-500 hover:text-slate-400"><ArrowLeft className="w-5 h-5" /></a>
+            <a href="/" className="text-slate-400 hover:text-slate-300"><ArrowLeft className="w-5 h-5" /></a>
             <Bot className="w-7 h-7 text-primary" />
-            <h1 className="text-lg font-bold">Website Editor</h1>
+            <h1 className="text-lg font-bold text-white">Website Editor</h1>
           </div>
           <div className="flex items-center gap-2">
             {selected && (
@@ -152,19 +152,19 @@ export default function EditorPage() {
             {/* Tabs */}
             <div className="flex gap-1 bg-white/5 p-1 rounded-lg">
               <button onClick={() => { setTab("edit"); if(selected) setPreviewUrl(`${API_BASE}/api/preview/${selected}`); }}
-                className={`flex-1 flex items-center justify-center gap-1 py-2 rounded-md text-xs font-medium transition ${tab === "edit" ? "bg-white shadow text-primary" : "text-slate-400"}`}>
+                className={`flex-1 flex items-center justify-center gap-1 py-2 rounded-md text-xs font-medium transition ${tab === "edit" ? "bg-white shadow text-primary" : "text-slate-300"}`}>
                 <Send className="w-3 h-3" /> Edit
               </button>
               <button onClick={() => setTab("logo")}
-                className={`flex-1 flex items-center justify-center gap-1 py-2 rounded-md text-xs font-medium transition ${tab === "logo" ? "bg-white shadow text-primary" : "text-slate-400"}`}>
+                className={`flex-1 flex items-center justify-center gap-1 py-2 rounded-md text-xs font-medium transition ${tab === "logo" ? "bg-white shadow text-primary" : "text-slate-300"}`}>
                 <Palette className="w-3 h-3" /> Logo
               </button>
               <button onClick={() => setTab("social")}
-                className={`flex-1 flex items-center justify-center gap-1 py-2 rounded-md text-xs font-medium transition ${tab === "social" ? "bg-white shadow text-primary" : "text-slate-400"}`}>
+                className={`flex-1 flex items-center justify-center gap-1 py-2 rounded-md text-xs font-medium transition ${tab === "social" ? "bg-white shadow text-primary" : "text-slate-300"}`}>
                 <Image className="w-3 h-3" /> Social
               </button>
               <button onClick={() => setTab("video")}
-                className={`flex-1 flex items-center justify-center gap-1 py-2 rounded-md text-xs font-medium transition ${tab === "video" ? "bg-white shadow text-primary" : "text-slate-400"}`}>
+                className={`flex-1 flex items-center justify-center gap-1 py-2 rounded-md text-xs font-medium transition ${tab === "video" ? "bg-white shadow text-primary" : "text-slate-300"}`}>
                 &#127909; Video
               </button>
             </div>
@@ -173,7 +173,7 @@ export default function EditorPage() {
             <div className="bg-white/[0.03] backdrop-blur-xl border-white/[0.06] rounded-xl shadow-lg shadow-black/10 border border-white/5 p-4 flex-1 flex flex-col">
               {tab === "edit" && (
                 <>
-                  <label className="text-xs font-medium text-slate-400 mb-1">What do you want to change?</label>
+                  <label className="text-xs font-medium text-slate-300 mb-1">What do you want to change?</label>
                   <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)}
                     placeholder="Examples:&#10;- Change color to dark blue&#10;- Add a new service&#10;- Update business hours&#10;- Make headline more catchy&#10;- Add FAQ about pricing"
                     className="flex-1 w-full px-3 py-2 border border-white/10 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary/50" />
@@ -186,11 +186,11 @@ export default function EditorPage() {
 
               {tab === "logo" && (
                 <>
-                  <label className="text-xs font-medium text-slate-400 mb-2">Logo Style</label>
+                  <label className="text-xs font-medium text-slate-300 mb-2">Logo Style</label>
                   <div className="grid grid-cols-2 gap-2 mb-3">
                     {["modern", "minimal", "bold", "elegant", "playful"].map((s) => (
                       <button key={s} onClick={() => setLogoStyle(s)}
-                        className={`px-3 py-2 rounded-lg text-xs font-medium capitalize transition ${logoStyle === s ? "bg-primary text-white" : "bg-white/5 text-slate-400 hover:bg-white/10"}`}>
+                        className={`px-3 py-2 rounded-lg text-xs font-medium capitalize transition ${logoStyle === s ? "bg-primary text-white" : "bg-white/5 text-slate-300 hover:bg-white/10"}`}>
                         {s}
                       </button>
                     ))}
@@ -206,7 +206,7 @@ export default function EditorPage() {
                 <>
                   {!showIdeaInput && !videoPrompt && (
                     <div className="flex-1 flex flex-col items-center justify-center gap-3">
-                      <p className="text-sm text-slate-400 text-center">What kind of video do you want?</p>
+                      <p className="text-sm text-slate-300 text-center">What kind of video do you want?</p>
                       <button onClick={() => setShowIdeaInput(true)}
                         className="px-4 py-2 bg-primary/10 text-primary rounded-lg text-sm font-medium hover:bg-primary/20">
                         Describe your idea
@@ -216,7 +216,7 @@ export default function EditorPage() {
 
                   {showIdeaInput && !videoPrompt && (
                     <div className="flex-1 flex flex-col">
-                      <label className="text-xs font-medium text-slate-400 mb-1">Your Video Idea</label>
+                      <label className="text-xs font-medium text-slate-300 mb-1">Your Video Idea</label>
                       <textarea value={videoIdea} onChange={(e) => setVideoIdea(e.target.value)}
                         placeholder="Describe your idea briefly...&#10;&#10;Examples:&#10;- Show the gym equipment and people exercising&#10;- A chef cooking in the kitchen&#10;- Happy customers at the salon&#10;- Before/after dental treatment&#10;- Hotel room tour with amenities"
                         className="flex-1 w-full px-3 py-2 border border-white/10 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary/50" />
@@ -229,14 +229,14 @@ export default function EditorPage() {
 
                   {videoPrompt && (
                     <div className="flex-1 flex flex-col">
-                      <label className="text-xs font-medium text-slate-400 mb-1">AI-Generated Video Prompt</label>
+                      <label className="text-xs font-medium text-slate-300 mb-1">AI-Generated Video Prompt</label>
                       <textarea value={videoPrompt} onChange={(e) => setVideoPrompt(e.target.value)}
                         className="flex-1 w-full px-3 py-2 border border-white/10 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary/50" />
                       <div className="flex gap-2 mt-2 mb-2">
-                        <label className="text-xs text-slate-400 self-center">Clips:</label>
+                        <label className="text-xs text-slate-300 self-center">Clips:</label>
                         {[2, 3, 4, 5].map((n) => (
                           <button key={n} onClick={() => setNumClips(n)}
-                            className={`px-2 py-1 rounded text-xs font-medium ${numClips === n ? "bg-primary text-white" : "bg-white/5 text-slate-400"}`}>
+                            className={`px-2 py-1 rounded text-xs font-medium ${numClips === n ? "bg-primary text-white" : "bg-white/5 text-slate-300"}`}>
                             {n}x10s
                           </button>
                         ))}
@@ -247,7 +247,7 @@ export default function EditorPage() {
                           {videoLoading ? `Generating ${numClips} clips...` : `Generate ${numClips * 10}s Video`}
                         </button>
                         <button onClick={() => { setVideoPrompt(""); setVideoIdea(""); setShowIdeaInput(false); }}
-                          className="px-3 py-2.5 bg-white/5 text-slate-400 rounded-lg text-sm hover:bg-white/10">
+                          className="px-3 py-2.5 bg-white/5 text-slate-300 rounded-lg text-sm hover:bg-white/10">
                           Reset
                         </button>
                       </div>
@@ -269,14 +269,14 @@ export default function EditorPage() {
 
               {tab === "social" && (
                 <>
-                  <label className="text-xs font-medium text-slate-400 mb-1">Platform</label>
+                  <label className="text-xs font-medium text-slate-300 mb-1">Platform</label>
                   <select value={socialPlatform} onChange={(e) => setSocialPlatform(e.target.value)}
                     className="w-full px-3 py-2 border border-white/10 rounded-lg text-sm mb-3">
                     <option value="instagram">Instagram Post</option>
                     <option value="facebook">Facebook Post</option>
                     <option value="whatsapp_status">WhatsApp Status</option>
                   </select>
-                  <label className="text-xs font-medium text-slate-400 mb-1">Purpose</label>
+                  <label className="text-xs font-medium text-slate-300 mb-1">Purpose</label>
                   <select value={socialPurpose} onChange={(e) => setSocialPurpose(e.target.value)}
                     className="w-full px-3 py-2 border border-white/10 rounded-lg text-sm mb-3">
                     <option value="promotion">Promotion</option>
@@ -302,7 +302,7 @@ export default function EditorPage() {
             {selected && previewUrl ? (
               <iframe key={refreshKey + previewUrl} src={previewUrl} className="w-full h-full border-0" title="Preview" />
             ) : (
-              <div className="flex items-center justify-center h-full text-slate-500 text-sm">Select a website to start editing</div>
+              <div className="flex items-center justify-center h-full text-slate-400 text-sm">Select a website to start editing</div>
             )}
           </div>
         </div>

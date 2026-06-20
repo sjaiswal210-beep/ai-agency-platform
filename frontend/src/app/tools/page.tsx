@@ -70,9 +70,9 @@ export default function ToolsPage() {
       <header className="bg-white/[0.03] backdrop-blur-xl border-white/[0.06] border-b border-white/10 px-6 py-3">
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           <div className="flex items-center gap-3">
-            <a href="/" className="text-slate-500 hover:text-slate-400"><ArrowLeft className="w-5 h-5" /></a>
+            <a href="/" className="text-slate-400 hover:text-slate-300"><ArrowLeft className="w-5 h-5" /></a>
             <Bot className="w-7 h-7 text-primary" />
-            <h1 className="text-lg font-bold">Business Toolkit</h1>
+            <h1 className="text-lg font-bold text-white">Business Toolkit</h1>
             {category && <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full capitalize">{category}</span>}
           </div>
         </div>
@@ -92,7 +92,7 @@ export default function ToolsPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4" style={{ minHeight: "calc(100vh - 180px)" }}>
             {/* Tools grid */}
             <div className="space-y-2">
-              <p className="text-xs font-medium text-slate-400 uppercase tracking-wide mb-2">Available Tools</p>
+              <p className="text-xs font-medium text-slate-300 uppercase tracking-wide mb-2">Available Tools</p>
               {tools.map((tool) => (
                 <button key={tool.id} onClick={() => { setActiveTool(tool); setResult(""); }}
                   className={`w-full text-left p-3 rounded-lg border transition ${
@@ -104,7 +104,7 @@ export default function ToolsPage() {
                     <span className="text-xl">{tool.icon}</span>
                     <div>
                       <p className="text-sm font-medium text-white">{tool.name}</p>
-                      <p className="text-xs text-slate-400">{tool.desc}</p>
+                      <p className="text-xs text-slate-300">{tool.desc}</p>
                     </div>
                   </div>
                 </button>
@@ -120,7 +120,7 @@ export default function ToolsPage() {
                       <span className="text-2xl">{activeTool.icon}</span>
                       <div>
                         <h2 className="font-semibold text-white">{activeTool.name}</h2>
-                        <p className="text-xs text-slate-400">{activeTool.desc}</p>
+                        <p className="text-xs text-slate-300">{activeTool.desc}</p>
                       </div>
                     </div>
                     <textarea value={context} onChange={(e) => setContext(e.target.value)}
@@ -135,7 +135,7 @@ export default function ToolsPage() {
                   {result && (
                     <div className="bg-white/[0.03] backdrop-blur-xl border-white/[0.06] rounded-xl border border-white/5 p-4 flex-1 overflow-auto">
                       <div className="flex items-center justify-between mb-3">
-                        <p className="text-xs font-medium text-slate-400">Generated Content</p>
+                        <p className="text-xs font-medium text-slate-300">Generated Content</p>
                         <button onClick={copyResult}
                           className="flex items-center gap-1 px-2 py-1 text-xs bg-white/5 rounded hover:bg-white/10 transition">
                           {copied ? <><Check className="w-3 h-3 text-green-500" /> Copied</> : <><Copy className="w-3 h-3" /> Copy</>}
@@ -146,7 +146,7 @@ export default function ToolsPage() {
                   )}
                 </>
               ) : (
-                <div className="flex items-center justify-center h-full text-slate-500 text-sm">
+                <div className="flex items-center justify-center h-full text-slate-400 text-sm">
                   Select a tool from the left to get started
                 </div>
               )}
