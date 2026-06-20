@@ -142,7 +142,7 @@ export default function EditorPage() {
           <div className="flex flex-col gap-3">
             {/* Website selector */}
             <select value={selected} onChange={(e) => { setSelected(e.target.value); setRefreshKey((k) => k + 1); setPreviewUrl(`${API_BASE}/api/preview/${e.target.value}`); }}
-              className="w-full px-3 py-2 border border-white/10 rounded-lg text-sm bg-white">
+              className="w-full px-3 py-2 border border-white/10 rounded-lg text-sm bg-white/[0.03]">
               <option value="">Select website...</option>
               {websites.map((w) => (
                 <option key={w.id} value={w.id}>{w.template} - {w.id.slice(0, 8)}...</option>

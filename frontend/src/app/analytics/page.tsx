@@ -115,7 +115,7 @@ export default function AnalyticsPage() {
             </thead>
             <tbody>
               {usage?.items.map((item, i) => (
-                <tr key={i} className={`border-t border-gray-50 ${item.calls > 0 ? "bg-white" : "bg-white/[0.02]/50 opacity-60"}`}>
+                <tr key={i} className={`border-t border-gray-50 ${item.calls > 0 ? "bg-white/[0.03]" : "bg-white/[0.02]/50 opacity-60"}`}>
                   <td className="px-4 py-2.5 capitalize">{item.action.replace(/_/g, " ")}</td>
                   <td className="px-4 py-2.5 text-right font-mono">{item.calls}</td>
                   <td className="px-4 py-2.5 text-right font-mono text-xs text-slate-400">${item.cost_per_call}</td>
