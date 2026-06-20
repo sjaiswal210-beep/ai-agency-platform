@@ -172,15 +172,24 @@ async def stitch_videos(clips: list, website_id: str, business_name: str = "", p
     phone_text = phone or ""
     branding = "Powered by City-Maps.online"
     
-    # Build drawtext filter
+    # Build professional branded overlay
+    # Sanitize text
+    brand_text = brand_text.replace("'", "").replace('"', '').replace(":", " ")
+    phone_text = phone_text.replace("'", "")
+    branding = branding.replace("'", "")
+    
     drawtext_filters = []
-    # Business name - top left
-    drawtext_filters.append(f"drawtext=text='{brand_text}':fontsize=24:fontcolor=white:x=20:y=20:shadowcolor=black:shadowx=2:shadowy=2")
-    # Phone - top right
+    # Top gradient bar
+    drawtext_filters.append("drawbox=x=0:y=0:w=iw:h=70:color=black@0.6:t=fill")
+    # Bottom gradient bar
+    drawtext_filters.append("drawbox=x=0:y=ih-55:w=iw:h=55:color=black@0.6:t=fill")
+    # Business name - large, centered at top
+    drawtext_filters.append(f"drawtext=text='{brand_text}':fontsize=36:fontcolor=white:x=(w-tw)/2:y=18:shadowcolor=black:shadowx=3:shadowy=3")
+    # Phone - below business name (smaller)
     if phone_text:
-        drawtext_filters.append(f"drawtext=text='{phone_text}':fontsize=18:fontcolor=white:x=w-tw-20:y=20:shadowcolor=black:shadowx=2:shadowy=2")
-    # Branding - bottom center
-    drawtext_filters.append(f"drawtext=text='{branding}':fontsize=16:fontcolor=white:x=(w-tw)/2:y=h-40:shadowcolor=black:shadowx=2:shadowy=2")
+        drawtext_filters.append(f"drawtext=text='{phone_text}':fontsize=20:fontcolor=#00e5ff:x=(w-tw)/2:y=50:shadowcolor=black:shadowx=2:shadowy=2")
+    # Branding - bottom center, larger
+    drawtext_filters.append(f"drawtext=text='{branding}':fontsize=22:fontcolor=white:x=(w-tw)/2:y=h-40:shadowcolor=black:shadowx=2:shadowy=2")
     
     filter_str = ",".join(drawtext_filters)
     
@@ -571,16 +580,22 @@ async def generate_free_video(website_id: str, req: HFVideoRequest, request: Req
     # - Offer text animated (pulses mid-video)  
     # - Website URL at bottom
     filters = []
-    # Dark gradient bars for text readability
-    filters.append("drawbox=x=0:y=0:w=iw:h=60:color=black@0.5:t=fill")
-    filters.append("drawbox=x=0:y=ih-45:w=iw:h=45:color=black@0.5:t=fill")
-    # Business name - large, bold, top center
-    filters.append(f"drawtext=text=\'{biz_clean}\':fontsize=28:fontcolor=white:x=(w-tw)/2:y=18:shadowcolor=black:shadowx=2:shadowy=2")
-    # Offer/custom text - animated fade in at 2sec, stays visible
+    # Professional branded overlay
+    # Top bar - darker, taller for business name
+    filters.append("drawbox=x=0:y=0:w=iw:h=80:color=black@0.7:t=fill")
+    # Bottom bar - for website URL
+    filters.append("drawbox=x=0:y=ih-60:w=iw:h=60:color=black@0.7:t=fill")
+    # Accent line at top (cyan brand color)
+    filters.append("drawbox=x=0:y=78:w=iw:h=3:color=#00e5ff@0.8:t=fill")
+    # Accent line at bottom
+    filters.append("drawbox=x=0:y=ih-60:w=iw:h=3:color=#00e5ff@0.8:t=fill")
+    # Business name - large, bold, centered in top bar
+    filters.append(f"drawtext=text=\'{biz_clean}\':fontsize=38:fontcolor=white:x=(w-tw)/2:y=20:shadowcolor=black:shadowx=3:shadowy=3")
+    # Offer/custom text - big yellow text in center, fades in after 2s
     if offer_clean:
-        filters.append(f"drawtext=text=\'{offer_clean}\':fontsize=24:fontcolor=yellow:x=(w-tw)/2:y=(h-th)/2:shadowcolor=black:shadowx=3:shadowy=3:enable=\'gte(t,1.5)\'")
-    # Website URL at bottom center
-    filters.append(f"drawtext=text=\'{site_clean}\':fontsize=18:fontcolor=white:x=(w-tw)/2:y=h-32:shadowcolor=black:shadowx=2:shadowy=2")
+        filters.append(f"drawtext=text=\'{offer_clean}\':fontsize=34:fontcolor=#fbbf24:x=(w-tw)/2:y=(h-th)/2:shadowcolor=black:shadowx=4:shadowy=4:enable=\'gte(t,1.5)\'")
+    # Website URL - bottom center, with glow effect
+    filters.append(f"drawtext=text=\'{site_clean}\':fontsize=24:fontcolor=#00e5ff:x=(w-tw)/2:y=h-42:shadowcolor=black:shadowx=2:shadowy=2")
     drawtext = ",".join(filters)
     try:
         subprocess.run(["ffmpeg", "-y", "-i", concat_path, "-vf", drawtext, "-c:a", "copy", "-preset", "ultrafast", final_path], capture_output=True, timeout=180)
