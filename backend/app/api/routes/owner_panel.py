@@ -65,9 +65,9 @@ body{{padding-bottom:60px}}
 </div>
 
 <div class="stats">
-<div class="stat"><div class="n">{views}</div><div class="l">Views</div></div>
+<div class="stat"><div class="n">{views}</div><div class="l">New Leads</div></div>
 <div class="stat"><div class="n">{calls}</div><div class="l">Calls</div></div>
-<div class="stat"><div class="n">{wa}</div><div class="l">WhatsApp</div></div>
+<div class="stat"><div class="n">{wa}</div><div class="l">Converted</div></div>
 </div>
 
 <div class="section-title">Manage Your Business</div>
