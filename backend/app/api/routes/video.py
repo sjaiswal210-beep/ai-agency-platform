@@ -580,22 +580,24 @@ async def generate_free_video(website_id: str, req: HFVideoRequest, request: Req
     # - Offer text animated (pulses mid-video)  
     # - Website URL at bottom
     filters = []
-    # Professional branded overlay
-    # Top bar - darker, taller for business name
-    filters.append("drawbox=x=0:y=0:w=iw:h=80:color=black@0.7:t=fill")
-    # Bottom bar - for website URL
-    filters.append("drawbox=x=0:y=ih-60:w=iw:h=60:color=black@0.7:t=fill")
-    # Accent line at top (cyan brand color)
-    filters.append("drawbox=x=0:y=78:w=iw:h=3:color=#00e5ff@0.8:t=fill")
-    # Accent line at bottom
-    filters.append("drawbox=x=0:y=ih-60:w=iw:h=3:color=#00e5ff@0.8:t=fill")
-    # Business name - large, bold, centered in top bar
-    filters.append(f"drawtext=text=\'{biz_clean}\':fontsize=38:fontcolor=white:x=(w-tw)/2:y=20:shadowcolor=black:shadowx=3:shadowy=3")
-    # Offer/custom text - big yellow text in center, fades in after 2s
+    # === SOCIAL POST STYLE VIDEO TEMPLATE ===
+    # Persistent top strip with business name (always visible)
+    filters.append("drawbox=x=0:y=0:w=iw:h=70:color=black@0.65:t=fill")
+    filters.append("drawbox=x=0:y=68:w=iw:h=2:color=#00e5ff@0.9:t=fill")
+    filters.append(f"drawtext=text=\'{biz_clean}\':fontsize=32:fontcolor=white:x=(w-tw)/2:y=20:shadowcolor=black:shadowx=2:shadowy=2")
+    # Persistent bottom strip with website + CTA
+    filters.append("drawbox=x=0:y=ih-55:w=iw:h=55:color=black@0.65:t=fill")
+    filters.append("drawbox=x=0:y=ih-55:w=iw:h=2:color=#00e5ff@0.9:t=fill")
+    filters.append(f"drawtext=text=\'{site_clean}\':fontsize=20:fontcolor=#00e5ff:x=(w-tw)/2:y=h-38:shadowcolor=black:shadowx=2:shadowy=2")
+    # Corner badge - "PROMO" label top-right
+    filters.append("drawbox=x=iw-90:y=75:w=85:h=26:color=#7c3aed@0.8:t=fill")
+    filters.append("drawtext=text=\'PROMO\':fontsize=14:fontcolor=white:x=iw-80:y=80")
+    # Offer/Custom text - center of screen, appears after 2s, pulses
     if offer_clean:
-        filters.append(f"drawtext=text=\'{offer_clean}\':fontsize=34:fontcolor=#fbbf24:x=(w-tw)/2:y=(h-th)/2:shadowcolor=black:shadowx=4:shadowy=4:enable=\'gte(t,1.5)\'")
-    # Website URL - bottom center, with glow effect
-    filters.append(f"drawtext=text=\'{site_clean}\':fontsize=24:fontcolor=#00e5ff:x=(w-tw)/2:y=h-42:shadowcolor=black:shadowx=2:shadowy=2")
+        filters.append(f"drawbox=x=iw/2-tw/2-20:y=ih/2-20:w=tw+40:h=50:color=black@0.6:t=fill:enable=\'gte(t,2)\'")
+        filters.append(f"drawtext=text=\'{offer_clean}\':fontsize=36:fontcolor=#fbbf24:x=(w-tw)/2:y=(h-th)/2:shadowcolor=black:shadowx=3:shadowy=3:enable=\'gte(t,2)\'")
+    # "Follow Us" CTA bottom-left, appears after 5s
+    filters.append(f"drawtext=text=\'Follow Us\':fontsize=14:fontcolor=white:x=15:y=h-75:shadowcolor=black:shadowx=1:shadowy=1:enable=\'gte(t,5)\'")
     drawtext = ",".join(filters)
     try:
         subprocess.run(["ffmpeg", "-y", "-i", concat_path, "-vf", drawtext, "-c:a", "copy", "-preset", "ultrafast", final_path], capture_output=True, timeout=180)
