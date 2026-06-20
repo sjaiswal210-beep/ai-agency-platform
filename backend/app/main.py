@@ -66,6 +66,7 @@ from app.modules.billing.router import router as billing_module_router
 from app.modules.booking.router import router as booking_module_router
 from app.modules.inventory.router import router as inventory_module_router
 from app.modules.property.router import router as property_module_router
+from app.modules.photographer.router import router as photographer_router
 from app.api.routes.public_booking import router as public_booking_router
 from app.api.routes.migration import router as migration_router
 from app.api.routes.panel_tools_admin import router as panel_tools_admin_router
@@ -290,6 +291,7 @@ app.include_router(billing_module_router)
 app.include_router(booking_module_router)
 app.include_router(inventory_module_router)
 app.include_router(property_module_router)
+app.include_router(photographer_router)
 app.include_router(public_booking_router, prefix="/api")
 app.include_router(migration_router)
 app.include_router(panel_tools_admin_router)
@@ -1009,6 +1011,7 @@ async def full_health_check():
 @app.get("/health")
 def health():
     return {"status": "ok", "service": "ai-agency-platform"}
+
 
 
 
