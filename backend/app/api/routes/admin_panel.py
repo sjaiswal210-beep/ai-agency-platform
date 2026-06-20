@@ -225,6 +225,22 @@ def save_note(note: dict):
     return {"saved": True}
 
 
+
+
+@router.put("/notes/{note_id}")
+def update_note(note_id: str, data: dict):
+    """Update an admin note (edit text, mark done, add reply)."""
+    from app.core.supabase import get_supabase
+    db = get_supabase()
+    new_text = data.get("note", "")
+    if not new_text:
+        raise HTTPException(400, "Note text required")
+    try:
+        db.table("agent_logs").update({"action": new_text}).eq("id", note_id).eq("agent_name", "admin_notes").execute()
+        return {"updated": True}
+    except Exception as e:
+        raise HTTPException(500, str(e)[:100])
+
 @router.delete("/notes/{note_id}")
 def delete_note(note_id: str):
     """Delete an admin note."""
