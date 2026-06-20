@@ -42,6 +42,17 @@ def owner_panel(website_id: str):
     def tool_visible(tool_id):
         return tool_id not in disabled_tools
 
+    # Get enabled Business OS modules for this website's organization
+    enabled_bos_modules = set()
+    try:
+        org_result = db.table("organizations").select("id").eq("slug", slug).limit(1).execute()
+        if org_result.data:
+            org_id = org_result.data[0]["id"]
+            mods = db.table("organization_modules").select("module_id").eq("organization_id", org_id).eq("enabled", True).execute()
+            enabled_bos_modules = set(m["module_id"] for m in (mods.data or []))
+    except Exception:
+        pass
+
     html = f'''<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <title>{business_name} - Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -162,6 +173,17 @@ def social_links_page(website_id: str):
     def tool_visible(tool_id):
         return tool_id not in disabled_tools
 
+    # Get enabled Business OS modules for this website's organization
+    enabled_bos_modules = set()
+    try:
+        org_result = db.table("organizations").select("id").eq("slug", slug).limit(1).execute()
+        if org_result.data:
+            org_id = org_result.data[0]["id"]
+            mods = db.table("organization_modules").select("module_id").eq("organization_id", org_id).eq("enabled", True).execute()
+            enabled_bos_modules = set(m["module_id"] for m in (mods.data or []))
+    except Exception:
+        pass
+
     html = f'''<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"><title>Social Links</title><style>*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:20px;max-width:400px;margin:0 auto}}h2{{font-size:1rem;margin-bottom:16px}}input{{width:100%;padding:10px;border:1px solid #334155;border-radius:8px;background:#1e293b;color:#fff;font-size:.8rem;margin-bottom:10px;outline:none}}button{{width:100%;padding:12px;background:#6366f1;color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:.85rem}}</style></head><body><h2>Social Media Links</h2><input id="instaUrl" placeholder="Instagram URL"><input id="fbUrl" placeholder="Facebook URL"><input id="ytUrl" placeholder="YouTube URL"><button onclick="save()">Save Links</button><p id="msg" style="margin-top:10px;font-size:.75rem;color:#22c55e"></p><script>async function save(){{try{{await fetch("/api/panel/{website_id}/social-links",{{method:"POST",headers:{{"Content-Type":"application/json"}},body:JSON.stringify({{instagram:document.getElementById("instaUrl").value,facebook:document.getElementById("fbUrl").value,youtube:document.getElementById("ytUrl").value}})}});document.getElementById("msg").textContent="Saved!"}}catch{{alert("Failed")}}}}</script></body></html>'''
     return HTMLResponse(content=html)
 
@@ -178,6 +200,17 @@ def gallery_page(website_id: str):
 
     def tool_visible(tool_id):
         return tool_id not in disabled_tools
+
+    # Get enabled Business OS modules for this website's organization
+    enabled_bos_modules = set()
+    try:
+        org_result = db.table("organizations").select("id").eq("slug", slug).limit(1).execute()
+        if org_result.data:
+            org_id = org_result.data[0]["id"]
+            mods = db.table("organization_modules").select("module_id").eq("organization_id", org_id).eq("enabled", True).execute()
+            enabled_bos_modules = set(m["module_id"] for m in (mods.data or []))
+    except Exception:
+        pass
 
     html = f'''<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"><title>Gallery Photos</title><style>*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:20px;max-width:400px;margin:0 auto}}h2{{font-size:1rem;margin-bottom:8px}}p{{font-size:.75rem;color:#64748b;margin-bottom:12px}}textarea{{width:100%;padding:10px;border:1px solid #334155;border-radius:8px;background:#1e293b;color:#fff;font-size:.8rem;min-height:150px;margin-bottom:10px;outline:none;resize:vertical}}button{{width:100%;padding:12px;background:#6366f1;color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:.85rem}}</style></head><body><h2>Gallery Photos</h2><p>Add image URLs (one per line). Use Google Drive or Imgur links.</p><textarea id="galUrls" placeholder="https://drive.google.com/...&#10;https://i.imgur.com/...&#10;https://..."></textarea><button onclick="save()">Save Gallery</button><p id="msg" style="margin-top:10px;font-size:.75rem;color:#22c55e"></p><script>async function save(){{var urls=document.getElementById("galUrls").value.split("\\n").filter(function(u){{return u.trim()}});try{{await fetch("/api/panel/{website_id}/gallery",{{method:"POST",headers:{{"Content-Type":"application/json"}},body:JSON.stringify({{urls:urls}})}});document.getElementById("msg").textContent="Saved! "+urls.length+" photos added."}}catch{{alert("Failed")}}}}</script></body></html>'''
     return HTMLResponse(content=html)
@@ -234,6 +267,17 @@ def video_creator_page(website_id: str):
 
     def tool_visible(tool_id):
         return tool_id not in disabled_tools
+
+    # Get enabled Business OS modules for this website's organization
+    enabled_bos_modules = set()
+    try:
+        org_result = db.table("organizations").select("id").eq("slug", slug).limit(1).execute()
+        if org_result.data:
+            org_id = org_result.data[0]["id"]
+            mods = db.table("organization_modules").select("module_id").eq("organization_id", org_id).eq("enabled", True).execute()
+            enabled_bos_modules = set(m["module_id"] for m in (mods.data or []))
+    except Exception:
+        pass
 
     html = f'''<!DOCTYPE html><html lang="en"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
@@ -449,6 +493,17 @@ def ai_video_page(website_id: str):
 
     def tool_visible(tool_id):
         return tool_id not in disabled_tools
+
+    # Get enabled Business OS modules for this website's organization
+    enabled_bos_modules = set()
+    try:
+        org_result = db.table("organizations").select("id").eq("slug", slug).limit(1).execute()
+        if org_result.data:
+            org_id = org_result.data[0]["id"]
+            mods = db.table("organization_modules").select("module_id").eq("organization_id", org_id).eq("enabled", True).execute()
+            enabled_bos_modules = set(m["module_id"] for m in (mods.data or []))
+    except Exception:
+        pass
 
     html = f'''<!DOCTYPE html><html><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
@@ -728,6 +783,8 @@ Return JSON:
         return data
     except Exception:
         return {"competitors": [], "insights": "Could not analyze. Try again."}
+
+
 
 
 
