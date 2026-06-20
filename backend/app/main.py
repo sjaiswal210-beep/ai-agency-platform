@@ -68,6 +68,7 @@ from app.modules.inventory.router import router as inventory_module_router
 from app.modules.property.router import router as property_module_router
 from app.api.routes.public_booking import router as public_booking_router
 from app.api.routes.migration import router as migration_router
+from app.api.routes.panel_tools_admin import router as panel_tools_admin_router
 from app.automation.scheduler import start_scheduler, stop_scheduler
 from app.core.logging import setup_logging
 
@@ -291,6 +292,7 @@ app.include_router(inventory_module_router)
 app.include_router(property_module_router)
 app.include_router(public_booking_router, prefix="/api")
 app.include_router(migration_router)
+app.include_router(panel_tools_admin_router)
 
 
 # Mount static files
@@ -1007,6 +1009,7 @@ async def full_health_check():
 @app.get("/health")
 def health():
     return {"status": "ok", "service": "ai-agency-platform"}
+
 
 
 
