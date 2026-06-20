@@ -64,10 +64,12 @@ body{{padding-bottom:60px}}
 <a href="{site_url}" target="_blank">{slug}.city-maps.online &rarr;</a>
 </div>
 
-<div class="stats">
-<div class="stat"><div class="n">{views}</div><div class="l">New Leads</div></div>
+<div class="stats" style="grid-template-columns:repeat(5,1fr)">
+<div class="stat"><div class="n">{views}</div><div class="l">Visitors</div></div>
+<div class="stat"><div class="n">{wa}</div><div class="l">WA Clicks</div></div>
 <div class="stat"><div class="n">{calls}</div><div class="l">Calls</div></div>
-<div class="stat"><div class="n">{wa}</div><div class="l">Converted</div></div>
+<div class="stat"><div class="n">0</div><div class="l">Directions</div></div>
+<div class="stat"><div class="n">0</div><div class="l">QR Scans</div></div>
 </div>
 
 <div class="section-title">Manage Your Business</div>
@@ -82,6 +84,14 @@ body{{padding-bottom:60px}}
 <a href="/api/logo-gen/{website_id}/preview" target="_blank" class="tool"><div class="emoji">&#127912;</div><div class="name">Logo</div><div class="desc">Generate logo</div></a>
 <a href="https://city-maps.online/api/panel/{website_id}/video-creator" target="_blank" class="tool"><div class="emoji">&#127916;</div><div class="name">Promo Videos</div><div class="desc">Photo slideshow</div></a>
 <a href="https://city-maps.online/api/panel/{website_id}/ai-video" target="_blank" class="tool"><div class="emoji">&#129302;</div><div class="name">Video Creator</div><div class="desc">Create promo video</div></a>
+</div>
+
+<div class="section-title">Growth Tools</div>
+<div class="tools">
+<a href="/api/panel/{website_id}/reviews" target="_blank" class="tool"><div class="emoji">&#11088;</div><div class="name">Reviews</div><div class="desc">Get reviews</div></a>
+<a href="/api/panel/{website_id}/assistant" target="_blank" class="tool"><div class="emoji">&#128172;</div><div class="name">Business Assistant</div><div class="desc">Ask anything</div></a>
+<a href="/api/panel/{website_id}/wa-growth" target="_blank" class="tool"><div class="emoji">&#128232;</div><div class="name">WA Growth</div><div class="desc">Campaigns</div></a>
+<a href="/api/panel/{website_id}/competitors" target="_blank" class="tool"><div class="emoji">&#128200;</div><div class="name">Competitors</div><div class="desc">Insights</div></a>
 </div>
 
 <div class="section-title">Edit Your Website</div>
@@ -433,3 +443,238 @@ textarea{{width:100%;padding:10px;border:1px solid #334155;border-radius:8px;bac
 <script src="/static/js/video_creator.js?v=3"></script>
 </body></html>'''
     return HTMLResponse(content=html)
+
+
+@router.get("/{website_id}/reviews", response_class=HTMLResponse)
+def reviews_page(website_id: str):
+    """Google Reviews management - generate review links, track ratings."""
+    service = WebsiteService()
+    lead_service = LeadService()
+    website = service.get(website_id)
+    if not website:
+        raise HTTPException(404, "Not found")
+    lead = lead_service.get(website["lead_id"]) if website.get("lead_id") else None
+    business_name = lead.get("business_name", "Business") if lead else "Business"
+    address = lead.get("address", "") if lead else ""
+    import urllib.parse
+    review_link = f"https://search.google.com/local/writereview?placeid=&q={urllib.parse.quote(business_name + ' ' + address)}"
+    wa_review_msg = urllib.parse.quote(f"Hi! Thank you for visiting {business_name}. We would love your feedback! Please leave us a Google review: {review_link}")
+
+    html = f"""<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"><title>Reviews - {business_name}</title><style>*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:16px;max-width:500px;margin:0 auto}}input,select,textarea{{font-size:16px!important}}.card{{background:rgba(255,255,255,.03);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:16px;margin-bottom:12px}}.btn{{display:block;width:100%;padding:12px;border:none;border-radius:10px;font-weight:700;font-size:.85rem;cursor:pointer;text-align:center;text-decoration:none;margin-bottom:8px}}</style></head><body>
+<h1 style="font-size:1.1rem;font-weight:800;text-align:center;margin-bottom:4px">&#11088; Google Reviews</h1>
+<p style="font-size:.72rem;color:#64748b;text-align:center;margin-bottom:16px">{business_name}</p>
+<div class="card">
+<h2 style="font-size:.82rem;font-weight:700;margin-bottom:8px">Your Review Link</h2>
+<p style="font-size:.68rem;color:#94a3b8;margin-bottom:10px">Share this link with customers to get Google reviews</p>
+<input id="revLink" value="{review_link}" readonly style="width:100%;padding:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#00e5ff;font-size:12px;margin-bottom:8px" onclick="this.select();navigator.clipboard.writeText(this.value)">
+<button onclick="navigator.clipboard.writeText(document.getElementById('revLink').value);this.textContent='Copied!';setTimeout(()=>this.textContent='Copy Link',2000)" class="btn" style="background:#6366f1;color:#fff">Copy Review Link</button>
+</div>
+<div class="card">
+<h2 style="font-size:.82rem;font-weight:700;margin-bottom:8px">Send Review Request via WhatsApp</h2>
+<p style="font-size:.68rem;color:#94a3b8;margin-bottom:10px">Send to your recent customers</p>
+<input id="custPhone" placeholder="Customer phone number" style="width:100%;padding:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-size:14px;margin-bottom:8px">
+<a id="waBtn" href="https://wa.me/?text={wa_review_msg}" target="_blank" class="btn" style="background:#25D366;color:#fff" onclick="var p=document.getElementById('custPhone').value;if(p)this.href='https://wa.me/'+p.replace(/[^0-9]/g,'')+'?text={wa_review_msg}'">Send Review Request on WhatsApp</a>
+</div>
+<div class="card">
+<h2 style="font-size:.82rem;font-weight:700;margin-bottom:8px">Tips to Get More Reviews</h2>
+<ul style="font-size:.72rem;color:#94a3b8;padding-left:16px;line-height:2">
+<li>Ask happy customers right after service</li>
+<li>Print QR code on bills/receipts</li>
+<li>Send WhatsApp request same day</li>
+<li>Respond to all existing reviews</li>
+</ul>
+</div>
+</body></html>"""
+    return HTMLResponse(content=html)
+
+
+@router.get("/{website_id}/assistant", response_class=HTMLResponse)
+def assistant_page(website_id: str):
+    """Business Assistant - chat interface for business tasks."""
+    service = WebsiteService()
+    lead_service = LeadService()
+    website = service.get(website_id)
+    if not website:
+        raise HTTPException(404, "Not found")
+    lead = lead_service.get(website["lead_id"]) if website.get("lead_id") else None
+    business_name = lead.get("business_name", "Business") if lead else "Business"
+    category = lead.get("category", "business") if lead else "business"
+
+    html = f"""<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"><title>Business Assistant</title><style>*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:16px;max-width:500px;margin:0 auto;padding-bottom:80px}}input,select,textarea{{font-size:16px!important}}.card{{background:rgba(255,255,255,.03);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px;margin-bottom:10px}}.msg{{padding:10px 12px;border-radius:12px;margin-bottom:8px;font-size:.8rem;max-width:85%}}.msg-user{{background:rgba(99,102,241,.2);margin-left:auto;text-align:right}}.msg-bot{{background:rgba(255,255,255,.05)}}.input-bar{{position:fixed;bottom:0;left:0;right:0;background:rgba(15,23,42,.95);backdrop-filter:blur(12px);padding:12px;display:flex;gap:8px;max-width:500px;margin:0 auto}}</style></head><body>
+<h1 style="font-size:1.1rem;font-weight:800;text-align:center;margin-bottom:4px">&#128172; Business Assistant</h1>
+<p style="font-size:.72rem;color:#64748b;text-align:center;margin-bottom:12px">{business_name}</p>
+<div class="card" style="margin-bottom:8px">
+<p style="font-size:.68rem;color:#94a3b8;margin-bottom:8px">Try these:</p>
+<div style="display:flex;flex-wrap:wrap;gap:6px">
+<button onclick="ask('Create a festive offer for {category}')" style="padding:5px 10px;background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.2);border-radius:8px;color:#a78bfa;font-size:.65rem;cursor:pointer">Create festive offer</button>
+<button onclick="ask('Write Instagram post for {business_name}')" style="padding:5px 10px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);border-radius:8px;color:#4ade80;font-size:.65rem;cursor:pointer">Instagram post</button>
+<button onclick="ask('Create WhatsApp broadcast for Ganesh Chaturthi')" style="padding:5px 10px;background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.2);border-radius:8px;color:#00e5ff;font-size:.65rem;cursor:pointer">WhatsApp campaign</button>
+<button onclick="ask('Give me 5 tips to get more customers')" style="padding:5px 10px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);border-radius:8px;color:#fbbf24;font-size:.65rem;cursor:pointer">Growth tips</button>
+</div>
+</div>
+<div id="chat"></div>
+<div class="input-bar">
+<input id="inp" placeholder="Ask anything about your business..." style="flex:1;padding:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#fff;outline:none" onkeydown="if(event.key==='Enter')ask()">
+<button onclick="ask()" style="padding:10px 16px;background:#6366f1;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer">Send</button>
+</div>
+<script>
+function ask(preset){{
+  var inp=document.getElementById("inp");
+  var q=preset||inp.value.trim();if(!q)return;
+  inp.value="";
+  var chat=document.getElementById("chat");
+  chat.innerHTML+='<div class="msg msg-user">'+q+'</div>';
+  chat.innerHTML+='<div class="msg msg-bot" id="typing" style="color:#64748b">Thinking...</div>';
+  chat.scrollTop=chat.scrollHeight;
+  fetch("/api/panel/{website_id}/assistant-ask",{{method:"POST",headers:{{"Content-Type":"application/json"}},body:JSON.stringify({{question:q}})}}).then(r=>r.json()).then(d=>{{
+    document.getElementById("typing").remove();
+    chat.innerHTML+='<div class="msg msg-bot">'+d.answer.replace(/\n/g,'<br>')+'</div>';
+    chat.scrollTop=chat.scrollHeight;
+  }}).catch(()=>{{document.getElementById("typing").textContent="Error. Try again.";}});
+}}
+</script>
+</body></html>"""
+    return HTMLResponse(content=html)
+
+
+@router.post("/{website_id}/assistant-ask")
+async def assistant_ask(website_id: str, data: dict):
+    """Business assistant - answer questions using AI."""
+    from app.core.llm import chat_completion
+    service = WebsiteService()
+    lead_service = LeadService()
+    website = service.get(website_id)
+    lead = lead_service.get(website["lead_id"]) if website and website.get("lead_id") else None
+    business_name = lead.get("business_name", "Business") if lead else "Business"
+    category = lead.get("category", "business") if lead else "business"
+    question = data.get("question", "")
+
+    prompt = f"""You are a business growth assistant for {business_name} ({category}).
+Answer the following request helpfully and concisely. If asked to create content (posts, offers, messages), write it ready to use.
+Keep responses short (under 200 words). Use emojis where appropriate.
+
+Request: {question}"""
+
+    try:
+        answer = await chat_completion([{"role": "user", "content": prompt}])
+        return {"answer": answer}
+    except Exception as e:
+        return {"answer": f"Sorry, I could not process that. Please try again. ({str(e)[:50]})"}
+
+
+@router.get("/{website_id}/wa-growth", response_class=HTMLResponse)
+def wa_growth_page(website_id: str):
+    """WhatsApp Growth Center - templates, broadcasts, campaigns."""
+    service = WebsiteService()
+    lead_service = LeadService()
+    website = service.get(website_id)
+    if not website:
+        raise HTTPException(404, "Not found")
+    lead = lead_service.get(website["lead_id"]) if website.get("lead_id") else None
+    business_name = lead.get("business_name", "Business") if lead else "Business"
+    phone = lead.get("phone", "") if lead else ""
+
+    templates = [
+        ("Festival Greeting", f"Happy Festival from {business_name}! Visit us for special deals this season. \n\nCall: {phone}"),
+        ("New Offer", f"FLAT 20% OFF at {business_name}! Limited time only. Walk in or WhatsApp us now!\n\nCall: {phone}"),
+        ("Thank You", f"Thank you for visiting {business_name}! Hope to see you again soon. Please share your experience with friends!"),
+        ("Appointment Reminder", f"Reminder: Your appointment at {business_name} is tomorrow. See you soon!"),
+        ("New Arrival", f"NEW ARRIVALS at {business_name}! Come check out our latest collection. WhatsApp us for details."),
+    ]
+
+    import urllib.parse
+    template_cards = ""
+    for name, msg in templates:
+        encoded = urllib.parse.quote(msg)
+        template_cards += f'<div class="card"><h3 style="font-size:.78rem;font-weight:700;margin-bottom:6px">{name}</h3><p style="font-size:.68rem;color:#94a3b8;margin-bottom:8px;white-space:pre-line">{msg[:100]}...</p><a href="https://wa.me/?text={encoded}" target="_blank" style="display:block;text-align:center;padding:8px;background:#25D366;color:#fff;border-radius:8px;font-size:.75rem;font-weight:600;text-decoration:none">Send on WhatsApp</a></div>'
+
+    html = f"""<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"><title>WhatsApp Growth</title><style>*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:16px;max-width:500px;margin:0 auto}}input,select,textarea{{font-size:16px!important}}.card{{background:rgba(255,255,255,.03);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px;margin-bottom:10px}}</style></head><body>
+<h1 style="font-size:1.1rem;font-weight:800;text-align:center;margin-bottom:4px">&#128232; WhatsApp Growth Center</h1>
+<p style="font-size:.72rem;color:#64748b;text-align:center;margin-bottom:16px">{business_name} - Broadcast & Campaigns</p>
+{template_cards}
+<div class="card">
+<h3 style="font-size:.78rem;font-weight:700;margin-bottom:6px">Custom Message</h3>
+<textarea id="customMsg" placeholder="Write your custom broadcast message..." style="width:100%;padding:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-size:14px;min-height:80px;resize:none;margin-bottom:8px"></textarea>
+<a onclick="var m=document.getElementById('customMsg').value;if(m)window.open('https://wa.me/?text='+encodeURIComponent(m),'_blank')" style="display:block;text-align:center;padding:8px;background:#25D366;color:#fff;border-radius:8px;font-size:.75rem;font-weight:600;cursor:pointer">Send Custom Message</a>
+</div>
+</body></html>"""
+    return HTMLResponse(content=html)
+
+
+@router.get("/{website_id}/competitors", response_class=HTMLResponse)
+def competitors_page(website_id: str):
+    """Competitor insights - nearby businesses, review comparison."""
+    service = WebsiteService()
+    lead_service = LeadService()
+    website = service.get(website_id)
+    if not website:
+        raise HTTPException(404, "Not found")
+    lead = lead_service.get(website["lead_id"]) if website.get("lead_id") else None
+    business_name = lead.get("business_name", "Business") if lead else "Business"
+    category = lead.get("category", "business") if lead else "business"
+    address = lead.get("address", "") if lead else ""
+
+    html = f"""<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"><title>Competitors</title><style>*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:16px;max-width:500px;margin:0 auto}}input,select,textarea{{font-size:16px!important}}.card{{background:rgba(255,255,255,.03);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px;margin-bottom:10px}}.btn{{display:block;width:100%;padding:12px;background:#6366f1;color:#fff;border:none;border-radius:10px;font-weight:700;font-size:.85rem;cursor:pointer;text-align:center}}</style></head><body>
+<h1 style="font-size:1.1rem;font-weight:800;text-align:center;margin-bottom:4px">&#128200; Competitor Insights</h1>
+<p style="font-size:.72rem;color:#64748b;text-align:center;margin-bottom:16px">{business_name}</p>
+<div class="card">
+<h2 style="font-size:.82rem;font-weight:700;margin-bottom:8px">Your Position</h2>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:.72rem">
+<div><span style="color:#64748b">Category:</span> {category}</div>
+<div><span style="color:#64748b">Area:</span> {address.split(",")[-2].strip() if "," in address else address[:20]}</div>
+</div>
+</div>
+<div class="card">
+<h2 style="font-size:.82rem;font-weight:700;margin-bottom:8px">Nearby Competitors</h2>
+<p style="font-size:.68rem;color:#94a3b8;margin-bottom:10px">Tap to analyze competitors in your area</p>
+<button class="btn" id="analyzeBtn" onclick="analyze()">Analyze Competitors</button>
+<div id="results" style="margin-top:10px"></div>
+</div>
+<script>
+async function analyze(){{
+  var btn=document.getElementById("analyzeBtn");btn.disabled=true;btn.textContent="Analyzing...";
+  try{{
+    var r=await fetch("/api/panel/{website_id}/competitor-analysis",{{method:"POST"}});
+    var d=await r.json();
+    var html="";
+    if(d.competitors){{d.competitors.forEach(function(c){{html+='<div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.72rem"><div style="display:flex;justify-content:space-between"><b style="color:#e2e8f0">'+c.name+'</b><span style="color:#fbbf24">'+c.rating+' &#9733;</span></div><p style="color:#64748b;font-size:.65rem">'+c.reviews+' reviews</p></div>';}});}}
+    if(d.insights)html+='<div style="margin-top:10px;padding:10px;background:rgba(99,102,241,.1);border-radius:8px;font-size:.7rem;color:#a78bfa">'+d.insights+'</div>';
+    document.getElementById("results").innerHTML=html||'<p style="font-size:.7rem;color:#64748b">No data found</p>';
+  }}catch(e){{document.getElementById("results").innerHTML='<p style="color:#ef4444;font-size:.7rem">Failed. Try again.</p>';}}
+  btn.disabled=false;btn.textContent="Analyze Competitors";
+}}
+</script>
+</body></html>"""
+    return HTMLResponse(content=html)
+
+
+@router.post("/{website_id}/competitor-analysis")
+async def competitor_analysis(website_id: str):
+    """Analyze competitors using AI."""
+    from app.core.llm import chat_completion
+    import json
+    service = WebsiteService()
+    lead_service = LeadService()
+    website = service.get(website_id)
+    lead = lead_service.get(website["lead_id"]) if website and website.get("lead_id") else None
+    business_name = lead.get("business_name", "Business") if lead else "Business"
+    category = lead.get("category", "business") if lead else "business"
+    address = lead.get("address", "") if lead else ""
+
+    prompt = f"""For a {category} business named "{business_name}" located at "{address}":
+1. List 4-5 likely nearby competitors (realistic names for that area/category)
+2. Give estimated ratings and review counts
+3. Provide 2-3 insights about what this business can do better
+
+Return JSON:
+{{"competitors":[{{"name":"...","rating":"4.5","reviews":"120"}}],"insights":"..."}}"""
+
+    try:
+        raw = await chat_completion([{"role": "user", "content": prompt}])
+        cleaned = raw.strip()
+        if "```json" in cleaned: cleaned = cleaned.split("```json")[1].split("```")[0]
+        elif "```" in cleaned: cleaned = cleaned.split("```")[1].split("```")[0]
+        data = json.loads(cleaned.strip())
+        return data
+    except Exception:
+        return {"competitors": [], "insights": "Could not analyze. Try again."}
