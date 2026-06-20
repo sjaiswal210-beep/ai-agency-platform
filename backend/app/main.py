@@ -74,6 +74,9 @@ from app.modules.custom_orders.router import router as custom_orders_router
 from app.modules.catalog.router import router as catalog_router
 from app.modules.clinic.router import router as clinic_router
 from app.modules.students.router import router as students_router
+from app.modules.events.router import router as events_router
+from app.modules.fleet.router import router as fleet_router
+from app.modules.reminders.router import router as reminders_router
 from app.api.routes.public_booking import router as public_booking_router
 from app.api.routes.public_catalog import router as public_catalog_router
 from app.api.routes.migration import router as migration_router
@@ -307,6 +310,9 @@ app.include_router(custom_orders_router)
 app.include_router(catalog_router)
 app.include_router(clinic_router)
 app.include_router(students_router)
+app.include_router(events_router)
+app.include_router(fleet_router)
+app.include_router(reminders_router)
 app.include_router(public_booking_router, prefix="/api")
 app.include_router(public_catalog_router, prefix="/api")
 app.include_router(migration_router)
@@ -1027,6 +1033,7 @@ async def full_health_check():
 @app.get("/health")
 def health():
     return {"status": "ok", "service": "ai-agency-platform"}
+
 
 
 
