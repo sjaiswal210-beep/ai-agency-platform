@@ -20,8 +20,8 @@ interface WebsiteItem {
 
 const STATUS_COLORS: Record<string, string> = {
   generating: "bg-yellow-100 text-yellow-700",
-  preview: "bg-blue-100 text-blue-700",
-  approved: "bg-green-100 text-green-700",
+  preview: "bg-blue-100 text-blue-400",
+  approved: "bg-green-100 text-green-400",
   deployed: "bg-emerald-200 text-emerald-800",
 };
 
@@ -137,7 +137,7 @@ export default function WebsitesPage() {
                       href={`${API_BASE}/api/logo-gen/${site.id}/preview`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-3 py-2 bg-white/5 text-slate-400 text-xs rounded-lg hover:bg-gray-200 transition"
+                      className="px-3 py-2 bg-white/5 text-slate-400 text-xs rounded-lg hover:bg-white/10 transition"
                       title="Edit Logo"
                     >
                       Logo
@@ -146,7 +146,7 @@ export default function WebsitesPage() {
                       href={`${API_BASE}/api/panel/${site.id}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-3 py-2 bg-white/5 text-slate-400 text-xs rounded-lg hover:bg-gray-200 transition"
+                      className="px-3 py-2 bg-white/5 text-slate-400 text-xs rounded-lg hover:bg-white/10 transition"
                       title="Owner Panel"
                     >
                       Panel

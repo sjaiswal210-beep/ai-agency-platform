@@ -190,7 +190,7 @@ export default function EditorPage() {
                   <div className="grid grid-cols-2 gap-2 mb-3">
                     {["modern", "minimal", "bold", "elegant", "playful"].map((s) => (
                       <button key={s} onClick={() => setLogoStyle(s)}
-                        className={`px-3 py-2 rounded-lg text-xs font-medium capitalize transition ${logoStyle === s ? "bg-primary text-white" : "bg-white/5 text-slate-400 hover:bg-gray-200"}`}>
+                        className={`px-3 py-2 rounded-lg text-xs font-medium capitalize transition ${logoStyle === s ? "bg-primary text-white" : "bg-white/5 text-slate-400 hover:bg-white/10"}`}>
                         {s}
                       </button>
                     ))}
@@ -247,7 +247,7 @@ export default function EditorPage() {
                           {videoLoading ? `Generating ${numClips} clips...` : `Generate ${numClips * 10}s Video`}
                         </button>
                         <button onClick={() => { setVideoPrompt(""); setVideoIdea(""); setShowIdeaInput(false); }}
-                          className="px-3 py-2.5 bg-white/5 text-slate-400 rounded-lg text-sm hover:bg-gray-200">
+                          className="px-3 py-2.5 bg-white/5 text-slate-400 rounded-lg text-sm hover:bg-white/10">
                           Reset
                         </button>
                       </div>

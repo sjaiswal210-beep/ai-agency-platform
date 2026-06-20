@@ -52,7 +52,7 @@ export default function AnalyticsPage() {
             <h1 className="text-lg font-bold">Analytics & Costs</h1>
           </div>
           <div className="flex gap-2">
-            <button onClick={fetchData} className="flex items-center gap-1 px-3 py-1.5 text-xs bg-white/5 rounded-lg hover:bg-gray-200">
+            <button onClick={fetchData} className="flex items-center gap-1 px-3 py-1.5 text-xs bg-white/5 rounded-lg hover:bg-white/10">
               <RefreshCw className="w-3 h-3" /> Refresh
             </button>
             <button onClick={resetUsage} className="flex items-center gap-1 px-3 py-1.5 text-xs text-red-500 bg-red-50 rounded-lg hover:bg-red-100">
@@ -194,7 +194,7 @@ export default function AnalyticsPage() {
 
         {/* Bottom note */}
         <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-center">
-          <p className="text-sm text-green-700 font-medium">
+          <p className="text-sm text-green-400 font-medium">
             With free tiers, you can run ~4000 lead discoveries + unlimited AI operations per month at $0 cost.
           </p>
         </div>

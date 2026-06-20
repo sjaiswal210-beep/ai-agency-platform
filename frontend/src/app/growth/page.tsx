@@ -77,7 +77,7 @@ export default function GrowthPage() {
                   <div className="flex items-center gap-3">
                     <span className="text-2xl">{tool.icon}</span>
                     <div>
-                      <p className="text-sm font-semibold">{tool.name}</p>
+                      <p className="text-sm font-semibold text-white">{tool.name}</p>
                       <p className="text-xs text-slate-400">{tool.desc}</p>
                     </div>
                   </div>
@@ -91,7 +91,7 @@ export default function GrowthPage() {
                 <h3 className="font-semibold text-sm">{loading ? "Generating..." : activeTool ? "Result" : "Select a tool"}</h3>
                 {result && (
                   <button onClick={() => { navigator.clipboard.writeText(result); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
-                    className="flex items-center gap-1 px-3 py-1 text-xs bg-white/5 rounded-lg hover:bg-gray-200">
+                    className="flex items-center gap-1 px-3 py-1 text-xs bg-white/5 rounded-lg hover:bg-white/10">
                     {copied ? <><Check className="w-3 h-3 text-green-500" /> Copied</> : <><Copy className="w-3 h-3" /> Copy All</>}
                   </button>
                 )}

@@ -103,7 +103,7 @@ export default function ToolsPage() {
                   <div className="flex items-center gap-3">
                     <span className="text-xl">{tool.icon}</span>
                     <div>
-                      <p className="text-sm font-medium">{tool.name}</p>
+                      <p className="text-sm font-medium text-white">{tool.name}</p>
                       <p className="text-xs text-slate-400">{tool.desc}</p>
                     </div>
                   </div>
@@ -119,7 +119,7 @@ export default function ToolsPage() {
                     <div className="flex items-center gap-2 mb-3">
                       <span className="text-2xl">{activeTool.icon}</span>
                       <div>
-                        <h2 className="font-semibold">{activeTool.name}</h2>
+                        <h2 className="font-semibold text-white">{activeTool.name}</h2>
                         <p className="text-xs text-slate-400">{activeTool.desc}</p>
                       </div>
                     </div>
@@ -137,7 +137,7 @@ export default function ToolsPage() {
                       <div className="flex items-center justify-between mb-3">
                         <p className="text-xs font-medium text-slate-400">Generated Content</p>
                         <button onClick={copyResult}
-                          className="flex items-center gap-1 px-2 py-1 text-xs bg-white/5 rounded hover:bg-gray-200 transition">
+                          className="flex items-center gap-1 px-2 py-1 text-xs bg-white/5 rounded hover:bg-white/10 transition">
                           {copied ? <><Check className="w-3 h-3 text-green-500" /> Copied</> : <><Copy className="w-3 h-3" /> Copy</>}
                         </button>
                       </div>

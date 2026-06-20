@@ -171,7 +171,7 @@ export default function NotesPage() {
               onChange={(e) => setText(e.target.value)}
               placeholder="Write a note, task, or start a conversation..."
               rows={3}
-              className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500/30 resize-none mb-3"
+              className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-400/30 resize-none mb-3"
               onKeyDown={(e) => { if (e.key === "Enter" && e.ctrlKey) saveNote(); }}
             />
             <div className="flex items-center justify-between">
@@ -198,7 +198,7 @@ export default function NotesPage() {
                 {editingId === note.id ? (
                   <div>
                     <textarea value={editText} onChange={(e) => setEditText(e.target.value)} rows={3}
-                      className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-purple-500/30 resize-none mb-2" />
+                      className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-purple-400/30 resize-none mb-2" />
                     <div className="flex gap-2">
                       <button onClick={saveEdit} className="px-3 py-1.5 bg-purple-600 text-white rounded-lg text-xs font-medium">Save</button>
                       <button onClick={() => setEditingId(null)} className="px-3 py-1.5 bg-white/5 text-slate-400 rounded-lg text-xs border border-white/10">Cancel</button>
@@ -239,7 +239,7 @@ export default function NotesPage() {
                       <div className="mt-3 ml-6 flex gap-2">
                         <input value={replyText} onChange={(e) => setReplyText(e.target.value)}
                           placeholder="Write a reply..."
-                          className="flex-1 px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-purple-500/30"
+                          className="flex-1 px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-purple-400/30"
                           onKeyDown={(e) => { if (e.key === "Enter") addReply(note.id); }}
                         />
                         <button onClick={() => addReply(note.id)} className="p-1.5 bg-purple-600 rounded-lg text-white hover:bg-purple-700 transition">
