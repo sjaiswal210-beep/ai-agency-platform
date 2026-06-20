@@ -1,3 +1,4 @@
+var _st=document.createElement("style");_st.textContent=".swal2-popup{border-radius:16px!important;margin:5px auto!important;max-width:calc(100vw - 10px)!important}";document.head.appendChild(_st);
 async function pubSearch(){
   var biz=document.getElementById("sBiz").value.trim();
   var area=document.getElementById("sArea").value.trim();
@@ -20,7 +21,7 @@ async function pubSearch(){
       });
       html+="</div>";
       r.innerHTML="";
-      Swal.fire({title:data.results.length+" businesses found",html:html,showConfirmButton:false,showCloseButton:true,background:"#0f172a",color:"#fff",width:"92%",didOpen:function(){document.querySelectorAll("[data-biz]").forEach(function(el){el.addEventListener("click",function(){selectBiz(el)})});}});
+      Swal.fire({title:data.results.length+" businesses found",html:html,showConfirmButton:false,showCloseButton:true,background:"#0f172a",color:"#fff",width:"92%",padding:"14px",didOpen:function(){document.querySelectorAll("[data-biz]").forEach(function(el){el.addEventListener("click",function(){selectBiz(el)})});}});
     }else{
       Swal.fire({icon:"info",title:"No results found",text:"Try a different business name or area.",background:"#0f172a",color:"#fff"});
     }
