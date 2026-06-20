@@ -1,4 +1,4 @@
-﻿from contextlib import asynccontextmanager
+from contextlib import asynccontextmanager
 import re as _security_re
 
 def _sanitize_input(text: str) -> str:
@@ -211,7 +211,7 @@ async def subdomain_routing(request: Request, call_next):
                     html = generate_html(content, website.get("template", "store"), lead, website_id_override=website["id"])
                     # Inject ad slot before </body>
                     wid = website["id"]
-                    ad_inject = '<div id="cm-ad" style="display:none;position:fixed;bottom:62px;left:8px;right:8px;z-index:998;text-align:center"></div><script data-cfasync="false">fetch("/api/ads/serve?website_id=' + wid + '").then(function(r){return r.json()}).then(function(d){if(!d.ad)return;var s=document.getElementById("cm-ad");s.style.display="block";s.innerHTML="<a href=\'"+d.ad.destination_url+"\' target=\'_blank\'><img src=\'"+d.ad.creative_url+"\' style=\'max-width:100%;max-height:90px;border-radius:8px\' alt=\'ad\'></a>";fetch("/api/ads/track",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({campaign_id:d.ad.id,event_type:"ad_impression",website_id:"' + wid + '"})})}).catch(function(){});</script>'
+                    ad_inject = '<div id="cm-ad" style="display:none;position:fixed;bottom:65px;left:10px;right:10px;z-index:998;text-align:center;background:rgba(15,23,42,.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:8px;box-shadow:0 8px 30px rgba(0,0,0,.4)"></div><script data-cfasync="false">fetch("/api/ads/serve?website_id=' + wid + '").then(function(r){return r.json()}).then(function(d){if(!d.ad)return;var s=document.getElementById("cm-ad");s.style.display="block";s.style.position="relative";s.innerHTML="<a href=\'"+d.ad.destination_url+"\' target=\'_blank\'><img src=\'"+d.ad.creative_url+"\' style=\'width:100%;max-height:75px;object-fit:cover;border-radius:10px\' alt=\'ad\'></a><span style=\'position:absolute;top:4px;right:8px;background:rgba(0,0,0,.6);color:#fff;font-size:8px;padding:1px 5px;border-radius:8px\'>Ad</span><button onclick=\'document.getElementById("cm-ad").style.display="none"\' style=\'position:absolute;top:-6px;left:-6px;width:18px;height:18px;border-radius:50%;background:rgba(0,0,0,.7);color:#fff;border:none;font-size:11px;cursor:pointer;line-height:18px\'>&times;</button>";fetch("/api/ads/track",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({campaign_id:d.ad.id,event_type:"ad_impression",website_id:"' + wid + '"})})}).catch(function(){});</script>'
                     # Inject ad - use simple string replace on the body tag
                     html = html.replace("<body>", "<body>" + ad_inject, 1)
                     if ad_inject not in html:
