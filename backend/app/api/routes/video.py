@@ -450,8 +450,13 @@ Return ONLY a JSON array of 4 scene descriptions:
 
 @router.post("/{website_id}/generate-free")
 async def generate_free_video(website_id: str, req: HFVideoRequest):
-    """Generate video clips and return URLs."""
+    """Generate 30-sec video (6 clips), stitch with ffmpeg, add text overlay."""
     import json as _json
+    import httpx as _hx
+    import subprocess
+    import tempfile
+    import shutil
+
     service = WebsiteService()
     lead_service = LeadService()
     website = service.get(website_id)
@@ -461,29 +466,29 @@ async def generate_free_video(website_id: str, req: HFVideoRequest):
     business_name = lead.get("business_name", "Business") if lead else "Business"
     category = lead.get("category", "business") if lead else "business"
     slug = website.get("slug", "")
+    site_url = f"{slug}.city-maps.online" if slug else "city-maps.online"
+    custom_text = req.custom_text if hasattr(req, "custom_text") and req.custom_text else ""
 
-    # Parse scenes from prompt (newline separated) or generate
+    # Parse scenes
     prompt_text = req.prompt or ""
     scenes = [s.strip() for s in prompt_text.split("\n") if s.strip() and len(s.strip()) > 10]
-    # Strip "Scene X:" prefix if present
-    scenes = [s.split(":", 1)[1].strip() if s.startswith("Scene") else s for s in scenes]
-    
+    scenes = [s.split(":", 1)[1].strip() if ":" in s and s.split(":")[0].strip().startswith("Scene") else s for s in scenes]
+
     if len(scenes) < 3:
-        # Generate scenes
         try:
-            sp = f"Create 6 scene descriptions for a {category} business promo. Business: {business_name}. Return ONLY JSON array."
+            sp = f"Create 6 short scene descriptions for a {category} business video. Business: {business_name}. Return ONLY JSON array."
             raw = await chat_completion([{"role": "user", "content": sp}])
             cleaned = raw.strip()
             if "```json" in cleaned: cleaned = cleaned.split("```json")[1].split("```")[0]
             elif "```" in cleaned: cleaned = cleaned.split("```")[1].split("```")[0]
             scenes = _json.loads(cleaned.strip())[:6]
         except Exception:
-            scenes = [f"{business_name} exterior", f"{business_name} interior", f"Products at {business_name}", f"Happy customers", f"Team at work", f"Business signage"]
+            scenes = [f"{business_name} exterior", f"Interior with customers", f"Products close-up", f"Happy customers", f"Team working", f"Business signage"]
 
     if not REPLICATE_TOKEN:
         raise HTTPException(500, "Video service not configured")
 
-    # Generate clips
+    # Generate 6 clips via Replicate
     rep_client = replicate.Client(api_token=REPLICATE_TOKEN)
     clip_urls = []
     for scene in scenes[:6]:
@@ -498,11 +503,66 @@ async def generate_free_video(website_id: str, req: HFVideoRequest):
     if not clip_urls:
         return {"status": "failed", "message": "Video generation failed. Try again."}
 
-    return {
-        "status": "completed",
-        "video_url": clip_urls[0],
-        "clips": clip_urls,
-        "total_duration": f"{len(clip_urls) * 5} seconds",
-        "business_name": business_name
-    }
+    # Download and stitch with ffmpeg
+    temp_dir = tempfile.mkdtemp()
+    clip_files = []
+    async with _hx.AsyncClient(timeout=60) as client:
+        for i, url in enumerate(clip_urls):
+            try:
+                resp = await client.get(url)
+                if resp.status_code == 200 and len(resp.content) > 5000:
+                    path = os.path.join(temp_dir, f"clip_{i}.mp4")
+                    with open(path, "wb") as fout:
+                        fout.write(resp.content)
+                    clip_files.append(path)
+            except Exception:
+                continue
+
+    if not clip_files:
+        shutil.rmtree(temp_dir, ignore_errors=True)
+        return {"status": "completed", "video_url": clip_urls[0], "clips": clip_urls, "total_duration": f"{len(clip_urls)*5} seconds", "business_name": business_name}
+
+    # Stitch
+    output_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), "static", "videos")
+    os.makedirs(output_dir, exist_ok=True)
+    concat_path = os.path.join(temp_dir, "concat.mp4")
+    final_path = os.path.join(output_dir, f"{website_id}_promo.mp4")
+
+    list_file = os.path.join(temp_dir, "list.txt")
+    with open(list_file, "w") as lf:
+        for cf in clip_files:
+            lf.write(f"file \'{cf}\'\n")
+
+    # Concat clips
+    try:
+        subprocess.run(["ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", list_file, "-c", "copy", concat_path], capture_output=True, timeout=120)
+    except Exception:
+        pass
+    if not os.path.exists(concat_path) or os.path.getsize(concat_path) < 5000:
+        try:
+            subprocess.run(["ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", list_file, "-c:v", "libx264", "-preset", "ultrafast", "-crf", "28", concat_path], capture_output=True, timeout=180)
+        except Exception:
+            # If ffmpeg fails completely, return first clip
+            shutil.rmtree(temp_dir, ignore_errors=True)
+            return {"status": "completed", "video_url": clip_urls[0], "clips": clip_urls, "total_duration": f"{len(clip_urls)*5} seconds", "business_name": business_name}
+
+    # Add text overlay
+    overlay = (custom_text or business_name).replace("'", "").replace('"', '').replace(":", " ")
+    site_clean = site_url.replace("'", "")
+    drawtext = f"drawtext=text=\'{overlay}\':fontsize=20:fontcolor=white:x=10:y=10:shadowcolor=black:shadowx=2:shadowy=2,drawtext=text=\'{site_clean}\':fontsize=14:fontcolor=white:x=(w-tw)/2:y=h-25:shadowcolor=black:shadowx=2:shadowy=2"
+    try:
+        subprocess.run(["ffmpeg", "-y", "-i", concat_path, "-vf", drawtext, "-c:a", "copy", "-preset", "ultrafast", final_path], capture_output=True, timeout=180)
+        if not os.path.exists(final_path) or os.path.getsize(final_path) < 5000:
+            shutil.copy2(concat_path, final_path)
+    except Exception:
+        shutil.copy2(concat_path, final_path)
+
+    shutil.rmtree(temp_dir, ignore_errors=True)
+
+    if os.path.exists(final_path) and os.path.getsize(final_path) > 5000:
+        video_url = f"/static/videos/{website_id}_promo.mp4"
+    else:
+        video_url = clip_urls[0]
+
+    return {"status": "completed", "video_url": video_url, "clips": clip_urls, "total_duration": f"{len(clip_files)*5} seconds", "business_name": business_name}
 
