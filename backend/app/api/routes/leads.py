@@ -156,7 +156,7 @@ async def public_create_site(data: dict):
         return {"error": str(e), "message": "Website creation started. Check back in a minute."}
 
 @router.get("/")
-def list_leads(status: str | None = None, limit: int = 50, offset: int = 0):
+def list_leads(status: str | None = None, limit: int = 500, offset: int = 0):
     """List all leads with optional status filter."""
     return LeadService().list_leads(status=status, limit=limit, offset=offset)
 
