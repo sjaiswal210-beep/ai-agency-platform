@@ -152,24 +152,36 @@ async function fixAll(){{var p=document.getElementById("prog");p.style.display="
 async def fix_all_low_scores():
     """Auto-fix all websites scoring below 8."""
     from app.core.supabase import get_supabase
-    from app.services.website_service import WebsiteService
     from app.services.lead_service import LeadService
-    from app.agents.qa_review.agent import auto_fix_website
+    from app.agents.qa_review.agent import auto_fix_website, review_website
     db = get_supabase()
     sites = db.table("websites").select("id,slug,lead_id,content").not_.is_("slug", "null").limit(50).execute().data or []
     fixed = 0
+    errors = []
     for site in sites:
         content = site.get("content", {}) or {}
         if not isinstance(content, dict):
             continue
+        # Check both content._qa_review and qa_reviews table
         review = content.get("_qa_review", {})
-        if not review or review.get("overall_score", 10) >= 8:
+        if not review:
+            try:
+                qr = db.table("qa_reviews").select("overall_score,issues,fixes_needed").eq("website_id", site["id"]).limit(1).execute()
+                if qr.data:
+                    review = qr.data[0]
+            except Exception:
+                pass
+        if not review:
+            continue
+        score = review.get("overall_score", 10)
+        if not isinstance(score, (int, float)) or score >= 8:
             continue
         try:
             ls = LeadService()
             lead = ls.get(site["lead_id"]) if site.get("lead_id") else None
             await auto_fix_website(site["id"], review, content, lead)
             fixed += 1
-        except Exception:
+        except Exception as e:
+            errors.append({"site": site.get("slug",""), "error": str(e)[:50]})
             continue
-    return {"fixed": fixed, "total_checked": len(sites)}
+    return {"fixed": fixed, "total_checked": len(sites), "errors": errors[:5]}
