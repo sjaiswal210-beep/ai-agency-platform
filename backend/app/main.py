@@ -815,7 +815,7 @@ a{{text-decoration:none;color:inherit}}
 
 
 <div class="badge"><span class="dot"></span>{count}+ businesses already online</div>
-<h1>Make Your Business <span>Online Free</span></h1>
+<h1>Get More Customers <span>Online Free</span></h1>
 <p style="font-size:.95rem;color:#94a3b8;margin-bottom:16px">Free Website, WhatsApp & Business Growth Tools</p>
 <img src="/static/images/hero-banner.png" alt="City Maps - Create Free Websites" style="max-width:500px;width:100%;border-radius:10px;margin-bottom:10px">
 
