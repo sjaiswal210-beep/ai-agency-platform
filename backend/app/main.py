@@ -803,7 +803,7 @@ a{{text-decoration:none;color:inherit}}
 <div class="badge"><span class="dot"></span>{count}+ businesses already online</div>
 <h1>Make Your Business <span>Online Free</span></h1>
 <p style="font-size:.95rem;color:#94a3b8;margin-bottom:16px">Free Website, WhatsApp & Business Growth Tools</p>
-<img src="/static/images/hero-banner.png" alt="City Maps - Create Free Websites" style="max-width:500px;width:100%;border-radius:10px;margin-bottom:10px">
+<picture><source srcset="/static/images/hero-banner.webp" type="image/webp"><img src="/static/images/hero-banner-sm.jpg" alt="City Maps - Create Free Websites" style="max-width:500px;width:100%;border-radius:10px;margin-bottom:10px" loading="eager" width="500" height="300" fetchpriority="high"></picture>
 
 <div class="search-box" style="max-width:560px;margin:20px auto 0;padding:14px 16px;border-radius:16px;background:rgba(255,255,255,.04);border:1.5px solid rgba(0,229,255,.15);box-shadow:0 12px 40px rgba(0,229,255,.1),inset 0 1px 0 rgba(255,255,255,.05);backdrop-filter:blur(12px)">
 <div style="display:flex;gap:8px;flex-wrap:wrap">
