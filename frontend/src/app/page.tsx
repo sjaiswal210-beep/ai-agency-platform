@@ -177,7 +177,7 @@ export default function Dashboard() {
               <Bell className="w-4 h-4 text-slate-400" />
               <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full pulse-dot"></span>
             </button>
-            <div className="w-8 h-8 bg-purple-600/20 rounded-full flex items-center justify-center text-xs font-bold text-purple-600">AI</div>
+            <div className="w-8 h-8 bg-purple-600/20 rounded-full flex items-center justify-center text-xs font-bold text-purple-400">AI</div>
           </div>
         </header>
 
@@ -186,7 +186,7 @@ export default function Dashboard() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 stagger-children">
             <div className="stat-card">
               <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center flex-shrink-0">
-                <Users className="w-6 h-6 text-blue-600" />
+                <Users className="w-6 h-6 text-blue-400" />
               </div>
               <div>
                 <div className="text-xl font-bold text-white">{stats?.total_leads ?? 0}</div>
@@ -195,7 +195,7 @@ export default function Dashboard() {
             </div>
             <div className="stat-card">
               <div className="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center flex-shrink-0">
-                <MessageSquare className="w-6 h-6 text-amber-600" />
+                <MessageSquare className="w-6 h-6 text-amber-400" />
               </div>
               <div>
                 <div className="text-xl font-bold text-white">{stats?.total_outreach ?? 0}</div>
@@ -204,7 +204,7 @@ export default function Dashboard() {
             </div>
             <div className="stat-card">
               <div className="w-12 h-12 rounded-xl bg-green-500/10 flex items-center justify-center flex-shrink-0">
-                <TrendingUp className="w-6 h-6 text-green-600" />
+                <TrendingUp className="w-6 h-6 text-green-400" />
               </div>
               <div>
                 <div className="text-xl font-bold text-white">{stats?.leads_by_status?.converted ?? 0}</div>
@@ -213,7 +213,7 @@ export default function Dashboard() {
             </div>
             <div className="stat-card">
               <div className="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center flex-shrink-0">
-                <Globe className="w-6 h-6 text-purple-600" />
+                <Globe className="w-6 h-6 text-purple-400" />
               </div>
               <div>
                 <div className="text-xl font-bold text-white">{stats?.total_websites ?? 0}</div>
@@ -229,11 +229,11 @@ export default function Dashboard() {
               <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">AI Agents</h3>
               <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
                 {Object.entries(agentStatus.agents || {}).map(([key, agent]: [string, any]) => (
-                  <div key={key} className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg">
+                  <div key={key} className="flex items-center gap-2 px-3 py-2 bg-slate-700/30 rounded-lg">
                     <span className="text-lg">{agent.icon}</span>
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-medium truncate">{agent.name}</p>
-                      <p className={`text-[10px] ${agent.status === "active" ? "text-green-600" : "text-gray-400"}`}>
+                      <p className={`text-[10px] ${agent.status === "active" ? "text-green-400" : "text-gray-400"}`}>
                         {agent.status === "active" ? "\u25cf Working" : "\u25cb Idle"}
                       </p>
                     </div>
@@ -265,7 +265,7 @@ export default function Dashboard() {
             <div className="glass-card-solid p-5">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-semibold text-sm text-white">Pipeline Status</h3>
-                <a href="/leads" className="text-xs text-purple-600 hover:underline">View all &rarr;</a>
+                <a href="/leads" className="text-xs text-purple-400 hover:underline">View all &rarr;</a>
               </div>
               <div className="space-y-3">
                 {Object.entries(stats?.leads_by_status || {}).map(([status, count]) => (
@@ -277,18 +277,18 @@ export default function Dashboard() {
                         status === "outreach_sent" ? "bg-amber-400" :
                         status === "converted" ? "bg-green-400" : "bg-gray-300"
                       }`} />
-                      <span className="text-sm capitalize">{status.replace("_", " ")}</span>
+                      <span className="text-sm capitalize text-slate-200">{status.replace("_", " ")}</span>
                     </div>
                     <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                      status === "new" ? "bg-blue-500/10 text-blue-600" :
-                      status === "analyzed" ? "bg-purple-500/10 text-purple-600" :
-                      status === "outreach_sent" ? "bg-amber-500/10 text-amber-600" :
-                      status === "converted" ? "bg-green-500/10 text-green-600" : "bg-gray-50 text-gray-600"
+                      status === "new" ? "bg-blue-500/10 text-blue-400" :
+                      status === "analyzed" ? "bg-purple-500/10 text-purple-400" :
+                      status === "outreach_sent" ? "bg-amber-500/10 text-amber-400" :
+                      status === "converted" ? "bg-green-500/10 text-green-400" : "bg-slate-700/30 text-slate-400"
                     }`}>{count}</span>
                   </div>
                 ))}
                 {Object.keys(stats?.leads_by_status || {}).length === 0 && (
-                  <p className="text-xs text-gray-400 text-center py-4">No leads yet</p>
+                  <p className="text-xs text-slate-500 text-center py-4">No leads yet</p>
                 )}
               </div>
             </div>
@@ -297,7 +297,7 @@ export default function Dashboard() {
             <div className="glass-card-solid p-5">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-semibold text-sm text-white">Recent Leads</h3>
-                <a href="/leads" className="text-xs text-purple-600 hover:underline">View all &rarr;</a>
+                <a href="/leads" className="text-xs text-purple-400 hover:underline">View all &rarr;</a>
               </div>
               <div className="space-y-3">
                 {recentLeads.map((lead) => (
@@ -307,15 +307,15 @@ export default function Dashboard() {
                       <p className="text-xs text-gray-400">{lead.address?.split(",").slice(0, 2).join(",") || lead.category} {lead.phone ? `· ${lead.phone}` : ""}</p>
                     </div>
                     <span className={`text-xs px-2 py-0.5 rounded-full ${
-                      lead.status === "new" ? "bg-blue-500/10 text-blue-600" :
-                      lead.status === "analyzed" ? "bg-purple-500/10 text-purple-600" :
-                      lead.status === "outreach_sent" ? "bg-amber-500/10 text-amber-600" :
-                      "bg-gray-50 text-gray-600"
+                      lead.status === "new" ? "bg-blue-500/10 text-blue-400" :
+                      lead.status === "analyzed" ? "bg-purple-500/10 text-purple-400" :
+                      lead.status === "outreach_sent" ? "bg-amber-500/10 text-amber-400" :
+                      "bg-slate-700/30 text-slate-400"
                     }`}>{lead.status.replace("_", " ")}</span>
                   </div>
                 ))}
                 {recentLeads.length === 0 && (
-                  <p className="text-xs text-gray-400 text-center py-4">No leads yet. Start discovering!</p>
+                  <p className="text-xs text-slate-500 text-center py-4">No leads yet. Start discovering!</p>
                 )}
               </div>
             </div>
@@ -423,7 +423,7 @@ export default function Dashboard() {
             {waResult ? (
               <div className="flex-1 overflow-y-auto">
                 <p className="text-sm font-medium mb-2">Message for {waResult.business}:</p>
-                <div className="bg-gray-50 rounded-lg p-3 text-sm whitespace-pre-wrap mb-4 border max-h-48 overflow-y-auto">{waResult.message}</div>
+                <div className="bg-slate-700/30 rounded-lg p-3 text-sm whitespace-pre-wrap mb-4 border max-h-48 overflow-y-auto">{waResult.message}</div>
                 <div className="flex gap-2">
                   <a href={waResult.link} target="_blank" rel="noopener noreferrer"
                     className="flex-1 flex items-center justify-center gap-2 bg-green-500/100 text-white py-2.5 rounded-xl text-sm font-medium hover:bg-green-600">
@@ -432,7 +432,7 @@ export default function Dashboard() {
                   <button onClick={() => { navigator.clipboard.writeText(waResult.message); }}
                     className="px-4 py-2.5 bg-white/5 rounded-xl text-sm hover:bg-gray-200">Copy</button>
                 </div>
-                <button onClick={() => setWaResult(null)} className="mt-3 w-full text-xs text-purple-600 hover:underline">Back to list</button>
+                <button onClick={() => setWaResult(null)} className="mt-3 w-full text-xs text-purple-400 hover:underline">Back to list</button>
               </div>
             ) : (
               <div className="flex-1 overflow-y-auto space-y-2">
@@ -493,7 +493,7 @@ export default function Dashboard() {
                   {["restaurant", "gym", "salon", "dentist", "clinic", "hotel", "cafe", "plumber", "lawyer", "photographer", "school", "solar", "real estate", "spa"].map((cat) => (
                     <button key={cat} onClick={() => setKeyword(cat)}
                       className={`px-3 py-1 rounded-full text-xs font-medium border transition ${
-                        keyword === cat ? "bg-purple-600 text-white border-primary" : "bg-gray-50 text-gray-600 border-white/10 hover:border-primary hover:text-purple-600"
+                        keyword === cat ? "bg-purple-600 text-white border-primary" : "bg-slate-700/30 text-gray-600 border-white/10 hover:border-primary hover:text-purple-400"
                       }`}>{cat}</button>
                   ))}
                 </div>
@@ -509,7 +509,7 @@ export default function Dashboard() {
                   {[5, 10, 15, 20].map((n) => (
                     <button key={n} onClick={() => setLeadCount(n)}
                       className={`flex-1 py-2 rounded-lg text-sm font-medium border transition ${
-                        leadCount === n ? "bg-purple-600 text-white border-primary" : "bg-gray-50 text-gray-600 border-white/10 hover:border-primary"
+                        leadCount === n ? "bg-purple-600 text-white border-primary" : "bg-slate-700/30 text-gray-600 border-white/10 hover:border-primary"
                       }`}>{n}</button>
                   ))}
                 </div>
