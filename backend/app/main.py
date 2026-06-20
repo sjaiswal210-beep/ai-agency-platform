@@ -75,6 +75,7 @@ from app.modules.catalog.router import router as catalog_router
 from app.modules.clinic.router import router as clinic_router
 from app.modules.students.router import router as students_router
 from app.api.routes.public_booking import router as public_booking_router
+from app.api.routes.public_catalog import router as public_catalog_router
 from app.api.routes.migration import router as migration_router
 from app.api.routes.panel_tools_admin import router as panel_tools_admin_router
 from app.automation.scheduler import start_scheduler, stop_scheduler
@@ -307,6 +308,7 @@ app.include_router(catalog_router)
 app.include_router(clinic_router)
 app.include_router(students_router)
 app.include_router(public_booking_router, prefix="/api")
+app.include_router(public_catalog_router, prefix="/api")
 app.include_router(migration_router)
 app.include_router(panel_tools_admin_router)
 
@@ -1025,6 +1027,7 @@ async def full_health_check():
 @app.get("/health")
 def health():
     return {"status": "ok", "service": "ai-agency-platform"}
+
 
 
 
