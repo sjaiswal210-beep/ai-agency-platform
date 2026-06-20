@@ -65,7 +65,7 @@ export default function BusinessDashboard() {
             <button onClick={() => setActiveModule(null)} className="text-sm text-indigo-600 hover:underline mb-4 block">&larr; Back to Dashboard</button>
             <div className="bg-white rounded-xl border border-gray-200 p-6 min-h-[60vh]">
               <h2 className="text-xl font-bold mb-2 capitalize">{activeModule.replace("_", " ")} Module</h2>
-              <p className="text-sm text-gray-500">Module active. Full UI available at /dashboard/{orgSlug}/{activeModule}</p>
+              <p className="text-sm text-gray-500 mb-4">Module active.</p><a href={`/dashboard/${orgSlug}/${activeModule}`} className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700">Open Full Module &rarr;</a>
             </div>
           </div>
         )}
