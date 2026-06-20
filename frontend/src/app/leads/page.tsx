@@ -13,7 +13,7 @@ const STATUS_COLORS: Record<string, string> = {
   responded: "bg-emerald-100 text-emerald-700",
   interested: "bg-green-100 text-green-700",
   converted: "bg-green-200 text-green-800",
-  lost: "bg-gray-100 text-gray-500",
+  lost: "bg-white/5 text-slate-400",
 };
 
 export default function LeadsPage() {
@@ -102,20 +102,20 @@ export default function LeadsPage() {
 
   return (
     <div className="min-h-screen">
-      <header className="bg-white border-b border-gray-200 px-6 py-4">
+      <header className="bg-white/[0.03] backdrop-blur-xl border-white/[0.06] border-b border-white/10 px-6 py-4">
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           <div className="flex items-center gap-3">
-            <a href="/" className="text-gray-400 hover:text-gray-600">
+            <a href="/" className="text-slate-500 hover:text-slate-400">
               <ArrowLeft className="w-5 h-5" />
             </a>
             <Bot className="w-8 h-8 text-primary" />
             <h1 className="text-xl font-bold">Leads</h1>
-            <span className="text-sm text-gray-400">({leads.length})</span>
+            <span className="text-sm text-slate-500">({leads.length})</span>
           </div>
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="px-3 py-1.5 border border-gray-200 rounded-lg text-sm"
+            className="px-3 py-1.5 border border-white/10 rounded-lg text-sm"
           >
             <option value="">All Statuses</option>
             <option value="new">New</option>
@@ -130,10 +130,10 @@ export default function LeadsPage() {
       </header>
 
       <main className="max-w-7xl mx-auto px-6 py-8">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="bg-white/[0.03] backdrop-blur-xl border-white/[0.06] rounded-xl shadow-lg shadow-black/10 border border-white/5 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-gray-50 border-b">
+              <thead className="bg-white/[0.02] border-b">
                 <tr>
                   <th className="text-left px-4 py-3 font-medium">Business</th>
                   <th className="text-left px-4 py-3 font-medium">Phone</th>
@@ -146,7 +146,7 @@ export default function LeadsPage() {
               </thead>
               <tbody>
                 {leads.map((lead) => (
-                  <tr key={lead.id} className={`border-b last:border-0 hover:bg-gray-50 border-l-4 ${
+                  <tr key={lead.id} className={`border-b last:border-0 hover:bg-white/[0.02] border-l-4 ${
                         lead.status === "new" ? "border-l-blue-400" :
                         lead.status === "analyzed" ? "border-l-purple-400" :
                         lead.status === "outreach_sent" ? "border-l-amber-400" :
@@ -154,7 +154,7 @@ export default function LeadsPage() {
                       }`}>
                     <td className="px-4 py-3">
                       <p className="font-medium text-sm">{lead.business_name}</p>
-                      <p className="text-xs text-gray-500 truncate max-w-[250px]">{lead.address}</p>
+                      <p className="text-xs text-slate-400 truncate max-w-[250px]">{lead.address}</p>
                     </td>
                     <td className="px-4 py-3">
                       {lead.phone ? (
@@ -163,7 +163,7 @@ export default function LeadsPage() {
                           {lead.phone}
                         </a>
                       ) : (
-                        <span className="text-gray-400 text-xs">No phone</span>
+                        <span className="text-slate-500 text-xs">No phone</span>
                       )}
                     </td>
                     <td className="px-4 py-3 capitalize text-sm">{lead.category}</td>
@@ -172,7 +172,7 @@ export default function LeadsPage() {
                         <span className="flex items-center gap-1 text-sm">
                           <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
                           {lead.rating}
-                          {lead.review_count ? <span className="text-gray-400 text-xs">({lead.review_count})</span> : null}
+                          {lead.review_count ? <span className="text-slate-500 text-xs">({lead.review_count})</span> : null}
                         </span>
                       )}
                     </td>
@@ -182,7 +182,7 @@ export default function LeadsPage() {
                       )}
                     </td>
                     <td className="px-4 py-3">
-                      <span className={`px-2 py-0.5 rounded-full text-xs ${STATUS_COLORS[lead.status] || "bg-gray-100"}`}>
+                      <span className={`px-2 py-0.5 rounded-full text-xs ${STATUS_COLORS[lead.status] || "bg-white/5"}`}>
                         {lead.status.replace("_", " ")}
                       </span>
                     </td>
@@ -239,9 +239,9 @@ export default function LeadsPage() {
               </tbody>
             </table>
           </div>
-          {loading && <p className="text-center py-12 text-gray-400">Loading leads...</p>}
+          {loading && <p className="text-center py-12 text-slate-500">Loading leads...</p>}
           {!loading && leads.length === 0 && (
-            <p className="text-center py-12 text-gray-400">
+            <p className="text-center py-12 text-slate-500">
               No leads found. Start by discovering leads from the dashboard.
             </p>
           )}
@@ -251,11 +251,11 @@ export default function LeadsPage() {
       {/* QA Review Modal */}
       {qaReview && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setQaReview(null)}>
-          <div className="bg-white rounded-2xl p-6 w-full max-w-lg shadow-xl max-h-[85vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-white/[0.03] backdrop-blur-xl border-white/[0.06] rounded-2xl p-6 w-full max-w-lg shadow-xl max-h-[85vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h3 className="font-bold text-lg">QA Agent Review</h3>
-                <p className="text-xs text-gray-500">{qaReview.business_name}</p>
+                <p className="text-xs text-slate-400">{qaReview.business_name}</p>
               </div>
               <div className={`text-2xl font-black ${(qaReview.overall_score || 0) >= 7 ? "text-green-600" : (qaReview.overall_score || 0) >= 5 ? "text-amber-600" : "text-red-600"}`}>
                 {qaReview.overall_score || "?"}/10
@@ -263,15 +263,15 @@ export default function LeadsPage() {
             </div>
 
             {qaReview.summary && (
-              <p className="text-sm text-gray-600 mb-4 bg-gray-50 p-3 rounded-lg">{qaReview.summary}</p>
+              <p className="text-sm text-slate-400 mb-4 bg-white/[0.02] p-3 rounded-lg">{qaReview.summary}</p>
             )}
 
             {qaReview.scores && (
               <div className="grid grid-cols-3 gap-2 mb-4">
                 {Object.entries(qaReview.scores).map(([key, val]: [string, any]) => (
-                  <div key={key} className="text-center p-2 bg-gray-50 rounded-lg">
+                  <div key={key} className="text-center p-2 bg-white/[0.02] rounded-lg">
                     <div className={`text-lg font-bold ${val >= 7 ? "text-green-600" : val >= 5 ? "text-amber-600" : "text-red-600"}`}>{val}</div>
-                    <div className="text-[10px] text-gray-500 capitalize">{key.replace("_", " ")}</div>
+                    <div className="text-[10px] text-slate-400 capitalize">{key.replace("_", " ")}</div>
                   </div>
                 ))}
               </div>
@@ -279,7 +279,7 @@ export default function LeadsPage() {
 
             {qaReview.issues && qaReview.issues.length > 0 && (
               <div className="mb-4">
-                <h4 className="text-xs font-bold text-gray-700 uppercase mb-2">Issues Found</h4>
+                <h4 className="text-xs font-bold text-slate-300 uppercase mb-2">Issues Found</h4>
                 <div className="space-y-2">
                   {qaReview.issues.map((issue: any, i: number) => (
                     <div key={i} className={`text-xs p-2 rounded-lg border-l-3 ${issue.severity === "high" ? "bg-red-50 border-l-red-500" : issue.severity === "medium" ? "bg-amber-50 border-l-amber-500" : "bg-blue-50 border-l-blue-500"}`}>
@@ -292,8 +292,8 @@ export default function LeadsPage() {
 
             {qaReview.fixes_needed && qaReview.fixes_needed.length > 0 && (
               <div className="mb-4">
-                <h4 className="text-xs font-bold text-gray-700 uppercase mb-2">Fixes Applied</h4>
-                <ul className="text-xs text-gray-600 space-y-1">
+                <h4 className="text-xs font-bold text-slate-300 uppercase mb-2">Fixes Applied</h4>
+                <ul className="text-xs text-slate-400 space-y-1">
                   {qaReview.fixes_needed.map((fix: string, i: number) => (
                     <li key={i} className="flex items-start gap-2"><span className="text-green-500 mt-0.5">&#10003;</span> {fix}</li>
                   ))}
@@ -307,7 +307,7 @@ export default function LeadsPage() {
               </div>
             )}
 
-            <button onClick={() => setQaReview(null)} className="w-full text-center py-2 text-xs text-gray-400 hover:text-gray-600">Close</button>
+            <button onClick={() => setQaReview(null)} className="w-full text-center py-2 text-xs text-slate-500 hover:text-slate-400">Close</button>
           </div>
         </div>
       )}
@@ -316,10 +316,10 @@ export default function LeadsPage() {
       {/* WhatsApp Message Modal */}
       {waMessage && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setWaMessage(null)}>
-          <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-white/[0.03] backdrop-blur-xl border-white/[0.06] rounded-2xl p-6 w-full max-w-md shadow-xl" onClick={(e) => e.stopPropagation()}>
             <h3 className="font-bold mb-1">WhatsApp Outreach</h3>
-            <p className="text-xs text-gray-500 mb-3">Message for {waMessage.business}</p>
-            <div className="bg-gray-50 rounded-lg p-3 text-sm whitespace-pre-wrap mb-4 max-h-60 overflow-y-auto border">
+            <p className="text-xs text-slate-400 mb-3">Message for {waMessage.business}</p>
+            <div className="bg-white/[0.02] rounded-lg p-3 text-sm whitespace-pre-wrap mb-4 max-h-60 overflow-y-auto border">
               {waMessage.message}
             </div>
             
@@ -329,11 +329,11 @@ export default function LeadsPage() {
                 Open WhatsApp
               </a>
               <button onClick={() => {navigator.clipboard.writeText(waMessage.message); }}
-                className="px-4 py-2.5 bg-gray-100 text-gray-600 rounded-xl text-sm font-medium hover:bg-gray-200">
+                className="px-4 py-2.5 bg-white/5 text-slate-400 rounded-xl text-sm font-medium hover:bg-gray-200">
                 Copy
               </button>
             </div>
-            <button onClick={() => setWaMessage(null)} className="mt-2 w-full text-center text-xs text-gray-400">Close</button>
+            <button onClick={() => setWaMessage(null)} className="mt-2 w-full text-center text-xs text-slate-500">Close</button>
           </div>
         </div>
       )}

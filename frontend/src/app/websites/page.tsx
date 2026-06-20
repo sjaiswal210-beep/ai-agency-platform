@@ -58,34 +58,34 @@ export default function WebsitesPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white/80 backdrop-blur-lg border-b border-gray-200/50 px-6 py-3 sticky top-0 z-10">
+    <div className="min-h-screen bg-[#020817]">
+      <header className="bg-[#0f172a]/80 backdrop-blur-lg border-b border-white/5 px-6 py-3 sticky top-0 z-10">
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           <div className="flex items-center gap-3">
-            <a href="/" className="text-gray-400 hover:text-gray-600">
+            <a href="/" className="text-slate-500 hover:text-slate-400">
               <ArrowLeft className="w-5 h-5" />
             </a>
             <Bot className="w-7 h-7 text-primary" />
             <h1 className="text-lg font-bold">Generated Websites</h1>
-            <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">{websites.length}</span>
+            <span className="text-xs bg-white/5 text-slate-400 px-2 py-0.5 rounded-full">{websites.length}</span>
           </div>
         </div>
       </header>
 
       <main className="max-w-7xl mx-auto px-6 py-6">
         {loading ? (
-          <p className="text-center py-20 text-gray-400">Loading...</p>
+          <p className="text-center py-20 text-slate-500">Loading...</p>
         ) : error ? (
           <div className="text-center py-20">
             <p className="text-red-500 text-sm mb-2">{error}</p>
             <button onClick={() => window.location.reload()} className="px-4 py-2 bg-primary text-white rounded-lg text-sm">Retry</button>
           </div>
         ) : websites.length === 0 ? (
-          <p className="text-center py-20 text-gray-400">No websites generated yet. Go to Leads and click "Site" to create one.</p>
+          <p className="text-center py-20 text-slate-500">No websites generated yet. Go to Leads and click "Site" to create one.</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {websites.map((site) => (
-              <div key={site.id} className="bg-white rounded-xl border border-gray-100 overflow-hidden hover-lift">
+              <div key={site.id} className="bg-white/[0.03] backdrop-blur-xl border-white/[0.06] rounded-xl border border-white/5 overflow-hidden hover-lift">
                 {/* Preview thumbnail */}
                 <div className="relative h-28 bg-gradient-to-br from-purple-50 to-indigo-50 border-b flex items-center justify-center">
                   {/* <iframe
@@ -101,10 +101,10 @@ export default function WebsitesPage() {
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex-1 min-w-0">
                       <h3 className="font-semibold text-sm truncate">{site.business_name || "Untitled"}</h3>
-                      <p className="text-xs text-gray-500 capitalize">{site.category || site.template}</p>
+                      <p className="text-xs text-slate-400 capitalize">{site.category || site.template}</p>
                       {site.slug && <p className="text-xs text-purple-500 truncate">{site.slug}.city-maps.online</p>}
                     </div>
-                    <span className={`px-2 py-0.5 rounded-full text-xs flex-shrink-0 ml-2 ${STATUS_COLORS[site.status] || "bg-gray-100 text-gray-600"}`}>
+                    <span className={`px-2 py-0.5 rounded-full text-xs flex-shrink-0 ml-2 ${STATUS_COLORS[site.status] || "bg-white/5 text-slate-400"}`}>
                       {site.status}
                     </span>
                   </div>
@@ -112,12 +112,12 @@ export default function WebsitesPage() {
                   {/* Info */}
                   <div className="space-y-1 mb-3">
                     {site.phone && (
-                      <p className="text-xs text-gray-500 flex items-center gap-1">
+                      <p className="text-xs text-slate-400 flex items-center gap-1">
                         <Phone className="w-3 h-3" /> {site.phone}
                       </p>
                     )}
                     {site.address && (
-                      <p className="text-xs text-gray-500 flex items-center gap-1 truncate">
+                      <p className="text-xs text-slate-400 flex items-center gap-1 truncate">
                         <MapPin className="w-3 h-3 flex-shrink-0" /> {site.address.split(",").slice(0, 2).join(",")}
                       </p>
                     )}
@@ -137,7 +137,7 @@ export default function WebsitesPage() {
                       href={`${API_BASE}/api/logo-gen/${site.id}/preview`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-3 py-2 bg-gray-100 text-gray-600 text-xs rounded-lg hover:bg-gray-200 transition"
+                      className="px-3 py-2 bg-white/5 text-slate-400 text-xs rounded-lg hover:bg-gray-200 transition"
                       title="Edit Logo"
                     >
                       Logo
@@ -146,7 +146,7 @@ export default function WebsitesPage() {
                       href={`${API_BASE}/api/panel/${site.id}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-3 py-2 bg-gray-100 text-gray-600 text-xs rounded-lg hover:bg-gray-200 transition"
+                      className="px-3 py-2 bg-white/5 text-slate-400 text-xs rounded-lg hover:bg-gray-200 transition"
                       title="Owner Panel"
                     >
                       Panel
@@ -159,7 +159,7 @@ export default function WebsitesPage() {
                     </button>
                   </div>
 
-                  <p className="text-xs text-gray-400 mt-2">
+                  <p className="text-xs text-slate-500 mt-2">
                     Created {new Date(site.created_at).toLocaleDateString()}
                   </p>
                 </div>

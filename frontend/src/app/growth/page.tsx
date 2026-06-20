@@ -41,16 +41,16 @@ export default function GrowthPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white/80 backdrop-blur-lg border-b border-gray-200/50 px-6 py-3 sticky top-0 z-10">
+    <div className="min-h-screen bg-[#020817]">
+      <header className="bg-[#0f172a]/80 backdrop-blur-lg border-b border-white/5 px-6 py-3 sticky top-0 z-10">
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           <div className="flex items-center gap-3">
-            <a href="/" className="text-gray-400 hover:text-gray-600"><ArrowLeft className="w-5 h-5" /></a>
+            <a href="/" className="text-slate-500 hover:text-slate-400"><ArrowLeft className="w-5 h-5" /></a>
             <Bot className="w-7 h-7 text-primary" />
             <h1 className="text-lg font-bold">Growth Tools</h1>
           </div>
           <select value={selectedLead} onChange={(e) => setSelectedLead(e.target.value)}
-            className="px-3 py-1.5 border border-gray-200 rounded-lg text-sm bg-white max-w-xs">
+            className="px-3 py-1.5 border border-white/10 rounded-lg text-sm bg-white max-w-xs">
             <option value="">Select a business...</option>
             {leads.map((l) => (
               <option key={l.id} value={l.id}>{l.business_name} ({l.category})</option>
@@ -61,7 +61,7 @@ export default function GrowthPage() {
 
       <main className="max-w-7xl mx-auto px-6 py-6">
         {!selectedLead ? (
-          <div className="text-center py-20 text-gray-400">
+          <div className="text-center py-20 text-slate-500">
             <TrendingUp className="w-12 h-12 mx-auto mb-3 opacity-50" />
             <p>Select a business above to access growth tools</p>
           </div>
@@ -72,13 +72,13 @@ export default function GrowthPage() {
               {TOOLS.map((tool) => (
                 <button key={tool.id} onClick={() => runTool(tool.endpoint)} disabled={loading}
                   className={`w-full text-left p-4 rounded-xl border transition hover-lift ${
-                    activeTool === tool.endpoint ? "bg-primary/5 border-primary/30" : "bg-white border-gray-100 hover:border-gray-200"
+                    activeTool === tool.endpoint ? "bg-primary/5 border-primary/30" : "bg-white/[0.03] backdrop-blur-xl border-white/[0.06] border-white/5 hover:border-white/10"
                   }`}>
                   <div className="flex items-center gap-3">
                     <span className="text-2xl">{tool.icon}</span>
                     <div>
                       <p className="text-sm font-semibold">{tool.name}</p>
-                      <p className="text-xs text-gray-500">{tool.desc}</p>
+                      <p className="text-xs text-slate-400">{tool.desc}</p>
                     </div>
                   </div>
                 </button>
@@ -86,20 +86,20 @@ export default function GrowthPage() {
             </div>
 
             {/* Result */}
-            <div className="lg:col-span-2 bg-white rounded-xl border border-gray-100 overflow-hidden flex flex-col">
-              <div className="p-4 border-b border-gray-100 flex items-center justify-between">
+            <div className="lg:col-span-2 bg-white/[0.03] backdrop-blur-xl border-white/[0.06] rounded-xl border border-white/5 overflow-hidden flex flex-col">
+              <div className="p-4 border-b border-white/5 flex items-center justify-between">
                 <h3 className="font-semibold text-sm">{loading ? "Generating..." : activeTool ? "Result" : "Select a tool"}</h3>
                 {result && (
                   <button onClick={() => { navigator.clipboard.writeText(result); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
-                    className="flex items-center gap-1 px-3 py-1 text-xs bg-gray-100 rounded-lg hover:bg-gray-200">
+                    className="flex items-center gap-1 px-3 py-1 text-xs bg-white/5 rounded-lg hover:bg-gray-200">
                     {copied ? <><Check className="w-3 h-3 text-green-500" /> Copied</> : <><Copy className="w-3 h-3" /> Copy All</>}
                   </button>
                 )}
               </div>
               <div className="flex-1 p-4 overflow-y-auto">
-                {loading && <div className="flex items-center justify-center h-full"><div className="text-center"><div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full mx-auto mb-3"></div><p className="text-sm text-gray-500">Generating strategy...</p></div></div>}
-                {!loading && !result && <div className="flex items-center justify-center h-full text-gray-400 text-sm">Click a tool to generate growth strategy</div>}
-                {!loading && result && <pre className="whitespace-pre-wrap text-sm text-gray-700 leading-relaxed font-sans">{result}</pre>}
+                {loading && <div className="flex items-center justify-center h-full"><div className="text-center"><div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full mx-auto mb-3"></div><p className="text-sm text-slate-400">Generating strategy...</p></div></div>}
+                {!loading && !result && <div className="flex items-center justify-center h-full text-slate-500 text-sm">Click a tool to generate growth strategy</div>}
+                {!loading && result && <pre className="whitespace-pre-wrap text-sm text-slate-300 leading-relaxed font-sans">{result}</pre>}
               </div>
             </div>
           </div>

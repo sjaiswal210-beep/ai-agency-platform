@@ -50,10 +50,10 @@ export default function OutreachPage() {
 
   return (
     <div className="min-h-screen">
-      <header className="bg-white border-b border-gray-200 px-6 py-4">
+      <header className="bg-white/[0.03] backdrop-blur-xl border-white/[0.06] border-b border-white/10 px-6 py-4">
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           <div className="flex items-center gap-3">
-            <a href="/" className="text-gray-400 hover:text-gray-600">
+            <a href="/" className="text-slate-500 hover:text-slate-400">
               <ArrowLeft className="w-5 h-5" />
             </a>
             <Bot className="w-8 h-8 text-primary" />
@@ -65,8 +65,8 @@ export default function OutreachPage() {
       <main className="max-w-7xl mx-auto px-6 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Lead list */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="p-4 border-b bg-gray-50">
+          <div className="bg-white/[0.03] backdrop-blur-xl border-white/[0.06] rounded-xl shadow-lg shadow-black/10 border border-white/5 overflow-hidden">
+            <div className="p-4 border-b bg-[#020817]">
               <h2 className="font-semibold text-sm">Select a Lead</h2>
             </div>
             <div className="max-h-[600px] overflow-y-auto">
@@ -74,30 +74,30 @@ export default function OutreachPage() {
                 <button
                   key={lead.id}
                   onClick={() => setSelectedLead(lead.id)}
-                  className={`w-full text-left px-4 py-3 border-b last:border-0 hover:bg-gray-50 transition ${
+                  className={`w-full text-left px-4 py-3 border-b last:border-0 hover:bg-white/[0.02] transition ${
                     selectedLead === lead.id ? "bg-primary/5 border-l-2 border-l-primary" : ""
                   }`}
                 >
                   <p className="font-medium text-sm">{lead.business_name}</p>
-                  <p className="text-xs text-gray-400">{lead.status}</p>
+                  <p className="text-xs text-slate-500">{lead.status}</p>
                 </button>
               ))}
             </div>
           </div>
 
           {/* Messages */}
-          <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="p-4 border-b bg-gray-50">
+          <div className="lg:col-span-2 bg-white/[0.03] backdrop-blur-xl border-white/[0.06] rounded-xl shadow-lg shadow-black/10 border border-white/5 overflow-hidden">
+            <div className="p-4 border-b bg-[#020817]">
               <h2 className="font-semibold text-sm">
                 {selectedLead ? "Message History" : "Select a lead to view messages"}
               </h2>
             </div>
             <div className="p-4 space-y-4 max-h-[600px] overflow-y-auto">
               {messages.length === 0 && selectedLead && (
-                <p className="text-center text-gray-400 py-8">No messages sent to this lead yet.</p>
+                <p className="text-center text-slate-500 py-8">No messages sent to this lead yet.</p>
               )}
               {messages.map((msg) => (
-                <div key={msg.id} className="border border-gray-100 rounded-lg p-4">
+                <div key={msg.id} className="border border-white/5 rounded-lg p-4">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
                       {msg.channel === "email" ? (
@@ -111,8 +111,8 @@ export default function OutreachPage() {
                       {msg.status}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-600 whitespace-pre-wrap">{msg.message}</p>
-                  <p className="text-xs text-gray-400 mt-2">
+                  <p className="text-sm text-slate-400 whitespace-pre-wrap">{msg.message}</p>
+                  <p className="text-xs text-slate-500 mt-2">
                     {new Date(msg.created_at).toLocaleString()}
                   </p>
                 </div>
