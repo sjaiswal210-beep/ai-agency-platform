@@ -15,6 +15,8 @@ class Settings(BaseSettings):
     freellmapi_url: str = ""
     freellmapi_key: str = ""
     hf_token: str = ""
+    google_client_id: str = ""
+    google_client_secret: str = ""
     openrouter_model: str = "gemini-2.5-flash-lite"
     redis_url: str = "redis://localhost:6379/0"
     api_secret_key: str = "dev-secret"
