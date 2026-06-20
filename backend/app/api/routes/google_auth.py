@@ -15,6 +15,8 @@ SCOPES = [
     "openid",
     "email",
     "profile",
+    "https://www.googleapis.com/auth/business.manage",
+    "https://www.googleapis.com/auth/calendar",
 ]
 
 
