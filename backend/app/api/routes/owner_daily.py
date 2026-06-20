@@ -1,6 +1,5 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 import json
-import random
 from datetime import datetime
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import HTMLResponse
@@ -15,7 +14,7 @@ logger = get_logger(__name__)
 
 @router.get("/{website_id}", response_class=HTMLResponse)
 async def daily_dashboard(website_id: str):
-    """Daily business dashboard - gives owners reasons to visit every day. Includes ad slots."""
+    """Daily business dashboard - AI-powered content & growth toolkit for business owners."""
     service = WebsiteService()
     lead_service = LeadService()
     website = service.get(website_id)
@@ -26,8 +25,11 @@ async def daily_dashboard(website_id: str):
     business_name = lead.get("business_name", "Business") if lead else "Business"
     category = lead.get("category", "business") if lead else "business"
     phone = lead.get("phone", "") if lead else ""
+    slug = website.get("slug", "")
 
     today = datetime.now().strftime("%A, %B %d")
+    hour = datetime.now().hour
+    time_greeting = "Good Morning" if hour < 12 else "Good Afternoon" if hour < 17 else "Good Evening"
 
     # Generate daily content using AI
     daily_prompt = f"""Generate daily business content pack for:
@@ -37,23 +39,23 @@ Date: {today}
 
 Return JSON with ALL these fields:
 {{
-    "greeting": "Motivating good morning message (1 line)",
-    "tip_of_day": "One actionable tip specific to {category} (2 sentences)",
+    "greeting": "Short motivational greeting (1 line)",
+    "tip_of_day": "One actionable tip specific to {category} business (2 sentences max)",
     "daily_goal": "One specific measurable goal for today",
-    "social_post_1": "Instagram/Facebook post caption with emojis (promotional, about a service)",
-    "social_post_2": "Educational/tip post for social media with emojis (teach something to followers)",
-    "social_post_3": "Behind-the-scenes or team appreciation post with emojis",
-    "story_idea": "Instagram/WhatsApp story idea with what to show (1 sentence)",
-    "reel_idea": "Short video/reel concept for today (1-2 sentences, trending format)",
-    "whatsapp_morning": "Good morning message to broadcast to all customers (warm, short, includes business value)",
-    "whatsapp_offer": "Special offer message to send to customers today (creates urgency, under 50 words)",
-    "whatsapp_followup": "Follow-up message for customers who visited last week (friendly check-in, under 40 words)",
-    "whatsapp_review_ask": "Message asking happy customer for a Google review (polite, easy, includes review link placeholder)",
-    "google_post": "Google Business Profile post (announcement or offer, under 100 words)",
+    "social_post_1": "Instagram/Facebook promotional post caption with emojis (about a service/product)",
+    "social_post_2": "Educational/tip post for social media with emojis",
+    "social_post_3": "Behind-the-scenes or customer appreciation post with emojis",
+    "story_idea": "Instagram/WhatsApp story idea (1 sentence, what to show)",
+    "reel_idea": "Short video/reel concept (trending format, 1-2 sentences)",
+    "whatsapp_morning": "Good morning broadcast to customers (warm, short, includes business value)",
+    "whatsapp_offer": "Special offer message with urgency (under 50 words)",
+    "whatsapp_followup": "Follow-up for recent visitors (friendly, under 40 words)",
+    "whatsapp_review_ask": "Ask happy customer for Google review (polite, easy)",
+    "google_post": "Google Business Profile post (offer or announcement, under 80 words)",
     "fun_fact": "Interesting industry fact about {category}",
-    "hashtags": ["8 trending and relevant hashtags"],
-    "content_idea": "One creative content idea they can shoot today (photo or video)",
-    "engagement_question": "A question to post that gets customer comments/engagement"
+    "hashtags": ["8 relevant hashtags without # symbol"],
+    "content_idea": "Creative photo/video idea to shoot today",
+    "engagement_question": "Question to post that gets customer comments"
 }}
 Return ONLY valid JSON."""
 
@@ -65,131 +67,311 @@ Return ONLY valid JSON."""
         elif "```" in cleaned:
             cleaned = cleaned.split("```")[1].split("```")[0].strip()
         data = json.loads(cleaned)
-    except Exception:
+    except Exception as e:
+        logger.error(f"Daily AI error: {e}")
         data = {
-            "greeting": f"Good day, {business_name}! Ready to grow today?",
-            "tip_of_day": "Focus on asking every happy customer for a Google review today. Reviews are the #1 factor for local SEO.",
-            "social_post": f"Another great day at {business_name}! We love serving our community. Visit us today! #local #business",
-            "customer_message": f"Hi! Hope you're doing well. We have something special for you at {business_name}. Visit us this week!",
-            "fun_fact": f"Did you know? Businesses with 50+ Google reviews get 3x more clicks than those with less.",
+            "greeting": f"Let's make today count, {business_name}!",
+            "tip_of_day": "Ask every happy customer for a Google review today. Businesses with 50+ reviews get 3x more clicks.",
             "daily_goal": "Get 2 new Google reviews today",
-            "hashtags": [f"#{category}", "#localbusiness", "#growthmindset", "#customerfirst", "#trending"],
+            "social_post_1": f"Another great day at {business_name}! We love serving our community. Visit us today! #local",
+            "social_post_2": f"Did you know? Here's a quick tip from our experts at {business_name}...",
+            "social_post_3": f"Meet our amazing team at {business_name}! We're here to serve you better every day.",
+            "story_idea": "Show your workspace setup for the day",
+            "reel_idea": "Quick before/after transformation of your work",
+            "whatsapp_morning": f"Good morning! {business_name} wishes you a wonderful day. Visit us for something special today!",
+            "whatsapp_offer": f"Special today only at {business_name}! Get 10% off. Limited time. Visit now!",
+            "whatsapp_followup": "Hi! Hope you enjoyed your last visit. We'd love to see you again soon!",
+            "whatsapp_review_ask": "Hi! We loved serving you. Could you share a quick Google review? It helps us a lot!",
+            "google_post": f"Visit {business_name} today for great service and value. We're open and ready to serve you!",
+            "fun_fact": f"Businesses that post daily on social media grow 2x faster than those that don't.",
+            "hashtags": [category, "localbusiness", "smallbusiness", "growthmindset", "business", "trending", "viral", "support"],
+            "content_idea": "Take a photo of your best product/service and share a customer testimonial",
+            "engagement_question": "What's the one thing you love most about our service? Tell us below!"
         }
 
+    # Extract all content
     greeting = data.get("greeting", "Welcome back!")
     tip = data.get("tip_of_day", "")
-    social_post = data.get("social_post", "")
-    customer_msg = data.get("customer_message", "")
-    fun_fact = data.get("fun_fact", "")
     daily_goal = data.get("daily_goal", "")
-    hashtags = data.get("hashtags", [])
-
-    # Ad slots (you can replace these with real ad network code later)
-    ad_banner_top = '<div style="background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:12px;padding:16px 20px;margin-bottom:20px;text-align:center"><a href="https://kalpdevpg.online" target="_blank" style="color:#fff;text-decoration:none;font-size:.85rem;font-weight:500">&#x2728; Upgrade to Premium - Get custom domain + advanced features | <u>Learn More</u></a></div>'
-
-    ad_sidebar = '<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:16px;text-align:center;margin-top:16px"><p style="font-size:.7rem;color:#94a3b8;margin-bottom:8px">SPONSORED</p><div style="background:linear-gradient(135deg,#f59e0b,#ef4444);border-radius:8px;padding:20px;color:#fff"><p style="font-weight:700;font-size:.9rem">Grow Your Business 10x</p><p style="font-size:.75rem;opacity:.9;margin-top:4px">Get professional marketing tools</p><a href="#" style="display:inline-block;margin-top:8px;background:#fff;color:#f59e0b;padding:6px 14px;border-radius:6px;font-size:.75rem;font-weight:600;text-decoration:none">Try Free</a></div></div>'
-
-    ad_bottom = '<div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:16px;text-align:center;margin-top:20px"><p style="font-size:.65rem;color:#94a3b8;margin-bottom:6px">AD</p><p style="font-size:.85rem;color:#374151">Want more customers? <a href="#" style="color:#6366f1;font-weight:600">Boost your listing on Google &rarr;</a></p></div>'
-
-    # Extract all fields
-    social_1 = data.get("social_post_1", data.get("social_post", ""))
+    social_1 = data.get("social_post_1", "")
     social_2 = data.get("social_post_2", "")
     social_3 = data.get("social_post_3", "")
     story_idea = data.get("story_idea", "")
     reel_idea = data.get("reel_idea", "")
     wa_morning = data.get("whatsapp_morning", "")
-    wa_offer = data.get("whatsapp_offer", data.get("customer_message", ""))
+    wa_offer = data.get("whatsapp_offer", "")
     wa_followup = data.get("whatsapp_followup", "")
     wa_review = data.get("whatsapp_review_ask", "")
     google_post = data.get("google_post", "")
+    fun_fact = data.get("fun_fact", "")
     content_idea = data.get("content_idea", "")
     engagement_q = data.get("engagement_question", "")
-    hashtags_str = " ".join([h if h.startswith("#") else "#"+h for h in hashtags[:8]])
+    hashtags = data.get("hashtags", [])
+    hashtags_display = " ".join([f"#{h}" if not h.startswith("#") else h for h in hashtags[:8]])
 
-    # Ad slots
-    ad_top = '<div style="background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:12px;padding:14px 20px;margin-bottom:20px;text-align:center"><a href="#" style="color:#fff;text-decoration:none;font-size:.8rem">&#x2728; Want more customers? Upgrade to Premium Plan &rarr;</a></div>'
-    ad_mid = '<div style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:14px;text-align:center;margin:16px 0"><p style="font-size:.6rem;color:#94a3b8;margin-bottom:4px">SPONSORED</p><p style="font-size:.8rem;color:#374151">Boost your Google ranking &#x2192; <a href="#" style="color:#6366f1">Learn how</a></p></div>'
-    ad_side = '<div style="background:linear-gradient(135deg,#f59e0b,#ef4444);border-radius:10px;padding:16px;color:#fff;text-align:center;margin-top:12px"><p style="font-weight:700;font-size:.85rem">Get 5x More Calls</p><p style="font-size:.7rem;opacity:.9;margin-top:4px">Professional Google Ads management</p><a href="#" style="display:inline-block;margin-top:8px;background:#fff;color:#f59e0b;padding:5px 12px;border-radius:6px;font-size:.7rem;font-weight:600;text-decoration:none">Start Free</a></div>'
-
-    def copy_btn(target_id):
-        return f'<button onclick="navigator.clipboard.writeText(document.getElementById(\'{target_id}\').textContent);this.textContent=\'Copied!\';setTimeout(()=>this.textContent=\'Copy\',1500)" style="background:#f1f5f9;border:none;padding:4px 10px;border-radius:4px;font-size:.7rem;color:#6366f1;cursor:pointer;font-weight:600">Copy</button>'
-
-    def wa_send_btn(msg_id):
-        return f'<a href="https://wa.me/?text=" onclick="this.href=\'https://wa.me/?text=\'+encodeURIComponent(document.getElementById(\'{msg_id}\').textContent)" target="_blank" style="background:#25D366;color:#fff;padding:4px 10px;border-radius:4px;font-size:.7rem;text-decoration:none;font-weight:600">Send</a>'
+    # Clean phone for WhatsApp link
+    wa_phone = phone.replace("-", "").replace(" ", "").replace("+", "")
+    if wa_phone and not wa_phone.startswith("91") and len(wa_phone) == 10:
+        wa_phone = "91" + wa_phone
 
     html = f"""<!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <title>{business_name} - Daily Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-*{{margin:0;padding:0;box-sizing:border-box}}
-body{{font-family:Inter,sans-serif;background:#f8fafc;color:#1e293b;min-height:100vh}}
-.header{{background:#fff;border-bottom:1px solid #e2e8f0;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}}
-.header h1{{font-size:1rem;font-weight:700}}
-.container{{max-width:1000px;margin:0 auto;padding:20px}}
-.grid{{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}}
-.card{{background:#fff;border:1px solid #f1f5f9;border-radius:10px;padding:16px}}
-.card-label{{font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:#94a3b8;margin-bottom:8px;font-weight:600;display:flex;align-items:center;justify-content:space-between}}
-.card-text{{font-size:.82rem;color:#374151;line-height:1.6}}
-.section-title{{font-size:.75rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin:20px 0 10px;padding-left:4px}}
-.goal{{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-radius:10px;padding:16px;margin-bottom:16px}}
-.goal .label{{font-size:.65rem;text-transform:uppercase;opacity:.8;letter-spacing:1px}}
-.goal .text{{font-size:.9rem;font-weight:700;margin-top:4px}}
-.tags{{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}}
-.tags span{{background:#eff6ff;color:#3b82f6;padding:2px 8px;border-radius:12px;font-size:.65rem}}
-.links{{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}}
-.links a{{background:#fff;border:1px solid #e2e8f0;padding:6px 12px;border-radius:6px;font-size:.75rem;text-decoration:none;color:#475569}}
-.links a:hover{{border-color:#6366f1;color:#6366f1}}
-@media(max-width:768px){{.grid{{grid-template-columns:1fr}}}}
-</style></head><body>
-<div class="header"><div><h1>{business_name}</h1><span style="font-size:.75rem;color:#64748b">{today}</span></div><a href="/api/preview/{website_id}" target="_blank" style="font-size:.75rem;color:#6366f1;text-decoration:none">My Website &rarr;</a></div>
-<div class="container">
-{ad_top}
-<p style="font-size:.95rem;font-weight:600;margin-bottom:16px">{greeting}</p>
-<div class="links">
-<a href="/api/panel/{website_id}" target="_blank">&#128296; Tools</a>
-<a href="/api/preview/{website_id}" target="_blank">&#127760; Website</a>
-<a href="/api/logo-gen/{website_id}/preview" target="_blank">&#127912; Logo</a>
-<a href="https://wa.me/{phone.replace('-','').replace(' ','').replace('+','')}" target="_blank">&#128172; WhatsApp</a>
-</div>
-<div class="goal"><div class="label">&#127919; Today's Goal</div><div class="text">{daily_goal}</div></div>
+:root {{ --primary: #6366f1; --primary-light: #e0e7ff; --green: #10b981; --orange: #f59e0b; --red: #ef4444; }}
+* {{ margin:0; padding:0; box-sizing:border-box; }}
+body {{ font-family: Inter, -apple-system, sans-serif; background: #f1f5f9; color: #1e293b; min-height: 100vh; padding-bottom: 80px; }}
 
-<div class="section-title">&#128172; WhatsApp Messages (Send directly)</div>
-<div class="grid">
-<div class="card"><div class="card-label">Good Morning Broadcast {copy_btn('wa1')} {wa_send_btn('wa1')}</div><div class="card-text" id="wa1">{wa_morning}</div></div>
-<div class="card"><div class="card-label">Special Offer {copy_btn('wa2')} {wa_send_btn('wa2')}</div><div class="card-text" id="wa2">{wa_offer}</div></div>
-<div class="card"><div class="card-label">Follow-up Message {copy_btn('wa3')} {wa_send_btn('wa3')}</div><div class="card-text" id="wa3">{wa_followup}</div></div>
-</div>
-<div class="grid" style="grid-template-columns:1fr 1fr;margin-top:12px">
-<div class="card"><div class="card-label">Ask for Review {copy_btn('wa4')} {wa_send_btn('wa4')}</div><div class="card-text" id="wa4">{wa_review}</div></div>
-<div class="card"><div class="card-label">Google Business Post {copy_btn('gp')}</div><div class="card-text" id="gp">{google_post}</div></div>
+/* Header */
+.header {{ background: #fff; border-bottom: 1px solid #e2e8f0; padding: 12px 16px; position: sticky; top: 0; z-index: 50; }}
+.header-inner {{ max-width: 800px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }}
+.header h1 {{ font-size: .95rem; font-weight: 700; }}
+.header .date {{ font-size: .7rem; color: #64748b; }}
+.header .links {{ display: flex; gap: 8px; }}
+.header .links a {{ font-size: .7rem; color: var(--primary); text-decoration: none; padding: 4px 8px; border: 1px solid #e2e8f0; border-radius: 6px; }}
+
+/* Main */
+.main {{ max-width: 800px; margin: 0 auto; padding: 16px; }}
+
+/* Greeting */
+.greeting {{ background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #fff; border-radius: 14px; padding: 18px 20px; margin-bottom: 16px; }}
+.greeting .time {{ font-size: .7rem; opacity: .8; }}
+.greeting .msg {{ font-size: .95rem; font-weight: 600; margin-top: 4px; }}
+.greeting .goal {{ margin-top: 10px; background: rgba(255,255,255,.15); border-radius: 8px; padding: 10px 12px; }}
+.greeting .goal-label {{ font-size: .6rem; text-transform: uppercase; letter-spacing: 1px; opacity: .8; }}
+.greeting .goal-text {{ font-size: .85rem; font-weight: 600; margin-top: 2px; }}
+
+/* Tabs */
+.tabs {{ display: flex; gap: 4px; background: #fff; border-radius: 10px; padding: 4px; margin-bottom: 16px; border: 1px solid #e2e8f0; overflow-x: auto; }}
+.tab {{ padding: 8px 14px; border-radius: 8px; font-size: .75rem; font-weight: 600; cursor: pointer; white-space: nowrap; color: #64748b; transition: all .2s; }}
+.tab.active {{ background: var(--primary); color: #fff; }}
+
+/* Section */
+.section {{ display: none; }}
+.section.active {{ display: block; }}
+
+/* Cards */
+.card {{ background: #fff; border: 1px solid #f1f5f9; border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; }}
+.card-header {{ display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }}
+.card-label {{ font-size: .65rem; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; font-weight: 600; }}
+.card-actions {{ display: flex; gap: 6px; }}
+.btn-copy {{ background: #f1f5f9; border: none; padding: 4px 10px; border-radius: 6px; font-size: .65rem; color: var(--primary); cursor: pointer; font-weight: 600; }}
+.btn-copy:active {{ background: #e2e8f0; }}
+.btn-send {{ background: #25D366; color: #fff; border: none; padding: 4px 10px; border-radius: 6px; font-size: .65rem; cursor: pointer; font-weight: 600; text-decoration: none; }}
+.card-text {{ font-size: .8rem; color: #374151; line-height: 1.6; }}
+
+/* Tags */
+.tags {{ display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }}
+.tags span {{ background: #eff6ff; color: #3b82f6; padding: 2px 8px; border-radius: 10px; font-size: .6rem; font-weight: 500; }}
+
+/* Grid */
+.grid-2 {{ display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }}
+@media(max-width:600px) {{ .grid-2 {{ grid-template-columns: 1fr; }} }}
+
+/* Tip */
+.tip-card {{ background: linear-gradient(135deg, #fef3c7, #fde68a); border: 1px solid #fbbf24; border-radius: 12px; padding: 14px 16px; margin-bottom: 16px; }}
+.tip-card .label {{ font-size: .65rem; color: #92400e; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }}
+.tip-card .text {{ font-size: .8rem; color: #78350f; margin-top: 4px; line-height: 1.5; }}
+
+/* Ad */
+.ad {{ background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; text-align: center; margin: 16px 0; }}
+.ad .label {{ font-size: .55rem; color: #cbd5e1; text-transform: uppercase; letter-spacing: 1px; }}
+.ad .text {{ font-size: .8rem; color: #475569; margin-top: 4px; }}
+.ad a {{ color: var(--primary); font-weight: 600; }}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div>
+      <h1>{business_name}</h1>
+      <span class="date">{today}</span>
+    </div>
+    <div class="links">
+      <a href="/api/panel/{website_id}" target="_blank">&#9881; Panel</a>
+      <a href="/api/preview/{website_id}" target="_blank">&#127760; Website</a>
+    </div>
+  </div>
 </div>
 
-{ad_mid}
+<div class="main">
+  <!-- Greeting + Goal -->
+  <div class="greeting">
+    <div class="time">{time_greeting}</div>
+    <div class="msg">{greeting}</div>
+    <div class="goal">
+      <div class="goal-label">&#127919; Today's Goal</div>
+      <div class="goal-text">{daily_goal}</div>
+    </div>
+  </div>
 
-<div class="section-title">&#128247; Social Media Posts (Copy & Upload)</div>
-<div class="grid">
-<div class="card"><div class="card-label">Promotional Post {copy_btn('s1')}</div><div class="card-text" id="s1">{social_1}</div><div class="tags">{''.join([f'<span>{h if h.startswith("#") else "#"+h}</span>' for h in hashtags[:4]])}</div></div>
-<div class="card"><div class="card-label">Educational Post {copy_btn('s2')}</div><div class="card-text" id="s2">{social_2}</div><div class="tags">{''.join([f'<span>{h if h.startswith("#") else "#"+h}</span>' for h in hashtags[4:8]])}</div></div>
-<div class="card"><div class="card-label">Team/BTS Post {copy_btn('s3')}</div><div class="card-text" id="s3">{social_3}</div></div>
+  <!-- Tabs Navigation -->
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('whatsapp')">&#128172; WhatsApp</div>
+    <div class="tab" onclick="showTab('social')">&#128247; Social Media</div>
+    <div class="tab" onclick="showTab('content')">&#127916; Content</div>
+    <div class="tab" onclick="showTab('growth')">&#128161; Growth</div>
+  </div>
+
+  <!-- WhatsApp Section -->
+  <div class="section active" id="sec-whatsapp">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-label">&#9728;&#65039; Morning Broadcast</span>
+        <div class="card-actions">
+          <button class="btn-copy" onclick="copyText('wa1',this)">Copy</button>
+          <a class="btn-send" href="https://wa.me/?text=" onclick="this.href='https://wa.me/?text='+encodeURIComponent(document.getElementById('wa1').textContent)" target="_blank">Send</a>
+        </div>
+      </div>
+      <div class="card-text" id="wa1">{wa_morning}</div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-label">&#128293; Special Offer</span>
+        <div class="card-actions">
+          <button class="btn-copy" onclick="copyText('wa2',this)">Copy</button>
+          <a class="btn-send" href="https://wa.me/?text=" onclick="this.href='https://wa.me/?text='+encodeURIComponent(document.getElementById('wa2').textContent)" target="_blank">Send</a>
+        </div>
+      </div>
+      <div class="card-text" id="wa2">{wa_offer}</div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-label">&#128075; Follow-Up</span>
+        <div class="card-actions">
+          <button class="btn-copy" onclick="copyText('wa3',this)">Copy</button>
+          <a class="btn-send" href="https://wa.me/?text=" onclick="this.href='https://wa.me/?text='+encodeURIComponent(document.getElementById('wa3').textContent)" target="_blank">Send</a>
+        </div>
+      </div>
+      <div class="card-text" id="wa3">{wa_followup}</div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-label">&#11088; Ask for Review</span>
+        <div class="card-actions">
+          <button class="btn-copy" onclick="copyText('wa4',this)">Copy</button>
+          <a class="btn-send" href="https://wa.me/?text=" onclick="this.href='https://wa.me/?text='+encodeURIComponent(document.getElementById('wa4').textContent)" target="_blank">Send</a>
+        </div>
+      </div>
+      <div class="card-text" id="wa4">{wa_review}</div>
+    </div>
+  </div>
+
+  <!-- Social Media Section -->
+  <div class="section" id="sec-social">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-label">&#128226; Promotional Post</span>
+        <button class="btn-copy" onclick="copyText('s1',this)">Copy</button>
+      </div>
+      <div class="card-text" id="s1">{social_1}</div>
+      <div class="tags">{''.join([f'<span>#{h}</span>' if not h.startswith('#') else f'<span>{h}</span>' for h in hashtags[:4]])}</div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-label">&#128218; Educational Post</span>
+        <button class="btn-copy" onclick="copyText('s2',this)">Copy</button>
+      </div>
+      <div class="card-text" id="s2">{social_2}</div>
+      <div class="tags">{''.join([f'<span>#{h}</span>' if not h.startswith('#') else f'<span>{h}</span>' for h in hashtags[4:8]])}</div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-label">&#128248; Team / Behind the Scenes</span>
+        <button class="btn-copy" onclick="copyText('s3',this)">Copy</button>
+      </div>
+      <div class="card-text" id="s3">{social_3}</div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-label">&#127759; Google Business Post</span>
+        <button class="btn-copy" onclick="copyText('gp',this)">Copy</button>
+      </div>
+      <div class="card-text" id="gp">{google_post}</div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-label">&#128172; Engagement Question</span>
+        <button class="btn-copy" onclick="copyText('eq',this)">Copy</button>
+      </div>
+      <div class="card-text" id="eq">{engagement_q}</div>
+    </div>
+
+    <!-- All hashtags -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-label"># Hashtags</span>
+        <button class="btn-copy" onclick="copyText('htags',this)">Copy All</button>
+      </div>
+      <div class="card-text" id="htags">{hashtags_display}</div>
+    </div>
+  </div>
+
+  <!-- Content Ideas Section -->
+  <div class="section" id="sec-content">
+    <div class="card">
+      <div class="card-header"><span class="card-label">&#128248; Story Idea</span></div>
+      <div class="card-text">{story_idea}</div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><span class="card-label">&#127909; Reel / Video Idea</span></div>
+      <div class="card-text">{reel_idea}</div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><span class="card-label">&#128247; What to Shoot Today</span></div>
+      <div class="card-text">{content_idea}</div>
+    </div>
+  </div>
+
+  <!-- Growth Section -->
+  <div class="section" id="sec-growth">
+    <div class="tip-card">
+      <div class="label">&#128161; Tip of the Day</div>
+      <div class="text">{tip}</div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><span class="card-label">&#129300; Did You Know?</span></div>
+      <div class="card-text">{fun_fact}</div>
+    </div>
+
+    <div class="ad">
+      <div class="label">Grow Faster</div>
+      <div class="text">Want more customers? <a href="/api/panel/{website_id}">Manage your business tools &rarr;</a></div>
+    </div>
+  </div>
 </div>
 
-<div class="section-title">&#127916; Content Ideas for Today</div>
-<div class="grid" style="grid-template-columns:1fr 1fr 1fr">
-<div class="card"><div class="card-label">&#128248; Story Idea</div><div class="card-text">{story_idea}</div></div>
-<div class="card"><div class="card-label">&#127909; Reel/Video Idea</div><div class="card-text">{reel_idea}</div></div>
-<div class="card"><div class="card-label">&#128161; Content to Shoot</div><div class="card-text">{content_idea}</div></div>
-</div>
+<script>
+function showTab(name) {{
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('sec-' + name).classList.add('active');
+  event.target.classList.add('active');
+}}
 
-<div class="grid" style="grid-template-columns:2fr 1fr;margin-top:12px">
-<div class="card"><div class="card-label">&#128172; Engagement Question (post to get comments)</div><div class="card-text" id="eq">{engagement_q}</div><button onclick="navigator.clipboard.writeText(document.getElementById('eq').textContent)" style="background:#f1f5f9;border:none;padding:4px 10px;border-radius:4px;font-size:.7rem;color:#6366f1;cursor:pointer;margin-top:8px;font-weight:600">Copy</button></div>
-<div class="card"><div class="card-label">&#129300; Fun Fact</div><div class="card-text">{fun_fact}</div></div>
-</div>
-
-<div class="section-title">&#128161; Daily Tip</div>
-<div class="card"><div class="card-text" style="font-size:.9rem">{tip}</div></div>
-
-{ad_mid}
-</div>
-</body></html>"""
+function copyText(id, btn) {{
+  var text = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(text).then(function() {{
+    btn.textContent = '\\u2713 Copied';
+    setTimeout(function() {{ btn.textContent = 'Copy'; }}, 1500);
+  }});
+}}
+</script>
+</body>
+</html>"""
     return HTMLResponse(content=html)
