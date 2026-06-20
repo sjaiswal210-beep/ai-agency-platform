@@ -1,4 +1,4 @@
-from contextlib import asynccontextmanager
+﻿from contextlib import asynccontextmanager
 import re as _security_re
 
 def _sanitize_input(text: str) -> str:
@@ -59,6 +59,11 @@ from app.api.routes.sitemap import router as sitemap_router
 from app.api.routes.qa_review import router as qa_router
 from app.api.routes.offers import router as offers_router
 from app.api.routes.ads import router as ads_router
+from app.api.routes.organizations import router as organizations_router
+from app.api.routes.admin import router as admin_router
+from app.modules.crm.router import router as crm_module_router
+from app.modules.billing.router import router as billing_module_router
+from app.modules.booking.router import router as booking_module_router
 from app.automation.scheduler import start_scheduler, stop_scheduler
 from app.core.logging import setup_logging
 
@@ -273,6 +278,11 @@ app.include_router(sitemap_router, prefix="")
 app.include_router(qa_router, prefix="/api")
 app.include_router(offers_router, prefix="/api")
 app.include_router(ads_router, prefix="/api")
+app.include_router(organizations_router)
+app.include_router(admin_router)
+app.include_router(crm_module_router)
+app.include_router(billing_module_router)
+app.include_router(booking_module_router)
 
 
 # Mount static files
@@ -975,7 +985,7 @@ async def full_health_check():
     rows = ""
     for r in results:
         color = "#22c55e" if r["status"] == "ok" else "#ef4444"
-        rows += f'<tr><td style="padding:8px;font-size:.78rem">{r["name"]}</td><td style="padding:8px"><span style="color:{color};font-weight:700;font-size:.75rem">{"✓" if r["status"]=="ok" else "✗"} {r["code"]}</span></td><td style="padding:8px;font-size:.72rem;color:#64748b">{r.get("ms","")}ms</td></tr>'
+        rows += f'<tr><td style="padding:8px;font-size:.78rem">{r["name"]}</td><td style="padding:8px"><span style="color:{color};font-weight:700;font-size:.75rem">{"âœ“" if r["status"]=="ok" else "âœ—"} {r["code"]}</span></td><td style="padding:8px;font-size:.72rem;color:#64748b">{r.get("ms","")}ms</td></tr>'
     
     html = f'''<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"><title>Health Check</title><style>*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:16px;max-width:600px;margin:0 auto}}table{{width:100%;border-collapse:collapse;background:#1e293b;border-radius:10px;overflow:hidden;margin-top:16px}}th{{text-align:left;padding:10px;font-size:.7rem;color:#64748b;border-bottom:1px solid #334155}}tr:hover{{background:#334155}}</style></head><body>
 <h1 style="font-size:1.2rem">{ok}/{total} Features Working</h1>

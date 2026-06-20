@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 const API_BASE = "https://ai-agency-platform.onrender.com";
 
@@ -126,6 +126,7 @@ export default function Dashboard() {
     { name: "All Sites", icon: Globe, href: "https://ai-agency-platform.onrender.com/api/sites" },
     
     { name: "QA Agent", icon: Bot, href: "https://ai-agency-platform.onrender.com/api/qa/review-all" },
+    { name: "Admin Portal", icon: Settings, href: "/admin" },
   ];
 
   return (
@@ -304,7 +305,7 @@ export default function Dashboard() {
                   <div key={lead.id} className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-white">{lead.business_name}</p>
-                      <p className="text-xs text-slate-300">{lead.address?.split(",").slice(0, 2).join(",") || lead.category} {lead.phone ? `· ${lead.phone}` : ""}</p>
+                      <p className="text-xs text-slate-300">{lead.address?.split(",").slice(0, 2).join(",") || lead.category} {lead.phone ? `Â· ${lead.phone}` : ""}</p>
                     </div>
                     <span className={`text-xs px-2 py-0.5 rounded-full ${
                       lead.status === "new" ? "bg-blue-500/10 text-blue-400" :
@@ -536,3 +537,4 @@ export default function Dashboard() {
     </div>
   );
 }
+
