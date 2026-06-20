@@ -3,7 +3,7 @@
 const API_BASE = "https://ai-agency-platform.onrender.com";
 
 import { useEffect, useState } from "react";
-import { ArrowLeft, Building2, Package, ToggleLeft, ToggleRight, Search, Filter, Save, Check } from "lucide-react";
+import { ArrowLeft, Building2, Package, ToggleLeft, ToggleRight, Search, Filter, Save, Check, Plus } from "lucide-react";
 
 interface Module {
   id: string;
@@ -110,6 +110,10 @@ export default function AdminPage() {
           <div className="text-xs bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full font-medium">
             {organizations.length} Organizations | {modules.length} Modules
           </div>
+          <a href="/admin/create" className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 text-white rounded-lg text-xs font-medium hover:bg-indigo-700 transition">
+            <Plus className="w-3.5 h-3.5" /> New Organization
+          </a>
+
         </div>
       </header>
 
@@ -236,3 +240,5 @@ export default function AdminPage() {
     </div>
   );
 }
+
+
