@@ -538,7 +538,7 @@ def landing_page():
 
     html = f'''<!DOCTYPE html><html lang="en"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-<title>City Maps - Make Your Business Growth Live | Free Website & Growth Tools</title>
+<title>City Maps - Make your business online free with professional Website and Whatsapp sales and 69 growth tools.</title>
 <meta name="description" content="Build professional website free. WhatsApp connect, growth tools, Google visibility. If you are on Maps, your website is ready. Make your business growth live.">
 <meta name="theme-color" content="#020817"><meta name="google-site-verification" content="39nzaqNCoWxNXFyhZTNOUSSWZiHY9rCEpDFzvEakUo4">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
