@@ -582,7 +582,7 @@ a{{text-decoration:none;color:inherit}}
 .shooting-star:nth-child(3){{width:100px;animation-duration:14s;animation-delay:7s}}
 .shooting-star:nth-child(4){{width:50px;background:linear-gradient(90deg,rgba(124,58,237,.5),transparent);animation-duration:20s;animation-delay:10s}}
 .floating-orb{{position:absolute;border-radius:50%;opacity:0;animation:floatOrb 16s ease-in-out infinite}}
-.light-trail{{position:absolute;width:2px;height:0;background:linear-gradient(180deg,rgba(0,229,255,.4),transparent);animation:trailMove 14s linear infinite;opacity:0}}
+.light-trail{{display:none}}
 .pulse-ring{{position:absolute;border-radius:50%;border:1px solid rgba(0,229,255,.15);animation:pulseExpand 10s ease-out infinite;opacity:0}}
 @keyframes shoot{{0%{{transform:translateX(-100px) translateY(0);opacity:0}}5%{{opacity:.7}}85%{{opacity:.5}}100%{{transform:translateX(calc(100vw + 100px)) translateY(100px);opacity:0}}}}
 @keyframes floatOrb{{0%,100%{{opacity:0;transform:translate(0,0) scale(.8)}}25%{{opacity:.4}}50%{{opacity:.5;transform:translate(20px,-25px) scale(1.1)}}75%{{opacity:.3}}}}
