@@ -417,7 +417,7 @@ async def generate_video_script(website_id: str, req: ScriptRequest):
     """Generate a 4-scene video script from a blurb/keywords."""
     import json as _json
     
-    prompt = f"""Create a 6-scene video script for a 30-second promotional video.
+    prompt = f"""Create a 4-scene video script for a 20-second promotional video.
 Business: {req.business_name}, Category: {req.category}
 Theme/Keywords: {req.blurb if req.blurb else req.category + ' business promotional'}
 
@@ -435,7 +435,7 @@ Return ONLY a JSON array of 4 scene descriptions:
         elif "```" in cleaned:
             cleaned = cleaned.split("```")[1].split("```")[0].strip()
         scenes = _json.loads(cleaned)
-        return {"script": scenes[:6]}
+        return {"script": scenes[:4]}
     except Exception:
         # Fallback script
         return {"script": [
@@ -443,8 +443,6 @@ Return ONLY a JSON array of 4 scene descriptions:
             f"Interior of {req.business_name}, modern setup, customers browsing, warm atmosphere",
             f"Close-up of key products/services, professional quality, vibrant colors",
             f"Happy customers at {req.business_name}, smiles, satisfaction",
-            f"Team members providing service, professional and friendly",
-            f"Business signage and contact info, inviting viewers to visit"
         ]}
 
 
@@ -476,14 +474,14 @@ async def generate_free_video(website_id: str, req: HFVideoRequest):
 
     if len(scenes) < 3:
         try:
-            sp = f"Create 6 short scene descriptions for a {category} business video. Business: {business_name}. Return ONLY JSON array."
+            sp = f"Create 4 short scene descriptions for a {category} business video. Business: {business_name}. Return ONLY JSON array."
             raw = await chat_completion([{"role": "user", "content": sp}])
             cleaned = raw.strip()
             if "```json" in cleaned: cleaned = cleaned.split("```json")[1].split("```")[0]
             elif "```" in cleaned: cleaned = cleaned.split("```")[1].split("```")[0]
             scenes = _json.loads(cleaned.strip())[:6]
         except Exception:
-            scenes = [f"{business_name} exterior", f"Interior with customers", f"Products close-up", f"Happy customers", f"Team working", f"Business signage"]
+            scenes = [f"{business_name} exterior", f"Interior with customers", f"Products close-up", f"Happy customers"]
 
     if not REPLICATE_TOKEN:
         raise HTTPException(500, "Video service not configured")
@@ -491,7 +489,7 @@ async def generate_free_video(website_id: str, req: HFVideoRequest):
     # Generate 6 clips via Replicate
     rep_client = replicate.Client(api_token=REPLICATE_TOKEN)
     clip_urls = []
-    for scene in scenes[:6]:
+    for scene in scenes[:4]:
         try:
             output = rep_client.run("lightricks/ltx-2-distilled", input={"prompt": scene})
             url = output.url if hasattr(output, "url") else str(output[0]) if isinstance(output, list) else str(output)

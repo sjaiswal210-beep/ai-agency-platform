@@ -3,7 +3,7 @@
   var btn=document.getElementById("scriptBtn");
   var kw=b.value.trim()||window._cat;
   btn.disabled=true;btn.textContent="Generating...";
-  b.value="Generating 6 scenes...";b.style.opacity="0.5";
+  b.value="Generating 4 scenes...";b.style.opacity="0.5";
   fetch("/api/video/"+window._wid+"/generate-script",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({blurb:kw,business_name:window._bname,category:window._cat})}).then(function(r){return r.json()}).then(function(d){
     b.style.opacity="1";
     if(d.script){b.value=d.script.map(function(s,i){return"Scene "+(i+1)+": "+s}).join(String.fromCharCode(10,10));}
@@ -23,7 +23,7 @@ function genVideo(){
   btn.disabled=true;btn.textContent="Generating...";
   var ov=document.createElement("div");ov.id="vidOverlay";
   ov.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px";
-  ov.innerHTML='<div style="background:#1e293b;border-radius:16px;padding:24px;text-align:center;max-width:300px;width:90%"><div style="width:36px;height:36px;border:3px solid rgba(99,102,241,.2);border-top:3px solid #6366f1;border-radius:50%;animation:sp 1s linear infinite;margin:0 auto 12px"></div><p style="font-size:.85rem;font-weight:700;color:#fff">Generating Video</p><p style="font-size:.7rem;color:#94a3b8;margin-top:6px">Creating 6 scenes (4-6 min)</p><style>@keyframes sp{to{transform:rotate(360deg)}}</style></div>';
+  ov.innerHTML='<div style="background:#1e293b;border-radius:16px;padding:24px;text-align:center;max-width:300px;width:90%"><div style="width:36px;height:36px;border:3px solid rgba(99,102,241,.2);border-top:3px solid #6366f1;border-radius:50%;animation:sp 1s linear infinite;margin:0 auto 12px"></div><p style="font-size:.85rem;font-weight:700;color:#fff">Generating Video</p><p style="font-size:.7rem;color:#94a3b8;margin-top:6px">Creating 4 scenes (2-3 min)</p><style>@keyframes sp{to{transform:rotate(360deg)}}</style></div>';
   document.body.appendChild(ov);
   fetch("/api/video/"+window._wid+"/generate-free",{method:"POST",signal:AbortSignal.timeout(600000),headers:{"Content-Type":"application/json"},body:JSON.stringify({prompt:prompt,custom_text:ct})}).then(function(r){return r.json()}).then(function(d){
     var ov2=document.getElementById("vidOverlay");

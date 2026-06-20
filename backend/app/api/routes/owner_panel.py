@@ -356,7 +356,7 @@ async function generateVideo(){{
   btn.disabled=true;btn.textContent='Creating video...';
   var popup=document.createElement('div');popup.id='genPopup';
   popup.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:9999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px)';
-  popup.innerHTML='<div style="background:#1e293b;border:1px solid #334155;border-radius:16px;padding:28px;text-align:center;max-width:300px;width:90%"><div style="width:40px;height:40px;border:3px solid rgba(99,102,241,.2);border-top:3px solid #6366f1;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 14px"></div><p style="font-size:.85rem;font-weight:700;color:#fff;margin-bottom:6px">Generating Video</p><p style="font-size:.7rem;color:#94a3b8">Creating 6 scenes... (4-6 min)</p><style>@keyframes spin{{to{{transform:rotate(360deg)}}}}</style></div>';
+  popup.innerHTML='<div style="background:#1e293b;border:1px solid #334155;border-radius:16px;padding:28px;text-align:center;max-width:300px;width:90%"><div style="width:40px;height:40px;border:3px solid rgba(99,102,241,.2);border-top:3px solid #6366f1;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 14px"></div><p style="font-size:.85rem;font-weight:700;color:#fff;margin-bottom:6px">Generating Video</p><p style="font-size:.7rem;color:#94a3b8">Creating 4 scenes... (2-3 min)</p><style>@keyframes spin{{to{{transform:rotate(360deg)}}}}</style></div>';
   document.body.appendChild(popup);
   try{{
     var r=await fetch('/api/video/{website_id}/generate-free',{{method:'POST',headers:{{'Content-Type':'application/json'}},body:JSON.stringify({{prompt:generatedScript||document.getElementById('blurb').value,custom_text:customText}})}});
@@ -372,7 +372,7 @@ async function generateVideo(){{
     var gp=document.getElementById('genPopup');
     if(gp)gp.innerHTML='<div style="background:#1e293b;border:1px solid #334155;border-radius:16px;padding:20px;max-width:300px;width:90%;text-align:center"><p style="color:#ef4444;font-size:.85rem">Error: '+e.message+'</p><button onclick="this.parentNode.parentNode.remove()" style="margin-top:12px;padding:8px 16px;background:#334155;border:none;border-radius:8px;color:#fff;font-size:.75rem;cursor:pointer">Close</button></div>';
   }}
-  btn.disabled=false;btn.textContent='Generate 30-sec Video';
+  btn.disabled=false;btn.textContent='Generate 20-sec Video';
 }}
 
 </script><div id="toolModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9999;align-items:center;justify-content:center;padding:10px"><div style="background:#fff;border-radius:16px;width:100%;max-width:480px;height:85vh;position:relative;overflow:hidden"><button onclick="closeTool()" style="position:absolute;top:8px;right:12px;background:rgba(0,0,0,.6);color:#fff;border:none;width:28px;height:28px;border-radius:50%;font-size:1rem;cursor:pointer;z-index:10">&times;</button><iframe id="toolFrame" style="width:100%;height:100%;border:none;border-radius:16px" src=""></iframe></div></div></body></html>'''
@@ -426,8 +426,8 @@ textarea{{width:100%;padding:10px;border:1px solid #334155;border-radius:8px;bac
 <p style="margin-top:6px;font-size:.6rem;color:#475569">Business name added automatically</p>
 </div>
 
-<button class="btn btn-green" id="genBtn" onclick="genVideo()">Generate 30-sec Video</button>
-<p class="note">Creates 6 scenes. Takes 4-6 minutes.</p>
+<button class="btn btn-green" id="genBtn" onclick="genVideo()">Generate 20-sec Video</button>
+<p class="note">Creates 4 scenes. Takes 2-3 minutes.</p>
 
 <script>window._wid="{website_id}";window._bname="{business_name}";window._cat="{category}";</script>
 <script src="/static/js/video_creator.js?v=3"></script>
