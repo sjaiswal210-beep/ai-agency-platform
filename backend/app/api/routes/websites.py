@@ -41,7 +41,7 @@ async def deploy(website_id: str):
 
 
 @router.get("/")
-def list_websites(limit: int = 30, offset: int = 0):
+def list_websites(limit: int = 500, offset: int = 0):
     """List all generated websites with business names."""
     from app.services.lead_service import LeadService
     websites = WebsiteService().list_all(limit=limit, offset=offset)
