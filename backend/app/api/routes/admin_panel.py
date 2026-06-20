@@ -32,10 +32,10 @@ def admin_dashboard(auth: str = ""):
     total_websites = websites_r.count or len(websites_r.data or [])
 
     # Recent leads
-    recent = db.table("leads").select("id, business_name, category, phone, rating, status, created_at").order("created_at", desc=True).limit(20).execute()
+    recent = db.table("leads").select("id, business_name, category, phone, rating, status, created_at").order("created_at", desc=True).limit(500).execute()
 
     # Recent websites
-    recent_sites = db.table("websites").select("id, lead_id, slug, status, created_at").order("created_at", desc=True).limit(20).execute()
+    recent_sites = db.table("websites").select("id, lead_id, slug, status, created_at").order("created_at", desc=True).limit(500).execute()
 
     # Status breakdown
     statuses = {}
@@ -207,7 +207,7 @@ def get_notes():
     from app.core.supabase import get_supabase
     db = get_supabase()
     try:
-        result = db.table("agent_logs").select("*").eq("agent_name", "admin_notes").order("created_at", desc=True).limit(20).execute()
+        result = db.table("agent_logs").select("*").eq("agent_name", "admin_notes").order("created_at", desc=True).limit(500).execute()
         return [{"id": r["id"], "note": r.get("action", ""), "created_at": r.get("created_at", "")} for r in (result.data or [])]
     except Exception:
         return []
