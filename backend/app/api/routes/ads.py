@@ -56,7 +56,7 @@ def ad_manager_page(pwd: str = ""):
         <td style="padding:10px;font-size:.75rem">{c.get('ad_format','banner')}</td>
         <td style="padding:10px;font-size:.75rem">Rs.{c.get('rate',0)}/{c.get('pricing_model','cpm')}</td>
         <td style="padding:10px"><span style="color:{status_color};font-size:.72rem;font-weight:600">{status_text}</span></td>
-        <td style="padding:10px;white-space:nowrap"><button onclick="toggleCampaign('{c.get('id','')}')" style="font-size:.7rem;padding:4px 8px;border-radius:6px;border:1px solid #334155;background:#1e293b;color:#fff;cursor:pointer;margin-right:4px">{'Pause' if c.get('active') else 'Activate'}</button><button onclick="deleteCampaign('{c.get('id','')}')" style="font-size:.7rem;padding:4px 8px;border-radius:6px;border:1px solid #ef4444;background:transparent;color:#ef4444;cursor:pointer">Del</button></td>
+        <td style="padding:10px;white-space:nowrap"><button onclick="toggleCampaign('{c.get('id','')}')" style="font-size:.7rem;padding:4px 8px;border-radius:6px;border:1px solid #334155;background:#1e293b;color:#fff;cursor:pointer;margin-right:4px">{'Pause' if c.get('active') else 'Activate'}</button><a href='/api/ads/campaign/{c.get("id","")}/stats?pwd=kalpdev2024' style='font-size:.7rem;padding:4px 8px;border-radius:6px;border:1px solid #00e5ff;color:#00e5ff;text-decoration:none;margin-right:4px'>Stats</a><button onclick="deleteCampaign('{c.get('id','')}')" style="font-size:.7rem;padding:4px 8px;border-radius:6px;border:1px solid #ef4444;background:transparent;color:#ef4444;cursor:pointer">Del</button></td>
         </tr>"""
 
     html = f'''<!DOCTYPE html><html><head>
@@ -593,4 +593,121 @@ def ads_analytics(pwd: str = ""):
 def create_ad_page():
     """AI-powered ad creative generator."""
     html = """<html><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Create Ad</title><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:sans-serif;background:#0f172a;color:#fff;padding:20px;max-width:500px;margin:0 auto}h1{font-size:1.1rem;margin-bottom:16px}label{display:block;font-size:.7rem;color:#94a3b8;margin-bottom:4px}input,textarea,select{width:100%;padding:10px;border:1px solid #334155;border-radius:8px;background:#1e293b;color:#fff;font-size:.8rem;margin-bottom:12px;outline:none}.preview{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:16px;margin:16px 0;text-align:center;min-height:150px;display:flex;align-items:center;justify-content:center;flex-direction:column}.btn{width:100%;padding:12px;background:linear-gradient(135deg,#00e5ff,#0ea5e9);color:#020817;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:.85rem;margin-bottom:8px}.btn-sec{background:#334155;color:#fff}</style></head><body><h1>Create Ad Creative</h1><label>Business/Brand Name</label><input id="brand" placeholder="e.g., Summer Cafe"><label>Offer/Headline</label><input id="headline" placeholder="e.g., 50% OFF This Weekend!"><label>Ad Size</label><select id="size"><option value="728x90">Banner (728x90)</option><option value="300x250">Rectangle (300x250)</option><option value="320x50">Mobile Banner (320x50)</option></select><label>Style</label><select id="style"><option value="gradient">Gradient</option><option value="minimal">Minimal</option><option value="bold">Bold</option></select><label>Destination URL</label><input id="destUrl" placeholder="https://your-site.city-maps.online"><div class="preview" id="preview"><p style="font-size:.75rem;color:#64748b">Preview will appear here</p></div><button class="btn" onclick="generateAd()">Generate Ad Creative</button><button class="btn btn-sec" onclick="downloadAd()">Download as Image</button><script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script><script>function generateAd(){var b=document.getElementById("brand").value||"Brand";var h=document.getElementById("headline").value||"Special Offer!";var s=document.getElementById("size").value.split("x");var st=document.getElementById("style").value;var colors={gradient:"linear-gradient(135deg,#7c3aed,#06b6d4)",minimal:"#1e293b",bold:"linear-gradient(135deg,#ef4444,#f59e0b)"};var p=document.getElementById("preview");p.style.width=Math.min(parseInt(s[0]),400)+"px";p.style.height=parseInt(s[1])+"px";p.style.background=colors[st];p.style.borderRadius="8px";p.style.position="relative";p.innerHTML="<div style='position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:12px'><div style='text-align:center'><p style='font-size:"+((parseInt(s[1])>100)?"1.2rem":"0.8rem")+";font-weight:800;color:#fff;margin-bottom:4px'>"+h+"</p><p style='font-size:.7rem;color:rgba(255,255,255,.8)'>"+b+"</p></div></div>";}function downloadAd(){var p=document.getElementById("preview");html2canvas(p,{scale:2}).then(function(canvas){var a=document.createElement("a");a.download="ad-creative.png";a.href=canvas.toDataURL();a.click();});}</script></body></html>"""
+    return HTMLResponse(content=html)
+
+@router.get("/campaign/{campaign_id}/stats", response_class=HTMLResponse)
+def campaign_stats_detail(campaign_id: str, pwd: str = ""):
+    """Detailed campaign analytics - daily chart, per-site breakdown, click timeline."""
+    if pwd != "kalpdev2024":
+        return HTMLResponse("<script>location.href='/api/ads/manage'</script>")
+    from app.core.supabase import get_supabase
+    from datetime import datetime, timedelta
+    from collections import defaultdict
+    db = get_supabase()
+
+    # Get campaign
+    try:
+        camp = db.table("ad_campaigns").select("*").eq("id", campaign_id).limit(1).execute()
+        if not camp.data:
+            return HTMLResponse("<h1>Not found</h1>")
+        c = camp.data[0]
+    except Exception:
+        return HTMLResponse("<h1>Error</h1>")
+
+    # Get all events for this campaign
+    events = []
+    try:
+        ev = db.table("analytics_events").select("*").like("page", f"/ad/{campaign_id}%").order("created_at", desc=True).limit(500).execute()
+        events = ev.data or []
+    except Exception:
+        pass
+
+    # Daily breakdown
+    daily = defaultdict(lambda: {"impressions": 0, "clicks": 0})
+    site_stats = defaultdict(lambda: {"impressions": 0, "clicks": 0})
+    
+    for e in events:
+        day = e.get("created_at", "")[:10]
+        etype = e.get("event_type", "")
+        wid = e.get("website_id", "unknown")
+        if etype == "ad_impression":
+            daily[day]["impressions"] += 1
+            site_stats[wid]["impressions"] += 1
+        elif etype == "ad_click":
+            daily[day]["clicks"] += 1
+            site_stats[wid]["clicks"] += 1
+
+    # Build daily chart bars
+    sorted_days = sorted(daily.keys())[-14:]  # Last 14 days
+    max_imp = max((daily[d]["impressions"] for d in sorted_days), default=1) or 1
+    daily_bars = ""
+    for d in sorted_days:
+        imp = daily[d]["impressions"]
+        clk = daily[d]["clicks"]
+        h = int(imp / max_imp * 100)
+        daily_bars += f'<div style="text-align:center;flex:1;min-width:30px"><div style="height:{h}px;background:linear-gradient(180deg,#00e5ff,#6366f1);border-radius:4px 4px 0 0;min-height:4px;position:relative"><span style="position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:.55rem;color:#94a3b8">{imp}</span></div><div style="font-size:.5rem;color:#64748b;margin-top:4px">{d[5:]}</div></div>'
+
+    # Per-site table
+    site_rows = ""
+    for wid, st in sorted(site_stats.items(), key=lambda x: -x[1]["impressions"])[:20]:
+        ctr = round(st["clicks"] / st["impressions"] * 100, 1) if st["impressions"] > 0 else 0
+        site_rows += f'<tr style="border-bottom:1px solid #334155"><td style="padding:8px;font-size:.7rem;color:#94a3b8">{wid[:20]}</td><td style="padding:8px;text-align:center;font-size:.75rem;color:#e2e8f0">{st["impressions"]}</td><td style="padding:8px;text-align:center;font-size:.75rem;color:#e2e8f0">{st["clicks"]}</td><td style="padding:8px;text-align:center;font-size:.75rem;color:#00e5ff">{ctr}%</td></tr>'
+
+    # Recent clicks timeline
+    recent_clicks = [e for e in events if e.get("event_type") == "ad_click"][:15]
+    timeline = ""
+    for clk in recent_clicks:
+        t = clk.get("created_at", "")[:16].replace("T", " ")
+        wid = clk.get("website_id", "?")[:15]
+        timeline += f'<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #1e293b;font-size:.68rem"><span style="color:#22c55e">Click</span><span style="color:#94a3b8">{wid}</span><span style="color:#64748b">{t}</span></div>'
+
+    name = c.get("name", "Campaign")
+    impressions = c.get("impressions", 0)
+    clicks = c.get("clicks", 0)
+    spent = c.get("spent", 0)
+    budget = c.get("budget", 0)
+    ctr = round(clicks / impressions * 100, 2) if impressions > 0 else 0
+
+    html = f"""<!DOCTYPE html><html><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>{name} - Stats</title>
+<style>*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:16px;max-width:700px;margin:0 auto}}input,select,textarea{{font-size:16px!important}}h1{{font-size:1.1rem;font-weight:800;margin-bottom:4px}}.sub{{font-size:.72rem;color:#64748b;margin-bottom:16px}}.stats{{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}}.stat{{background:rgba(255,255,255,.03);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:12px;text-align:center}}.stat .n{{font-size:1.1rem;font-weight:800;color:#00e5ff}}.stat .l{{font-size:.55rem;color:#64748b;margin-top:2px}}.card{{background:rgba(255,255,255,.03);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:14px;margin-bottom:12px}}.card h2{{font-size:.8rem;font-weight:700;margin-bottom:10px}}table{{width:100%;border-collapse:collapse}}th{{text-align:left;padding:8px;font-size:.6rem;color:#64748b}}</style></head><body>
+<a href="/api/ads/manage?pwd=kalpdev2024" style="color:#00e5ff;font-size:.7rem">&larr; Back to Ad Manager</a>
+<h1>{name}</h1>
+<p class="sub">{c.get("advertiser_name","")} &bull; {"Active" if c.get("active") else "Paused"}</p>
+
+<div class="stats">
+<div class="stat"><div class="n">{impressions:,}</div><div class="l">Impressions</div></div>
+<div class="stat"><div class="n">{clicks:,}</div><div class="l">Clicks</div></div>
+<div class="stat"><div class="n">{ctr}%</div><div class="l">CTR</div></div>
+<div class="stat"><div class="n">Rs.{spent:.2f}</div><div class="l">Spent</div></div>
+</div>
+
+<div class="card">
+<h2>Daily Performance (Last 14 Days)</h2>
+<div style="display:flex;align-items:flex-end;gap:3px;height:120px;padding-top:20px">{daily_bars or '<p style="font-size:.7rem;color:#475569">No data yet</p>'}</div>
+</div>
+
+<div class="card">
+<h2>Per-Site Breakdown</h2>
+<table><thead><tr><th>Website</th><th style="text-align:center">Views</th><th style="text-align:center">Clicks</th><th style="text-align:center">CTR</th></tr></thead><tbody>{site_rows or '<tr><td colspan="4" style="text-align:center;padding:16px;font-size:.7rem;color:#475569">No site data</td></tr>'}</tbody></table>
+</div>
+
+<div class="card">
+<h2>Recent Clicks</h2>
+{timeline or '<p style="font-size:.7rem;color:#475569">No clicks yet</p>'}
+</div>
+
+<div class="card">
+<h2>Campaign Details</h2>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:.72rem">
+<div><span style="color:#64748b">Format:</span> {c.get("ad_format","banner")}</div>
+<div><span style="color:#64748b">Pricing:</span> {c.get("pricing_model","cpm").upper()} Rs.{c.get("rate",0)}</div>
+<div><span style="color:#64748b">Budget:</span> Rs.{budget:.2f}</div>
+<div><span style="color:#64748b">Remaining:</span> Rs.{budget-spent:.2f}</div>
+<div><span style="color:#64748b">Targeting:</span> {c.get("targeting_type","all")}</div>
+<div><span style="color:#64748b">Created:</span> {c.get("created_at","")[:10]}</div>
+</div>
+</div>
+</body></html>"""
     return HTMLResponse(content=html)
