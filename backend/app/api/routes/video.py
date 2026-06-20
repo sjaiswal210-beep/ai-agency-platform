@@ -12,11 +12,13 @@ from app.services.website_service import WebsiteService
 from app.services.lead_service import LeadService
 from app.core.llm import chat_completion
 from app.core.logging import get_logger
+from fastapi import Request
 
 router = APIRouter(prefix="/video", tags=["video"])
 logger = get_logger(__name__)
 
 REPLICATE_TOKEN = os.environ.get("REPLICATE_TOKEN", "")
+MAX_PROMPT_LENGTH = 2000  # Max characters for video prompts
 
 
 class VideoRequest(BaseModel):
@@ -447,7 +449,14 @@ Return ONLY a JSON array of 4 scene descriptions:
 
 
 @router.post("/{website_id}/generate-free")
-async def generate_free_video(website_id: str, req: HFVideoRequest):
+async def generate_free_video(website_id: str, req: HFVideoRequest, request: Request = None):
+    """Generate video clips, stitch with ffmpeg, add text overlay."""
+    # Rate limit: 10 video generations per hour
+    if request:
+        from app.main import _check_ai_rate_limit
+        client_ip = request.client.host if request.client else "unknown"
+        if not _check_ai_rate_limit(client_ip):
+            raise HTTPException(429, "Video generation limit reached (10/hour). Try again later.")
     """Generate 30-sec video (6 clips), stitch with ffmpeg, add text overlay."""
     import json as _json
     import httpx as _hx
@@ -466,6 +475,12 @@ async def generate_free_video(website_id: str, req: HFVideoRequest):
     slug = website.get("slug", "")
     site_url = f"{slug}.city-maps.online" if slug else "city-maps.online"
     custom_text = req.custom_text if hasattr(req, "custom_text") and req.custom_text else ""
+
+    # Validate prompt length
+    if req.prompt and len(req.prompt) > MAX_PROMPT_LENGTH:
+        raise HTTPException(400, "Prompt too long. Max 2000 characters.")
+    if req.custom_text and len(req.custom_text) > 100:
+        raise HTTPException(400, "Custom text too long. Max 100 characters.")
 
     # Parse scenes
     prompt_text = req.prompt or ""

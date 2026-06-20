@@ -84,6 +84,19 @@ from collections import defaultdict
 import time as _time
 _rate_limits = defaultdict(list)
 
+
+# Stricter rate limiting for AI/expensive endpoints (10 per hour per IP)
+_ai_rate_limits = defaultdict(list)
+
+def _check_ai_rate_limit(ip: str) -> bool:
+    """Check if IP has exceeded AI endpoint rate limit (10/hour)."""
+    now = _time.time()
+    _ai_rate_limits[ip] = [t for t in _ai_rate_limits[ip] if now - t < 3600]
+    if len(_ai_rate_limits[ip]) >= 10:
+        return False
+    _ai_rate_limits[ip].append(now)
+    return True
+
 @app.middleware("http")
 async def rate_limit_middleware(request: Request, call_next):
     """Basic rate limiting - 100 requests per minute per IP."""
