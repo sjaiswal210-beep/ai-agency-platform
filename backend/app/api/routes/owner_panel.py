@@ -38,7 +38,19 @@ def owner_panel(website_id: str):
 <style>
 *{{margin:0;padding:0;box-sizing:border-box}}
 body{{font-family:Inter,sans-serif;background:#020817;color:#fff;padding:12px;max-width:500px;margin:0 auto;min-height:100vh;position:relative;overflow-x:hidden}}
-body::before{{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 50% 30%,rgba(99,102,241,.08),transparent 60%),radial-gradient(circle at 80% 70%,rgba(0,229,255,.05),transparent 40%);pointer-events:none;z-index:0}}
+body::before{{content:'';position:fixed;inset:0;background:
+  radial-gradient(ellipse 100% 60% at 50% 30%,rgba(99,102,241,.1),transparent 55%),
+  radial-gradient(circle at 80% 80%,rgba(0,229,255,.08),transparent 40%),
+  radial-gradient(circle at 20% 60%,rgba(124,58,237,.06),transparent 40%),
+  repeating-linear-gradient(0deg,transparent,transparent 39px,rgba(99,102,241,.02) 40px),
+  repeating-linear-gradient(90deg,transparent,transparent 39px,rgba(99,102,241,.02) 40px);
+  pointer-events:none;z-index:0;animation:bgShift 30s ease-in-out infinite}}
+body::after{{content:'';position:fixed;top:-50%;left:-50%;width:200%;height:200%;background:
+  radial-gradient(circle at 30% 40%,rgba(0,229,255,.04),transparent 30%),
+  radial-gradient(circle at 70% 60%,rgba(124,58,237,.04),transparent 30%);
+  pointer-events:none;z-index:0;animation:glowDrift 20s ease-in-out infinite}}
+@keyframes bgShift{{0%,100%{{opacity:.8}}50%{{opacity:1}}}}
+@keyframes glowDrift{{0%,100%{{transform:translate(0,0)}}50%{{transform:translate(2%,-2%)}}}}
 .hdr{{text-align:center;padding:10px 0 8px;position:relative;z-index:1}}.hdr h1{{font-size:1.1rem;font-weight:800;background:linear-gradient(135deg,#fff,#94a3b8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}}.hdr p{{font-size:.72rem;color:#64748b;margin-top:3px}}.hdr a{{display:inline-block;margin-top:6px;color:#00e5ff;font-size:.72rem;font-weight:600}}
 .stats{{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px;position:relative;z-index:1}}.stat{{background:rgba(255,255,255,.03);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:12px 8px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.05)}}.stat .n{{font-size:1rem;font-weight:800;background:linear-gradient(135deg,#00e5ff,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent}}.stat .l{{font-size:.58rem;color:#64748b;margin-top:2px}}
 .section-title{{font-size:.58rem;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.08em;margin:8px 0 5px;padding-left:4px;position:relative;z-index:1}}
