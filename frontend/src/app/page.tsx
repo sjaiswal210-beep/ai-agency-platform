@@ -136,7 +136,7 @@ export default function Dashboard() {
           <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/30">
             <Bot className="w-5 h-5 text-white" />
           </div>
-          {!collapsed && <span className="font-bold text-sm text-white">AI Employee</span>}
+          {!collapsed && <span className="font-bold text-sm text-white">City Maps</span>}
         </div>
 
         <nav className="flex-1 py-3 px-2 space-y-1">
@@ -169,8 +169,8 @@ export default function Dashboard() {
         {/* Top bar */}
         <header className="bg-[#0f172a]/80 backdrop-blur-lg border-b border-white/5 px-6 py-3 flex items-center justify-between sticky top-0 z-10">
           <div>
-            <h1 className="text-xl font-bold text-white">Dashboard</h1>
-            <p className="text-xs text-slate-400">Your AI Employee Automation Platform</p>
+            <h1 className="text-xl font-bold text-white">City-Maps Admin</h1>
+            <p className="text-xs text-slate-400">Your City Maps Admin Automation Platform</p>
           </div>
           <div className="flex items-center gap-3">
             <button className="p-2 hover:bg-white/5 rounded-lg relative">
@@ -226,7 +226,7 @@ export default function Dashboard() {
           {/* Agent Status */}
           {false && agentStatus && (
             <div className="glass-card-solid p-4 mb-6">
-              <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">AI Agents</h3>
+              <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">Agents</h3>
               <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
                 {Object.entries(agentStatus.agents || {}).map(([key, agent]: [string, any]) => (
                   <div key={key} className="flex items-center gap-2 px-3 py-2 bg-slate-700/30 rounded-lg">
