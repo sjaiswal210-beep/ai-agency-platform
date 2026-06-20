@@ -27,6 +27,8 @@ export default function AnalyticsPage() {
   const [usage, setUsage] = useState<UsageData | null>(null);
   const [replicateUsage, setReplicateUsage] = useState<any>(null);
 
+  const USD_TO_INR = 85;
+
   const fetchData = () => {
     api.dashboard.stats().then(setStats).catch(console.error);
     fetch(`${API_BASE}/api/dashboard/usage`).then(r => r.json()).then(setUsage).catch(console.error);
@@ -72,7 +74,7 @@ export default function AnalyticsPage() {
               <DollarSign className="w-4 h-4 text-green-500" />
               <span className="text-xs font-medium text-slate-300">Total Spend</span>
             </div>
-            <p className="text-2xl font-bold text-white">${usage?.total_cost?.toFixed(3) ?? "0.000"}</p>
+            <p className="text-2xl font-bold text-white">{String.fromCharCode(8377)}{((usage?.total_cost ?? 0) * USD_TO_INR).toFixed(2)}</p>
             <p className="text-xs text-slate-400 mt-1">This session</p>
           </div>
           <div className="bg-white/[0.03] backdrop-blur-xl border-white/[0.06] rounded-xl border border-white/5 p-5">
@@ -80,15 +82,15 @@ export default function AnalyticsPage() {
               <Search className="w-4 h-4 text-blue-500" />
               <span className="text-xs font-medium text-slate-300">Google Places</span>
             </div>
-            <p className="text-2xl font-bold text-white">${usage?.total_google_cost?.toFixed(3) ?? "0.000"}</p>
-            <p className="text-xs text-green-600 mt-1">${usage?.google_free_remaining?.toFixed(2) ?? "200.00"} free remaining</p>
+            <p className="text-2xl font-bold text-white">{String.fromCharCode(8377)}{((usage?.total_google_cost ?? 0) * USD_TO_INR).toFixed(2)}</p>
+            <p className="text-xs text-green-600 mt-1">{String.fromCharCode(8377)}{((usage?.google_free_remaining ?? 200) * USD_TO_INR).toFixed(0)} free remaining</p>
           </div>
           <div className="bg-white/[0.03] backdrop-blur-xl border-white/[0.06] rounded-xl border border-white/5 p-5">
             <div className="flex items-center gap-2 mb-2">
               <Zap className="w-4 h-4 text-amber-500" />
               <span className="text-xs font-medium text-slate-300">Gemini AI</span>
             </div>
-            <p className="text-2xl font-bold text-white">${usage?.total_gemini_cost?.toFixed(3) ?? "0.000"}</p>
+            <p className="text-2xl font-bold text-white">{String.fromCharCode(8377)}{((usage?.total_gemini_cost ?? 0) * USD_TO_INR).toFixed(2)}</p>
             <p className="text-xs text-green-600 mt-1">{usage?.gemini_free ? "Within free tier" : "Paid usage"}</p>
           </div>
           <div className="bg-white/[0.03] backdrop-blur-xl border-white/[0.06] rounded-xl border border-white/5 p-5">
@@ -96,7 +98,7 @@ export default function AnalyticsPage() {
               <DollarSign className="w-4 h-4 text-primary" />
               <span className="text-xs font-medium text-slate-300">Cost Per Lead</span>
             </div>
-            <p className="text-2xl font-bold text-white">${totalLeads > 0 ? ((usage?.total_cost ?? 0) / totalLeads).toFixed(3) : "0.000"}</p>
+            <p className="text-2xl font-bold text-white">{String.fromCharCode(8377)}{totalLeads > 0 ? (((usage?.total_cost ?? 0) * USD_TO_INR) / totalLeads).toFixed(2) : "0.00"}</p>
             <p className="text-xs text-slate-400 mt-1">{totalLeads} leads total</p>
           </div>
         </div>
@@ -120,15 +122,15 @@ export default function AnalyticsPage() {
                 <tr key={i} className={`border-t border-white/5 ${item.calls > 0 ? "bg-white/[0.03]" : "bg-white/[0.02]/50 opacity-60"}`}>
                   <td className="px-4 py-2.5 capitalize">{item.action.replace(/_/g, " ")}</td>
                   <td className="px-4 py-2.5 text-right font-mono">{item.calls}</td>
-                  <td className="px-4 py-2.5 text-right font-mono text-xs text-slate-300">${item.cost_per_call}</td>
-                  <td className="px-4 py-2.5 text-right font-mono font-medium">${item.total_cost.toFixed(4)}</td>
+                  <td className="px-4 py-2.5 text-right font-mono text-xs text-slate-300">{String.fromCharCode(8377)}{(item.cost_per_call * USD_TO_INR).toFixed(2)}</td>
+                  <td className="px-4 py-2.5 text-right font-mono font-medium">{String.fromCharCode(8377)}{(item.total_cost * USD_TO_INR).toFixed(2)}</td>
                 </tr>
               ))}
             </tbody>
             <tfoot className="bg-white/[0.02] border-t-2 border-white/10">
               <tr>
                 <td className="px-4 py-3 font-bold" colSpan={3}>Total</td>
-                <td className="px-4 py-3 text-right font-mono font-bold text-primary">${usage?.total_cost?.toFixed(4) ?? "0.0000"}</td>
+                <td className="px-4 py-3 text-right font-mono font-bold text-primary">{String.fromCharCode(8377)}{((usage?.total_cost ?? 0) * USD_TO_INR).toFixed(2)}</td>
               </tr>
             </tfoot>
           </table>
