@@ -419,7 +419,7 @@ MOBILE_CSS = """
   .hero p{font-size:.78rem!important;margin-bottom:8px!important}
   .hero-btns{flex-direction:column!important;gap:10px!important;align-items:stretch!important}
   .hero-btns .btn,.btn-white,.btn-glass{text-align:center;justify-content:center;padding:9px 16px!important;font-size:.78rem!important}
-  .stats-section .stats-grid,.stats-grid{grid-template-columns:repeat(2,1fr)!important;gap:12px!important;padding:0 16px}.stats-section{background-attachment:scroll!important;background-size:cover!important;background-position:center!important;transform:translateZ(0)}
+  .stats-section .stats-grid,.stats-grid{grid-template-columns:repeat(2,1fr)!important;gap:12px!important;padding:0 16px}.stats-section{background-attachment:scroll!important;background-size:120% auto!important;background-position:center 50%!important}
   .stat-number{font-size:1.5rem!important}
   .section,.sec{padding:20px 12px!important}.products-section{order:-1!important}
   .section-header h2,.sec-head h2{font-size:1.1rem!important}
