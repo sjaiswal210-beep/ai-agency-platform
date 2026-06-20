@@ -599,7 +599,7 @@ a{{text-decoration:none;color:inherit}}
 
 /* Nav */
 .nav{{position:fixed;top:0;left:0;right:0;z-index:50;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;max-width:1100px;margin:0 auto;transition:all .3s}}
-.nav-logo{{font-weight:900;font-size:1rem;background:linear-gradient(135deg,#00e5ff,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent}}
+.nav-logo{{font-weight:900;font-size:1rem;background:linear-gradient(135deg,#00e5ff,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.1}}.nav-logo span:last-child{{background:none;-webkit-text-fill-color:#64748b}}
 .nav-btn{{padding:8px 16px;font-size:.72rem;font-weight:600;border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;transition:all .2s;background:rgba(255,255,255,.03);backdrop-filter:blur(10px)}}.nav-btn:hover{{background:rgba(255,255,255,.08)}}
 
 /* Hero */
@@ -755,7 +755,7 @@ a{{text-decoration:none;color:inherit}}
 <div class="content">
 
 <!-- Nav -->
-<nav class="nav"><div class="nav-logo">City Maps</div><a href="https://ai-agency-platform-blush.vercel.app" class="nav-btn">Admin</a></nav>
+<nav class="nav"><div class="nav-logo"><span style="font-size:1.2rem">City Maps</span><span style="display:block;font-size:.55rem;font-weight:400;color:#64748b;margin-top:-2px">Making World Digital</span></div><a href="https://ai-agency-platform-blush.vercel.app" class="nav-btn">Admin</a></nav>
 
 <!-- Hero -->
 <section class="hero">
@@ -792,12 +792,12 @@ a{{text-decoration:none;color:inherit}}
 <section class="sec" id="features">
 <div class="sec-label">Platform</div><div class="sec-title">Everything Your Business Needs</div><div class="sec-desc">More than a website. A complete digital growth engine built for local businesses.</div>
 <div class="feat-grid">
-<div class="feat-card glass glass-hover"><div class="feat-icon">&#127760;</div><h3>Professional Website</h3><p>Beautiful responsive site with services, gallery, map, reviews, and contact.</p></div>
-<div class="feat-card glass glass-hover"><div class="feat-icon">&#128172;</div><h3>WhatsApp Commerce</h3><p>One-tap order button. Customers enquire and buy directly on WhatsApp.</p></div>
-<div class="feat-card glass glass-hover"><div class="feat-icon">&#128205;</div><h3>Google Maps Visibility</h3><p>Show up when people search near you. Full Google profile optimization.</p></div>
-<div class="feat-card glass glass-hover"><div class="feat-icon">&#128722;</div><h3>Product Catalog</h3><p>Showcase products with photos, prices, and Buy Now button.</p></div>
-<div class="feat-card glass glass-hover"><div class="feat-icon">&#128200;</div><h3>Real-Time Analytics</h3><p>Track visitors, calls, WhatsApp clicks, and orders in real-time.</p></div>
-<div class="feat-card glass glass-hover"><div class="feat-icon">&#127909;</div><h3>Video &amp; Content</h3><p>Create promo videos, social posts, and stories for your business.</p></div>
+<a href="#pricing" class="feat-card glass glass-hover" style="text-decoration:none;color:inherit"><div class="feat-icon">&#127760;</div><h3>Professional Website</h3><p>Beautiful responsive site with services, gallery, map, reviews, and contact.</p></a>
+<a href="#pricing" class="feat-card glass glass-hover" style="text-decoration:none;color:inherit"><div class="feat-icon">&#128172;</div><h3>WhatsApp Commerce</h3><p>One-tap order button. Customers enquire and buy directly on WhatsApp.</p></a>
+<a href="#pricing" class="feat-card glass glass-hover" style="text-decoration:none;color:inherit"><div class="feat-icon">&#128205;</div><h3>Google Maps Visibility</h3><p>Show up when people search near you. Full Google profile optimization.</p></a>
+<a href="#pricing" class="feat-card glass glass-hover" style="text-decoration:none;color:inherit"><div class="feat-icon">&#128722;</div><h3>Product Catalog</h3><p>Showcase products with photos, prices, and Buy Now button.</p></a>
+<a href="#pricing" class="feat-card glass glass-hover" style="text-decoration:none;color:inherit"><div class="feat-icon">&#128200;</div><h3>Real-Time Analytics</h3><p>Track visitors, calls, WhatsApp clicks, and orders in real-time.</p></a>
+<a href="#pricing" class="feat-card glass glass-hover" style="text-decoration:none;color:inherit"><div class="feat-icon">&#127909;</div><h3>Video &amp; Content</h3><p>Create promo videos, social posts, and stories for your business.</p></a>
 </div></section>
 
 <!-- Video -->
