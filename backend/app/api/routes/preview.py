@@ -567,11 +567,6 @@ def generate_html(content: dict, template: str, lead: dict = None, website_id_ov
     contact = content.get("contact_info", {})
     colors = content.get("color_scheme", {"primary": "#6366f1", "secondary": "#e0e7ff", "accent": "#10b981"})
     seo_title = content.get("seo_title", hero_title)
-    # Enhance SEO title with location
-    _city = address.split(",")[-2].strip() if address and "," in address else ""
-    if _city and _city not in seo_title:
-        seo_title = f"{seo_title} in {_city}"
-    seo_title = f"{seo_title} | Powered by City Maps"
     seo_desc = content.get("seo_description", hero_subtitle)
     features = content.get("features", [])
     primary = colors.get("primary", "#6366f1")
@@ -623,6 +618,12 @@ def generate_html(content: dict, template: str, lead: dict = None, website_id_ov
     email = contact.get("email", lead.get("email", "") if lead else "")
     address = contact.get("address", lead.get("address", "") if lead else "")
     hours = contact.get("hours", "Mon-Sat: 9 AM - 8 PM")
+
+    # Enhance SEO title with location
+    _city = address.split(",")[-2].strip() if address and "," in address else ""
+    if _city and _city not in seo_title:
+        seo_title = f"{seo_title} in {_city}"
+    seo_title = f"{seo_title} | Powered by City Maps"
     business_name = lead.get("business_name", hero_title) if lead else hero_title
     whatsapp_num = phone.replace("-", "").replace(" ", "").replace("+", "") if phone else ""
     short_name = business_name.split()[0] if business_name else "Biz"
