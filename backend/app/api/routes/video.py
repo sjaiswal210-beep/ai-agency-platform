@@ -547,9 +547,28 @@ async def generate_free_video(website_id: str, req: HFVideoRequest):
             return {"status": "completed", "video_url": clip_urls[0], "clips": clip_urls, "total_duration": f"{len(clip_urls)*5} seconds", "business_name": business_name}
 
     # Add text overlay
-    overlay = (custom_text or business_name).replace("'", "").replace('"', '').replace(":", " ")
+    # Sanitize text for ffmpeg
+    biz_clean = business_name.replace("'", "").replace('"', '').replace(":", " ").replace(",", " ")
+    offer_clean = (custom_text or "").replace("'", "").replace('"', '').replace(":", " ").replace(",", " ")
     site_clean = site_url.replace("'", "")
-    drawtext = f"drawtext=text=\'{overlay}\':fontsize=20:fontcolor=white:x=10:y=10:shadowcolor=black:shadowx=2:shadowy=2,drawtext=text=\'{site_clean}\':fontsize=14:fontcolor=white:x=(w-tw)/2:y=h-25:shadowcolor=black:shadowx=2:shadowy=2"
+    
+    # Build complex filter with:
+    # - Semi-transparent dark bar at top and bottom
+    # - Large business name at top (always visible)
+    # - Offer text animated (pulses mid-video)  
+    # - Website URL at bottom
+    filters = []
+    # Dark gradient bars for text readability
+    filters.append("drawbox=x=0:y=0:w=iw:h=60:color=black@0.5:t=fill")
+    filters.append("drawbox=x=0:y=ih-45:w=iw:h=45:color=black@0.5:t=fill")
+    # Business name - large, bold, top center
+    filters.append(f"drawtext=text=\'{biz_clean}\':fontsize=28:fontcolor=white:x=(w-tw)/2:y=18:shadowcolor=black:shadowx=2:shadowy=2")
+    # Offer/custom text - animated fade in at 2sec, stays visible
+    if offer_clean:
+        filters.append(f"drawtext=text=\'{offer_clean}\':fontsize=24:fontcolor=yellow:x=(w-tw)/2:y=(h-th)/2:shadowcolor=black:shadowx=3:shadowy=3:enable=\'gte(t,1.5)\'")
+    # Website URL at bottom center
+    filters.append(f"drawtext=text=\'{site_clean}\':fontsize=18:fontcolor=white:x=(w-tw)/2:y=h-32:shadowcolor=black:shadowx=2:shadowy=2")
+    drawtext = ",".join(filters)
     try:
         subprocess.run(["ffmpeg", "-y", "-i", concat_path, "-vf", drawtext, "-c:a", "copy", "-preset", "ultrafast", final_path], capture_output=True, timeout=180)
         if not os.path.exists(final_path) or os.path.getsize(final_path) < 5000:
