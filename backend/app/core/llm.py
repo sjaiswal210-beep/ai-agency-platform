@@ -1,6 +1,7 @@
 import httpx
 import asyncio
 from app.core.config import get_settings
+from app.services.usage_tracker import track_usage
 
 
 GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent"
@@ -119,7 +120,9 @@ async def chat_completion(messages: list[dict], model: str | None = None) -> str
     freellm_key = getattr(settings, 'freellmapi_key', '') or ''
     if freellm_url:
         try:
-            return await _call_freellmapi(messages, freellm_url, freellm_key)
+            result = await _call_freellmapi(messages, freellm_url, freellm_key)
+            track_usage("freellmapi_chat")
+            return result
         except Exception:
             pass  # Fall through to Groq
 

@@ -12,6 +12,7 @@ from app.services.website_service import WebsiteService
 from app.services.lead_service import LeadService
 from app.core.llm import chat_completion
 from app.core.logging import get_logger
+from app.services.usage_tracker import track_usage
 from fastapi import Request
 
 router = APIRouter(prefix="/video", tags=["video"])
@@ -519,6 +520,7 @@ async def generate_free_video(website_id: str, req: HFVideoRequest, request: Req
             url = output.url if hasattr(output, "url") else str(output[0]) if isinstance(output, list) else str(output)
             if url and url.startswith("http"):
                 clip_urls.append(url)
+                track_usage("replicate_video_clip")
         except Exception:
             continue
 

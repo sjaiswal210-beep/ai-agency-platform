@@ -17,6 +17,10 @@ _usage = {
     "gemini_social": {"calls": 0, "cost_per_call": 0.002},
     "gemini_editor": {"calls": 0, "cost_per_call": 0.002},
     "gemini_toolkit": {"calls": 0, "cost_per_call": 0.002},
+    "replicate_video_clip": {"calls": 0, "cost_per_call": 0.012},
+    "replicate_video_stitch": {"calls": 0, "cost_per_call": 0.0},
+    "freellmapi_chat": {"calls": 0, "cost_per_call": 0.0},
+    "hf_video": {"calls": 0, "cost_per_call": 0.0},
 }
 
 
@@ -48,13 +52,20 @@ def get_usage_stats() -> dict:
             "total_cost": round(cost, 4),
         })
 
+    total_replicate = sum(data["calls"] * data["cost_per_call"] for action, data in _usage.items() if "replicate" in action)
+    total_freellm = sum(data["calls"] * data["cost_per_call"] for action, data in _usage.items() if "freellm" in action or "hf_" in action)
+
     return {
         "items": items,
         "total_cost": round(total_cost, 4),
         "total_google_cost": round(total_google, 4),
         "total_gemini_cost": round(total_gemini, 4),
+        "total_replicate_cost": round(total_replicate, 4),
+        "total_freellm_cost": round(total_freellm, 4),
         "google_free_remaining": round(200.0 - total_google, 2),
-        "gemini_free": total_gemini < 0.50,  # Effectively free under free tier
+        "gemini_free": total_gemini < 0.50,
+        "replicate_clips": _usage.get("replicate_video_clip", {}).get("calls", 0),
+        "freellm_calls": _usage.get("freellmapi_chat", {}).get("calls", 0),
     }
 
 
