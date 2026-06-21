@@ -84,6 +84,7 @@ from app.modules.documents.router import router as documents_router
 from app.modules.ai_employee.router import router as ai_employee_router
 from app.api.routes.invoice_pdf import router as invoice_pdf_router
 from app.api.routes.cron_jobs import router as cron_router
+from app.api.routes.health_agent import router as health_agent_router
 from app.api.routes.public_booking import router as public_booking_router
 from app.api.routes.public_catalog import router as public_catalog_router
 from app.api.routes.business_ui import router as business_ui_router
@@ -330,6 +331,7 @@ app.include_router(documents_router)
 app.include_router(ai_employee_router)
 app.include_router(invoice_pdf_router)
 app.include_router(cron_router)
+app.include_router(health_agent_router)
 app.include_router(public_booking_router, prefix="/api")
 app.include_router(public_catalog_router, prefix="/api")
 app.include_router(business_ui_router)
