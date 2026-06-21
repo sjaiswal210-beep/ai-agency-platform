@@ -16,7 +16,7 @@ async def list_all_modules():
 async def admin_list_organizations(
     search: Optional[str] = None,
     plan: Optional[str] = None,
-    limit: int = Query(default=50, le=200),
+    limit: int = Query(default=200, le=500),
     offset: int = 0
 ):
     supabase = get_supabase()
@@ -114,7 +114,7 @@ async def update_template(template_id: str, data: dict):
 async def get_audit_log(
     org_id: Optional[str] = None,
     action: Optional[str] = None,
-    limit: int = Query(default=50, le=200),
+    limit: int = Query(default=200, le=500),
     offset: int = 0
 ):
     supabase = get_supabase()

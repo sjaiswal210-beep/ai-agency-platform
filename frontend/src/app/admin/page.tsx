@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 const API_BASE = "https://ai-agency-platform.onrender.com";
 
@@ -45,7 +45,7 @@ export default function AdminPage() {
 
   useEffect(() => {
     fetch(`${API_BASE}/api/admin/modules`).then(r => r.json()).then(d => setModules(d.modules || []));
-    fetch(`${API_BASE}/api/admin/organizations`).then(r => r.json()).then(d => setOrganizations(d.organizations || []));
+    fetch(`${API_BASE}/api/admin/organizations?limit=200`).then(r => r.json()).then(d => setOrganizations(d.organizations || []));
     fetch(`${API_BASE}/api/admin/templates`).then(r => r.json()).then(d => setTemplates(d.templates || []));
   }, []);
 
@@ -95,6 +95,19 @@ export default function AdminPage() {
     o.name.toLowerCase().includes(search.toLowerCase()) || o.slug.toLowerCase().includes(search.toLowerCase())
   );
 
+  // Load more when searching server-side
+  const searchServer = async () => {
+    if (search.length >= 2) {
+      const r = await fetch(`${API_BASE}/api/admin/organizations?search=${encodeURIComponent(search)}&limit=200`);
+      const d = await r.json();
+      setOrganizations(d.organizations || []);
+    } else if (search.length === 0) {
+      const r = await fetch(`${API_BASE}/api/admin/organizations?limit=200`);
+      const d = await r.json();
+      setOrganizations(d.organizations || []);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white border-b border-gray-200 px-6 py-3">
@@ -126,7 +139,7 @@ export default function AdminPage() {
                 <div className="relative">
                   <Search className="w-4 h-4 absolute left-3 top-2.5 text-gray-400" />
                   <input type="text" value={search} onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Search organizations..."
+                    placeholder="Search organizations... (Enter to search all)" onKeyDown={(e) => { if (e.key === "Enter") searchServer(); }}
                     className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/30" />
                 </div>
               </div>

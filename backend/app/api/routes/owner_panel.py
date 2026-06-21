@@ -111,6 +111,7 @@ body{{padding-bottom:60px}}
 
 <div class="section-title">Growth Tools</div>
 <div class="tools">
+<a href="/api/bookings/{website_id}/manage-bookings" target="_blank" class="tool"><div class="emoji">&#128197;</div><div class="name">Bookings</div><div class="desc">Appointments</div></a>
 <a href="/api/panel/{website_id}/reviews" target="_blank" class="tool"><div class="emoji">&#11088;</div><div class="name">Reviews</div><div class="desc">Get reviews</div></a>
 <a href="/api/panel/{website_id}/assistant" target="_blank" class="tool"><div class="emoji">&#128172;</div><div class="name">Business Assistant</div><div class="desc">Ask anything</div></a>
 <a href="/api/panel/{website_id}/wa-growth" target="_blank" class="tool"><div class="emoji">&#128232;</div><div class="name">WA Growth</div><div class="desc">Campaigns</div></a>
