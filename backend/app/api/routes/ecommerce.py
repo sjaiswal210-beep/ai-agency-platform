@@ -264,3 +264,206 @@ await fetch(`/api/store/${{WID}}/products/${{id}}`,{{method:"DELETE"}});location
 </script>
 </body></html>'''
     return HTMLResponse(content=html)
+
+
+@router.get("/{website_id}/store-page", response_class=HTMLResponse)
+def store_page(website_id: str):
+    """Full e-commerce store page with cart, search, categories, WhatsApp checkout."""
+    from app.services.website_service import WebsiteService
+    from app.services.lead_service import LeadService
+    from fastapi.responses import HTMLResponse
+    
+    ws = WebsiteService()
+    ls = LeadService()
+    website = ws.get(website_id)
+    if not website:
+        raise HTTPException(404, "Not found")
+    lead = ls.get(website["lead_id"]) if website.get("lead_id") else None
+    business_name = lead.get("business_name", "Business") if lead else "Business"
+    phone = lead.get("phone", "") if lead else ""
+    address = lead.get("address", "") if lead else ""
+    slug = website.get("slug", "")
+    whatsapp_num = phone.replace("-", "").replace(" ", "").replace("+", "") if phone else ""
+    if whatsapp_num and not whatsapp_num.startswith("91"):
+        whatsapp_num = "91" + whatsapp_num
+
+    # Get products
+    db = get_supabase()
+    products = []
+    try:
+        result = db.table("store_products").select("*").eq("website_id", website_id).eq("in_stock", True).order("name").execute()
+        products = result.data or []
+    except Exception:
+        pass
+
+    # Build product JSON for frontend
+    import json
+    products_json = json.dumps([{
+        "id": p.get("id", ""),
+        "name": p.get("name", ""),
+        "description": p.get("description", ""),
+        "price": p.get("price", 0),
+        "image_url": p.get("image_url", ""),
+        "category": p.get("category", "General"),
+        "stock": p.get("stock_qty", 99),
+    } for p in products])
+
+    html = f"""<!DOCTYPE html><html><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>{business_name} - Store</title>
+<style>
+*{{margin:0;padding:0;box-sizing:border-box}}
+body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:12px;padding-bottom:70px;max-width:600px;margin:0 auto}}
+input,select{{font-size:16px!important}}
+.hdr{{text-align:center;padding:10px 0}}.hdr h1{{font-size:1rem;font-weight:800}}.hdr p{{font-size:.7rem;color:#64748b}}
+.search{{width:100%;padding:10px 14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#fff;font-size:14px;outline:none;margin-bottom:10px}}
+.cats{{display:flex;gap:6px;overflow-x:auto;margin-bottom:12px;padding-bottom:4px}}.cat{{padding:5px 12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:50px;font-size:.68rem;white-space:nowrap;cursor:pointer;color:#94a3b8}}.cat.active{{background:#6366f1;color:#fff;border-color:#6366f1}}
+.grid{{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}}
+.prod{{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;overflow:hidden;transition:all .2s}}.prod:active{{transform:scale(.97)}}
+.prod img{{width:100%;height:100px;object-fit:cover;background:#1e293b}}
+.prod-info{{padding:8px}}.prod-name{{font-size:.72rem;font-weight:600;margin-bottom:2px}}.prod-price{{font-size:.8rem;font-weight:800;color:#00e5ff}}.prod-desc{{font-size:.6rem;color:#64748b;margin-top:2px}}
+.add-btn{{display:block;width:100%;padding:6px;background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.3);border-radius:6px;color:#a78bfa;font-size:.68rem;font-weight:600;cursor:pointer;margin-top:6px;text-align:center}}
+.cart-float{{position:fixed;bottom:16px;right:16px;width:50px;height:50px;background:#6366f1;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(99,102,241,.4);cursor:pointer;z-index:999}}.cart-float svg{{width:22px;height:22px;fill:#fff}}.cart-badge{{position:absolute;top:-4px;right:-4px;width:20px;height:20px;background:#ef4444;border-radius:50%;font-size:.6rem;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center}}
+.cart-panel{{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;padding:16px;overflow-y:auto;backdrop-filter:blur(8px)}}
+.cart-panel.open{{display:block}}
+.cart-box{{background:#1e293b;border-radius:16px;padding:16px;max-width:400px;margin:20px auto}}
+.cart-item{{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:.75rem}}
+.cart-total{{display:flex;justify-content:space-between;padding:12px 0;font-weight:800;font-size:.9rem;border-top:2px solid rgba(255,255,255,.1);margin-top:8px}}
+.checkout-btn{{width:100%;padding:14px;background:#25D366;color:#fff;border:none;border-radius:10px;font-weight:700;font-size:.9rem;cursor:pointer;margin-top:10px}}
+.addr-input{{width:100%;padding:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-size:14px;margin-top:8px;outline:none}}
+.empty{{text-align:center;padding:40px;color:#475569;font-size:.8rem}}
+</style></head><body>
+
+<div class="hdr">
+<h1>&#128722; {business_name}</h1>
+<p>Shop & Order via WhatsApp</p>
+</div>
+
+<input class="search" id="searchBox" placeholder="Search products..." oninput="filterProducts()">
+<div class="cats" id="catBar"></div>
+<div class="grid" id="prodGrid"></div>
+
+<div class="cart-float" onclick="toggleCart()">
+<svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+<div class="cart-badge" id="cartCount">0</div>
+</div>
+
+<div class="cart-panel" id="cartPanel">
+<div class="cart-box">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+<h2 style="font-size:1rem;font-weight:800">Your Cart</h2>
+<button onclick="toggleCart()" style="background:none;border:none;color:#94a3b8;font-size:1.3rem;cursor:pointer">&times;</button>
+</div>
+<div id="cartItems"></div>
+<div class="cart-total"><span>Total</span><span id="cartTotal">Rs.0</span></div>
+<input class="addr-input" id="custAddr" placeholder="Delivery address (optional)">
+<input class="addr-input" id="custName" placeholder="Your name" style="margin-top:6px">
+<button class="checkout-btn" onclick="checkout()">&#128172; Order on WhatsApp</button>
+</div>
+</div>
+
+<script>
+var products={products_json};
+var cart=JSON.parse(localStorage.getItem('cart_{website_id}')||'{{}}');
+var activeCat='All';
+
+function init(){{
+  // Build categories
+  var cats=['All',...new Set(products.map(p=>p.category||'General'))];
+  var catHtml=cats.map(c=>'<div class="cat'+(c===activeCat?' active':'')+'" onclick="filterCat(\''+c+'\')">'+c+'</div>').join('');
+  document.getElementById('catBar').innerHTML=catHtml;
+  renderProducts(products);
+  updateCartUI();
+}}
+
+function renderProducts(list){{
+  if(!list.length){{document.getElementById('prodGrid').innerHTML='<div class="empty" style="grid-column:span 2">No products found</div>';return;}}
+  var html=list.map(p=>{{
+    var img=p.image_url||'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=300&h=200&fit=crop';
+    return '<div class="prod"><img src="'+img+'" alt="'+p.name+'"><div class="prod-info"><div class="prod-name">'+p.name+'</div><div class="prod-price">Rs.'+p.price+'</div><div class="prod-desc">'+( p.description||'').substring(0,40)+'</div><button class="add-btn" onclick="addToCart(\''+p.id+'\')">+ Add to Cart</button></div></div>';
+  }}).join('');
+  document.getElementById('prodGrid').innerHTML=html;
+}}
+
+function filterProducts(){{
+  var q=document.getElementById('searchBox').value.toLowerCase();
+  var filtered=products.filter(p=>(p.name+' '+p.description+' '+p.category).toLowerCase().includes(q));
+  if(activeCat!=='All')filtered=filtered.filter(p=>(p.category||'General')===activeCat);
+  renderProducts(filtered);
+}}
+
+function filterCat(cat){{
+  activeCat=cat;
+  document.querySelectorAll('.cat').forEach(c=>c.classList.remove('active'));
+  event.target.classList.add('active');
+  filterProducts();
+}}
+
+function addToCart(id){{
+  cart[id]=(cart[id]||0)+1;
+  localStorage.setItem('cart_{website_id}',JSON.stringify(cart));
+  updateCartUI();
+}}
+
+function removeFromCart(id){{
+  if(cart[id])cart[id]--;
+  if(cart[id]<=0)delete cart[id];
+  localStorage.setItem('cart_{website_id}',JSON.stringify(cart));
+  updateCartUI();
+  renderCartItems();
+}}
+
+function updateCartUI(){{
+  var count=Object.values(cart).reduce((a,b)=>a+b,0);
+  document.getElementById('cartCount').textContent=count;
+}}
+
+function toggleCart(){{
+  var panel=document.getElementById('cartPanel');
+  panel.classList.toggle('open');
+  if(panel.classList.contains('open'))renderCartItems();
+}}
+
+function renderCartItems(){{
+  var items='';var total=0;
+  Object.keys(cart).forEach(id=>{{
+    var p=products.find(x=>x.id===id);
+    if(!p)return;
+    var subtotal=p.price*cart[id];total+=subtotal;
+    items+='<div class="cart-item"><div><b>'+p.name+'</b><br><span style="font-size:.6rem;color:#64748b">Rs.'+p.price+' x '+cart[id]+'</span></div><div style="display:flex;align-items:center;gap:8px"><span>Rs.'+subtotal+'</span><button onclick="removeFromCart(\''+id+'\');renderCartItems()" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:.8rem">-</button></div></div>';
+  }});
+  document.getElementById('cartItems').innerHTML=items||'<p style="text-align:center;color:#475569;padding:16px;font-size:.75rem">Cart is empty</p>';
+  document.getElementById('cartTotal').textContent='Rs.'+total;
+}}
+
+function checkout(){{
+  var items=[];var total=0;
+  Object.keys(cart).forEach(id=>{{
+    var p=products.find(x=>x.id===id);
+    if(!p)return;
+    items.push(p.name+' x'+cart[id]+' = Rs.'+(p.price*cart[id]));
+    total+=p.price*cart[id];
+  }});
+  if(!items.length){{alert('Cart is empty');return;}}
+  var name=document.getElementById('custName').value||'Customer';
+  var addr=document.getElementById('custAddr').value;
+  var msg='*New Order from {business_name} Store*%0A%0A';
+  msg+='Customer: '+encodeURIComponent(name)+'%0A';
+  if(addr)msg+='Address: '+encodeURIComponent(addr)+'%0A';
+  msg+='%0A*Items:*%0A'+items.map(i=>encodeURIComponent('- '+i)).join('%0A');
+  msg+='%0A%0A*Total: Rs.'+total+'*';
+  msg+='%0A%0APlease confirm my order. Thank you!';
+  // Save order history
+  var history=JSON.parse(localStorage.getItem('orders_{website_id}')||'[]');
+  history.unshift({{items:items,total:total,date:new Date().toISOString().slice(0,10)}});
+  localStorage.setItem('orders_{website_id}',JSON.stringify(history.slice(0,20)));
+  // Clear cart
+  cart={{}};localStorage.setItem('cart_{website_id}','{{}}');updateCartUI();
+  window.open('https://wa.me/{whatsapp_num}?text='+msg,'_blank');
+  toggleCart();
+}}
+
+init();
+</script>
+</body></html>"""
+    return HTMLResponse(content=html)
