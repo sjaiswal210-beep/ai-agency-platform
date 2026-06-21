@@ -156,7 +156,25 @@ async def full_health_check(pwd: str = ""):
     for (name, status, detail, code) in tests:
         color = "#22c55e" if status == "OK" else "#f59e0b" if status == "WARN" else "#ef4444"
         icon = "&#10003;" if status == "OK" else "&#9888;" if status == "WARN" else "&#10007;"
-        rows += f'<tr><td style="color:{color};font-weight:700">{icon} {status}</td><td>{name}</td><td style="color:#94a3b8">{detail}</td></tr>'
+                fix = ""
+        if status == "FAIL":
+            if "DB:" in name:
+                fix = f"Run SQL schema in Supabase for this table. Check scripts/ folder."
+            elif "API:" in name:
+                if "403" in detail:
+                    fix = "Enable this module for the org in Admin Portal."
+                else:
+                    fix = "Check Render logs. Module router may have import error."
+            elif "UI:" in name:
+                fix = "Check business_ui.py syntax. Module page may be misconfigured."
+            elif "Public" in name:
+                fix = "Module not enabled OR public page route broken."
+            else:
+                fix = "Check Render deploy logs."
+        elif status == "WARN":
+            fix = "Enable module via Admin Portal for this org."
+        fix_html = f'<div style="font-size:.55rem;color:#fbbf24;margin-top:2px;font-style:italic">Fix: {fix}</div>' if fix else ""
+        rows += f'<tr><td style="color:{color};font-weight:700">{icon} {status}</td><td>{name}{fix_html}</td><td style="color:#94a3b8">{detail}</td></tr>'
     
     html = f'''<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Platform Health Check</title>
