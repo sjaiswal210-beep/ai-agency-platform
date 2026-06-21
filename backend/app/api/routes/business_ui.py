@@ -116,17 +116,5 @@ loadDashboard();
 </body></html>'''
 
 
-@router.get("/{org_id}/{module_id}", response_class=HTMLResponse)
-async def module_ui_page(org_id: str, module_id: str):
-    """Render a simple UI page for any module."""
-    db = get_supabase()
-    org = db.table("organizations").select("name").eq("id", org_id).single().execute()
-    org_name = org.data["name"] if org.data else "Business"
-    
-    # Check module access
-    mod = db.table("organization_modules").select("enabled").eq("organization_id", org_id).eq("module_id", module_id).single().execute()
-    if not mod.data or not mod.data.get("enabled"):
-        return HTMLResponse(f"<h2>Module '{module_id}' is not enabled for this business.</h2><p><a href='javascript:history.back()'>Go back</a></p>", status_code=403)
-    
-    html = build_module_page(org_id, module_id, org_name)
-    return HTMLResponse(content=html)
+
+
