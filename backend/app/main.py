@@ -82,6 +82,7 @@ from app.api.routes.public_booking import router as public_booking_router
 from app.api.routes.public_catalog import router as public_catalog_router
 from app.api.routes.business_ui import router as business_ui_router
 from app.api.routes.admin_ui import router as admin_ui_router
+from app.api.routes.platform_overview import router as overview_router
 from app.api.routes.migration import router as migration_router
 from app.api.routes.panel_tools_admin import router as panel_tools_admin_router
 from app.automation.scheduler import start_scheduler, stop_scheduler
@@ -321,6 +322,7 @@ app.include_router(public_booking_router, prefix="/api")
 app.include_router(public_catalog_router, prefix="/api")
 app.include_router(business_ui_router)
 app.include_router(admin_ui_router)
+app.include_router(overview_router)
 app.include_router(migration_router)
 app.include_router(panel_tools_admin_router)
 
@@ -1039,6 +1041,7 @@ async def full_health_check():
 @app.get("/health")
 def health():
     return {"status": "ok", "service": "ai-agency-platform"}
+
 
 
 
