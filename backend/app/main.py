@@ -589,8 +589,8 @@ def all_sites_page():
     leads = {}
     for l in leads_data:
         lid = l.get("id")
-        if lid and isinstance(lid, str):
-            leads[lid] = l
+        if lid:
+            leads[str(lid)] = l
     
     # Group by category and city
     by_category = {}
@@ -608,6 +608,28 @@ def all_sites_page():
         by_category.setdefault(cat, []).append(entry)
         by_city.setdefault(city, []).append(entry)
     
+    # Build all sites list
+    all_links_html = ""
+    for s in sites:
+        lid = s.get("lead_id", "")
+        if not isinstance(lid, str):
+            lid = str(lid) if lid else ""
+        lead_info = leads.get(lid, {})
+        bname = lead_info.get("business_name", "Unknown") if isinstance(lead_info, dict) else "Unknown"
+        sl = s.get("slug", "")
+        all_links_html += f'<a href="https://{sl}.city-maps.online" target="_blank" style="display:flex;justify-content:space-between;padding:8px 0;font-size:.75rem;color:#00e5ff;border-bottom:1px solid #334155"><span>{bname}</span><span style="color:#64748b;font-size:.65rem">{sl}.city-maps.online</span></a>'
+
+    # Build all sites list
+    all_links_html = ""
+    for s in sites:
+        lid = s.get("lead_id", "")
+        if not isinstance(lid, str):
+            lid = str(lid) if lid else ""
+        lead_info = leads.get(lid, {})
+        bname = lead_info.get("business_name", "Unknown") if isinstance(lead_info, dict) else "Unknown"
+        sl = s.get("slug", "")
+        all_links_html += f'<a href="https://{sl}.city-maps.online" target="_blank" style="display:flex;justify-content:space-between;padding:8px 0;font-size:.75rem;color:#00e5ff;border-bottom:1px solid #334155"><span>{bname}</span><span style="color:#64748b;font-size:.65rem">{sl}.city-maps.online</span></a>'
+
     # Build HTML with tabs
     cat_sections = ""
     for cat, items in sorted(by_category.items(), key=lambda x: -len(x[1])):
@@ -629,7 +651,7 @@ def all_sites_page():
 </div>
 <div class="panel active" id="panel-cat">{cat_sections}</div>
 <div class="panel" id="panel-city">{city_sections}</div>
-<div class="panel" id="panel-all">{''.join([f'<a href="https://{s.get("slug","")}.city-maps.online" target="_blank" style="display:flex;justify-content:space-between;padding:8px 0;font-size:.75rem;color:#00e5ff;border-bottom:1px solid #334155"><span>{leads.get(str(s.get("lead_id","")) if isinstance(s.get("lead_id"), str) else "",{{}}).get("business_name","?")}</span><span style="color:#64748b;font-size:.65rem">{s.get("slug","")}.city-maps.online</span></a>' for s in sites])}</div>
+<div class="panel" id="panel-all">{all_links_html}</div>
 <script>function filterSites(){{var q=document.getElementById('searchBox').value.toLowerCase();document.querySelectorAll('.panel a').forEach(function(a){{a.style.display=a.textContent.toLowerCase().includes(q)?'':'none'}});}}
 function showTab(t){{document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));document.getElementById('panel-'+t).classList.add('active');event.target.classList.add('active');}}</script>
 </body></html>'''

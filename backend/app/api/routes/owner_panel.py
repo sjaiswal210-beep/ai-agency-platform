@@ -874,13 +874,45 @@ JSON format:
         data = json.loads(cleaned.strip())
     except Exception:
         # Fallback content
-        data = {
-            "products": [
-                {"name": f"{category.title()} Service 1", "description": "Premium quality service", "price": 299},
-                {"name": f"{category.title()} Service 2", "description": "Best value option", "price": 499},
-                {"name": f"Special Package", "description": "Complete package deal", "price": 999},
-                {"name": f"Premium {category.title()}", "description": "Top tier experience", "price": 1499},
+        # Category-specific default products with images
+        cat_products = {
+            "salon": [
+                {"name": "Haircut & Styling", "description": "Professional cut and style", "price": 299, "image_url": "https://images.unsplash.com/photo-1560066984-138dadb4c035?w=300&h=200&fit=crop", "category": "Hair"},
+                {"name": "Facial Treatment", "description": "Deep cleansing facial", "price": 599, "image_url": "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=300&h=200&fit=crop", "category": "Skin"},
+                {"name": "Manicure & Pedicure", "description": "Complete nail care", "price": 499, "image_url": "https://images.unsplash.com/photo-1604654894610-df63bc536371?w=300&h=200&fit=crop", "category": "Nails"},
+                {"name": "Hair Color", "description": "Premium hair coloring", "price": 1499, "image_url": "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=300&h=200&fit=crop", "category": "Hair"},
+                {"name": "Bridal Package", "description": "Complete bridal makeup", "price": 4999, "image_url": "https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=300&h=200&fit=crop", "category": "Special"},
             ],
+            "restaurant": [
+                {"name": "Veg Thali", "description": "Complete meal with roti, dal, rice", "price": 149, "image_url": "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=300&h=200&fit=crop", "category": "Meals"},
+                {"name": "Paneer Butter Masala", "description": "Creamy paneer curry", "price": 199, "image_url": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=300&h=200&fit=crop", "category": "Main Course"},
+                {"name": "Biryani", "description": "Aromatic rice with spices", "price": 249, "image_url": "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=300&h=200&fit=crop", "category": "Rice"},
+                {"name": "Fresh Juice", "description": "Seasonal fruit juice", "price": 79, "image_url": "https://images.unsplash.com/photo-1534353473418-4cfa6c56fd38?w=300&h=200&fit=crop", "category": "Drinks"},
+                {"name": "Dessert Combo", "description": "Gulab jamun + ice cream", "price": 129, "image_url": "https://images.unsplash.com/photo-1551024506-0bccd828d307?w=300&h=200&fit=crop", "category": "Desserts"},
+            ],
+            "gym": [
+                {"name": "Monthly Membership", "description": "Full gym access", "price": 999, "image_url": "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=300&h=200&fit=crop", "category": "Membership"},
+                {"name": "Personal Training (10 sessions)", "description": "1-on-1 with trainer", "price": 4999, "image_url": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=200&fit=crop", "category": "Training"},
+                {"name": "Yoga Classes", "description": "Morning yoga batch", "price": 1499, "image_url": "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=300&h=200&fit=crop", "category": "Classes"},
+                {"name": "Diet Plan", "description": "Custom nutrition plan", "price": 799, "image_url": "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=300&h=200&fit=crop", "category": "Nutrition"},
+            ],
+            "store": [
+                {"name": "New Collection", "description": "Latest arrivals", "price": 599, "image_url": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=300&h=200&fit=crop", "category": "New"},
+                {"name": "Best Seller", "description": "Most popular item", "price": 499, "image_url": "https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=300&h=200&fit=crop", "category": "Popular"},
+                {"name": "Budget Range", "description": "Value for money", "price": 299, "image_url": "https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?w=300&h=200&fit=crop", "category": "Budget"},
+                {"name": "Premium Item", "description": "Top quality", "price": 1299, "image_url": "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=300&h=200&fit=crop", "category": "Premium"},
+            ],
+        }
+        # Find matching category
+        cat_lower = category.lower()
+        matched_prods = cat_products.get("store", [])  # default
+        for key in cat_products:
+            if key in cat_lower or cat_lower in key:
+                matched_prods = cat_products[key]
+                break
+        
+        data = {
+            "products": matched_prods,
             "social_posts": [
                 f"Visit {business_name} for the best {category} experience! Call {phone}",
                 f"New offers at {business_name}! Limited time only. WhatsApp us now!",
@@ -901,7 +933,10 @@ JSON format:
                 "name": p.get("name", "Product"),
                 "description": p.get("description", ""),
                 "price": p.get("price", 0),
+                "image_url": p.get("image_url", ""),
+                "category": p.get("category", "General"),
                 "in_stock": True,
+                "stock_qty": 99,
             }).execute()
         except Exception:
             pass
