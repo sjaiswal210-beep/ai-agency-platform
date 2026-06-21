@@ -629,7 +629,7 @@ def all_sites_page():
 </div>
 <div class="panel active" id="panel-cat">{cat_sections}</div>
 <div class="panel" id="panel-city">{city_sections}</div>
-<div class="panel" id="panel-all">{''.join([f'<a href="https://{s.get("slug","")}.city-maps.online" target="_blank" style="display:flex;justify-content:space-between;padding:8px 0;font-size:.75rem;color:#00e5ff;border-bottom:1px solid #334155"><span>{leads.get(s.get("lead_id",""),{{}}).get("business_name","?")}</span><span style="color:#64748b;font-size:.65rem">{s.get("slug","")}.city-maps.online</span></a>' for s in sites])}</div>
+<div class="panel" id="panel-all">{''.join([f'<a href="https://{s.get("slug","")}.city-maps.online" target="_blank" style="display:flex;justify-content:space-between;padding:8px 0;font-size:.75rem;color:#00e5ff;border-bottom:1px solid #334155"><span>{leads.get(str(s.get("lead_id","")) if isinstance(s.get("lead_id"), str) else "",{{}}).get("business_name","?")}</span><span style="color:#64748b;font-size:.65rem">{s.get("slug","")}.city-maps.online</span></a>' for s in sites])}</div>
 <script>function filterSites(){{var q=document.getElementById('searchBox').value.toLowerCase();document.querySelectorAll('.panel a').forEach(function(a){{a.style.display=a.textContent.toLowerCase().includes(q)?'':'none'}});}}
 function showTab(t){{document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));document.getElementById('panel-'+t).classList.add('active');event.target.classList.add('active');}}</script>
 </body></html>'''
