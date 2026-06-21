@@ -1,4 +1,4 @@
-﻿from fastapi import APIRouter
+from fastapi import APIRouter
 from fastapi.responses import HTMLResponse
 from app.core.supabase import get_supabase
 

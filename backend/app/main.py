@@ -1,4 +1,4 @@
-﻿from contextlib import asynccontextmanager
+from contextlib import asynccontextmanager
 import re as _security_re
 
 def _sanitize_input(text: str) -> str:

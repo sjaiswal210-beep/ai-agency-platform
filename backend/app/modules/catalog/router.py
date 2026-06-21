@@ -1,4 +1,4 @@
-﻿from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query
 from fastapi.responses import HTMLResponse
 from typing import Optional
 from app.core.supabase import get_supabase
