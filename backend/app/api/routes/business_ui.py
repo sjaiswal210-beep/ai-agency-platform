@@ -437,6 +437,16 @@ document.querySelectorAll(".li-row input").forEach(function(i){{i.addEventListen
 function showAdd(){{ document.getElementById("addModal").classList.add("show"); }}
 function closeModal(id){{ document.getElementById(id).classList.remove("show"); }}
 
+async function recordPayment(invoiceId, total, alreadyPaid) {
+  var remaining = total - alreadyPaid;
+  var amount = prompt("Payment amount (remaining: Rs."+remaining+"):", remaining);
+  if(!amount || isNaN(amount)) return;
+  await fetch(API+"/payments",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
+    invoice_id: invoiceId, amount: Number(amount), method: "cash"
+  })});
+  loadInvoices(); loadStats();
+}
+
 async function saveInvoice() {{
   var rows = document.querySelectorAll(".li-row");
   var items = [];
@@ -551,6 +561,37 @@ var LIST_KEY = "{config["list_key"]}";
 
 loadDash(); loadList();
 
+// Delete record
+async function deleteItem(id) {
+  if(!confirm("Delete this record?")) return;
+  try {
+    await fetch(API_LIST+"/"+id, {method:"DELETE"});
+  } catch(e) {
+    // Some modules use different delete patterns
+    await fetch(API_CREATE+"/"+id, {method:"DELETE"});
+  }
+  loadList(); loadDash();
+}
+
+// Update status
+async function updateStatus(id, status) {
+  var endpoint = API_LIST+"/"+id+"/status";
+  try {
+    await fetch(endpoint, {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({status:status})});
+  } catch(e) {
+    // Fallback: PUT on the item itself
+    await fetch(API_LIST+"/"+id, {method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({status:status})});
+  }
+  loadList(); loadDash();
+}
+
+// WhatsApp send
+function sendWhatsApp(phone, message) {
+  var cleanPhone = phone.replace(/[^0-9]/g,"");
+  if(cleanPhone.length===10) cleanPhone = "91"+cleanPhone;
+  window.open("https://wa.me/"+cleanPhone+"?text="+encodeURIComponent(message), "_blank");
+}
+
 async function loadDash() {{
   try {{
     var r = await fetch(API_DASH); var d = await r.json();
@@ -597,4 +638,114 @@ async function saveItem() {{
 }}
 </script>
 </body></html>'''
+    return HTMLResponse(content=html)
+
+
+
+
+@router.get("/{slug_or_id}/subscriptions/deliver", response_class=HTMLResponse)
+async def subscription_delivery_board(slug_or_id: str):
+    """Daily delivery board for subscription businesses (dairy, tiffin, water)."""
+    org = get_org_from_slug(slug_or_id)
+    if not org:
+        return HTMLResponse("<h2>Business not found</h2>", status_code=404)
+    org_id = org["id"]
+    org_name = org["name"]
+    color = org.get("brand_color", "#8b5cf6")
+    
+    html = f"""<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>Today's Deliveries - {org_name}</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>{base_style(color)}
+.del-item{{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid #f1f5f9}}
+.del-check{{width:22px;height:22px;border-radius:50%;border:2px solid #e2e8f0;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}}
+.del-check.done{{background:#22c55e;border-color:#22c55e;color:#fff}}
+.del-check.skip{{background:#f59e0b;border-color:#f59e0b;color:#fff}}
+.del-info{{flex:1}}
+.del-name{{font-size:.82rem;font-weight:600}}
+.del-meta{{font-size:.65rem;color:#94a3b8}}
+.del-qty{{font-size:.85rem;font-weight:700;color:{color}}}
+.del-actions{{display:flex;gap:4px}}
+.del-btn{{padding:4px 8px;border-radius:6px;font-size:.6rem;font-weight:600;border:none;cursor:pointer}}
+.summary{{background:#fff;border:1px solid #f1f5f9;border-radius:10px;padding:14px;margin-bottom:12px;display:flex;justify-content:space-around;text-align:center}}
+.summary .n{{font-size:1.1rem;font-weight:800}}
+.summary .l{{font-size:.6rem;color:#94a3b8}}
+</style></head><body>
+<div class="hd"><div class="hd-in">
+<h1>&#128666; Today's Deliveries</h1>
+<a href="/api/biz/{org["slug"]}/subscriptions" class="back">&times;</a>
+</div></div>
+<div class="mn">
+<div class="summary" id="summary">
+<div><div class="n" id="totalCount">-</div><div class="l">Total</div></div>
+<div><div class="n" id="doneCount" style="color:#22c55e">-</div><div class="l">Delivered</div></div>
+<div><div class="n" id="pendingCount" style="color:#f59e0b">-</div><div class="l">Pending</div></div>
+</div>
+
+<div class="card" id="deliveryList"><div class="empty">Loading today's deliveries...</div></div>
+</div>
+
+<script>
+var API = "/api/org/{org_id}/subscriptions";
+var deliveries = [];
+
+loadToday();
+
+async function loadToday() {{
+  var r = await fetch(API+"/today");
+  var d = await r.json();
+  deliveries = d.deliveries || [];
+  renderDeliveries();
+}}
+
+function renderDeliveries() {{
+  var el = document.getElementById("deliveryList");
+  var done = deliveries.filter(d => d.delivery_status==="delivered").length;
+  var total = deliveries.length;
+  document.getElementById("totalCount").textContent = total;
+  document.getElementById("doneCount").textContent = done;
+  document.getElementById("pendingCount").textContent = total - done;
+  
+  if(total===0){{ el.innerHTML='<div class="empty">No deliveries scheduled today</div>'; return; }}
+  
+  el.innerHTML = deliveries.map(function(d, i) {{
+    var isDone = d.delivery_status==="delivered";
+    var isSkip = d.delivery_status==="skipped"||d.delivery_status==="not_home";
+    var checkClass = isDone?"del-check done":isSkip?"del-check skip":"del-check";
+    var checkIcon = isDone?"&#10003;":isSkip?"&#10005;":"";
+    var product = d.subscription_products?d.subscription_products.name:(d.product_name||"");
+    
+    return '<div class="del-item">'+
+      '<div class="'+checkClass+'" onclick="markDelivered(\''+d.id+'\','+i+')">'+checkIcon+'</div>'+
+      '<div class="del-info"><div class="del-name">'+d.customer_name+'</div><div class="del-meta">'+
+      (d.address||d.locality||"")+(product?" &middot; "+product:"")+'</div></div>'+
+      '<div class="del-qty">'+(d.quantity||1)+'</div>'+
+      '<div class="del-actions">'+
+      (isDone||isSkip?'':'<button class="del-btn" style="background:#ef4444;color:#fff" onclick="markSkipped(\''+d.id+'\','+i+')">Skip</button>')+
+      (d.customer_phone?'<button class="del-btn" style="background:#25D366;color:#fff" onclick="callCustomer(\''+d.customer_phone+'\')">&#128222;</button>':'')+
+      '</div></div>';
+  }}).join("");
+}}
+
+async function markDelivered(subId, idx) {{
+  await fetch(API+"/mark-delivery",{{method:"POST",headers:{{"Content-Type":"application/json"}},body:JSON.stringify({{
+    subscription_id: subId, status: "delivered", quantity: deliveries[idx].quantity||1
+  }})}});
+  deliveries[idx].delivery_status = "delivered";
+  renderDeliveries();
+}}
+
+async function markSkipped(subId, idx) {{
+  await fetch(API+"/mark-delivery",{{method:"POST",headers:{{"Content-Type":"application/json"}},body:JSON.stringify({{
+    subscription_id: subId, status: "skipped"
+  }})}});
+  deliveries[idx].delivery_status = "skipped";
+  renderDeliveries();
+}}
+
+function callCustomer(phone) {{
+  window.open("tel:"+phone);
+}}
+</script>
+</body></html>"""
     return HTMLResponse(content=html)
