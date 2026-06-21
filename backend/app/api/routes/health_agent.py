@@ -156,7 +156,7 @@ async def full_health_check(pwd: str = ""):
     for (name, status, detail, code) in tests:
         color = "#22c55e" if status == "OK" else "#f59e0b" if status == "WARN" else "#ef4444"
         icon = "&#10003;" if status == "OK" else "&#9888;" if status == "WARN" else "&#10007;"
-                fix = ""
+        fix = ""
         if status == "FAIL":
             if "DB:" in name:
                 fix = f"Run SQL schema in Supabase for this table. Check scripts/ folder."
