@@ -136,6 +136,14 @@ body{{padding-bottom:60px}}
 {('<a href="/api/photo/' + website_id + '/dashboard" target="_blank" class="tool"><div class="emoji">&#128248;</div><div class="name">Photography</div></a>' if 'photographer' in enabled_bos_modules or (lead and lead.get('category','').lower() in ['photographer','photography','videographer']) else '')}
 </div>""" if enabled_bos_modules else '') + '''
 
+<div class="section-title">Premium Tools</div>
+<div class="tools">
+<a href="/api/panel/{website_id}/crm" target="_blank" class="tool"><div class="emoji">&#128101;</div><div class="name">CRM</div><div class="desc">Customers</div></a>
+<a href="/api/panel/{website_id}/invoices" target="_blank" class="tool"><div class="emoji">&#129534;</div><div class="name">Invoices</div><div class="desc">Billing</div></a>
+<a href="/api/panel/{website_id}/inventory" target="_blank" class="tool"><div class="emoji">&#128230;</div><div class="name">Inventory</div><div class="desc">Stock</div></a>
+<a href="/api/bookings/{website_id}/manage-bookings" target="_blank" class="tool"><div class="emoji">&#128197;</div><div class="name">Bookings</div><div class="desc">Appointments</div></a>
+</div>
+
 <div class="section-title">Edit Your Website</div>
 <div class="tools">
 <a href="#" onclick="showEditor()" class="tool"><div class="emoji">&#9998;</div><div class="name">Edit Website</div><div class="desc">Change text & info</div></a>
@@ -909,3 +917,214 @@ JSON format:
         pass
 
     return {"status": "populated", "products": len(data.get("products", [])), "posts": len(data.get("social_posts", []))}
+
+
+@router.get("/{website_id}/crm", response_class=HTMLResponse)
+def crm_page(website_id: str):
+    """Simple CRM - track customers and follow-ups."""
+    from app.core.supabase import get_supabase
+    db = get_supabase()
+    service = WebsiteService()
+    lead_service = LeadService()
+    website = service.get(website_id)
+    if not website:
+        raise HTTPException(404, "Not found")
+    lead = lead_service.get(website["lead_id"]) if website.get("lead_id") else None
+    business_name = lead.get("business_name", "Business") if lead else "Business"
+
+    # Get customers
+    customers = []
+    try:
+        result = db.table("business_customers").select("*").eq("website_id", website_id).order("created_at", desc=True).limit(100).execute()
+        customers = result.data or []
+    except Exception:
+        pass
+
+    cust_rows = ""
+    for cu in customers:
+        cust_rows += f'<div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:10px;margin-bottom:6px"><div style="display:flex;justify-content:space-between"><b style="font-size:.78rem">{cu.get("name","")}</b><span style="font-size:.6rem;color:#64748b">{cu.get("created_at","")[:10]}</span></div><p style="font-size:.68rem;color:#94a3b8">{cu.get("phone","")} | {cu.get("notes","")[:40]}</p></div>'
+
+    html = f"""<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"><title>CRM - {business_name}</title><style>*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:16px;max-width:500px;margin:0 auto}}input,textarea{{font-size:16px!important;width:100%;padding:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;margin-bottom:8px;outline:none}}.btn{{width:100%;padding:12px;background:#6366f1;color:#fff;border:none;border-radius:10px;font-weight:700;font-size:.85rem;cursor:pointer}}</style></head><body>
+<h1 style="font-size:1.1rem;font-weight:800;text-align:center;margin-bottom:4px">&#128101; Customer CRM</h1>
+<p style="font-size:.72rem;color:#64748b;text-align:center;margin-bottom:16px">{business_name} &bull; {len(customers)} customers</p>
+<div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px;margin-bottom:12px">
+<h2 style="font-size:.8rem;font-weight:700;margin-bottom:8px">Add Customer</h2>
+<input id="cName" placeholder="Customer name"><input id="cPhone" placeholder="Phone / WhatsApp"><input id="cNotes" placeholder="Notes (service done, amount, etc.)">
+<button class="btn" onclick="addCustomer()">Add Customer</button>
+</div>
+<div id="custList">{cust_rows or '<p style="text-align:center;color:#475569;font-size:.75rem;padding:16px">No customers yet</p>'}</div>
+<script>
+async function addCustomer(){{
+  var data={{name:document.getElementById('cName').value,phone:document.getElementById('cPhone').value,notes:document.getElementById('cNotes').value}};
+  if(!data.name)return;
+  await fetch('/api/panel/{website_id}/crm-add',{{method:'POST',headers:{{'Content-Type':'application/json'}},body:JSON.stringify(data)}});
+  location.reload();
+}}
+</script></body></html>"""
+    return HTMLResponse(content=html)
+
+
+@router.post("/{website_id}/crm-add")
+async def crm_add_customer(website_id: str, data: dict):
+    """Add a customer to business CRM."""
+    from app.core.supabase import get_supabase
+    from datetime import datetime
+    db = get_supabase()
+    try:
+        db.table("business_customers").insert({
+            "website_id": website_id,
+            "name": data.get("name", ""),
+            "phone": data.get("phone", ""),
+            "notes": data.get("notes", ""),
+            "created_at": datetime.utcnow().isoformat(),
+        }).execute()
+    except Exception:
+        pass
+    return {"status": "added"}
+
+
+@router.get("/{website_id}/invoices", response_class=HTMLResponse)
+def invoices_page(website_id: str):
+    """Simple invoicing - create and track invoices."""
+    from app.core.supabase import get_supabase
+    db = get_supabase()
+    service = WebsiteService()
+    lead_service = LeadService()
+    website = service.get(website_id)
+    if not website:
+        raise HTTPException(404, "Not found")
+    lead = lead_service.get(website["lead_id"]) if website.get("lead_id") else None
+    business_name = lead.get("business_name", "Business") if lead else "Business"
+    phone = lead.get("phone", "") if lead else ""
+
+    invoices = []
+    try:
+        result = db.table("business_invoices").select("*").eq("website_id", website_id).order("created_at", desc=True).limit(50).execute()
+        invoices = result.data or []
+    except Exception:
+        pass
+
+    inv_rows = ""
+    for inv in invoices:
+        status_color = "#22c55e" if inv.get("status") == "paid" else "#f59e0b"
+        inv_rows += f'<div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:10px;margin-bottom:6px"><div style="display:flex;justify-content:space-between"><b style="font-size:.78rem">{inv.get("customer_name","")}</b><span style="font-size:.75rem;font-weight:700;color:{status_color}">Rs.{inv.get("amount",0)}</span></div><p style="font-size:.65rem;color:#64748b">{inv.get("description","")[:50]} | {inv.get("created_at","")[:10]} | <span style="color:{status_color}">{inv.get("status","pending").upper()}</span></p></div>'
+
+    html = f"""<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"><title>Invoices - {business_name}</title><style>*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:16px;max-width:500px;margin:0 auto}}input,textarea,select{{font-size:16px!important;width:100%;padding:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;margin-bottom:8px;outline:none}}.btn{{width:100%;padding:12px;background:#22c55e;color:#fff;border:none;border-radius:10px;font-weight:700;font-size:.85rem;cursor:pointer}}</style></head><body>
+<h1 style="font-size:1.1rem;font-weight:800;text-align:center;margin-bottom:4px">&#129534; Invoices</h1>
+<p style="font-size:.72rem;color:#64748b;text-align:center;margin-bottom:16px">{business_name} &bull; {len(invoices)} invoices</p>
+<div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px;margin-bottom:12px">
+<h2 style="font-size:.8rem;font-weight:700;margin-bottom:8px">Create Invoice</h2>
+<input id="iName" placeholder="Customer name"><input id="iAmount" type="number" placeholder="Amount (Rs.)"><input id="iDesc" placeholder="Description / services"><select id="iStatus"><option value="pending">Pending</option><option value="paid">Paid</option></select>
+<button class="btn" onclick="createInvoice()">Create Invoice & Send WhatsApp</button>
+</div>
+<div>{inv_rows or '<p style="text-align:center;color:#475569;font-size:.75rem;padding:16px">No invoices yet</p>'}</div>
+<script>
+async function createInvoice(){{
+  var data={{customer_name:document.getElementById('iName').value,amount:Number(document.getElementById('iAmount').value),description:document.getElementById('iDesc').value,status:document.getElementById('iStatus').value}};
+  if(!data.customer_name||!data.amount)return;
+  var r=await fetch('/api/panel/{website_id}/invoice-create',{{method:'POST',headers:{{'Content-Type':'application/json'}},body:JSON.stringify(data)}});
+  var d=await r.json();
+  if(d.wa_link)window.open(d.wa_link,'_blank');
+  location.reload();
+}}
+</script></body></html>"""
+    return HTMLResponse(content=html)
+
+
+@router.post("/{website_id}/invoice-create")
+async def create_invoice(website_id: str, data: dict):
+    """Create an invoice and generate WhatsApp share link."""
+    from app.core.supabase import get_supabase
+    from datetime import datetime
+    import urllib.parse
+    db = get_supabase()
+    
+    service = WebsiteService()
+    lead_service = LeadService()
+    website = service.get(website_id)
+    lead = lead_service.get(website["lead_id"]) if website and website.get("lead_id") else None
+    business_name = lead.get("business_name", "Business") if lead else "Business"
+
+    invoice = {
+        "website_id": website_id,
+        "customer_name": data.get("customer_name", ""),
+        "amount": data.get("amount", 0),
+        "description": data.get("description", ""),
+        "status": data.get("status", "pending"),
+        "created_at": datetime.utcnow().isoformat(),
+    }
+    try:
+        db.table("business_invoices").insert(invoice).execute()
+    except Exception:
+        pass
+
+    # Generate WhatsApp message
+    msg = f"Invoice from {business_name}\n\nCustomer: {data.get('customer_name')}\nAmount: Rs.{data.get('amount')}\nFor: {data.get('description')}\nStatus: {data.get('status','pending').upper()}\n\nThank you!"
+    wa_link = f"https://wa.me/?text={urllib.parse.quote(msg)}"
+
+    return {"status": "created", "wa_link": wa_link}
+
+
+@router.get("/{website_id}/inventory", response_class=HTMLResponse)
+def inventory_page(website_id: str):
+    """Simple inventory - track stock levels."""
+    from app.core.supabase import get_supabase
+    db = get_supabase()
+    service = WebsiteService()
+    lead_service = LeadService()
+    website = service.get(website_id)
+    if not website:
+        raise HTTPException(404, "Not found")
+    lead = lead_service.get(website["lead_id"]) if website.get("lead_id") else None
+    business_name = lead.get("business_name", "Business") if lead else "Business"
+
+    products = []
+    try:
+        result = db.table("store_products").select("*").eq("website_id", website_id).order("name").limit(100).execute()
+        products = result.data or []
+    except Exception:
+        pass
+
+    prod_rows = ""
+    for p in products:
+        stock = p.get("stock_qty", 0) or 0
+        color = "#22c55e" if stock > 5 else "#f59e0b" if stock > 0 else "#ef4444"
+        prod_rows += f'<div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:10px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center"><div><b style="font-size:.78rem">{p.get("name","")}</b><p style="font-size:.65rem;color:#64748b">Rs.{p.get("price",0)}</p></div><div style="text-align:right"><span style="font-size:1rem;font-weight:800;color:{color}">{stock}</span><p style="font-size:.55rem;color:#64748b">in stock</p></div></div>'
+
+    html = f"""<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"><title>Inventory - {business_name}</title><style>*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:16px;max-width:500px;margin:0 auto}}input{{font-size:16px!important;width:100%;padding:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;margin-bottom:8px;outline:none}}.btn{{width:100%;padding:12px;background:#6366f1;color:#fff;border:none;border-radius:10px;font-weight:700;font-size:.85rem;cursor:pointer}}</style></head><body>
+<h1 style="font-size:1.1rem;font-weight:800;text-align:center;margin-bottom:4px">&#128230; Inventory</h1>
+<p style="font-size:.72rem;color:#64748b;text-align:center;margin-bottom:16px">{business_name} &bull; {len(products)} items</p>
+<div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px;margin-bottom:12px">
+<h2 style="font-size:.8rem;font-weight:700;margin-bottom:8px">Update Stock</h2>
+<input id="sName" placeholder="Product name"><input id="sQty" type="number" placeholder="Stock quantity">
+<button class="btn" onclick="updateStock()">Update Stock</button>
+</div>
+<div>{prod_rows or '<p style="text-align:center;color:#475569;font-size:.75rem;padding:16px">No products. Add from Products tool first.</p>'}</div>
+<script>
+async function updateStock(){{
+  var name=document.getElementById('sName').value;var qty=Number(document.getElementById('sQty').value);
+  if(!name)return;
+  await fetch('/api/panel/{website_id}/stock-update',{{method:'POST',headers:{{'Content-Type':'application/json'}},body:JSON.stringify({{name:name,qty:qty}})}});
+  location.reload();
+}}
+</script></body></html>"""
+    return HTMLResponse(content=html)
+
+
+@router.post("/{website_id}/stock-update")
+async def update_stock(website_id: str, data: dict):
+    """Update stock quantity for a product."""
+    from app.core.supabase import get_supabase
+    db = get_supabase()
+    name = data.get("name", "")
+    qty = data.get("qty", 0)
+    try:
+        existing = db.table("store_products").select("id").eq("website_id", website_id).ilike("name", f"%{name}%").limit(1).execute()
+        if existing.data:
+            db.table("store_products").update({"stock_qty": qty}).eq("id", existing.data[0]["id"]).execute()
+            return {"status": "updated"}
+        else:
+            db.table("store_products").insert({"website_id": website_id, "name": name, "price": 0, "stock_qty": qty, "in_stock": qty > 0}).execute()
+            return {"status": "created"}
+    except Exception as e:
+        return {"error": str(e)[:50]}
