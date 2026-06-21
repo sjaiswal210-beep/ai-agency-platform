@@ -582,7 +582,10 @@ def all_sites_page():
     from app.core.supabase import get_supabase
     db = get_supabase()
     sites = db.table("websites").select("id,slug,lead_id,created_at").not_.is_("slug", "null").order("created_at", desc=True).execute().data or []
-    leads_data = db.table("leads").select("id,business_name,category,address").execute().data or []
+    try:
+        leads_data = db.table("leads").select("id,business_name,category,address").limit(500).execute().data or []
+    except Exception:
+        leads_data = []
     leads = {}
     for l in leads_data:
         lid = l.get("id")
