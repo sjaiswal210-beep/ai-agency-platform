@@ -23,10 +23,10 @@ export default function BusinessDashboard() {
   }, [orgSlug]);
 
   const enabledModules = modules.filter((m: any) => m.enabled);
-  if (!org) return <div className="min-h-screen bg-gray-50 flex items-center justify-center"><p className="text-gray-500">Loading...</p></div>;
+  if (!org) return <div className="min-h-screen bg-[#020817] flex items-center justify-center"><p className="text-slate-400">Loading...</p></div>;
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-[#020817]">
       <aside className={`${collapsed ? "w-16" : "w-56"} bg-gradient-to-b from-slate-900 to-slate-800 flex flex-col transition-all duration-200 fixed h-full z-20`}>
         <div className="p-4 flex items-center gap-2 border-b border-white/10">
           <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center"><Building2 className="w-5 h-5 text-white" /></div>
