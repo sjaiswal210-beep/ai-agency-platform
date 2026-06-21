@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import HTMLResponse
 from app.services.website_service import WebsiteService
@@ -168,6 +168,7 @@ body{{padding-bottom:60px}}
 </div>
 
 <script>if(!sessionStorage.getItem("pop_"+window.location.pathname)){{fetch("/api/panel/{website_id}/auto-populate",{{method:"POST"}});sessionStorage.setItem("pop_"+window.location.pathname,"1")}}</script>
+<div style="padding:8px 12px;position:relative;z-index:1;margin-bottom:8px"><a href="https://ai-agency-platform-blush.vercel.app/dashboard/''' + f'{slug}' + '''" target="_blank" style="display:block;text-align:center;padding:12px;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-radius:12px;text-decoration:none;font-weight:700;font-size:.82rem;box-shadow:0 4px 12px rgba(99,102,241,.3)">&#128187; Open Business Portal</a></div>
 <div class="wa-bar">
 <a href="{site_url}" target="_blank" class="blue">View Website</a>
 <a href="https://wa.me/917350785606?text=Hi%2C%20I%20need%20help%20with%20my%20business%20page" target="_blank" class="green">Get Help</a>
