@@ -167,6 +167,7 @@ body{{padding-bottom:60px}}
 <button onclick="saveGallery()" style="background:#6366f1;color:#fff;border:none;padding:9px 16px;border-radius:8px;font-weight:700;font-size:.78rem;cursor:pointer;width:100%">Save Photos</button>
 </div>
 
+<script>if(!sessionStorage.getItem("pop_"+window.location.pathname)){{fetch("/api/panel/{website_id}/auto-populate",{{method:"POST"}});sessionStorage.setItem("pop_"+window.location.pathname,"1")}}</script>
 <div class="wa-bar">
 <a href="{site_url}" target="_blank" class="blue">View Website</a>
 <a href="https://wa.me/917350785606?text=Hi%2C%20I%20need%20help%20with%20my%20business%20page" target="_blank" class="green">Get Help</a>
@@ -812,3 +813,97 @@ Return JSON:
 
 
 
+
+
+@router.post("/{website_id}/auto-populate")
+async def auto_populate_content(website_id: str):
+    """Auto-generate starter content for a business dashboard on first visit."""
+    from app.core.supabase import get_supabase
+    from app.core.llm import chat_completion
+    import json
+
+    db = get_supabase()
+    service = WebsiteService()
+    lead_service = LeadService()
+    website = service.get(website_id)
+    if not website:
+        raise HTTPException(404, "Not found")
+    lead = lead_service.get(website["lead_id"]) if website.get("lead_id") else None
+    business_name = lead.get("business_name", "Business") if lead else "Business"
+    category = lead.get("category", "general") if lead else "general"
+    phone = lead.get("phone", "") if lead else ""
+
+    # Check if already populated
+    try:
+        existing = db.table("store_products").select("id").eq("website_id", website_id).limit(1).execute()
+        if existing.data:
+            return {"status": "already_populated"}
+    except Exception:
+        pass
+
+    # Generate products + social posts + daily content using AI
+    prompt = f"""Generate starter content for a {category} business called "{business_name}".
+
+Return JSON with:
+1. "products": 4 products with name, description (1 line), price (in INR, realistic)
+2. "social_posts": 3 Instagram/WhatsApp posts ready to copy (with emojis, hashtags)
+3. "daily_content": 3 WhatsApp status updates (short, engaging)
+
+JSON format:
+{{
+  "products": [{{"name":"...","description":"...","price":299}}],
+  "social_posts": ["post1...", "post2...", "post3..."],
+  "daily_content": ["day1...", "day2...", "day3..."]
+}}"""
+
+    try:
+        raw = await chat_completion([{"role": "user", "content": prompt}])
+        cleaned = raw.strip()
+        if "```json" in cleaned: cleaned = cleaned.split("```json")[1].split("```")[0]
+        elif "```" in cleaned: cleaned = cleaned.split("```")[1].split("```")[0]
+        data = json.loads(cleaned.strip())
+    except Exception:
+        # Fallback content
+        data = {
+            "products": [
+                {"name": f"{category.title()} Service 1", "description": "Premium quality service", "price": 299},
+                {"name": f"{category.title()} Service 2", "description": "Best value option", "price": 499},
+                {"name": f"Special Package", "description": "Complete package deal", "price": 999},
+                {"name": f"Premium {category.title()}", "description": "Top tier experience", "price": 1499},
+            ],
+            "social_posts": [
+                f"Visit {business_name} for the best {category} experience! Call {phone}",
+                f"New offers at {business_name}! Limited time only. WhatsApp us now!",
+                f"Thank you for choosing {business_name}. Your satisfaction is our priority!",
+            ],
+            "daily_content": [
+                f"Good morning! {business_name} is open. Visit us today!",
+                f"Special offer running this week at {business_name}!",
+                f"Happy customers = Happy us! Visit {business_name} today.",
+            ],
+        }
+
+    # Save products
+    for p in data.get("products", [])[:6]:
+        try:
+            db.table("store_products").insert({
+                "website_id": website_id,
+                "name": p.get("name", "Product"),
+                "description": p.get("description", ""),
+                "price": p.get("price", 0),
+                "in_stock": True,
+            }).execute()
+        except Exception:
+            pass
+
+    # Save social posts and daily content in website content
+    try:
+        content = website.get("content", {}) or {}
+        content["_auto_social_posts"] = data.get("social_posts", [])
+        content["_auto_daily_content"] = data.get("daily_content", [])
+        content["_populated"] = True
+        db.table("websites").update({"content": content}).eq("id", website_id).execute()
+    except Exception:
+        pass
+
+    return {"status": "populated", "products": len(data.get("products", [])), "posts": len(data.get("social_posts", []))}
