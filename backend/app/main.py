@@ -77,6 +77,7 @@ from app.modules.students.router import router as students_router
 from app.modules.events.router import router as events_router
 from app.modules.fleet.router import router as fleet_router
 from app.modules.reminders.router import router as reminders_router
+from app.modules.whatsapp_automation.router import router as whatsapp_auto_router
 from app.api.routes.public_booking import router as public_booking_router
 from app.api.routes.public_catalog import router as public_catalog_router
 from app.api.routes.business_ui import router as business_ui_router
@@ -315,6 +316,7 @@ app.include_router(students_router)
 app.include_router(events_router)
 app.include_router(fleet_router)
 app.include_router(reminders_router)
+app.include_router(whatsapp_auto_router)
 app.include_router(public_booking_router, prefix="/api")
 app.include_router(public_catalog_router, prefix="/api")
 app.include_router(business_ui_router)
@@ -1037,6 +1039,7 @@ async def full_health_check():
 @app.get("/health")
 def health():
     return {"status": "ok", "service": "ai-agency-platform"}
+
 
 
 

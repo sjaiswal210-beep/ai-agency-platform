@@ -749,3 +749,264 @@ function callCustomer(phone) {{
 </script>
 </body></html>"""
     return HTMLResponse(content=html)
+
+
+@router.get("/{slug_or_id}/whatsapp", response_class=HTMLResponse)
+async def whatsapp_ui(slug_or_id: str):
+    """WhatsApp automation settings + send messages UI."""
+    org = get_org_from_slug(slug_or_id)
+    if not org:
+        return HTMLResponse("<h2>Business not found</h2>", status_code=404)
+    org_id = org["id"]
+    org_name = org["name"]
+    color = org.get("brand_color", "#25D366")
+
+    html = f'''<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>WhatsApp - {org_name}</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>{base_style("#25D366")}
+.provider-grid{{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}}
+.prov{{padding:12px;border:2px solid #e2e8f0;border-radius:10px;text-align:center;cursor:pointer;transition:all .2s}}
+.prov:hover{{border-color:#25D366}}
+.prov.active{{border-color:#25D366;background:#f0fdf4}}
+.prov .name{{font-size:.75rem;font-weight:700;margin-top:4px}}
+.prov .free{{font-size:.6rem;color:#22c55e}}
+.msg-item{{padding:10px 12px;border-bottom:1px solid #f8fafc;font-size:.75rem}}
+.msg-item .to{{font-weight:600}}
+.msg-item .txt{{color:#64748b;margin-top:2px;font-size:.7rem}}
+.msg-item .time{{font-size:.6rem;color:#cbd5e1;margin-top:2px}}
+.status-dot{{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:4px}}
+.dot-sent{{background:#3b82f6}}.dot-delivered{{background:#22c55e}}.dot-failed{{background:#ef4444}}.dot-read{{background:#22c55e}}
+</style></head><body>
+<div class="hd"><div class="hd-in"><h1>&#128172; WhatsApp</h1><a href="#" class="back" onclick="history.back();return false">&times;</a></div></div>
+<div class="mn">
+
+<div class="stats" id="stats" style="grid-template-columns:repeat(4,1fr)"><div class="st"><div class="n">-</div><div class="l">Today</div></div><div class="st"><div class="n">-</div><div class="l">Total</div></div><div class="st"><div class="n">-</div><div class="l">Delivered</div></div><div class="st"><div class="n">-</div><div class="l">Automations</div></div></div>
+
+<div class="tabs">
+<div class="tab active" onclick="showSec('send',this)">Send</div>
+<div class="tab" onclick="showSec('templates',this)">Templates</div>
+<div class="tab" onclick="showSec('log',this)">Log</div>
+<div class="tab" onclick="showSec('settings',this)">Settings</div>
+</div>
+
+<!-- Send Section -->
+<div class="section active" id="sec-send">
+<div class="card" style="padding:16px">
+<h3 style="font-size:.8rem;font-weight:700;margin-bottom:10px">Send Message</h3>
+<div class="field"><label>Phone Number</label><input id="s_phone" type="tel" placeholder="9876543210"></div>
+<div class="field"><label>Message</label><textarea id="s_msg" placeholder="Type your message..." style="min-height:80px"></textarea></div>
+<button class="btn" onclick="sendMsg()" style="width:100%;background:#25D366">Send via WhatsApp</button>
+<p id="sendResult" style="font-size:.7rem;margin-top:8px;color:#64748b"></p>
+</div>
+
+<div class="card" style="padding:16px;margin-top:10px">
+<h3 style="font-size:.8rem;font-weight:700;margin-bottom:10px">Broadcast</h3>
+<div class="field"><label>Phone Numbers (one per line)</label><textarea id="b_phones" placeholder="9876543210&#10;9876543211&#10;9876543212" style="min-height:60px"></textarea></div>
+<div class="field"><label>Message</label><textarea id="b_msg" placeholder="Broadcast message..." style="min-height:60px"></textarea></div>
+<button class="btn" onclick="broadcast()" style="width:100%;background:#25D366">Broadcast to All</button>
+<p id="broadcastResult" style="font-size:.7rem;margin-top:8px;color:#64748b"></p>
+</div>
+</div>
+
+<!-- Templates Section -->
+<div class="section" id="sec-templates">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+<span style="font-size:.8rem;font-weight:700">Message Templates</span>
+<button class="btn btn-sm" onclick="document.getElementById('tmplModal').classList.add('show')">+ Add</button>
+</div>
+<div class="card" id="templateList"><div class="empty">Loading...</div></div>
+</div>
+
+<!-- Log Section -->
+<div class="section" id="sec-log">
+<div class="card" id="msgLog"><div class="empty">Loading...</div></div>
+</div>
+
+<!-- Settings Section -->
+<div class="section" id="sec-settings">
+<div class="card" style="padding:16px">
+<h3 style="font-size:.85rem;font-weight:700;margin-bottom:4px">Connect WhatsApp API</h3>
+<p style="font-size:.7rem;color:#64748b;margin-bottom:14px">Connect your WhatsApp Business API to send automated messages. Free tiers available with most providers.</p>
+
+<div class="field"><label>Provider</label></div>
+<div class="provider-grid">
+<div class="prov" onclick="selectProvider('meta_cloud',this)" id="prov_meta_cloud"><div>&#128287;</div><div class="name">Meta Cloud API</div><div class="free">1000 free/month</div></div>
+<div class="prov" onclick="selectProvider('wati',this)" id="prov_wati"><div>&#128172;</div><div class="name">WATI</div><div class="free">Trial available</div></div>
+<div class="prov" onclick="selectProvider('aisensy',this)" id="prov_aisensy"><div>&#129302;</div><div class="name">AiSensy</div><div class="free">Free tier</div></div>
+<div class="prov" onclick="selectProvider('interakt',this)" id="prov_interakt"><div>&#128232;</div><div class="name">Interakt</div><div class="free">14-day trial</div></div>
+<div class="prov" onclick="selectProvider('gupshup',this)" id="prov_gupshup"><div>&#128640;</div><div class="name">Gupshup</div><div class="free">Pay per msg</div></div>
+<div class="prov" onclick="selectProvider('custom',this)" id="prov_custom"><div>&#9881;</div><div class="name">Custom API</div><div class="free">Any webhook</div></div>
+</div>
+
+<div id="configFields"></div>
+<button class="btn" onclick="saveConfig()" style="width:100%;margin-top:10px">Save & Connect</button>
+<p id="configResult" style="font-size:.7rem;margin-top:8px;color:#64748b"></p>
+</div>
+
+<div class="card" style="padding:16px;margin-top:10px">
+<h3 style="font-size:.8rem;font-weight:700;margin-bottom:4px">How to get API credentials</h3>
+<div style="font-size:.7rem;color:#64748b;line-height:1.6">
+<p><b>Meta Cloud API (Recommended - Free):</b></p>
+<p>1. Go to developers.facebook.com</p>
+<p>2. Create app > Add WhatsApp product</p>
+<p>3. Get Phone Number ID and Access Token</p>
+<p>4. You get 1000 free messages/month</p>
+<br>
+<p><b>WATI / AiSensy / Interakt:</b></p>
+<p>1. Sign up on their website</p>
+<p>2. Verify your WhatsApp number</p>
+<p>3. Get API key from dashboard</p>
+<p>4. Paste it above</p>
+</div>
+</div>
+</div>
+
+<!-- Add Template Modal -->
+<div class="modal" id="tmplModal"><div class="modal-box">
+<h2>Create Template</h2>
+<div class="field"><label>Name</label><input id="t_name" placeholder="e.g., Booking Confirmation"></div>
+<div class="field"><label>Trigger Event</label><select id="t_trigger">
+<option value="custom">Manual</option>
+<option value="booking_confirmed">Booking Confirmed</option>
+<option value="booking_reminder">Booking Reminder</option>
+<option value="payment_received">Payment Received</option>
+<option value="payment_due">Payment Due</option>
+<option value="invoice_sent">Invoice Sent</option>
+<option value="delivery_done">Delivery Done</option>
+<option value="subscription_bill">Monthly Bill</option>
+<option value="renewal_reminder">Renewal Reminder</option>
+<option value="follow_up">Follow Up</option>
+<option value="welcome">Welcome Message</option>
+</select></div>
+<div class="field"><label>Message Body</label><textarea id="t_body" placeholder="Hi {{name}}, your booking is confirmed for {{date}}. Thank you!" style="min-height:80px"></textarea>
+<span style="font-size:.6rem;color:#94a3b8">Use {{name}}, {{date}}, {{amount}}, {{service}} as variables</span></div>
+<div style="display:flex;gap:8px;margin-top:12px">
+<button class="btn" onclick="saveTemplate()" style="flex:1;background:#25D366">Save Template</button>
+<button class="btn btn-outline" onclick="document.getElementById('tmplModal').classList.remove('show')" style="flex:.4">Cancel</button>
+</div>
+</div></div>
+
+<script>
+var API = "/api/org/{org_id}/whatsapp";
+var selectedProvider = "meta_cloud";
+
+loadDashboard(); loadTemplates(); loadLog();
+
+function showSec(name,btn) {{
+  document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+  document.getElementById("sec-"+name).classList.add("active");
+  btn.classList.add("active");
+}}
+
+async function loadDashboard() {{
+  try {{
+    var r = await fetch(API+"/dashboard"); var d = await r.json();
+    document.getElementById("stats").innerHTML =
+      '<div class="st"><div class="n">'+d.today_sent+'</div><div class="l">Today</div></div>'+
+      '<div class="st"><div class="n">'+d.total_messages+'</div><div class="l">Total</div></div>'+
+      '<div class="st"><div class="n">'+d.delivered+'</div><div class="l">Delivered</div></div>'+
+      '<div class="st"><div class="n">'+d.active_automations+'</div><div class="l">Automations</div></div>';
+    if(d.provider) {{
+      document.querySelectorAll(".prov").forEach(p=>p.classList.remove("active"));
+      var el = document.getElementById("prov_"+d.provider);
+      if(el) el.classList.add("active");
+      selectedProvider = d.provider;
+      showConfigFields(d.provider);
+    }}
+  }} catch(e){{}}
+}}
+
+async function loadTemplates() {{
+  var r = await fetch(API+"/templates"); var d = await r.json();
+  var tmpls = d.templates||[];
+  if(tmpls.length===0){{ document.getElementById("templateList").innerHTML='<div class="empty">No templates. Create one to automate messages.</div>'; return; }}
+  document.getElementById("templateList").innerHTML = tmpls.map(function(t){{
+    return '<div style="padding:10px 12px;border-bottom:1px solid #f8fafc"><div style="display:flex;justify-content:space-between"><span style="font-size:.8rem;font-weight:600">'+t.name+'</span><span class="badge badge-blue">'+(t.trigger_event||"manual")+'</span></div><div style="font-size:.7rem;color:#64748b;margin-top:3px">'+t.message_body.substring(0,80)+'...</div></div>';
+  }}).join("");
+}}
+
+async function loadLog() {{
+  var r = await fetch(API+"/messages?limit=30"); var d = await r.json();
+  var msgs = d.messages||[];
+  if(msgs.length===0){{ document.getElementById("msgLog").innerHTML='<div class="empty">No messages sent yet</div>'; return; }}
+  document.getElementById("msgLog").innerHTML = msgs.map(function(m){{
+    var dot = m.status==="delivered"||m.status==="read"?"dot-delivered":m.status==="failed"?"dot-failed":"dot-sent";
+    return '<div class="msg-item"><div class="to"><span class="status-dot '+dot+'"></span>'+m.to_phone+(m.to_name?" ("+m.to_name+")":"")+'</div><div class="txt">'+m.message.substring(0,60)+'</div><div class="time">'+new Date(m.sent_at).toLocaleString("en-IN")+" - "+m.status+'</div></div>';
+  }}).join("");
+}}
+
+async function sendMsg() {{
+  var phone = document.getElementById("s_phone").value.trim();
+  var msg = document.getElementById("s_msg").value.trim();
+  if(!phone||!msg){{ alert("Enter phone and message"); return; }}
+  document.getElementById("sendResult").textContent = "Sending...";
+  var r = await fetch(API+"/send",{{method:"POST",headers:{{"Content-Type":"application/json"}},body:JSON.stringify({{phone:phone,message:msg}})}});
+  var d = await r.json();
+  document.getElementById("sendResult").textContent = d.success?"Sent successfully!":"Failed: "+(d.error||"Check settings");
+  if(d.success){{ document.getElementById("s_phone").value=""; document.getElementById("s_msg").value=""; loadDashboard(); loadLog(); }}
+}}
+
+async function broadcast() {{
+  var phones = document.getElementById("b_phones").value.trim().split("\\n").filter(p=>p.trim());
+  var msg = document.getElementById("b_msg").value.trim();
+  if(!phones.length||!msg){{ alert("Enter phones and message"); return; }}
+  document.getElementById("broadcastResult").textContent = "Sending to "+phones.length+" numbers...";
+  var r = await fetch(API+"/broadcast",{{method:"POST",headers:{{"Content-Type":"application/json"}},body:JSON.stringify({{phones:phones,message:msg}})}});
+  var d = await r.json();
+  document.getElementById("broadcastResult").textContent = "Sent: "+d.sent+", Failed: "+d.failed;
+  loadDashboard(); loadLog();
+}}
+
+function selectProvider(provider, el) {{
+  document.querySelectorAll(".prov").forEach(p=>p.classList.remove("active"));
+  el.classList.add("active");
+  selectedProvider = provider;
+  showConfigFields(provider);
+}}
+
+function showConfigFields(provider) {{
+  var fields = {{
+    "meta_cloud": '<div class="field"><label>Phone Number ID</label><input id="cfg_phone_id" placeholder="From Meta Developer Portal"></div><div class="field"><label>Access Token</label><input id="cfg_token" placeholder="Permanent token from System Users"></div>',
+    "wati": '<div class="field"><label>API Key</label><input id="cfg_key" placeholder="From WATI dashboard > API Keys"></div><div class="field"><label>Base URL</label><input id="cfg_url" placeholder="https://live-server-XXXXX.wati.io" value="https://live-server-108820.wati.io"></div>',
+    "aisensy": '<div class="field"><label>API Key</label><input id="cfg_key" placeholder="From AiSensy dashboard"></div>',
+    "interakt": '<div class="field"><label>API Key</label><input id="cfg_key" placeholder="From Interakt > Developer settings"></div>',
+    "gupshup": '<div class="field"><label>API Key</label><input id="cfg_key" placeholder="From Gupshup dashboard"></div><div class="field"><label>Source Phone</label><input id="cfg_phone_id" placeholder="Your registered number"></div>',
+    "custom": '<div class="field"><label>Webhook URL</label><input id="cfg_url" placeholder="https://your-api.com/send-whatsapp"></div><div class="field"><label>API Key / Token</label><input id="cfg_key" placeholder="Authorization token"></div>',
+  }};
+  document.getElementById("configFields").innerHTML = fields[provider]||"";
+}}
+showConfigFields("meta_cloud");
+
+async function saveConfig() {{
+  var body = {{ provider: selectedProvider }};
+  var keyEl = document.getElementById("cfg_key");
+  var tokenEl = document.getElementById("cfg_token");
+  var phoneEl = document.getElementById("cfg_phone_id");
+  var urlEl = document.getElementById("cfg_url");
+  if(keyEl) body.api_key = keyEl.value;
+  if(tokenEl) body.access_token = tokenEl.value;
+  if(phoneEl) body.phone_number_id = phoneEl.value;
+  if(urlEl) body.base_url = urlEl.value;
+  
+  var r = await fetch(API+"/config",{{method:"POST",headers:{{"Content-Type":"application/json"}},body:JSON.stringify(body)}});
+  var d = await r.json();
+  document.getElementById("configResult").textContent = d.message||"Saved!";
+  loadDashboard();
+}}
+
+async function saveTemplate() {{
+  var name = document.getElementById("t_name").value.trim();
+  var body = document.getElementById("t_body").value.trim();
+  if(!name||!body){{ alert("Name and message required"); return; }}
+  await fetch(API+"/templates",{{method:"POST",headers:{{"Content-Type":"application/json"}},body:JSON.stringify({{
+    name:name, trigger_event:document.getElementById("t_trigger").value, message_body:body
+  }})}});
+  document.getElementById("tmplModal").classList.remove("show");
+  document.getElementById("t_name").value="";document.getElementById("t_body").value="";
+  loadTemplates();
+}}
+</script>
+</body></html>'''
+    return HTMLResponse(content=html)
