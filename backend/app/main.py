@@ -78,6 +78,10 @@ from app.modules.events.router import router as events_router
 from app.modules.fleet.router import router as fleet_router
 from app.modules.reminders.router import router as reminders_router
 from app.modules.whatsapp_automation.router import router as whatsapp_auto_router
+from app.modules.assets.router import router as assets_router
+from app.modules.projects.router import router as projects_router
+from app.modules.documents.router import router as documents_router
+from app.modules.ai_employee.router import router as ai_employee_router
 from app.api.routes.public_booking import router as public_booking_router
 from app.api.routes.public_catalog import router as public_catalog_router
 from app.api.routes.business_ui import router as business_ui_router
@@ -318,6 +322,10 @@ app.include_router(events_router)
 app.include_router(fleet_router)
 app.include_router(reminders_router)
 app.include_router(whatsapp_auto_router)
+app.include_router(assets_router)
+app.include_router(projects_router)
+app.include_router(documents_router)
+app.include_router(ai_employee_router)
 app.include_router(public_booking_router, prefix="/api")
 app.include_router(public_catalog_router, prefix="/api")
 app.include_router(business_ui_router)
