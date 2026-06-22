@@ -321,6 +321,63 @@ RULES:
             logger.info("Auto-generated logo", url=logo_result["logo_url"])
     except Exception as e:
         logger.warning("Auto logo generation failed", error=str(e))
+    # Auto-generate products for the store
+    try:
+        from app.core.supabase import get_supabase as _pdb
+        db_p = _pdb()
+        # Check if products already exist
+        existing_prods = db_p.table("store_products").select("id").eq("website_id", website["id"]).limit(1).execute()
+        if not existing_prods.data:
+            category = lead.get("category", "general") if lead else "general"
+            cat_lower = category.lower()
+            # Category-specific products with images
+            product_sets = {
+                "salon": [
+                    {"name": "Haircut & Styling", "price": 299, "category": "Hair", "image_url": "https://images.unsplash.com/photo-1560066984-138dadb4c035?w=300&h=200&fit=crop"},
+                    {"name": "Facial Treatment", "price": 599, "category": "Skin", "image_url": "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=300&h=200&fit=crop"},
+                    {"name": "Hair Color", "price": 1499, "category": "Hair", "image_url": "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=300&h=200&fit=crop"},
+                    {"name": "Bridal Package", "price": 4999, "category": "Special", "image_url": "https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=300&h=200&fit=crop"},
+                ],
+                "restaurant": [
+                    {"name": "Veg Thali", "price": 149, "category": "Meals", "image_url": "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=300&h=200&fit=crop"},
+                    {"name": "Special Biryani", "price": 249, "category": "Rice", "image_url": "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=300&h=200&fit=crop"},
+                    {"name": "Paneer Butter Masala", "price": 199, "category": "Main Course", "image_url": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=300&h=200&fit=crop"},
+                    {"name": "Fresh Juice", "price": 79, "category": "Drinks", "image_url": "https://images.unsplash.com/photo-1534353473418-4cfa6c56fd38?w=300&h=200&fit=crop"},
+                ],
+                "gym": [
+                    {"name": "Monthly Membership", "price": 999, "category": "Membership", "image_url": "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=300&h=200&fit=crop"},
+                    {"name": "Personal Training", "price": 4999, "category": "Training", "image_url": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=200&fit=crop"},
+                    {"name": "Yoga Classes", "price": 1499, "category": "Classes", "image_url": "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=300&h=200&fit=crop"},
+                ],
+                "default": [
+                    {"name": "Service Package 1", "price": 499, "category": "Services", "image_url": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=300&h=200&fit=crop"},
+                    {"name": "Premium Service", "price": 999, "category": "Premium", "image_url": "https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=300&h=200&fit=crop"},
+                    {"name": "Consultation", "price": 299, "category": "General", "image_url": "https://images.unsplash.com/photo-1497366216548-37526070297c?w=300&h=200&fit=crop"},
+                    {"name": "Special Offer", "price": 199, "category": "Offers", "image_url": "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=300&h=200&fit=crop"},
+                ],
+            }
+            # Find matching products
+            prods = product_sets.get("default")
+            for key in product_sets:
+                if key in cat_lower or cat_lower in key:
+                    prods = product_sets[key]
+                    break
+            # Insert products
+            for p in prods:
+                db_p.table("store_products").insert({
+                    "website_id": website["id"],
+                    "name": p["name"],
+                    "price": p["price"],
+                    "category": p.get("category", "General"),
+                    "image_url": p.get("image_url", ""),
+                    "description": "",
+                    "in_stock": True,
+                    "stock_qty": 99,
+                }).execute()
+            logger.info("Auto-generated products", count=len(prods), website_id=website["id"])
+    except Exception as e:
+        logger.warning("Auto product generation failed", error=str(e))
+
     # Auto QA review after generation
     try:
         from app.agents.qa_review.agent import review_website as qa_review
