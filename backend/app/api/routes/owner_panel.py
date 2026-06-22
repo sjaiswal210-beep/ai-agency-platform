@@ -854,7 +854,7 @@ async def auto_populate_content(website_id: str):
     prompt = f"""Generate starter content for a {category} business called "{business_name}".
 
 Return JSON with:
-1. "products": 4 products with name, description (1 line), price (in INR, realistic)
+1. "products": 5 products with name, description (1 line), price (in INR, realistic), category, image_url (use https://images.unsplash.com/photo-XXXXX?w=300&h=200&fit=crop format with real unsplash photo IDs matching the product)
 2. "social_posts": 3 Instagram/WhatsApp posts ready to copy (with emojis, hashtags)
 3. "daily_content": 3 WhatsApp status updates (short, engaging)
 
@@ -900,6 +900,18 @@ JSON format:
                 {"name": "Best Seller", "description": "Most popular item", "price": 499, "image_url": "https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=300&h=200&fit=crop", "category": "Popular"},
                 {"name": "Budget Range", "description": "Value for money", "price": 299, "image_url": "https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?w=300&h=200&fit=crop", "category": "Budget"},
                 {"name": "Premium Item", "description": "Top quality", "price": 1299, "image_url": "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=300&h=200&fit=crop", "category": "Premium"},
+            ],
+            "clinic": [
+                {"name": "General Consultation", "description": "Doctor consultation", "price": 300, "image_url": "https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?w=300&h=200&fit=crop", "category": "Consultation"},
+                {"name": "Blood Test Package", "description": "Complete blood work", "price": 799, "image_url": "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=300&h=200&fit=crop", "category": "Lab"},
+                {"name": "Dental Cleaning", "description": "Professional cleaning", "price": 500, "image_url": "https://images.unsplash.com/photo-1606265752439-1f18756aa5fc?w=300&h=200&fit=crop", "category": "Dental"},
+                {"name": "Health Checkup", "description": "Full body checkup", "price": 1999, "image_url": "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=300&h=200&fit=crop", "category": "Packages"},
+            ],
+            "cafe": [
+                {"name": "Cappuccino", "description": "Rich espresso with foam", "price": 149, "image_url": "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=300&h=200&fit=crop", "category": "Coffee"},
+                {"name": "Sandwich", "description": "Grilled veg sandwich", "price": 129, "image_url": "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=300&h=200&fit=crop", "category": "Snacks"},
+                {"name": "Brownie", "description": "Chocolate fudge brownie", "price": 99, "image_url": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=300&h=200&fit=crop", "category": "Desserts"},
+                {"name": "Fresh Juice", "description": "Seasonal fruit blend", "price": 89, "image_url": "https://images.unsplash.com/photo-1534353473418-4cfa6c56fd38?w=300&h=200&fit=crop", "category": "Drinks"},
             ],
         }
         # Find matching category
