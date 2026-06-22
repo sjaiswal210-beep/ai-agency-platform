@@ -113,19 +113,19 @@ body{{padding-bottom:60px}}
 <a href="/api/qr/{website_id}" target="_blank" class="tool"><div class="emoji">&#128248;</div><div class="name">QR Code</div><div class="desc">For cards & banners</div></a>
 <a href="/api/owner-analytics/{website_id}" target="_blank" class="tool"><div class="emoji">&#128200;</div><div class="name">Analytics</div><div class="desc">Visitors & calls</div></a>
 <a href="/api/daily/{website_id}" target="_blank" class="tool"><div class="emoji">&#128197;</div><div class="name">Daily Content</div><div class="desc">Ready to share</div></a>
-<a href="/api/offers/' + website_id + '" target="_blank" class="tool"><div class="emoji">&#127873;</div><div class="name">Create Offer</div><div class="desc">Share deals & ads</div></a>
+<a href="/api/offers/{website_id}" target="_blank" class="tool"><div class="emoji">&#127873;</div><div class="name">Create Offer</div><div class="desc">Share deals & ads</div></a>
 <a href="https://city-maps.online/api/google-profile/{website_id}/setup-guide" target="_blank" class="tool"><div class="emoji">&#128205;</div><div class="name">Google Setup</div><div class="desc">Get on Maps</div></a>
 <a href="/api/logo-gen/{website_id}/preview" target="_blank" class="tool"><div class="emoji">&#127912;</div><div class="name">Logo</div><div class="desc">Generate logo</div></a>
-<a href="https://city-maps.online/api/panel/' + website_id + '/video-creator" target="_blank" class="tool"><div class="emoji">&#127916;</div><div class="name">Promo Videos</div><div class="desc">Photo slideshow</div></a>
-<a href="https://city-maps.online/api/panel/' + website_id + '/ai-video" target="_blank" class="tool"><div class="emoji">&#129302;</div><div class="name">Video Creator</div><div class="desc">Create promo video</div></a>
+<a href="https://city-maps.online/api/panel/{website_id}/video-creator" target="_blank" class="tool"><div class="emoji">&#127916;</div><div class="name">Promo Videos</div><div class="desc">Photo slideshow</div></a>
+<a href="https://city-maps.online/api/panel/{website_id}/ai-video" target="_blank" class="tool"><div class="emoji">&#129302;</div><div class="name">Video Creator</div><div class="desc">Create promo video</div></a>
 </div>
 
 <div class="section-title">Growth Tools</div>
 <div class="tools">
-<a href="/api/panel/' + website_id + '/reviews" target="_blank" class="tool"><div class="emoji">&#11088;</div><div class="name">Reviews</div><div class="desc">Get reviews</div></a>
-<a href="/api/panel/' + website_id + '/assistant" target="_blank" class="tool"><div class="emoji">&#128172;</div><div class="name">Business Assistant</div><div class="desc">Ask anything</div></a>
-<a href="/api/panel/' + website_id + '/wa-growth" target="_blank" class="tool"><div class="emoji">&#128232;</div><div class="name">Templates</div><div class="desc">Messages</div></a>
-<a href="/api/panel/' + website_id + '/competitors" target="_blank" class="tool"><div class="emoji">&#128200;</div><div class="name">Competitors</div><div class="desc">Insights</div></a>
+<a href="/api/panel/{website_id}/reviews" target="_blank" class="tool"><div class="emoji">&#11088;</div><div class="name">Reviews</div><div class="desc">Get reviews</div></a>
+<a href="/api/panel/{website_id}/assistant" target="_blank" class="tool"><div class="emoji">&#128172;</div><div class="name">Business Assistant</div><div class="desc">Ask anything</div></a>
+<a href="/api/panel/{website_id}/wa-growth" target="_blank" class="tool"><div class="emoji">&#128232;</div><div class="name">Templates</div><div class="desc">Messages</div></a>
+<a href="/api/panel/{website_id}/competitors" target="_blank" class="tool"><div class="emoji">&#128200;</div><div class="name">Competitors</div><div class="desc">Insights</div></a>
 </div>
 
 ''' + (f"""<div class="section-title">Business Modules</div>
@@ -143,23 +143,23 @@ body{{padding-bottom:60px}}
 {('<a href="/api/org/' + org_id + '/fleet" target="_blank" class="tool"><div class="emoji">&#128663;</div><div class="name">Fleet</div></a>' if 'fleet' in enabled_bos_modules and org_id else '')}
 {('<a href="/api/org/' + org_id + '/reminders" target="_blank" class="tool"><div class="emoji">&#128276;</div><div class="name">Reminders</div></a>' if 'reminders' in enabled_bos_modules and org_id else '')}
 {('<a href="/api/org/' + org_id + '/inventory" target="_blank" class="tool"><div class="emoji">&#128230;</div><div class="name">Inventory</div></a>' if 'inventory' in enabled_bos_modules and org_id else '')}
-{('<a href="/api/photo/' + website_id + '/dashboard" target="_blank" class="tool"><div class="emoji">&#128248;</div><div class="name">Photography</div></a>' if 'photographer' in enabled_bos_modules or (lead and lead.get('category','').lower() in ['photographer','photography','videographer']) else '')}
+{('<a href="/api/photo/{website_id}/dashboard" target="_blank" class="tool"><div class="emoji">&#128248;</div><div class="name">Photography</div></a>' if 'photographer' in enabled_bos_modules or (lead and lead.get('category','').lower() in ['photographer','photography','videographer']) else '')}
 </div>""" if enabled_bos_modules else '') + '''
 
 <div class="section-title">Premium Tools</div>
 <div class="tools">
-<a href="/api/panel/' + website_id + '/crm" target="_blank" class="tool"><div class="emoji">&#128101;</div><div class="name">CRM</div><div class="desc">Customers</div></a>
-<a href="/api/panel/' + website_id + '/invoices" target="_blank" class="tool"><div class="emoji">&#129534;</div><div class="name">Invoices</div><div class="desc">Billing</div></a>
+<a href="/api/panel/{website_id}/crm" target="_blank" class="tool"><div class="emoji">&#128101;</div><div class="name">CRM</div><div class="desc">Customers</div></a>
+<a href="/api/panel/{website_id}/invoices" target="_blank" class="tool"><div class="emoji">&#129534;</div><div class="name">Invoices</div><div class="desc">Billing</div></a>
 
-<a href="/api/bookings/' + website_id + '/manage-bookings" target="_blank" class="tool"><div class="emoji">&#128197;</div><div class="name">Bookings</div><div class="desc">Appointments</div></a>
+<a href="/api/bookings/{website_id}/manage-bookings" target="_blank" class="tool"><div class="emoji">&#128197;</div><div class="name">Bookings</div><div class="desc">Appointments</div></a>
 </div>
 
 <div class="section-title">Edit Your Website</div>
 <div class="tools">
-<a href="/api/panel/' + website_id + '/edit-site" target="_blank" class="tool"><div class="emoji">&#9998;</div><div class="name">Edit Website</div><div class="desc">Change text & info</div></a>
-<a href="/api/panel/' + website_id + '/social-links" target="_blank" class="tool"><div class="emoji">&#128279;</div><div class="name">Social Links</div><div class="desc">Instagram & Facebook</div></a>
-<a href="/api/panel/' + website_id + '/gallery" target="_blank" class="tool"><div class="emoji">&#128444;</div><div class="name">Gallery Photos</div><div class="desc">Add your photos</div></a>
-<a href="/api/offers/' + website_id + '" target="_blank" class="tool"><div class="emoji">&#127878;</div><div class="name">Festival Offers</div><div class="desc">Campaign templates</div></a>
+<a href="/api/panel/{website_id}/edit-site" target="_blank" class="tool"><div class="emoji">&#9998;</div><div class="name">Edit Website</div><div class="desc">Change text & info</div></a>
+<a href="/api/panel/{website_id}/social-links" target="_blank" class="tool"><div class="emoji">&#128279;</div><div class="name">Social Links</div><div class="desc">Instagram & Facebook</div></a>
+<a href="/api/panel/{website_id}/gallery" target="_blank" class="tool"><div class="emoji">&#128444;</div><div class="name">Gallery Photos</div><div class="desc">Add your photos</div></a>
+<a href="/api/offers/{website_id}" target="_blank" class="tool"><div class="emoji">&#127878;</div><div class="name">Festival Offers</div><div class="desc">Campaign templates</div></a>
 </div>
 
 <div id="editorPanel" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;align-items:center;justify-content:center;padding:16px"><div style="background:#fff;border-radius:16px;padding:20px;width:100%;max-width:400px;position:relative"><button onclick="closeModals()" style="position:absolute;top:10px;right:12px;background:none;border:none;font-size:1.2rem;cursor:pointer">&times;</button>
@@ -185,7 +185,7 @@ body{{padding-bottom:60px}}
 <button onclick="saveGallery()" style="background:#6366f1;color:#fff;border:none;padding:9px 16px;border-radius:8px;font-weight:700;font-size:.78rem;cursor:pointer;width:100%">Save Photos</button>
 </div>
 
-<script>if(!sessionStorage.getItem("pop_"+window.location.pathname)){{fetch("/api/panel/' + website_id + '/auto-populate",{{method:"POST"}});sessionStorage.setItem("pop_"+window.location.pathname,"1")}}</script>
+<script>if(!sessionStorage.getItem("pop_"+window.location.pathname)){{fetch("/api/panel/{website_id}/auto-populate",{{method:"POST"}});sessionStorage.setItem("pop_"+window.location.pathname,"1")}}</script>
 <div style="padding:8px 12px;position:relative;z-index:1;margin-bottom:8px"><a href="https://ai-agency-platform-blush.vercel.app/dashboard/''' + f'{slug}' + '''" target="_blank" style="display:block;text-align:center;padding:12px;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-radius:12px;text-decoration:none;font-weight:700;font-size:.82rem;box-shadow:0 4px 12px rgba(99,102,241,.3)">&#128187; Open Business Portal</a></div>
 <div style="padding:8px 12px;position:relative;z-index:1;margin-bottom:8px"><a href="https://ai-agency-platform-blush.vercel.app/dashboard/' + slug + '" target="_blank" style="display:block;text-align:center;padding:12px;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-radius:12px;text-decoration:none;font-weight:700;font-size:.82rem;box-shadow:0 4px 12px rgba(99,102,241,.3)">&#128187; Open Business Portal</a></div>
 <div class="wa-bar">
@@ -196,9 +196,9 @@ body{{padding-bottom:60px}}
 function showEditor(){{document.getElementById("editorPanel").style.display="flex";document.getElementById("socialPanel").style.display="none";document.getElementById("galleryPanel").style.display="none";}}
 function showSocial(){{document.getElementById("socialPanel").style.display="flex";document.getElementById("editorPanel").style.display="none";document.getElementById("galleryPanel").style.display="none";}}
 function showGallery(){{document.getElementById("galleryPanel").style.display="flex";document.getElementById("editorPanel").style.display="none";document.getElementById("socialPanel").style.display="none";}}
-async function submitEdit(){{var p=document.getElementById("editPrompt").value;if(!p)return;document.getElementById("editResult").textContent="Applying...";try{{var r=await fetch("https://city-maps.online/api/editor/' + website_id + '/edit",{{method:"POST",headers:{{"Content-Type":"application/json"}},body:JSON.stringify({{prompt:p}})}});var d=await r.json();document.getElementById("editResult").textContent=d.message||"Done! Refresh your website to see changes.";}}catch{{document.getElementById("editResult").textContent="Failed. Try again.";}}}}
-async function saveSocial(){{try{{await fetch("https://city-maps.online/api/panel/' + website_id + '/social-links",{{method:"POST",headers:{{"Content-Type":"application/json"}},body:JSON.stringify({{instagram:document.getElementById("instaUrl").value,facebook:document.getElementById("fbUrl").value,youtube:document.getElementById("ytUrl").value}})}});alert("Social links saved!");}}catch{{alert("Failed");}}}}
-async function saveGallery(){{var urls=document.getElementById("galUrls").value.split(String.fromCharCode(10)).filter(function(u){{return u.trim()}});try{{await fetch("https://city-maps.online/api/panel/' + website_id + '/gallery",{{method:"POST",headers:{{"Content-Type":"application/json"}},body:JSON.stringify({{urls:urls}})}});alert("Gallery saved! "+urls.length+" photos added.");}}catch{{alert("Failed");}}}}
+async function submitEdit(){{var p=document.getElementById("editPrompt").value;if(!p)return;document.getElementById("editResult").textContent="Applying...";try{{var r=await fetch("https://city-maps.online/api/editor/{website_id}/edit",{{method:"POST",headers:{{"Content-Type":"application/json"}},body:JSON.stringify({{prompt:p}})}});var d=await r.json();document.getElementById("editResult").textContent=d.message||"Done! Refresh your website to see changes.";}}catch{{document.getElementById("editResult").textContent="Failed. Try again.";}}}}
+async function saveSocial(){{try{{await fetch("https://city-maps.online/api/panel/{website_id}/social-links",{{method:"POST",headers:{{"Content-Type":"application/json"}},body:JSON.stringify({{instagram:document.getElementById("instaUrl").value,facebook:document.getElementById("fbUrl").value,youtube:document.getElementById("ytUrl").value}})}});alert("Social links saved!");}}catch{{alert("Failed");}}}}
+async function saveGallery(){{var urls=document.getElementById("galUrls").value.split(String.fromCharCode(10)).filter(function(u){{return u.trim()}});try{{await fetch("https://city-maps.online/api/panel/{website_id}/gallery",{{method:"POST",headers:{{"Content-Type":"application/json"}},body:JSON.stringify({{urls:urls}})}});alert("Gallery saved! "+urls.length+" photos added.");}}catch{{alert("Failed");}}}}
 </script><div id="toolModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9999;align-items:center;justify-content:center;padding:10px"><div style="background:#fff;border-radius:16px;width:100%;max-width:480px;height:85vh;position:relative;overflow:hidden"><button onclick="closeTool()" style="position:absolute;top:8px;right:12px;background:rgba(0,0,0,.6);color:#fff;border:none;width:28px;height:28px;border-radius:50%;font-size:1rem;cursor:pointer;z-index:10">&times;</button><iframe id="toolFrame" style="width:100%;height:100%;border:none;border-radius:16px" src=""></iframe></div></div></body></html>'''
     return HTMLResponse(content=html)
 
@@ -673,7 +673,7 @@ function ask(preset){{
   chat.innerHTML+='<div class="msg msg-user">'+q+'</div>';
   chat.innerHTML+='<div class="msg msg-bot" id="typing" style="color:#64748b">Thinking...</div>';
   chat.scrollTop=chat.scrollHeight;
-  fetch("/api/panel/' + website_id + '/assistant-ask",{{method:"POST",headers:{{"Content-Type":"application/json"}},body:JSON.stringify({{question:q}})}}).then(r=>r.json()).then(d=>{{
+  fetch("/api/panel/{website_id}/assistant-ask",{{method:"POST",headers:{{"Content-Type":"application/json"}},body:JSON.stringify({{question:q}})}}).then(r=>r.json()).then(d=>{{
     document.getElementById("typing").remove();
     chat.innerHTML+='<div class="msg msg-bot">'+d.answer.replace(/\n/g,'<br>')+'</div>';
     chat.scrollTop=chat.scrollHeight;
@@ -781,7 +781,7 @@ def competitors_page(website_id: str):
 async function analyze(){{
   var btn=document.getElementById("analyzeBtn");btn.disabled=true;btn.textContent="Analyzing...";
   try{{
-    var r=await fetch("/api/panel/' + website_id + '/competitor-analysis",{{method:"POST"}});
+    var r=await fetch("/api/panel/{website_id}/competitor-analysis",{{method:"POST"}});
     var d=await r.json();
     var html="";
     if(d.competitors){{d.competitors.forEach(function(c){{html+='<div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.72rem"><div style="display:flex;justify-content:space-between"><b style="color:#e2e8f0">'+c.name+'</b><span style="color:#fbbf24">'+c.rating+' &#9733;</span></div><p style="color:#64748b;font-size:.65rem">'+c.reviews+' reviews</p></div>';}});}}
@@ -1014,7 +1014,7 @@ def crm_page(website_id: str):
 async function addCustomer(){{
   var data={{name:document.getElementById('cName').value,phone:document.getElementById('cPhone').value,notes:document.getElementById('cNotes').value}};
   if(!data.name)return;
-  await fetch('/api/panel/' + website_id + '/crm-add',{{method:'POST',headers:{{'Content-Type':'application/json'}},body:JSON.stringify(data)}});
+  await fetch('/api/panel/{website_id}/crm-add',{{method:'POST',headers:{{'Content-Type':'application/json'}},body:JSON.stringify(data)}});
   location.reload();
 }}
 </script></body></html>"""
@@ -1079,7 +1079,7 @@ def invoices_page(website_id: str):
 async function createInvoice(){{
   var data={{customer_name:document.getElementById('iName').value,amount:Number(document.getElementById('iAmount').value),description:document.getElementById('iDesc').value,status:document.getElementById('iStatus').value}};
   if(!data.customer_name||!data.amount)return;
-  var r=await fetch('/api/panel/' + website_id + '/invoice-create',{{method:'POST',headers:{{'Content-Type':'application/json'}},body:JSON.stringify(data)}});
+  var r=await fetch('/api/panel/{website_id}/invoice-create',{{method:'POST',headers:{{'Content-Type':'application/json'}},body:JSON.stringify(data)}});
   var d=await r.json();
   if(d.wa_link)window.open(d.wa_link,'_blank');
   location.reload();
@@ -1161,7 +1161,7 @@ def inventory_page(website_id: str):
 async function updateStock(){{
   var name=document.getElementById('sName').value;var qty=Number(document.getElementById('sQty').value);
   if(!name)return;
-  await fetch('/api/panel/' + website_id + '/stock-update',{{method:'POST',headers:{{'Content-Type':'application/json'}},body:JSON.stringify({{name:name,qty:qty}})}});
+  await fetch('/api/panel/{website_id}/stock-update',{{method:'POST',headers:{{'Content-Type':'application/json'}},body:JSON.stringify({{name:name,qty:qty}})}});
   location.reload();
 }}
 </script></body></html>"""
