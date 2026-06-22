@@ -82,6 +82,8 @@ from app.modules.assets.router import router as assets_router
 from app.modules.projects.router import router as projects_router
 from app.modules.documents.router import router as documents_router
 from app.modules.ai_employee.router import router as ai_employee_router
+from app.modules.voice_calling.router import router as voice_calling_router
+from app.api.routes.voice_admin import router as voice_admin_router
 from app.api.routes.invoice_pdf import router as invoice_pdf_router
 from app.api.routes.cron_jobs import router as cron_router
 from app.api.routes.health_agent import router as health_agent_router
@@ -329,6 +331,8 @@ app.include_router(assets_router)
 app.include_router(projects_router)
 app.include_router(documents_router)
 app.include_router(ai_employee_router)
+app.include_router(voice_calling_router)
+app.include_router(voice_admin_router)
 app.include_router(invoice_pdf_router)
 app.include_router(cron_router)
 app.include_router(health_agent_router)
@@ -657,6 +661,110 @@ function showTab(t){{document.querySelectorAll('.panel').forEach(p=>p.classList.
 </body></html>'''
     return HTMLResponse(content=html)
 
+
+
+
+@app.get("/api/project-summary", response_class=HTMLResponse)
+def project_summary_page():
+    """Project summary page for internal reference."""
+    html = """<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>City Maps - Project Summary</title><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:sans-serif;background:#0f172a;color:#e2e8f0;padding:20px;max-width:900px;margin:0 auto;line-height:1.6}h1{font-size:1.5rem;font-weight:800;color:#00e5ff;margin-bottom:8px}h2{font-size:1.1rem;font-weight:700;color:#a78bfa;margin:24px 0 10px;border-bottom:1px solid rgba(255,255,255,.1);padding-bottom:6px}h3{font-size:.9rem;color:#94a3b8;margin:12px 0 6px}table{width:100%;border-collapse:collapse;margin:10px 0;font-size:.8rem}th{text-align:left;padding:8px;background:rgba(255,255,255,.05);color:#94a3b8;font-size:.7rem}td{padding:8px;border-bottom:1px solid rgba(255,255,255,.05)}a{color:#00e5ff;text-decoration:none}.card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px;margin:10px 0}.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:.65rem;font-weight:600;margin-right:4px}.b-green{background:rgba(34,197,94,.15);color:#4ade80}.b-yellow{background:rgba(245,158,11,.15);color:#fbbf24}.b-red{background:rgba(239,68,68,.15);color:#f87171}.b-blue{background:rgba(99,102,241,.15);color:#a78bfa}ul{padding-left:16px;font-size:.82rem}li{margin:4px 0}</style></head><body>
+<h1>City Maps Platform - Project Summary</h1>
+<p style="color:#64748b;font-size:.8rem">Last Updated: June 22, 2026 | Internal Reference</p>
+
+<h2>Platform Overview</h2>
+<div class="card">
+<table>
+<tr><td><b>Website</b></td><td><a href="https://city-maps.online" target="_blank">city-maps.online</a></td></tr>
+<tr><td><b>Backend</b></td><td><a href="https://ai-agency-platform.onrender.com" target="_blank">ai-agency-platform.onrender.com</a></td></tr>
+<tr><td><b>Admin</b></td><td><a href="https://ai-agency-platform-blush.vercel.app" target="_blank">ai-agency-platform-blush.vercel.app</a></td></tr>
+<tr><td><b>FreeLLMAPI</b></td><td><a href="https://freellmapi-rn6c.onrender.com" target="_blank">freellmapi-rn6c.onrender.com</a></td></tr>
+<tr><td><b>Pricing</b></td><td>Rs.29/mo (Growth) | Rs.39/mo (Premium)</td></tr>
+</table>
+</div>
+
+<h2>Demo Site</h2>
+<div class="card">
+<table>
+<tr><td>Website</td><td><a href="https://spice-garden.city-maps.online" target="_blank">spice-garden.city-maps.online</a></td></tr>
+<tr><td>Dashboard</td><td><a href="https://ai-agency-platform.onrender.com/api/panel/27b0a862-60c5-406e-a32a-47dde32823bb" target="_blank">Open Dashboard</a></td></tr>
+<tr><td>Store</td><td><a href="https://ai-agency-platform.onrender.com/api/store/27b0a862-60c5-406e-a32a-47dde32823bb/store-page" target="_blank">Open Store</a></td></tr>
+</table>
+</div>
+
+<h2>Completed Features</h2>
+<h3>Business Websites</h3>
+<ul>
+<li>AI-generated professional content + auto products</li>
+<li>Parallax stats, gallery lightbox with arrows</li>
+<li>Sticky nav: Call, WhatsApp, Store, Maps</li>
+<li>E-commerce with WhatsApp checkout</li>
+<li>OCR menu extraction (restaurants)</li>
+<li>Per-subdomain SEO (sitemap, robots.txt, schema)</li>
+</ul>
+
+<h3>Business Dashboard (22 Tools)</h3>
+<ul>
+<li>Store Manager, Social Post, QR Code, Analytics, Daily Content</li>
+<li>Create Offer, Google Setup, Logo, Promo Videos, Video Creator</li>
+<li>Reviews, Business Assistant (AI chat), Templates, Competitors</li>
+<li>CRM, Invoices, Bookings, Edit Website, Social Links, Gallery, Festival Offers</li>
+<li>Floating AI chat bubble + Google OAuth</li>
+</ul>
+
+<h3>Admin Dashboard</h3>
+<ul>
+<li>Dark liquid glass theme</li>
+<li>Leads (500), Websites (500), Analytics (INR)</li>
+<li>Notes with edit/reply, QA Dashboard, Ad Manager</li>
+</ul>
+
+<h3>Infrastructure</h3>
+<ul>
+<li>LLM: Gemini -> FreeLLMAPI -> Groq (free chain)</li>
+<li>Video: Replicate LTX-2 + ffmpeg stitching</li>
+<li>Security: rate limits, validation, Dependabot</li>
+<li>SEO: sitemaps, robots.txt, Google ping, schema</li>
+</ul>
+
+<h2>Pending Items</h2>
+<div class="card">
+<table>
+<tr><td><span class="badge b-red">HIGH</span> WhatsApp permanent token</td><td>Need from Meta Business Suite</td></tr>
+<tr><td><span class="badge b-red">HIGH</span> Razorpay payments</td><td>Rs.29/39 plans + Rs.2/video</td></tr>
+<tr><td><span class="badge b-yellow">WAITING</span> Google scope verification</td><td>Submitted, 2-4 weeks</td></tr>
+<tr><td><span class="badge b-red">HIGH</span> WhatsApp bot</td><td>Blocked by token</td></tr>
+<tr><td><span class="badge b-blue">LOW</span> Analytics password</td><td>Shubham@1994</td></tr>
+<tr><td><span class="badge b-yellow">MEDIUM</span> Bookings time settings</td><td>Owner sets hours</td></tr>
+<tr><td><span class="badge b-green">RECOMMENDED</span> Render upgrade</td><td>Rs.600/mo (no cold starts)</td></tr>
+</table>
+</div>
+
+<h2>Profit Model</h2>
+<div class="card">
+<table>
+<tr><th>Businesses</th><th>Revenue/mo</th><th>Costs/mo</th><th>Profit/mo</th><th>Margin</th></tr>
+<tr><td>50</td><td>Rs.1,450</td><td>Rs.67</td><td>Rs.1,383</td><td>95%</td></tr>
+<tr><td>500</td><td>Rs.14,500</td><td>Rs.2,700</td><td>Rs.11,800</td><td>81%</td></tr>
+<tr><td>1,000</td><td>Rs.29,000</td><td>Rs.2,700</td><td>Rs.26,300</td><td>91%</td></tr>
+<tr><td>10,000</td><td>Rs.2,90,000</td><td>Rs.17,000</td><td>Rs.2,73,000</td><td>94%</td></tr>
+</table>
+</div>
+
+<h2>Key Notes</h2>
+<div class="card">
+<ul>
+<li>Never use "AI" in customer-facing content - use "Auto"</li>
+<li>Ad Manager password: <code>kalpdev2024</code></li>
+<li>WhatsApp Phone ID: 1202589086266794</li>
+<li>Cloudflare timeout: 100s - AI features call Render directly</li>
+<li>All dashboard tools open in new tabs</li>
+<li>Google verification: 39nzaqNCoWxNXFyhZTNOUSSWZiHY9rCEpDFzvEakUo4</li>
+</ul>
+</div>
+
+<p style="text-align:center;margin-top:24px;font-size:.7rem;color:#475569">City Maps Platform | Internal Reference | Do not share publicly</p>
+</body></html>"""
+    return HTMLResponse(content=html)
 
 @app.get("/", response_class=HTMLResponse)
 def landing_page():
@@ -1066,7 +1174,7 @@ async def full_health_check():
     rows = ""
     for r in results:
         color = "#22c55e" if r["status"] == "ok" else "#ef4444"
-        rows += f'<tr><td style="padding:8px;font-size:.78rem">{r["name"]}</td><td style="padding:8px"><span style="color:{color};font-weight:700;font-size:.75rem">{"Ã¢Å“â€œ" if r["status"]=="ok" else "Ã¢Å“â€”"} {r["code"]}</span></td><td style="padding:8px;font-size:.72rem;color:#64748b">{r.get("ms","")}ms</td></tr>'
+        rows += f'<tr><td style="padding:8px;font-size:.78rem">{r["name"]}</td><td style="padding:8px"><span style="color:{color};font-weight:700;font-size:.75rem">{"ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ" if r["status"]=="ok" else "ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â"} {r["code"]}</span></td><td style="padding:8px;font-size:.72rem;color:#64748b">{r.get("ms","")}ms</td></tr>'
     
     html = f'''<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"><title>Health Check</title><style>*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:16px;max-width:600px;margin:0 auto}}table{{width:100%;border-collapse:collapse;background:#1e293b;border-radius:10px;overflow:hidden;margin-top:16px}}th{{text-align:left;padding:10px;font-size:.7rem;color:#64748b;border-bottom:1px solid #334155}}tr:hover{{background:#334155}}</style></head><body>
 <h1 style="font-size:1.2rem">{ok}/{total} Features Working</h1>
