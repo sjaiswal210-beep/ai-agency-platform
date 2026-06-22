@@ -1104,6 +1104,7 @@ body{{padding-bottom:70px}}
         f'<div class="gallery-grid">{gallery_html}</div></section>'
         ''
         f'{products_html}'
+        f'<div style="text-align:center;padding:20px 24px"><a href="/api/store/{website_id}/store-page" style="display:inline-block;padding:12px 28px;background:var(--p);color:#fff;border-radius:10px;font-weight:700;font-size:.9rem;text-decoration:none;box-shadow:0 4px 14px color-mix(in srgb,var(--p) 40%,transparent)">&#128722; Visit Our Store</a></div>'
         '<section class="section"><div class="section-header"><h2>What People Say</h2></div>'
         f'<div class="testimonials-grid">{testimonials_html}</div></section>'
         f'{hiw_html}{benefits_html}{faq_html}{maps_section}'
