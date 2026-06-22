@@ -97,7 +97,7 @@ body{{padding-bottom:60px}}
 
 <div class="section-title">Manage Your Business</div>
 <div class="tools">
-<a href="https://city-maps.online/api/store/{website_id}/manage" target="_blank" class="tool"><div class="emoji">&#128722;</div><div class="name">Products</div><div class="desc">Add & manage items</div></a>
+<a href="/api/panel/{website_id}/store-manager" target="_blank" class="tool"><div class="emoji">&#128722;</div><div class="name">Store Manager</div><div class="desc">Products & Stock</div></a>
 <a href="/api/branding/{website_id}/social-post/preview" target="_blank" class="tool"><div class="emoji">&#128247;</div><div class="name">Social Post</div><div class="desc">Create & download</div></a>
 <a href="/api/qr/{website_id}" target="_blank" class="tool"><div class="emoji">&#128248;</div><div class="name">QR Code</div><div class="desc">For cards & banners</div></a>
 <a href="/api/owner-analytics/{website_id}" target="_blank" class="tool"><div class="emoji">&#128200;</div><div class="name">Analytics</div><div class="desc">Visitors & calls</div></a>
@@ -139,7 +139,7 @@ body{{padding-bottom:60px}}
 <div class="tools">
 <a href="/api/panel/{website_id}/crm" target="_blank" class="tool"><div class="emoji">&#128101;</div><div class="name">CRM</div><div class="desc">Customers</div></a>
 <a href="/api/panel/{website_id}/invoices" target="_blank" class="tool"><div class="emoji">&#129534;</div><div class="name">Invoices</div><div class="desc">Billing</div></a>
-<a href="/api/panel/{website_id}/inventory" target="_blank" class="tool"><div class="emoji">&#128230;</div><div class="name">Inventory</div><div class="desc">Stock</div></a>
+
 <a href="/api/bookings/{website_id}/manage-bookings" target="_blank" class="tool"><div class="emoji">&#128197;</div><div class="name">Bookings</div><div class="desc">Appointments</div></a>
 </div>
 
