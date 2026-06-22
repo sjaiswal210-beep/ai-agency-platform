@@ -48,8 +48,19 @@ If they want to book, tell them to call {phone} or use the booking form.
 If you don't know something specific, offer to connect them with the team.
 Be warm and professional."""
 
-    reply = await chat_completion([{"role": "user", "content": prompt}])
-    return {"reply": reply.strip(), "business": business_name}
+    try:
+        import asyncio
+        reply = await asyncio.wait_for(
+            chat_completion([{"role": "user", "content": prompt}]),
+            timeout=15.0
+        )
+        if not reply or not reply.strip():
+            reply = f"Namaste! {business_name} mein aapka swagat hai. Main aapki kaise madad kar sakti hoon? Aap humein {phone} par call bhi kar sakte hain."
+        return {"reply": reply.strip(), "business": business_name}
+    except asyncio.TimeoutError:
+        return {"reply": f"Sorry, I am experiencing some delay. Please call us at {phone} or try again in a moment.", "business": business_name}
+    except Exception as e:
+        return {"reply": f"Namaste! Welcome to {business_name}. For quick help, please call us at {phone}. We are happy to assist!", "business": business_name}
 
 
 class BookingRequest(BaseModel):

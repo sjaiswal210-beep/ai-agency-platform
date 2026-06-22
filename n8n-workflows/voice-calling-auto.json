@@ -1,0 +1,112 @@
+{
+  "name": "CityMaps Voice Calling - Dograh",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [{"field": "minutes", "minutesInterval": 30}]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Every 30 Min (10AM-7PM)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [250, 300],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [{"value1": "={{new Date().getHours()}}", "operation": "largerEqual", "value2": 10}]
+        },
+        "combineOperation": "all"
+      },
+      "id": "check-hours",
+      "name": "Is Business Hours?",
+      "type": "n8n-nodes-base.if",
+      "position": [450, 300],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [{"value1": "={{new Date().getHours()}}", "operation": "smaller", "value2": 19}]
+        }
+      },
+      "id": "check-hours-end",
+      "name": "Before 7PM?",
+      "type": "n8n-nodes-base.if",
+      "position": [650, 200],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "url": "https://ai-agency-platform.onrender.com/api/cron/voice-auto-call?pwd=kalpdev2024",
+        "method": "POST",
+        "options": {}
+      },
+      "id": "auto-call",
+      "name": "Trigger Auto-Call",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [850, 200],
+      "typeVersion": 4.1
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [{"field": "hours", "hoursInterval": 24}]
+        }
+      },
+      "id": "daily-trigger",
+      "name": "Daily 11AM",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [250, 550],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "url": "https://ai-agency-platform.onrender.com/api/cron/voice-followups?pwd=kalpdev2024",
+        "method": "POST",
+        "options": {}
+      },
+      "id": "followups",
+      "name": "Process Follow-ups",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [500, 550],
+      "typeVersion": 4.1
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [{"field": "hours", "hoursInterval": 24}]
+        }
+      },
+      "id": "midnight-trigger",
+      "name": "Daily Midnight",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [250, 750],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "url": "https://ai-agency-platform.onrender.com/api/cron/voice-reset-daily?pwd=kalpdev2024",
+        "method": "POST",
+        "options": {}
+      },
+      "id": "reset-daily",
+      "name": "Reset Daily Counter",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [500, 750],
+      "typeVersion": 4.1
+    }
+  ],
+  "connections": {
+    "Every 30 Min (10AM-7PM)": {"main": [[{"node": "Is Business Hours?", "type": "main", "index": 0}]]},
+    "Is Business Hours?": {"main": [[{"node": "Before 7PM?", "type": "main", "index": 0}]]},
+    "Before 7PM?": {"main": [[{"node": "Trigger Auto-Call", "type": "main", "index": 0}]]},
+    "Daily 11AM": {"main": [[{"node": "Process Follow-ups", "type": "main", "index": 0}]]},
+    "Daily Midnight": {"main": [[{"node": "Reset Daily Counter", "type": "main", "index": 0}]]}
+  },
+  "settings": {"executionOrder": "v1"},
+  "staticData": null,
+  "tags": [{"name": "voice-calling"}, {"name": "automation"}]
+}
