@@ -370,7 +370,7 @@ var activeCat='All';
 function init(){{
   // Build categories
   var cats=['All',...new Set(products.map(p=>p.category||'General'))];
-  var catHtml=cats.map(c=>'<div class="cat'+(c===activeCat?' active':'')+'" onclick="filterCat(\''+c+'\')">'+c+'</div>').join('');
+  var catHtml=cats.map(c=>'<div class="cat'+(c===activeCat?' active':'')+'" onclick="filterCat(this.textContent)">'+c+'</div>').join('');
   document.getElementById('catBar').innerHTML=catHtml;
   renderProducts(products);
   updateCartUI();
@@ -380,7 +380,7 @@ function renderProducts(list){{
   if(!list.length){{document.getElementById('prodGrid').innerHTML='<div class="empty" style="grid-column:span 2">No products found</div>';return;}}
   var html=list.map(p=>{{
     var img=p.image_url||'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=300&h=200&fit=crop';
-    return '<div class="prod"><img src="'+img+'" alt="'+p.name+'"><div class="prod-info"><div class="prod-name">'+p.name+'</div><div class="prod-price">Rs.'+p.price+'</div><div class="prod-desc">'+( p.description||'').substring(0,40)+'</div><button class="add-btn" onclick="addToCart(\''+p.id+'\')">+ Add to Cart</button></div></div>';
+    return '<div class="prod"><img src="'+img+'" alt="'+p.name+'"><div class="prod-info"><div class="prod-name">'+p.name+'</div><div class="prod-price">Rs.'+p.price+'</div><div class="prod-desc">'+( p.description||'').substring(0,40)+'</div><button class="add-btn" onclick="addToCart(this.dataset.pid)" data-pid="'+p.id+'">+ Add to Cart</button></div></div>';
   }}).join('');
   document.getElementById('prodGrid').innerHTML=html;
 }}
@@ -430,7 +430,7 @@ function renderCartItems(){{
     var p=products.find(x=>x.id===id);
     if(!p)return;
     var subtotal=p.price*cart[id];total+=subtotal;
-    items+='<div class="cart-item"><div><b>'+p.name+'</b><br><span style="font-size:.6rem;color:#64748b">Rs.'+p.price+' x '+cart[id]+'</span></div><div style="display:flex;align-items:center;gap:8px"><span>Rs.'+subtotal+'</span><button onclick="removeFromCart(\''+id+'\');renderCartItems()" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:.8rem">-</button></div></div>';
+    items+='<div class="cart-item"><div><b>'+p.name+'</b><br><span style="font-size:.6rem;color:#64748b">Rs.'+p.price+' x '+cart[id]+'</span></div><div style="display:flex;align-items:center;gap:8px"><span>Rs.'+subtotal+'</span><button onclick="removeFromCart(this.dataset.pid);renderCartItems()" data-pid="'+id+'" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:.8rem">-</button></div></div>';
   }});
   document.getElementById('cartItems').innerHTML=items||'<p style="text-align:center;color:#475569;padding:16px;font-size:.75rem">Cart is empty</p>';
   document.getElementById('cartTotal').textContent='Rs.'+total;
