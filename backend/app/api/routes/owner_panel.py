@@ -111,7 +111,6 @@ body{{padding-bottom:60px}}
 
 <div class="section-title">Growth Tools</div>
 <div class="tools">
-<a href="/api/bookings/{website_id}/manage-bookings" target="_blank" class="tool"><div class="emoji">&#128197;</div><div class="name">Bookings</div><div class="desc">Appointments</div></a>
 <a href="/api/panel/{website_id}/reviews" target="_blank" class="tool"><div class="emoji">&#11088;</div><div class="name">Reviews</div><div class="desc">Get reviews</div></a>
 <a href="/api/panel/{website_id}/assistant" target="_blank" class="tool"><div class="emoji">&#128172;</div><div class="name">Business Assistant</div><div class="desc">Ask anything</div></a>
 <a href="/api/panel/{website_id}/wa-growth" target="_blank" class="tool"><div class="emoji">&#128232;</div><div class="name">Templates</div><div class="desc">Messages</div></a>
@@ -146,7 +145,7 @@ body{{padding-bottom:60px}}
 
 <div class="section-title">Edit Your Website</div>
 <div class="tools">
-<a href="#" onclick="showEditor()" class="tool"><div class="emoji">&#9998;</div><div class="name">Edit Website</div><div class="desc">Change text & info</div></a>
+<a href="/api/editor/{website_id}" target="_blank" class="tool"><div class="emoji">&#9998;</div><div class="name">Edit Website</div><div class="desc">Change text & info</div></a>
 <a href="/api/panel/{website_id}/social-links" target="_blank" class="tool"><div class="emoji">&#128279;</div><div class="name">Social Links</div><div class="desc">Instagram & Facebook</div></a>
 <a href="/api/panel/{website_id}/gallery" target="_blank" class="tool"><div class="emoji">&#128444;</div><div class="name">Gallery Photos</div><div class="desc">Add your photos</div></a>
 <a href="/api/offers/{website_id}" target="_blank" class="tool"><div class="emoji">&#127878;</div><div class="name">Festival Offers</div><div class="desc">Campaign templates</div></a>
