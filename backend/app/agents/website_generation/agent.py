@@ -378,6 +378,79 @@ RULES:
     except Exception as e:
         logger.warning("Auto product generation failed", error=str(e))
 
+
+    # OCR: Try to extract menu/pricing from Google Photos (for restaurants/hotels)
+    try:
+        food_cats = ["restaurant", "food", "cafe", "hotel", "bakery", "pizza", "dhaba", "bar", "biryani"]
+        cat_check = (lead.get("category", "") if lead else "").lower()
+        if any(fc in cat_check for fc in food_cats):
+            # Get Google Places photos that might be menu cards
+            from app.api.routes.preview import _get_real_photos
+            biz_name = lead.get("business_name", "") if lead else ""
+            biz_addr = lead.get("address", "") if lead else ""
+            photos = _get_real_photos(biz_name, biz_addr)
+            
+            if photos and len(photos) >= 2:
+                # Try to extract menu from the photos using Gemini vision
+                import httpx
+                from app.core.config import get_settings
+                settings = get_settings()
+                gemini_key = settings.gemini_api_key
+                
+                if gemini_key:
+                    # Use first 3 photos - one might be a menu card
+                    for photo_url in photos[:3]:
+                        try:
+                            async with httpx.AsyncClient(timeout=15) as client:
+                                # Gemini vision API with image URL
+                                resp = await client.post(
+                                    f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key={gemini_key}",
+                                    json={
+                                        "contents": [{
+                                            "parts": [
+                                                {"text": "If this image shows a menu card, price list, or rate card, extract ALL items with their prices. Return ONLY JSON array: [{\"name\":\"item\",\"price\":123}]. If this is NOT a menu/price list, return empty array: []"},
+                                                {"inline_data": {"mime_type": "image/jpeg", "data": ""}, "file_data": {"file_uri": photo_url, "mime_type": "image/jpeg"}}
+                                            ]
+                                        }]
+                                    }
+                                )
+                                if resp.status_code == 200:
+                                    result = resp.json()
+                                    text = result.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", "[]")
+                                    import json as _jj
+                                    cleaned = text.strip()
+                                    if "```json" in cleaned: cleaned = cleaned.split("```json")[1].split("```")[0]
+                                    elif "```" in cleaned: cleaned = cleaned.split("```")[1].split("```")[0]
+                                    menu_items = _jj.loads(cleaned.strip())
+                                    
+                                    if menu_items and len(menu_items) > 2:
+                                        # Found menu items! Add them as products
+                                        from app.core.supabase import get_supabase as _mdb
+                                        mdb = _mdb()
+                                        added = 0
+                                        for item in menu_items[:10]:
+                                            name = item.get("name", "")
+                                            price = item.get("price", 0)
+                                            if name and price:
+                                                mdb.table("store_products").insert({
+                                                    "website_id": website["id"],
+                                                    "name": name,
+                                                    "price": int(price),
+                                                    "category": "Menu",
+                                                    "image_url": photo_url,
+                                                    "description": "From menu card",
+                                                    "in_stock": True,
+                                                    "stock_qty": 99,
+                                                }).execute()
+                                                added += 1
+                                        if added > 0:
+                                            logger.info("OCR menu extracted", items=added, website_id=website["id"])
+                                            break  # Got menu, no need to check more photos
+                        except Exception:
+                            continue
+    except Exception as e:
+        logger.warning("OCR menu extraction failed", error=str(e)[:50])
+
     # Auto QA review after generation
     try:
         from app.agents.qa_review.agent import review_website as qa_review
