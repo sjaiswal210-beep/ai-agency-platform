@@ -108,7 +108,7 @@ body{{padding-bottom:60px}}
 
 <div class="section-title">Manage Your Business</div>
 <div class="tools">
-<a href="/api/panel/{website_id}/store-manager" target="_blank" class="tool"><div class="emoji">&#128722;</div><div class="name">Store Manager</div><div class="desc">Products & Stock</div></a>
+<a href="https://city-maps.online/api/store/{website_id}/manage" target="_blank" class="tool"><div class="emoji">&#128722;</div><div class="name">Store Manager</div><div class="desc">Products & Stock</div></a>
 <a href="/api/branding/{website_id}/social-post/preview" target="_blank" class="tool"><div class="emoji">&#128247;</div><div class="name">Social Post</div><div class="desc">Create & download</div></a>
 <a href="/api/qr/{website_id}" target="_blank" class="tool"><div class="emoji">&#128248;</div><div class="name">QR Code</div><div class="desc">For cards & banners</div></a>
 <a href="/api/owner-analytics/{website_id}" target="_blank" class="tool"><div class="emoji">&#128200;</div><div class="name">Analytics</div><div class="desc">Visitors & calls</div></a>
