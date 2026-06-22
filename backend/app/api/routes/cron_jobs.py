@@ -138,3 +138,35 @@ async def cron_booking_reminders(pwd: str = ""):
             pass
     
     return {"message": "Booking reminders sent", "sent": sent}
+
+@router.post("/voice-auto-call")
+async def cron_voice_auto_call(pwd: str = ""):
+    """Cron job: Auto-call new leads via Bolna AI. Call every 30 min during business hours."""
+    if pwd != "kalpdev2024":
+        return {"error": "unauthorized"}
+    
+    from app.modules.voice_calling.router import auto_call_new_leads
+    result = await auto_call_new_leads()
+    return result
+
+
+@router.post("/voice-followups")
+async def cron_voice_followups(pwd: str = ""):
+    """Cron job: Process voice call follow-ups that are due. Call daily at 11 AM."""
+    if pwd != "kalpdev2024":
+        return {"error": "unauthorized"}
+    
+    from app.modules.voice_calling.router import process_followup_calls
+    result = await process_followup_calls()
+    return result
+
+
+@router.post("/voice-reset-daily")
+async def cron_voice_reset_daily(pwd: str = ""):
+    """Cron job: Reset voice call daily counters. Call at midnight."""
+    if pwd != "kalpdev2024":
+        return {"error": "unauthorized"}
+    
+    from app.modules.voice_calling.router import reset_daily_counter
+    result = await reset_daily_counter()
+    return result
