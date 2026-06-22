@@ -1185,3 +1185,94 @@ async def update_stock(website_id: str, data: dict):
             return {"status": "created"}
     except Exception as e:
         return {"error": str(e)[:50]}
+
+
+@router.get("/{website_id}/edit-site", response_class=HTMLResponse)
+def edit_site_page(website_id: str):
+    """AI Website Editor."""
+    from app.core.supabase import get_supabase
+    db = get_supabase()
+    service = WebsiteService()
+    lead_service = LeadService()
+    website = service.get(website_id)
+    if not website:
+        raise HTTPException(404, "Not found")
+    lead = lead_service.get(website["lead_id"]) if website.get("lead_id") else None
+    business_name = lead.get("business_name", "Business") if lead else "Business"
+    content = website.get("content", {}) or {}
+    hero_title = content.get("hero_title", "")
+    hero_subtitle = content.get("hero_subtitle", "")
+    about = content.get("about", "")
+    contact = content.get("contact_info", {})
+    phone = contact.get("phone", lead.get("phone","") if lead else "")
+    email = contact.get("email", "")
+    address = contact.get("address", lead.get("address","") if lead else "")
+    hours = contact.get("hours", "Mon-Sat: 9 AM - 8 PM")
+
+    html = f"""<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"><title>Edit - {business_name}</title><style>*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:12px;max-width:500px;margin:0 auto}}input,textarea{{font-size:16px!important;width:100%;padding:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;margin-bottom:8px;outline:none}}.card{{background:rgba(255,255,255,.03);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px;margin-bottom:10px}}.card h2{{font-size:.8rem;font-weight:700;margin-bottom:8px}}.btn{{width:100%;padding:11px;border:none;border-radius:10px;font-weight:700;font-size:.82rem;cursor:pointer}}label{{font-size:.68rem;color:#94a3b8;margin-bottom:3px;display:block}}</style></head><body>
+<h1 style="font-size:1rem;font-weight:800;text-align:center;margin-bottom:12px">Edit Website</h1>
+<div class="card"><h2>Quick Edit (Command)</h2><p style="font-size:.65rem;color:#64748b;margin-bottom:8px">e.g. "change headline to Grand Opening"</p><textarea id="aiCmd" rows="2" placeholder="Type what to change..."></textarea><button class="btn" style="background:#6366f1;color:#fff" onclick="aiEdit()">Apply</button><p id="aiSt" style="font-size:.65rem;color:#94a3b8;margin-top:6px"></p></div>
+<div class="card"><h2>Hero</h2><label>Headline</label><input id="ht" value="{hero_title}"><label>Subtitle</label><input id="hs" value="{hero_subtitle}"></div>
+<div class="card"><h2>About</h2><textarea id="ab" rows="3">{about[:300]}</textarea></div>
+<div class="card"><h2>Contact</h2><label>Phone</label><input id="ph" value="{phone}"><label>Email</label><input id="em" value="{email}"><label>Address</label><input id="ad" value="{address}"><label>Hours</label><input id="hr" value="{hours}"></div>
+<button class="btn" style="background:#22c55e;color:#fff;margin-top:8px" onclick="saveAll()">Save All Changes</button>
+<p id="saveSt" style="font-size:.7rem;color:#22c55e;text-align:center;margin-top:8px"></p>
+<script>
+async function aiEdit(){{var cmd=document.getElementById("aiCmd").value;if(!cmd)return;document.getElementById("aiSt").textContent="Applying...";try{{var r=await fetch("/api/panel/{website_id}/ai-edit",{{method:"POST",headers:{{"Content-Type":"application/json"}},body:JSON.stringify({{command:cmd}})}});var d=await r.json();document.getElementById("aiSt").textContent=d.status==="updated"?"Done! Refresh site.":"Failed";}}catch(e){{document.getElementById("aiSt").textContent="Error";}}}}
+async function saveAll(){{var data={{hero_title:document.getElementById("ht").value,hero_subtitle:document.getElementById("hs").value,about:document.getElementById("ab").value,phone:document.getElementById("ph").value,email:document.getElementById("em").value,address:document.getElementById("ad").value,hours:document.getElementById("hr").value}};try{{var r=await fetch("/api/panel/{website_id}/save-edit",{{method:"POST",headers:{{"Content-Type":"application/json"}},body:JSON.stringify(data)}});var d=await r.json();document.getElementById("saveSt").textContent=d.status==="saved"?"Saved!":"Failed";}}catch(e){{document.getElementById("saveSt").textContent="Error";}}}}
+</script></body></html>"""
+    return HTMLResponse(content=html)
+
+
+@router.post("/{website_id}/ai-edit")
+async def ai_edit_website(website_id: str, data: dict):
+    """Apply AI edit command to website."""
+    from app.core.supabase import get_supabase
+    from app.core.llm import chat_completion
+    import json
+    db = get_supabase()
+    service = WebsiteService()
+    website = service.get(website_id)
+    if not website:
+        return {"status": "error"}
+    content = website.get("content", {}) or {}
+    command = data.get("command", "")
+    prompt = f"Edit website content. Current: hero_title={content.get('hero_title','')}, hero_subtitle={content.get('hero_subtitle','')}, about={content.get('about','')[:80]}. Command: {command}. Return ONLY changed fields as JSON."
+    try:
+        raw = await chat_completion([{"role": "user", "content": prompt}])
+        cleaned = raw.strip()
+        if "```" in cleaned: cleaned = cleaned.split("```")[1].split("```")[0]
+        if cleaned.startswith("json"): cleaned = cleaned[4:]
+        updates = json.loads(cleaned.strip())
+        for k, v in updates.items():
+            content[k] = v
+        db.table("websites").update({"content": content}).eq("id", website_id).execute()
+        return {"status": "updated"}
+    except Exception:
+        return {"status": "error"}
+
+
+@router.post("/{website_id}/save-edit")
+async def save_manual_edit(website_id: str, data: dict):
+    """Save manual edits."""
+    from app.core.supabase import get_supabase
+    db = get_supabase()
+    service = WebsiteService()
+    website = service.get(website_id)
+    if not website:
+        return {"status": "error"}
+    content = website.get("content", {}) or {}
+    if data.get("hero_title"): content["hero_title"] = data["hero_title"]
+    if data.get("hero_subtitle"): content["hero_subtitle"] = data["hero_subtitle"]
+    if data.get("about"): content["about"] = data["about"]
+    contact = content.get("contact_info", {})
+    if data.get("phone"): contact["phone"] = data["phone"]
+    if data.get("email"): contact["email"] = data["email"]
+    if data.get("address"): contact["address"] = data["address"]
+    if data.get("hours"): contact["hours"] = data["hours"]
+    content["contact_info"] = contact
+    try:
+        db.table("websites").update({"content": content}).eq("id", website_id).execute()
+        return {"status": "saved"}
+    except Exception:
+        return {"status": "error"}
