@@ -626,6 +626,11 @@ def generate_html(content: dict, template: str, lead: dict = None, website_id_ov
     seo_title = f"{seo_title} | Powered by City Maps"
     business_name = lead.get("business_name", hero_title) if lead else hero_title
     whatsapp_num = phone.replace("-", "").replace(" ", "").replace("+", "") if phone else ""
+    # Ensure proper format for wa.me (needs country code, no leading 0)
+    if whatsapp_num:
+        whatsapp_num = whatsapp_num.lstrip("0")
+        if not whatsapp_num.startswith("91"):
+            whatsapp_num = "91" + whatsapp_num
     short_name = business_name.split()[0] if business_name else "Biz"
     maps_url = get_maps_embed(address, business_name)
     dir_url = "https://www.google.com/maps/dir/?api=1&destination=" + urllib.parse.quote(address) if address else "#"
