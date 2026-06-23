@@ -1199,8 +1199,9 @@ async def update_stock(website_id: str, data: dict):
 
 @router.get("/{website_id}/edit-site", response_class=HTMLResponse)
 def edit_site_page(website_id: str):
-    """AI Website Editor."""
+    """Full AI Website Editor - edit all sections."""
     from app.core.supabase import get_supabase
+    import json as _json
     db = get_supabase()
     service = WebsiteService()
     lead_service = LeadService()
@@ -1210,29 +1211,218 @@ def edit_site_page(website_id: str):
     lead = lead_service.get(website["lead_id"]) if website.get("lead_id") else None
     business_name = lead.get("business_name", "Business") if lead else "Business"
     content = website.get("content", {}) or {}
-    hero_title = content.get("hero_title", "")
-    hero_subtitle = content.get("hero_subtitle", "")
-    about = content.get("about", "")
-    contact = content.get("contact_info", {})
-    phone = contact.get("phone", lead.get("phone","") if lead else "")
-    email = contact.get("email", "")
-    address = contact.get("address", lead.get("address","") if lead else "")
-    hours = contact.get("hours", "Mon-Sat: 9 AM - 8 PM")
+    content_json = _json.dumps(content, ensure_ascii=False)
 
-    html = f"""<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"><title>Edit - {business_name}</title><style>*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:12px;max-width:500px;margin:0 auto}}input,textarea{{font-size:16px!important;width:100%;padding:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;margin-bottom:8px;outline:none}}.card{{background:rgba(255,255,255,.03);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px;margin-bottom:10px}}.card h2{{font-size:.8rem;font-weight:700;margin-bottom:8px}}.btn{{width:100%;padding:11px;border:none;border-radius:10px;font-weight:700;font-size:.82rem;cursor:pointer}}label{{font-size:.68rem;color:#94a3b8;margin-bottom:3px;display:block}}</style></head><body>
-<h1 style="font-size:1rem;font-weight:800;text-align:center;margin-bottom:12px">Edit Website</h1>
-<div class="card"><h2>Quick Edit (Command)</h2><p style="font-size:.65rem;color:#64748b;margin-bottom:8px">e.g. "change headline to Grand Opening"</p><textarea id="aiCmd" rows="2" placeholder="Type what to change..."></textarea><button class="btn" style="background:#6366f1;color:#fff" onclick="aiEdit()">Apply</button><p id="aiSt" style="font-size:.65rem;color:#94a3b8;margin-top:6px"></p></div>
-<div class="card"><h2>Hero</h2><label>Headline</label><input id="ht" value="{hero_title}"><label>Subtitle</label><input id="hs" value="{hero_subtitle}"></div>
-<div class="card"><h2>About</h2><textarea id="ab" rows="3">{about[:300]}</textarea></div>
-<div class="card"><h2>Contact</h2><label>Phone</label><input id="ph" value="{phone}"><label>Email</label><input id="em" value="{email}"><label>Address</label><input id="ad" value="{address}"><label>Hours</label><input id="hr" value="{hours}"></div>
-<button class="btn" style="background:#22c55e;color:#fff;margin-top:8px" onclick="saveAll()">Save All Changes</button>
-<p id="saveSt" style="font-size:.7rem;color:#22c55e;text-align:center;margin-top:8px"></p>
-<script>
-async function aiEdit(){{var cmd=document.getElementById("aiCmd").value;if(!cmd)return;document.getElementById("aiSt").textContent="Applying...";try{{var r=await fetch("/api/panel/{website_id}/ai-edit",{{method:"POST",headers:{{"Content-Type":"application/json"}},body:JSON.stringify({{command:cmd}})}});var d=await r.json();document.getElementById("aiSt").textContent=d.status==="updated"?"Done! Refresh site.":"Failed";}}catch(e){{document.getElementById("aiSt").textContent="Error";}}}}
-async function saveAll(){{var data={{hero_title:document.getElementById("ht").value,hero_subtitle:document.getElementById("hs").value,about:document.getElementById("ab").value,phone:document.getElementById("ph").value,email:document.getElementById("em").value,address:document.getElementById("ad").value,hours:document.getElementById("hr").value}};try{{var r=await fetch("/api/panel/{website_id}/save-edit",{{method:"POST",headers:{{"Content-Type":"application/json"}},body:JSON.stringify(data)}});var d=await r.json();document.getElementById("saveSt").textContent=d.status==="saved"?"Saved!":"Failed";}}catch(e){{document.getElementById("saveSt").textContent="Error";}}}}
-</script></body></html>"""
+    html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"><title>Edit - ' + business_name + '</title>'
+    html += '<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:sans-serif;background:#0f172a;color:#fff;padding:12px;max-width:600px;margin:0 auto;padding-bottom:80px}input,textarea,select{font-size:16px!important;width:100%;padding:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;margin-bottom:6px;outline:none;font-family:inherit}textarea{resize:vertical;min-height:60px}.card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px;margin-bottom:10px}.card h2{font-size:.82rem;font-weight:700;margin-bottom:8px;color:#a78bfa}.btn{width:100%;padding:11px;border:none;border-radius:10px;font-weight:700;font-size:.82rem;cursor:pointer}.btn-primary{background:#6366f1;color:#fff}.btn-save{background:#22c55e;color:#fff}label{font-size:.68rem;color:#94a3b8;margin-bottom:2px;display:block}.svc-item,.test-item,.faq-item{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);border-radius:10px;padding:10px;margin-bottom:8px;position:relative}.del-btn{position:absolute;top:6px;right:8px;background:none;border:none;color:#ef4444;cursor:pointer;font-size:.8rem}.row{display:grid;grid-template-columns:1fr 1fr;gap:6px}.status{text-align:center;padding:8px;font-size:.75rem;margin-top:8px;border-radius:8px}.tabs{display:flex;gap:4px;margin-bottom:12px;overflow-x:auto;padding-bottom:4px}.tab{padding:6px 12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;font-size:.68rem;cursor:pointer;white-space:nowrap;color:#94a3b8}.tab.active{background:#6366f1;color:#fff;border-color:#6366f1}.section{display:none}.section.active{display:block}</style></head><body>'
+    html += '<h1 style="font-size:1rem;font-weight:800;text-align:center;margin-bottom:4px">Edit Website</h1>'
+    html += '<p style="font-size:.68rem;color:#64748b;text-align:center;margin-bottom:12px">' + business_name + '</p>'
+
+    # AI Command
+    html += '<div class="card"><h2>AI Quick Edit</h2><p style="font-size:.62rem;color:#64748b;margin-bottom:6px">e.g. "translate entire site to Hindi" or "add new service Catering"</p><textarea id="aiCmd" rows="2" placeholder="Type command..."></textarea><button class="btn btn-primary" onclick="aiEdit()">Apply with AI</button><p id="aiStatus" style="font-size:.65rem;color:#94a3b8;margin-top:4px"></p></div>'
+
+    # Tabs
+    html += '<div class="tabs"><div class="tab active" onclick="showTab(\'hero\')">Hero</div><div class="tab" onclick="showTab(\'about\')">About</div><div class="tab" onclick="showTab(\'services\')">Services</div><div class="tab" onclick="showTab(\'testimonials\')">Reviews</div><div class="tab" onclick="showTab(\'contact\')">Contact</div><div class="tab" onclick="showTab(\'faq\')">FAQ</div><div class="tab" onclick="showTab(\'seo\')">SEO</div></div>'
+
+    # Sections will be rendered by JS from the content JSON
+    html += '<div id="editor"></div>'
+    html += '<button class="btn btn-save" style="margin-top:12px" onclick="saveAll()">Save All Changes</button>'
+    html += '<div id="saveStatus" class="status"></div>'
+
+    html += '<script>var WID="' + website_id + '";var siteContent=' + content_json + ';var activeTab="hero";'
+    html += r'''
+function showTab(t){activeTab=t;document.querySelectorAll(".tab").forEach(function(el){el.classList.remove("active")});event.target.classList.add("active");renderEditor()}
+
+function renderEditor(){
+  var c=siteContent;var h="";
+  if(activeTab==="hero"){
+    h+='<div class="card"><h2>Hero Section</h2>';
+    h+='<label>Headline</label><input id="hero_title" value="'+(c.hero_title||"").replace(/"/g,"&quot;")+'">';
+    h+='<label>Subtitle</label><textarea id="hero_subtitle">'+(c.hero_subtitle||"")+'</textarea>';
+    h+='<label>Offer Badge</label><input id="hero_offer" value="'+(c.hero_offer||"").replace(/"/g,"&quot;")+'">';
+    h+='<label>CTA Button Text</label><input id="cta_text" value="'+(c.cta_text||"").replace(/"/g,"&quot;")+'">';
+    h+='<label>Secondary CTA</label><input id="cta_secondary" value="'+(c.cta_secondary||"").replace(/"/g,"&quot;")+'">';
+    h+='</div>';
+  }
+  else if(activeTab==="about"){
+    h+='<div class="card"><h2>About Section</h2>';
+    h+='<textarea id="about" rows="5">'+(c.about||"")+'</textarea>';
+    h+='</div>';
+    h+='<div class="card"><h2>Why Choose Us</h2>';
+    h+='<textarea id="why_choose_us" rows="3">'+(c.why_choose_us||"")+'</textarea>';
+    h+='</div>';
+  }
+  else if(activeTab==="services"){
+    h+='<div class="card"><h2>Services ('+((c.services||[]).length)+')</h2>';
+    (c.services||[]).forEach(function(s,i){
+      h+='<div class="svc-item"><button class="del-btn" onclick="delService('+i+')">x</button>';
+      h+='<div class="row"><div><label>Name</label><input class="svc-name" value="'+(s.name||"").replace(/"/g,"&quot;")+'"></div><div><label>Icon</label><input class="svc-icon" value="'+(s.icon||"")+'"></div></div>';
+      h+='<label>Description</label><textarea class="svc-desc" rows="2">'+(s.description||"")+'</textarea></div>';
+    });
+    h+='<button class="btn btn-primary" style="margin-top:6px;padding:8px;font-size:.72rem" onclick="addService()">+ Add Service</button></div>';
+  }
+  else if(activeTab==="testimonials"){
+    h+='<div class="card"><h2>Testimonials ('+((c.testimonials||[]).length)+')</h2>';
+    (c.testimonials||[]).forEach(function(t,i){
+      h+='<div class="test-item"><button class="del-btn" onclick="delTestimonial('+i+')">x</button>';
+      h+='<div class="row"><div><label>Name</label><input class="test-name" value="'+(t.name||"").replace(/"/g,"&quot;")+'"></div><div><label>Rating</label><input class="test-rating" type="number" min="1" max="5" value="'+(t.rating||5)+'"></div></div>';
+      h+='<label>Review</label><textarea class="test-text" rows="2">'+(t.text||t.comment||"")+'</textarea></div>';
+    });
+    h+='<button class="btn btn-primary" style="margin-top:6px;padding:8px;font-size:.72rem" onclick="addTestimonial()">+ Add Testimonial</button></div>';
+  }
+  else if(activeTab==="contact"){
+    var ci=c.contact_info||{};
+    h+='<div class="card"><h2>Contact Info</h2>';
+    h+='<label>Phone</label><input id="ci_phone" value="'+(ci.phone||"").replace(/"/g,"&quot;")+'">';
+    h+='<label>Email</label><input id="ci_email" value="'+(ci.email||"").replace(/"/g,"&quot;")+'">';
+    h+='<label>Address</label><input id="ci_address" value="'+(ci.address||"").replace(/"/g,"&quot;")+'">';
+    h+='<label>Hours</label><input id="ci_hours" value="'+(ci.hours||"").replace(/"/g,"&quot;")+'">';
+    h+='</div>';
+  }
+  else if(activeTab==="faq"){
+    h+='<div class="card"><h2>FAQ ('+((c.faq||[]).length)+')</h2>';
+    (c.faq||[]).forEach(function(f,i){
+      h+='<div class="faq-item"><button class="del-btn" onclick="delFaq('+i+')">x</button>';
+      h+='<label>Question</label><input class="faq-q" value="'+(f.question||"").replace(/"/g,"&quot;")+'">';
+      h+='<label>Answer</label><textarea class="faq-a" rows="2">'+(f.answer||"")+'</textarea></div>';
+    });
+    h+='<button class="btn btn-primary" style="margin-top:6px;padding:8px;font-size:.72rem" onclick="addFaq()">+ Add FAQ</button></div>';
+  }
+  else if(activeTab==="seo"){
+    h+='<div class="card"><h2>SEO Settings</h2>';
+    h+='<label>SEO Title</label><input id="seo_title" value="'+(c.seo_title||"").replace(/"/g,"&quot;")+'">';
+    h+='<label>SEO Description</label><textarea id="seo_description" rows="2">'+(c.seo_description||"")+'</textarea>';
+    h+='<label>SEO Keywords</label><input id="seo_keywords" value="'+(c.seo_keywords||"").replace(/"/g,"&quot;")+'">';
+    h+='</div>';
+  }
+  document.getElementById("editor").innerHTML=h;
+}
+
+function collectData(){
+  var c=siteContent;
+  if(activeTab==="hero"){
+    c.hero_title=document.getElementById("hero_title").value;
+    c.hero_subtitle=document.getElementById("hero_subtitle").value;
+    c.hero_offer=document.getElementById("hero_offer").value;
+    c.cta_text=document.getElementById("cta_text").value;
+    c.cta_secondary=document.getElementById("cta_secondary").value;
+  }else if(activeTab==="about"){
+    c.about=document.getElementById("about").value;
+    c.why_choose_us=document.getElementById("why_choose_us").value;
+  }else if(activeTab==="services"){
+    var names=document.querySelectorAll(".svc-name");
+    var icons=document.querySelectorAll(".svc-icon");
+    var descs=document.querySelectorAll(".svc-desc");
+    c.services=[];
+    for(var i=0;i<names.length;i++){c.services.push({name:names[i].value,icon:icons[i].value,description:descs[i].value,tags:[]});}
+  }else if(activeTab==="testimonials"){
+    var tnames=document.querySelectorAll(".test-name");
+    var tratings=document.querySelectorAll(".test-rating");
+    var ttexts=document.querySelectorAll(".test-text");
+    c.testimonials=[];
+    for(var i=0;i<tnames.length;i++){c.testimonials.push({name:tnames[i].value,rating:parseInt(tratings[i].value)||5,text:ttexts[i].value});}
+  }else if(activeTab==="contact"){
+    c.contact_info={phone:document.getElementById("ci_phone").value,email:document.getElementById("ci_email").value,address:document.getElementById("ci_address").value,hours:document.getElementById("ci_hours").value};
+  }else if(activeTab==="faq"){
+    var qs=document.querySelectorAll(".faq-q");
+    var as2=document.querySelectorAll(".faq-a");
+    c.faq=[];
+    for(var i=0;i<qs.length;i++){c.faq.push({question:qs[i].value,answer:as2[i].value});}
+  }else if(activeTab==="seo"){
+    c.seo_title=document.getElementById("seo_title").value;
+    c.seo_description=document.getElementById("seo_description").value;
+    c.seo_keywords=document.getElementById("seo_keywords").value;
+  }
+  siteContent=c;
+}
+
+function addService(){collectData();siteContent.services=siteContent.services||[];siteContent.services.push({name:"New Service",icon:"",description:"",tags:[]});renderEditor()}
+function delService(i){collectData();siteContent.services.splice(i,1);renderEditor()}
+function addTestimonial(){collectData();siteContent.testimonials=siteContent.testimonials||[];siteContent.testimonials.push({name:"Customer",rating:5,text:""});renderEditor()}
+function delTestimonial(i){collectData();siteContent.testimonials.splice(i,1);renderEditor()}
+function addFaq(){collectData();siteContent.faq=siteContent.faq||[];siteContent.faq.push({question:"",answer:""});renderEditor()}
+function delFaq(i){collectData();siteContent.faq.splice(i,1);renderEditor()}
+
+async function saveAll(){
+  collectData();
+  document.getElementById("saveStatus").innerHTML="Saving...";
+  try{
+    var r=await fetch("/api/panel/"+WID+"/save-full",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({content:siteContent})});
+    var d=await r.json();
+    document.getElementById("saveStatus").innerHTML=d.status==="saved"?'<span style="color:#22c55e">Saved! Refresh your website to see changes.</span>':'<span style="color:#ef4444">Failed to save</span>';
+  }catch(e){document.getElementById("saveStatus").innerHTML='<span style="color:#ef4444">Error saving</span>';}
+}
+
+async function aiEdit(){
+  var cmd=document.getElementById("aiCmd").value;if(!cmd)return;
+  document.getElementById("aiStatus").textContent="Applying AI edit to entire site...";
+  try{
+    var r=await fetch("/api/panel/"+WID+"/ai-edit-full",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({command:cmd,content:siteContent})});
+    var d=await r.json();
+    if(d.status==="updated"&&d.content){siteContent=d.content;renderEditor();document.getElementById("aiStatus").innerHTML='<span style="color:#22c55e">Done! Review changes and click Save.</span>';}
+    else{document.getElementById("aiStatus").innerHTML='<span style="color:#ef4444">Failed</span>';}
+  }catch(e){document.getElementById("aiStatus").innerHTML='<span style="color:#ef4444">Error</span>';}
+}
+
+renderEditor();
+'''
+    html += '</script></body></html>'
     return HTMLResponse(content=html)
 
+
+@router.post("/{website_id}/save-full")
+async def save_full_content(website_id: str, data: dict):
+    """Save full website content from the editor."""
+    from app.core.supabase import get_supabase
+    db = get_supabase()
+    new_content = data.get("content", {})
+    if not new_content:
+        return {"status": "error", "message": "No content"}
+    try:
+        db.table("websites").update({"content": new_content}).eq("id", website_id).execute()
+        return {"status": "saved"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)[:100]}
+
+
+@router.post("/{website_id}/ai-edit-full")
+async def ai_edit_full_website(website_id: str, data: dict):
+    """Apply AI edit command to ALL website content."""
+    from app.core.llm import chat_completion
+    import json
+    command = data.get("command", "")
+    current_content = data.get("content", {})
+    if not command:
+        return {"status": "error"}
+
+    # Build a prompt that edits the full content
+    content_str = json.dumps(current_content, ensure_ascii=False, indent=None)[:3000]
+    prompt = f"""You are a website content editor. Edit the following website JSON content based on this command: "{command}"
+
+IMPORTANT RULES:
+- Keep the EXACT same JSON structure (same keys, same format)
+- Only change the values, never add/remove keys unless the command asks to add a service/testimonial/faq
+- If command says "translate to Hindi" - translate ALL text values to Hindi
+- If command says "add service X" - add to the services array
+- Return the COMPLETE updated JSON (not just changed fields)
+- Do NOT add markdown formatting or code blocks - return pure JSON only
+
+Current content:
+{content_str}
+
+Return the FULL updated JSON:"""
+
+    try:
+        raw = await chat_completion([{"role": "user", "content": prompt}])
+        cleaned = raw.strip()
+        if "```" in cleaned:
+            cleaned = cleaned.split("```")[1].split("```")[0]
+            if cleaned.startswith("json"):
+                cleaned = cleaned[4:]
+        updated = json.loads(cleaned.strip())
+        return {"status": "updated", "content": updated}
+    except Exception:
+        return {"status": "error"}
 
 @router.post("/{website_id}/ai-edit")
 async def ai_edit_website(website_id: str, data: dict):
