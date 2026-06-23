@@ -685,7 +685,7 @@ function ask(preset){{
   chat.scrollTop=chat.scrollHeight;
   fetch("/api/panel/{website_id}/assistant-ask",{{method:"POST",headers:{{"Content-Type":"application/json"}},body:JSON.stringify({{question:q}})}}).then(r=>r.json()).then(d=>{{
     document.getElementById("typing").remove();
-    chat.innerHTML+='<div class="msg msg-bot">'+d.answer.replace(/\n/g,'<br>')+'</div>';
+    chat.innerHTML+='<div class="msg msg-bot">'+d.answer.split(String.fromCharCode(10)).join('<br>')+'</div>';
     chat.scrollTop=chat.scrollHeight;
   }}).catch(()=>{{document.getElementById("typing").textContent="Error. Try again.";}});
 }}
