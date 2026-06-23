@@ -123,9 +123,17 @@ export default function AdminPage() {
           <div className="text-xs bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full font-medium">
             {organizations.length} Organizations | {modules.length} Modules
           </div>
-          <a href="/admin/create" className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 text-white rounded-lg text-xs font-medium hover:bg-indigo-700 transition">
-            <Plus className="w-3.5 h-3.5" /> New Organization
-          </a>
+          <div className="flex items-center gap-2">
+            <a href="https://ai-agency-platform.onrender.com/api/admin/manage?pwd=kalpdev2024" target="_blank" className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-700 text-white rounded-lg text-xs font-medium hover:bg-slate-800 transition">
+              Admin Panel
+            </a>
+            <a href="https://ai-agency-platform.onrender.com/api/admin/voice-calls?pwd=kalpdev2024" target="_blank" className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-600 text-white rounded-lg text-xs font-medium hover:bg-purple-700 transition">
+              Voice Calls
+            </a>
+            <a href="/admin/create" className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 text-white rounded-lg text-xs font-medium hover:bg-indigo-700 transition">
+              <Plus className="w-3.5 h-3.5" /> New Organization
+            </a>
+          </div>
 
         </div>
       </header>
