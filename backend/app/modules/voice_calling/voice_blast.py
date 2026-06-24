@@ -47,8 +47,7 @@ def generate_hindi_script(business_name: str, owner_name: str = "", category: st
 
 
 async def generate_tts_audio(text: str, speed: float = 1.3, lang: str = 'hi') -> str:
-    """Generate Hindi TTS audio using gTTS and return the public URL."""
-    from gtts import gTTS
+    """Generate Hindi TTS audio using Sarvam AI (natural Indian voice) with gTTS fallback."""
     
     # Create a hash-based filename for caching
     text_hash = hashlib.md5(f'{text}_{speed}_{lang}'.encode()).hexdigest()[:12]
@@ -60,11 +59,49 @@ async def generate_tts_audio(text: str, speed: float = 1.3, lang: str = 'hi') ->
         return f"{BACKEND_URL}/static/audio/{filename}"
     
     os.makedirs("/app/static/audio", exist_ok=True)
+    
+    # Try Sarvam AI first (best Hindi voice)
+    sarvam_key = os.environ.get("SARVAM_API_KEY", "")
+    if sarvam_key:
+        try:
+            lang_map = {"hi": "hi-IN", "mr": "mr-IN", "ta": "ta-IN", "te": "te-IN", "bn": "bn-IN", "gu": "gu-IN", "en": "en-IN"}
+            sarvam_lang = lang_map.get(lang, "hi-IN")
+            
+            async with httpx.AsyncClient(timeout=30) as client:
+                response = await client.post(
+                    "https://api.sarvam.ai/text-to-speech",
+                    headers={
+                        "api-subscription-key": sarvam_key,
+                        "Content-Type": "application/json",
+                    },
+                    json={
+                        "inputs": [text],
+                        "target_language_code": sarvam_lang,
+                        "speaker": "meera",
+                        "model": "bulbul:v2",
+                        "speech_sample_rate": 22050,
+                        "enable_preprocessing": True,
+                        "pace": speed,
+                    },
+                )
+                if response.status_code == 200:
+                    import base64
+                    data = response.json()
+                    audio_b64 = data.get("audios", [None])[0]
+                    if audio_b64:
+                        audio_bytes = base64.b64decode(audio_b64)
+                        with open(filepath, "wb") as f:
+                            f.write(audio_bytes)
+                        return f"{BACKEND_URL}/static/audio/{filename}"
+        except Exception:
+            pass  # Fall through to gTTS
+    
+    # Fallback to gTTS
+    from gtts import gTTS
     import subprocess
     temp_path = filepath + ".tmp.mp3"
     tts = gTTS(text=text, lang=lang, slow=False)
     tts.save(temp_path)
-    # Speed up audio 1.3x using ffmpeg
     try:
         subprocess.run(
             ['ffmpeg', '-y', '-i', temp_path, '-filter:a', f'atempo={speed}', filepath],
@@ -72,7 +109,6 @@ async def generate_tts_audio(text: str, speed: float = 1.3, lang: str = 'hi') ->
         )
         os.remove(temp_path)
     except Exception:
-        # If ffmpeg not available, use original speed
         if os.path.exists(temp_path):
             os.rename(temp_path, filepath)
     
