@@ -11,3 +11,5 @@ apscheduler>=3.10.0
 replicate>=0.25.0
 
 huggingface_hub
+
+gTTS==2.5.4

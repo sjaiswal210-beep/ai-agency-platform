@@ -1,4 +1,4 @@
-﻿# CITY MAPS PLATFORM - PROJECT SUMMARY
+# CITY MAPS PLATFORM - PROJECT SUMMARY
 Last Updated: June 22, 2026
 
 ## PLATFORM OVERVIEW
@@ -49,3 +49,50 @@ SUPABASE_URL, SUPABASE_SERVICE_KEY, GEMINI_API_KEY, REPLICATE_TOKEN, HF_TOKEN, F
 - 50 businesses: Rs.1,450 revenue / Rs.67 cost = Rs.1,383 profit
 - 500 businesses: Rs.14,500 / Rs.2,700 = Rs.11,800 profit
 - 10,000 businesses: Rs.2,90,000 / Rs.17,000 = Rs.2,73,000 profit (94% margin)
+
+
+## VOICE CALLING (DOGRAH AI - Self-Hosted)
+- VPS: Contabo (147.93.169.183)
+- Domain: https://voice.city-maps.online
+- Dograh Version: 1.37.0 (OSS)
+- Login: admin@citymaps.online / CityMaps2024!
+- Org ID (Dograh): 7
+- Workflow ID: 8, UUID: cm-hindi-sales-2024-v1
+- Agent: CityMaps Hindi Sales (Priya)
+
+### Telephony
+- Provider: Vobiz
+- Auth ID: MA_PSCVLCX4
+- Phone: +918071579115
+- Vobiz App ID: 21975348680562462
+- Answer URL (in Vobiz App): https://voice.city-maps.online/api/v1/telephony/vobiz-xml
+
+### AI Stack (Dograh Built-in - Free)
+- STT: Dograh built-in (multilingual)
+- TTS: Dograh built-in (default voice)
+- LLM: Dograh built-in (uses OSS key)
+- Language: Hindi (prompts in Hinglish)
+
+### External Keys Available
+- Deepgram API: da29097e0c0919ebb8317a16c7ba22fa925c724b
+- Gemini API: AIzaSyAqAlr4lvE4kSWuvtubUpYbSG3VAdYuUXc
+
+### Status
+- Dashboard login: WORKING
+- Call initiation: WORKING
+- Audio stream connection: WORKING (WebSocket connects)
+- AI voice output: ISSUE - "Failed to write audio frame" 
+- Browser test: WORKING (WebRTC)
+- Phone test: Call connects but no AI voice heard
+
+### Known Issue
+- Dograh TTS generates audio but WebSocket output to Vobiz fails
+- Likely Vobiz WebSocket timing/format issue
+- Needs investigation: Vobiz stream may need specific format or faster TTS
+
+### City Maps Backend Integration
+- voice_call_config in Supabase points to Dograh VPS
+- provider: dograh (auto-detected from key prefix)
+- dograh_base_url: https://voice.city-maps.online
+- bolna_agent_id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+- Backend code (router.py) updated for correct Dograh API format

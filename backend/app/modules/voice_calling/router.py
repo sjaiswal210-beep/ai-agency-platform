@@ -19,10 +19,10 @@ def get_provider_config(config: dict) -> dict:
     api_key = config.get("bolna_api_key", "")
     
     if provider == "dograh":
-        base_url = config.get("dograh_base_url", "").rstrip("/")
+        base_url = config.get("dograh_base_url", "https://app.dograh.com").rstrip("/")
         return {
             "base_url": f"{base_url}/api/v1",
-            "headers": {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+            "headers": {"X-API-Key": api_key, "Content-Type": "application/json"},
             "provider": "dograh"
         }
     else:
@@ -41,7 +41,17 @@ async def get_voice_config(org_id: str = None):
         result = db.table("voice_call_config").select("*").eq("is_active", True).limit(1).single().execute()
     if not result.data:
         raise HTTPException(404, "Voice calling not configured. Add API key first.")
-    return result.data
+    config = result.data
+    # Auto-detect Dograh provider if column missing or not set
+    if not config.get("provider"):
+        if config.get("bolna_api_key", "").startswith("dograh_"):
+            config["provider"] = "dograh"
+            config["dograh_base_url"] = "https://voice.city-maps.online"
+        else:
+            config["provider"] = "bolna"
+    elif config.get("provider") == "dograh" and not config.get("dograh_base_url"):
+        config["dograh_base_url"] = "https://voice.city-maps.online"
+    return config
 
 
 def clean_phone(phone: str) -> str:
@@ -68,13 +78,14 @@ async def make_provider_call(config: dict, phone: str, user_data: dict) -> dict:
     clean_number = clean_phone(phone)
     
     if prov["provider"] == "dograh":
-        # Dograh API format
+        # Dograh API format - uses workflow UUID in URL path
+        agent_id = config.get("bolna_agent_id", "")
         call_payload = {
-            "agent_id": config.get("bolna_agent_id", ""),
             "phone_number": clean_number,
-            "variables": user_data,
+            "initial_context": user_data,
         }
-        endpoint = f"{prov['base_url']}/calls/create"
+        # Use the agent/workflow UUID endpoint
+        endpoint = f"{prov['base_url']}/public/agent/workflow/{agent_id}"
     else:
         # Bolna API format
         call_payload = {
@@ -99,10 +110,20 @@ async def make_provider_call(config: dict, phone: str, user_data: dict) -> dict:
     except Exception as e:
         raise HTTPException(500, f"Call failed: {str(e)[:200]}")
     
-    # Normalize response
-    execution_id = result.get("execution_id") or result.get("call_id") or result.get("id")
+    # Normalize response - Dograh returns workflow_run_id and status
+    execution_id = (
+        result.get("execution_id") or 
+        result.get("workflow_run_id") or 
+        result.get("call_id") or 
+        result.get("id")
+    )
     status = result.get("status", "queued")
-    return {"execution_id": execution_id, "status": status}
+    # Map Dograh status to our internal format
+    if status == "pending":
+        status = "queued"
+    elif status == "in_progress":
+        status = "in_progress"
+    return {"execution_id": str(execution_id) if execution_id else None, "status": status}
 
 
 # ============ CONFIG ENDPOINTS ============
@@ -278,7 +299,10 @@ async def voice_webhook(request: Request):
     db = get_supabase()
     payload = await request.json()
     
-    execution_id = payload.get("execution_id") or payload.get("call_id") or payload.get("id")
+    execution_id = payload.get("execution_id") or payload.get("workflow_run_id") or payload.get("call_id") or payload.get("id")
+    # Convert to string for matching (Dograh returns int workflow_run_id)
+    if execution_id is not None:
+        execution_id = str(execution_id)
     if not execution_id:
         return {"status": "ignored", "reason": "no execution_id"}
     

@@ -83,6 +83,7 @@ from app.modules.projects.router import router as projects_router
 from app.modules.documents.router import router as documents_router
 from app.modules.ai_employee.router import router as ai_employee_router
 from app.modules.voice_calling.router import router as voice_calling_router
+from app.modules.voice_calling.voice_blast import router as voice_blast_router
 from app.api.routes.voice_admin import router as voice_admin_router
 from app.api.routes.invoice_pdf import router as invoice_pdf_router
 from app.api.routes.cron_jobs import router as cron_router
@@ -332,6 +333,13 @@ app.include_router(projects_router)
 app.include_router(documents_router)
 app.include_router(ai_employee_router)
 app.include_router(voice_calling_router)
+app.include_router(voice_blast_router)
+
+# Serve static audio files for voice blast
+from fastapi.staticfiles import StaticFiles
+import os
+os.makedirs('static/audio', exist_ok=True)
+app.mount('/static', StaticFiles(directory='static'), name='static')
 app.include_router(voice_admin_router)
 app.include_router(invoice_pdf_router)
 app.include_router(cron_router)
@@ -1174,7 +1182,7 @@ async def full_health_check():
     rows = ""
     for r in results:
         color = "#22c55e" if r["status"] == "ok" else "#ef4444"
-        rows += f'<tr><td style="padding:8px;font-size:.78rem">{r["name"]}</td><td style="padding:8px"><span style="color:{color};font-weight:700;font-size:.75rem">{"ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ" if r["status"]=="ok" else "ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â"} {r["code"]}</span></td><td style="padding:8px;font-size:.72rem;color:#64748b">{r.get("ms","")}ms</td></tr>'
+        rows += f'<tr><td style="padding:8px;font-size:.78rem">{r["name"]}</td><td style="padding:8px"><span style="color:{color};font-weight:700;font-size:.75rem">{"ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ" if r["status"]=="ok" else "ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â"} {r["code"]}</span></td><td style="padding:8px;font-size:.72rem;color:#64748b">{r.get("ms","")}ms</td></tr>'
     
     html = f'''<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"><title>Health Check</title><style>*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:sans-serif;background:#0f172a;color:#fff;padding:16px;max-width:600px;margin:0 auto}}table{{width:100%;border-collapse:collapse;background:#1e293b;border-radius:10px;overflow:hidden;margin-top:16px}}th{{text-align:left;padding:10px;font-size:.7rem;color:#64748b;border-bottom:1px solid #334155}}tr:hover{{background:#334155}}</style></head><body>
 <h1 style="font-size:1.2rem">{ok}/{total} Features Working</h1>
