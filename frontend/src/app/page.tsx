@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 const API_BASE = "https://ai-agency-platform.onrender.com";
 
@@ -175,6 +175,7 @@ export default function Dashboard() {
             <p className="text-xs text-slate-300">Your City Maps Admin Automation Platform</p>
           </div>
           <div className="flex items-center gap-3">
+            <a href="https://ai-agency-platform.onrender.com/api/admin/voice-blast?pwd=kalpdev2024" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium text-orange-400 hover:bg-orange-500/10 border border-orange-500/30 transition"><Phone className="w-3.5 h-3.5" />Voice Blast</a>
             <button className="p-2 hover:bg-white/5 rounded-lg relative">
               <Bell className="w-4 h-4 text-slate-300" />
               <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full pulse-dot"></span>
@@ -306,7 +307,7 @@ export default function Dashboard() {
                   <div key={lead.id} className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-white">{lead.business_name}</p>
-                      <p className="text-xs text-slate-300">{lead.address?.split(",").slice(0, 2).join(",") || lead.category} {lead.phone ? `Ã‚Â· ${lead.phone}` : ""}</p>
+                      <p className="text-xs text-slate-300">{lead.address?.split(",").slice(0, 2).join(",") || lead.category} {lead.phone ? `Ãƒâ€šÃ‚Â· ${lead.phone}` : ""}</p>
                     </div>
                     <span className={`text-xs px-2 py-0.5 rounded-full ${
                       lead.status === "new" ? "bg-blue-500/10 text-blue-400" :
