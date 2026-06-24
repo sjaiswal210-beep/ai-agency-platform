@@ -306,7 +306,7 @@ export default function Dashboard() {
                   <div key={lead.id} className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-white">{lead.business_name}</p>
-                      <p className="text-xs text-slate-300">{lead.address?.split(",").slice(0, 2).join(",") || lead.category} {lead.phone ? `Â· ${lead.phone}` : ""}</p>
+                      <p className="text-xs text-slate-300">{lead.address?.split(",").slice(0, 2).join(",") || lead.category} {lead.phone ? `Ã‚Â· ${lead.phone}` : ""}</p>
                     </div>
                     <span className={`text-xs px-2 py-0.5 rounded-full ${
                       lead.status === "new" ? "bg-blue-500/10 text-blue-400" :
