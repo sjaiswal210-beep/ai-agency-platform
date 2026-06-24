@@ -60,8 +60,21 @@ async def generate_tts_audio(text: str) -> str:
         return f"{BACKEND_URL}/static/audio/{filename}"
     
     os.makedirs("/app/static/audio", exist_ok=True)
+    import subprocess
+    temp_path = filepath + ".tmp.mp3"
     tts = gTTS(text=text, lang='hi', slow=False)
-    tts.save(filepath)
+    tts.save(temp_path)
+    # Speed up audio 1.3x using ffmpeg
+    try:
+        subprocess.run(
+            ['ffmpeg', '-y', '-i', temp_path, '-filter:a', 'atempo=1.3', filepath],
+            capture_output=True, timeout=30
+        )
+        os.remove(temp_path)
+    except Exception:
+        # If ffmpeg not available, use original speed
+        if os.path.exists(temp_path):
+            os.rename(temp_path, filepath)
     
     return f"{BACKEND_URL}/static/audio/{filename}"
 
