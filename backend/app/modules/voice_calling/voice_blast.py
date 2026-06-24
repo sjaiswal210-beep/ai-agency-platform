@@ -346,3 +346,10 @@ async def load_settings():
     if result.data and result.data[0].get("blast_settings"):
         return result.data[0]["blast_settings"]
     return {}
+
+@router.get("/history")
+async def call_history(limit: int = 50):
+    """Get recent voice blast call history."""
+    db = get_supabase()
+    result = db.table("voice_calls").select("*").order("created_at", desc=True).limit(limit).execute()
+    return {"calls": result.data or [], "total": len(result.data or [])}
