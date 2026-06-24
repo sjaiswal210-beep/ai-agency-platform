@@ -86,12 +86,24 @@ async def generate_tts_audio(text: str, speed: float = 1.3, lang: str = 'hi', vo
                 )
                 if response.status_code == 200:
                     import base64
+                    import subprocess
                     data = response.json()
                     audio_b64 = data.get("audios", [None])[0]
                     if audio_b64:
                         audio_bytes = base64.b64decode(audio_b64)
-                        with open(filepath, "wb") as f:
+                        # Sarvam returns WAV - convert to MP3 for Vobiz compatibility
+                        wav_path = filepath.replace(".mp3", ".wav")
+                        with open(wav_path, "wb") as f:
                             f.write(audio_bytes)
+                        try:
+                            subprocess.run(
+                                ["ffmpeg", "-y", "-i", wav_path, "-codec:a", "libmp3lame", "-b:a", "128k", filepath],
+                                capture_output=True, timeout=30
+                            )
+                            os.remove(wav_path)
+                        except Exception:
+                            # If ffmpeg fails, rename wav to mp3 (Vobiz might accept WAV too)
+                            os.rename(wav_path, filepath)
                         return f"{BACKEND_URL}/static/audio/{filename}"
         except Exception:
             pass  # Fall through to gTTS
