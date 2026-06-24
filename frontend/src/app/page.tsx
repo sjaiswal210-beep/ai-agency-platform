@@ -247,10 +247,11 @@ export default function Dashboard() {
           )}
 
           <p className="text-xs font-semibold text-slate-300 uppercase tracking-wide mb-3">Quick Actions</p>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6 stagger-children">
+          <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 mb-6 stagger-children">
             <button onClick={() => setShowDiscover(true)} className="flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white py-3 rounded-xl text-sm font-medium hover:shadow-lg hover:shadow-indigo-500/25 transition-all">
               <PlusCircle className="w-4 h-4" /> New Campaign
             </button>
+            <a href="https://ai-agency-platform.onrender.com/api/admin/voice-blast?pwd=kalpdev2024" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 bg-gradient-to-r from-orange-500 to-amber-500 text-white py-3 rounded-xl text-sm font-medium hover:shadow-lg hover:shadow-orange-500/25 transition-all"><Phone className="w-4 h-4" /> Voice Blast</a>
             <button onClick={() => setShowDiscover(true)} className="flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white py-3 rounded-xl text-sm font-medium hover:shadow-lg hover:shadow-blue-500/25 transition-all">
               <Search className="w-4 h-4" /> Discover
             </button>
@@ -307,7 +308,7 @@ export default function Dashboard() {
                   <div key={lead.id} className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-white">{lead.business_name}</p>
-                      <p className="text-xs text-slate-300">{lead.address?.split(",").slice(0, 2).join(",") || lead.category} {lead.phone ? `Ãƒâ€šÃ‚Â· ${lead.phone}` : ""}</p>
+                      <p className="text-xs text-slate-300">{lead.address?.split(",").slice(0, 2).join(",") || lead.category} {lead.phone ? `ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· ${lead.phone}` : ""}</p>
                     </div>
                     <span className={`text-xs px-2 py-0.5 rounded-full ${
                       lead.status === "new" ? "bg-blue-500/10 text-blue-400" :
