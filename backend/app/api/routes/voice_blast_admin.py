@@ -81,8 +81,8 @@ textarea{min-height:120px;resize:vertical}
 <div>
 <label>TTS Provider</label>
 <select id="tts_provider">
-<option value="sarvam" selected>Sarvam AI (Natural Hindi)</option>
-<option value="gtts">Google TTS (Basic)</option>
+<option value="gtts" selected>Google TTS (Hindi)</option>
+<option value="sarvam">Sarvam AI (Natural Hindi)</option>
 </select>
 </div>
 </div>
@@ -112,6 +112,7 @@ textarea{min-height:120px;resize:vertical}
 </div>
 <button class="btn" onclick="makeCall()" id="callBtn">Make Test Call</button>
 <button class="btn btn-green" onclick="previewAudio()" id="previewBtn">Preview Audio Only</button>
+<button class="btn" onclick="saveScript()" style="background:#334155;margin-left:8px">Save Script</button>
 <div id="result"></div>
 <div id="audioPreview" class="audio-preview"></div>
 </div>
@@ -153,6 +154,36 @@ async function makeCall() {
   } catch(e) { document.getElementById("result").innerHTML = '<div class="result error">'+e.message+'</div>'; }
   btn.disabled = false; btn.textContent = "Make Test Call";
 }
+
+async function saveScript() {
+  const data = {
+    script: document.getElementById("script").value,
+    speed: document.getElementById("speed").value,
+    lang: document.getElementById("lang").value,
+    voice: document.getElementById("voice").value,
+    tts_provider: document.getElementById("tts_provider").value,
+  };
+  try {
+    const r = await fetch(API + "/api/voice-blast/save-settings", {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});
+    if (r.ok) { document.getElementById("result").innerHTML = '<div class="result success">Script & settings saved!</div>'; setTimeout(()=>document.getElementById("result").innerHTML='',2000); }
+  } catch(e) { document.getElementById("result").innerHTML = '<div class="result error">Save failed</div>'; }
+}
+
+async function loadScript() {
+  try {
+    const r = await fetch(API + "/api/voice-blast/load-settings");
+    if (r.ok) {
+      const d = await r.json();
+      if (d.script) document.getElementById("script").value = d.script;
+      if (d.speed) document.getElementById("speed").value = d.speed;
+      if (d.lang) document.getElementById("lang").value = d.lang;
+      if (d.voice) document.getElementById("voice").value = d.voice;
+      if (d.tts_provider) document.getElementById("tts_provider").value = d.tts_provider;
+    }
+  } catch(e) {}
+}
+// Auto-load saved settings on page load
+loadScript();
 
 async function previewAudio() {
   const btn = document.getElementById("previewBtn");

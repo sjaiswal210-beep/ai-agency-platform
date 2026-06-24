@@ -319,3 +319,30 @@ async def preview_audio(data: dict):
     tts_provider = data.get("tts_provider", "sarvam")
     audio_url = await generate_tts_audio(text, speed=speed, lang=lang, voice=voice, tts_provider=tts_provider)
     return {"audio_url": audio_url}
+
+@router.post("/save-settings")
+async def save_settings(data: dict):
+    """Save voice blast script and settings to Supabase for persistence."""
+    db = get_supabase()
+    settings = {
+        "script": data.get("script", ""),
+        "speed": data.get("speed", "1.3"),
+        "lang": data.get("lang", "hi"),
+        "voice": data.get("voice", "meera"),
+        "tts_provider": data.get("tts_provider", "gtts"),
+    }
+    # Upsert into a settings table or use voice_call_config
+    existing = db.table("voice_call_config").select("id").eq("is_active", True).limit(1).execute()
+    if existing.data:
+        db.table("voice_call_config").update({"blast_settings": settings}).eq("id", existing.data[0]["id"]).execute()
+    return {"message": "Settings saved"}
+
+
+@router.get("/load-settings")
+async def load_settings():
+    """Load saved voice blast script and settings."""
+    db = get_supabase()
+    result = db.table("voice_call_config").select("blast_settings").eq("is_active", True).limit(1).execute()
+    if result.data and result.data[0].get("blast_settings"):
+        return result.data[0]["blast_settings"]
+    return {}
