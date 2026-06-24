@@ -1,10 +1,10 @@
-﻿"use client";
+"use client";
 
 const API_BASE = "https://ai-agency-platform.onrender.com";
 
 import { useEffect, useState } from "react";
 import { api, DashboardStats, Lead } from "@/lib/api";
-import { Users, MessageSquare, TrendingUp, Globe, Search, Mail, PlusCircle, LayoutGrid, Zap, Settings, BarChart3, Bot, ChevronLeft, Bell, StickyNote } from "lucide-react";
+import { Users, MessageSquare, TrendingUp, Globe, Search, Mail, PlusCircle, LayoutGrid, Zap, Settings, BarChart3, Bot, ChevronLeft, Bell, StickyNote, Phone } from "lucide-react";
 
 export default function Dashboard() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
@@ -125,6 +125,7 @@ export default function Dashboard() {
     { name: "Growth Plan", icon: TrendingUp, href: "https://ai-agency-platform.onrender.com/api/growth-plan" },
     { name: "All Sites", icon: Globe, href: "https://ai-agency-platform.onrender.com/api/sites" },
     
+    { name: "Voice Blast", icon: Phone, href: "https://ai-agency-platform.onrender.com/api/admin/voice-blast?pwd=kalpdev2024" },
     { name: "QA Agent", icon: Bot, href: "https://ai-agency-platform.onrender.com/api/qa/review-all" },
     { name: "Admin Portal", icon: Settings, href: "/admin" },
   ];
