@@ -46,12 +46,12 @@ def generate_hindi_script(business_name: str, owner_name: str = "", category: st
     return script
 
 
-async def generate_tts_audio(text: str) -> str:
+async def generate_tts_audio(text: str, speed: float = 1.3, lang: str = 'hi') -> str:
     """Generate Hindi TTS audio using gTTS and return the public URL."""
     from gtts import gTTS
     
     # Create a hash-based filename for caching
-    text_hash = hashlib.md5(text.encode()).hexdigest()[:12]
+    text_hash = hashlib.md5(f'{text}_{speed}_{lang}'.encode()).hexdigest()[:12]
     filename = f"voice_blast_{text_hash}.mp3"
     filepath = f"/app/static/audio/{filename}"
     
@@ -62,12 +62,12 @@ async def generate_tts_audio(text: str) -> str:
     os.makedirs("/app/static/audio", exist_ok=True)
     import subprocess
     temp_path = filepath + ".tmp.mp3"
-    tts = gTTS(text=text, lang='hi', slow=False)
+    tts = gTTS(text=text, lang=lang, slow=False)
     tts.save(temp_path)
     # Speed up audio 1.3x using ffmpeg
     try:
         subprocess.run(
-            ['ffmpeg', '-y', '-i', temp_path, '-filter:a', 'atempo=1.3', filepath],
+            ['ffmpeg', '-y', '-i', temp_path, '-filter:a', f'atempo={speed}', filepath],
             capture_output=True, timeout=30
         )
         os.remove(temp_path)
@@ -141,8 +141,10 @@ async def blast_call(data: dict, background_tasks: BackgroundTasks):
         raise HTTPException(400, "Business name required")
     
     # Generate script and audio
-    script = generate_hindi_script(business_name, owner_name, category)
-    audio_url = await generate_tts_audio(script)
+    script = data.get('script_override') or generate_hindi_script(business_name, owner_name, category)
+    speed = float(data.get('speed', 1.3))
+    lang = data.get('lang', 'hi')
+    audio_url = await generate_tts_audio(script, speed=speed, lang=lang)
     
     # Make the call
     config = get_vobiz_config()
@@ -254,3 +256,14 @@ async def auto_blast_new_leads():
             results["failed"] += 1
     
     return {"message": f"Called {results['called']} leads", **results}
+
+@router.post("/preview")
+async def preview_audio(data: dict):
+    """Generate and return audio URL without making a call."""
+    text = data.get("text", "")
+    if not text:
+        raise HTTPException(400, "Text required")
+    speed = float(data.get("speed", 1.3))
+    lang = data.get("lang", "hi")
+    audio_url = await generate_tts_audio(text, speed=speed, lang=lang)
+    return {"audio_url": audio_url}
