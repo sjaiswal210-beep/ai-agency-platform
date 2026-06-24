@@ -137,8 +137,13 @@ async def blast_call(data: dict, background_tasks: BackgroundTasks):
     
     # Log the call
     db = get_supabase()
+    org_id = data.get("organization_id")
+    if not org_id:
+        # Get default org from voice_call_config
+        cfg = db.table("voice_call_config").select("organization_id").eq("is_active", True).limit(1).execute()
+        org_id = cfg.data[0]["organization_id"] if cfg.data else None
     db.table("voice_calls").insert({
-        "organization_id": data.get("organization_id"),
+        "organization_id": org_id,
         "lead_id": lead_id,
         "bolna_execution_id": result.get("request_uuid"),
         "recipient_phone": phone,
