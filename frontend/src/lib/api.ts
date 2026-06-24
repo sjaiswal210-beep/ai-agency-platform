@@ -1,4 +1,4 @@
-const API_URL = "https://ai-agency-platform.onrender.com";
+﻿const API_URL = "https://ai-agency-platform.onrender.com";
 
 async function fetchAPI<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${API_URL}/api${path}`, {
@@ -62,6 +62,7 @@ export interface DashboardStats {
 export interface Lead {
   id: string;
   business_name: string;
+  owner_name?: string;
   phone?: string;
   email?: string;
   website?: string;
