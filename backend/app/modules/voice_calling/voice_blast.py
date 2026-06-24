@@ -23,8 +23,8 @@ def get_vobiz_config():
         raise HTTPException(404, "Voice calling not configured")
     config = result.data[0]
     return {
-        "auth_id": "MA_PSCVLCX4",
-        "auth_token": "4if7memWB4871wl6U41ch018f9KwPEkOBbwPLZU3p53qnrEfKQRlVsSbM5CuOJGz",
+        "auth_id": os.environ.get("VOBIZ_AUTH_ID", ""),
+        "auth_token": os.environ.get("VOBIZ_AUTH_TOKEN", ""),
         "from_number": config.get("from_phone_number", "+918071579115"),
     }
 

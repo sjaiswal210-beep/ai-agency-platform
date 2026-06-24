@@ -62,7 +62,7 @@ SUPABASE_URL, SUPABASE_SERVICE_KEY, GEMINI_API_KEY, REPLICATE_TOKEN, HF_TOKEN, F
 
 ### Telephony
 - Provider: Vobiz
-- Auth ID: MA_PSCVLCX4
+- Auth ID: ***REDACTED***
 - Phone: +918071579115
 - Vobiz App ID: 21975348680562462
 - Answer URL (in Vobiz App): https://voice.city-maps.online/api/v1/telephony/vobiz-xml
@@ -74,8 +74,8 @@ SUPABASE_URL, SUPABASE_SERVICE_KEY, GEMINI_API_KEY, REPLICATE_TOKEN, HF_TOKEN, F
 - Language: Hindi (prompts in Hinglish)
 
 ### External Keys Available
-- Deepgram API: da29097e0c0919ebb8317a16c7ba22fa925c724b
-- Gemini API: AIzaSyAqAlr4lvE4kSWuvtubUpYbSG3VAdYuUXc
+- Deepgram API: ***REDACTED***
+- Gemini API: ***REDACTED***
 
 ### Status
 - Dashboard login: WORKING
