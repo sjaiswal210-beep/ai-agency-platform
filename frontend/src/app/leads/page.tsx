@@ -23,6 +23,8 @@ export default function LeadsPage() {
   const [generating, setGenerating] = useState<string>("");
   const [qaReview, setQaReview] = useState<any>(null);
   const [qaLoading, setQaLoading] = useState<string>("");
+  const [calling, setCalling] = useState<string>("");
+  const [callResult, setCallResult] = useState<{business: string; status: string} | null>(null);
   
 
   useEffect(() => {
@@ -43,6 +45,31 @@ export default function LeadsPage() {
       setWaMessage({ link: data.whatsapp_link, message: data.message, business: data.business_name });
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const handleCall = async (lead: Lead) => {
+    if (!lead.phone) return;
+    setCalling(lead.id);
+    try {
+      const res = await fetch(`${API_BASE}/api/voice-blast/call`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          phone: lead.phone,
+          business_name: lead.business_name,
+          owner_name: lead.owner_name || "",
+          category: lead.category || "",
+          lead_id: lead.id,
+        }),
+      });
+      const data = await res.json();
+      setCallResult({ business: lead.business_name, status: data.message || "Call initiated" });
+      setTimeout(() => setCallResult(null), 3000);
+    } catch (err) {
+      alert("Call failed");
+    } finally {
+      setCalling("");
     }
   };
 
