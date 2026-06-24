@@ -125,7 +125,6 @@ export default function Dashboard() {
     { name: "Growth Plan", icon: TrendingUp, href: "https://ai-agency-platform.onrender.com/api/growth-plan" },
     { name: "All Sites", icon: Globe, href: "https://ai-agency-platform.onrender.com/api/sites" },
     
-    { name: "Voice Blast", icon: Phone, href: "https://ai-agency-platform.onrender.com/api/admin/voice-blast?pwd=kalpdev2024" },
     { name: "QA Agent", icon: Bot, href: "https://ai-agency-platform.onrender.com/api/qa/review-all" },
     { name: "Admin Portal", icon: Settings, href: "/admin" },
   ];
