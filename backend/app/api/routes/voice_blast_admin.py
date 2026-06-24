@@ -63,6 +63,29 @@ textarea{min-height:120px;resize:vertical}
 </select>
 </div>
 </div>
+<div class="row">
+<div>
+<label>Voice (Sarvam AI)</label>
+<select id="voice">
+<option value="meera" selected>Meera (Female, Natural)</option>
+<option value="priya">Priya (Female, Friendly)</option>
+<option value="anushka">Anushka (Female, Professional)</option>
+<option value="manisha">Manisha (Female, Warm)</option>
+<option value="vidya">Vidya (Female, Calm)</option>
+<option value="arya">Arya (Male, Professional)</option>
+<option value="abhilash">Abhilash (Male, Friendly)</option>
+<option value="karun">Karun (Male, Deep)</option>
+<option value="hitesh">Hitesh (Male, Energetic)</option>
+</select>
+</div>
+<div>
+<label>TTS Provider</label>
+<select id="tts_provider">
+<option value="sarvam" selected>Sarvam AI (Natural Hindi)</option>
+<option value="gtts">Google TTS (Basic)</option>
+</select>
+</div>
+</div>
 </div>
 
 <div class="card">
@@ -115,6 +138,8 @@ async function makeCall() {
     script_override: getScript(),
     speed: document.getElementById("speed").value,
     lang: document.getElementById("lang").value,
+    voice: document.getElementById("voice").value,
+    tts_provider: document.getElementById("tts_provider").value,
   };
   try {
     const r = await fetch(API + "/api/voice-blast/call", {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
@@ -136,6 +161,8 @@ async function previewAudio() {
     text: getScript(),
     speed: document.getElementById("speed").value,
     lang: document.getElementById("lang").value,
+    voice: document.getElementById("voice").value,
+    tts_provider: document.getElementById("tts_provider").value,
   };
   try {
     const r = await fetch(API + "/api/voice-blast/preview", {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});

@@ -46,11 +46,11 @@ def generate_hindi_script(business_name: str, owner_name: str = "", category: st
     return script
 
 
-async def generate_tts_audio(text: str, speed: float = 1.3, lang: str = 'hi') -> str:
+async def generate_tts_audio(text: str, speed: float = 1.3, lang: str = 'hi', voice: str = 'meera', tts_provider: str = 'sarvam') -> str:
     """Generate Hindi TTS audio using Sarvam AI (natural Indian voice) with gTTS fallback."""
     
     # Create a hash-based filename for caching
-    text_hash = hashlib.md5(f'{text}_{speed}_{lang}'.encode()).hexdigest()[:12]
+    text_hash = hashlib.md5(f'{text}_{speed}_{lang}_{voice}_{tts_provider}'.encode()).hexdigest()[:12]
     filename = f"voice_blast_{text_hash}.mp3"
     filepath = f"/app/static/audio/{filename}"
     
@@ -62,7 +62,7 @@ async def generate_tts_audio(text: str, speed: float = 1.3, lang: str = 'hi') ->
     
     # Try Sarvam AI first (best Hindi voice)
     sarvam_key = os.environ.get("SARVAM_API_KEY", "")
-    if sarvam_key:
+    if sarvam_key and tts_provider == "sarvam":
         try:
             lang_map = {"hi": "hi-IN", "mr": "mr-IN", "ta": "ta-IN", "te": "te-IN", "bn": "bn-IN", "gu": "gu-IN", "en": "en-IN"}
             sarvam_lang = lang_map.get(lang, "hi-IN")
@@ -77,7 +77,7 @@ async def generate_tts_audio(text: str, speed: float = 1.3, lang: str = 'hi') ->
                     json={
                         "inputs": [text],
                         "target_language_code": sarvam_lang,
-                        "speaker": "meera",
+                        "speaker": voice,
                         "model": "bulbul:v2",
                         "speech_sample_rate": 22050,
                         "enable_preprocessing": True,
@@ -180,7 +180,9 @@ async def blast_call(data: dict, background_tasks: BackgroundTasks):
     script = data.get('script_override') or generate_hindi_script(business_name, owner_name, category)
     speed = float(data.get('speed', 1.3))
     lang = data.get('lang', 'hi')
-    audio_url = await generate_tts_audio(script, speed=speed, lang=lang)
+    voice = data.get('voice', 'meera')
+    tts_provider = data.get('tts_provider', 'sarvam')
+    audio_url = await generate_tts_audio(script, speed=speed, lang=lang, voice=voice, tts_provider=tts_provider)
     
     # Make the call
     config = get_vobiz_config()
@@ -301,5 +303,7 @@ async def preview_audio(data: dict):
         raise HTTPException(400, "Text required")
     speed = float(data.get("speed", 1.3))
     lang = data.get("lang", "hi")
-    audio_url = await generate_tts_audio(text, speed=speed, lang=lang)
+    voice = data.get("voice", "meera")
+    tts_provider = data.get("tts_provider", "sarvam")
+    audio_url = await generate_tts_audio(text, speed=speed, lang=lang, voice=voice, tts_provider=tts_provider)
     return {"audio_url": audio_url}
