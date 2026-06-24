@@ -47,7 +47,8 @@ def generate_hindi_script(business_name: str, owner_name: str = "", category: st
 
 
 async def generate_tts_audio(text: str) -> str:
-    """Generate Hindi TTS audio using Deepgram and return the public URL."""
+    """Generate Hindi TTS audio using gTTS and return the public URL."""
+    from gtts import gTTS
     
     # Create a hash-based filename for caching
     text_hash = hashlib.md5(text.encode()).hexdigest()[:12]
@@ -59,27 +60,8 @@ async def generate_tts_audio(text: str) -> str:
         return f"{BACKEND_URL}/static/audio/{filename}"
     
     os.makedirs("/app/static/audio", exist_ok=True)
-    
-    # Use Deepgram TTS API
-    deepgram_key = os.environ.get("DEEPGRAM_API_KEY", "da29097e0c0919ebb8317a16c7ba22fa925c724b")
-    
-    async with httpx.AsyncClient(timeout=30) as client:
-        response = await client.post(
-            "https://api.deepgram.com/v1/speak?model=aura-asteria-en",
-            headers={
-                "Authorization": f"Token {deepgram_key}",
-                "Content-Type": "application/json",
-            },
-            json={"text": text},
-        )
-        if response.status_code != 200:
-            # Fallback to gTTS if Deepgram fails
-            from gtts import gTTS
-            tts = gTTS(text=text, lang='hi', slow=False)
-            tts.save(filepath)
-        else:
-            with open(filepath, "wb") as f:
-                f.write(response.content)
+    tts = gTTS(text=text, lang='hi', slow=False)
+    tts.save(filepath)
     
     return f"{BACKEND_URL}/static/audio/{filename}"
 
