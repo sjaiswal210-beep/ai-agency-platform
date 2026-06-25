@@ -48,6 +48,9 @@ def owner_analytics_page(website_id: str):
     lead = lead_service.get(website["lead_id"]) if website.get("lead_id") else None
     business_name = lead.get("business_name", "Business") if lead else "Business"
     slug = website.get("slug", "")
+    _content = website.get("content", {}) or {}
+    _colors = _content.get("color_scheme", {}) or {}
+    primary = _colors.get("primary", "#7C3AED")
     since_7d = (datetime.utcnow() - timedelta(days=7)).isoformat()
     since_30d = (datetime.utcnow() - timedelta(days=30)).isoformat()
     try:
