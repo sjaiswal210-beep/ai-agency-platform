@@ -10,36 +10,30 @@ router = APIRouter(prefix="/owner-analytics", tags=["owner-analytics"])
 
 
 CSS = """
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Plus Jakarta Sans',sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh}
-.hdr{background:linear-gradient(135deg,#1e1b4b,#312e81);padding:24px 28px;border-bottom:1px solid rgba(255,255,255,.06)}
-.hdr h1{font-size:1.3rem;font-weight:800}.hdr p{font-size:.82rem;color:#94a3b8;margin-top:4px}.hdr a{color:#a78bfa}
-.wrap{max-width:1100px;margin:0 auto;padding:24px}
-.sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:28px}
-.sc{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:20px;transition:transform .2s}
-.sc:hover{transform:translateY(-2px);background:rgba(255,255,255,.06)}
-.si{font-size:1.5rem;margin-bottom:10px}.sv{font-size:1.7rem;font-weight:800}.sl{font-size:.75rem;color:#64748b;margin-top:2px}
-.cc{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:22px;margin-bottom:22px}
-.cc h3{font-size:.95rem;font-weight:700;margin-bottom:14px}
-.chart{display:flex;align-items:end;gap:6px;height:160px}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--p:#7C3AED;--ink:#0f172a;--mute:#64748b;--line:#e8edf3;--soft:#f6f8fb}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#f0f3f8;color:var(--ink);min-height:100vh;padding-bottom:calc(24px + env(safe-area-inset-bottom));-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain}
+.appbar{position:sticky;top:0;z-index:50;background:linear-gradient(135deg,var(--p),color-mix(in srgb,var(--p) 70%,#000));color:#fff;padding:calc(16px + env(safe-area-inset-top)) 18px 16px;box-shadow:0 2px 12px rgba(0,0,0,.12)}
+.appbar h1{font-size:1.1rem;font-weight:800;display:flex;align-items:center;gap:8px}
+.appbar p{font-size:.74rem;opacity:.85;margin-top:3px}
+.appbar p a{color:#fff;text-decoration:underline;opacity:.9}
+.appbar-actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.appbar-actions a{flex:1;min-width:72px;text-align:center;padding:9px 6px;background:rgba(255,255,255,.18);border-radius:10px;color:#fff;font-size:.72rem;font-weight:700;text-decoration:none;backdrop-filter:blur(6px)}
+.appbar-actions a:active{transform:scale(.96)}
+.wrap{max-width:720px;margin:0 auto;padding:16px}
+.sg{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:18px}
+.sc{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px 16px;transition:transform .2s}
+.sc:active{transform:scale(.98)}
+.si{font-size:1.4rem;margin-bottom:8px}.sv{font-size:1.6rem;font-weight:800;color:var(--p)}.sl{font-size:.68rem;color:var(--mute);margin-top:2px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.cc{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px 16px;margin-bottom:18px}
+.cc h3{font-size:.88rem;font-weight:800;margin-bottom:16px;color:var(--ink)}
+.chart{display:flex;align-items:end;gap:6px;height:150px}
 .bw{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
-.bar{width:100%;border-radius:5px 5px 0 0;background:linear-gradient(to top,#7c3aed,#a78bfa);min-height:4px}
-.bl{font-size:.6rem;color:#64748b}.bv{font-size:.65rem;color:#a78bfa;font-weight:700}
-.acts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px}
-.ab{display:flex;align-items:center;justify-content:center;gap:6px;padding:13px;border-radius:10px;font-weight:700;font-size:.85rem;text-decoration:none;transition:transform .2s}
-.ab:hover{transform:translateY(-2px)}
-.bp{background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;box-shadow:0 8px 20px rgba(124,58,237,.3)}
-.bg{background:linear-gradient(135deg,#059669,#10b981);color:#fff;box-shadow:0 8px 20px rgba(16,185,129,.3)}
-.bb{background:linear-gradient(135deg,#2563eb,#3b82f6);color:#fff;box-shadow:0 8px 20px rgba(37,99,235,.3)}
-.ba{background:linear-gradient(135deg,#d97706,#f59e0b);color:#fff;box-shadow:0 8px 20px rgba(245,158,11,.3)}
-.ad{background:rgba(245,158,11,.08);border:1px dashed rgba(245,158,11,.25);border-radius:10px;padding:14px;text-align:center;margin-bottom:16px}
-.ad p{font-size:.78rem;color:#f59e0b;font-weight:600}
-.tips{background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.15);border-radius:14px;padding:20px;margin-bottom:22px}
-.tips h3{font-size:.9rem;font-weight:700;color:#a78bfa;margin-bottom:10px}
-.tips li{font-size:.82rem;color:#94a3b8;margin-bottom:6px;list-style:none;padding-left:18px;position:relative}
-.tips li::before{content:"\2713";position:absolute;left:0;color:#a78bfa}
-.ft{text-align:center;padding:18px;font-size:.72rem;color:#475569;border-top:1px solid rgba(255,255,255,.05)}
-@media(max-width:640px){.sg{grid-template-columns:repeat(2,1fr)}.acts{grid-template-columns:1fr}}
+.bar{width:100%;border-radius:6px 6px 0 0;background:linear-gradient(to top,var(--p),color-mix(in srgb,var(--p) 55%,#fff));min-height:4px;transition:height .4s ease}
+.bl{font-size:.58rem;color:var(--mute)}.bv{font-size:.62rem;color:var(--p);font-weight:800}
+.ft{text-align:center;padding:20px;font-size:.7rem;color:#94a3b8}
+.ft a{color:var(--p);text-decoration:none}
+@media(max-width:420px){.sg{grid-template-columns:repeat(2,1fr)}}
 """
 
 
@@ -100,38 +94,29 @@ def owner_analytics_page(website_id: str):
     )
     html = (
         '<!DOCTYPE html><html lang="en"><head>'
-        '<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">'
+        '<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">'
         f'<title>Analytics - {business_name}</title>'
+        f'<meta name="theme-color" content="{primary}">'
         '<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">'
-        f'<style>{CSS}</style></head><body>'
-        f'<div class="hdr"><h1>\U0001f4ca {business_name}</h1>'
-        f'<p>Website Analytics &bull; <a href="{site_url}" target="_blank">{site_url or "Preview"}</a></p></div>'
+        f'<style>{CSS}</style><style>:root{{--p:{primary}}}</style></head><body>'
+        f'<div class="appbar"><h1>\U0001f4ca Analytics</h1>'
+        f'<p>{business_name} &bull; <a href="{site_url}" target="_blank">{slug or "Preview"}</a></p>'
+        '<div class="appbar-actions">'
+        f'<a href="/api/daily/{website_id}">Daily Content</a>'
+        f'<a href="{site_url}" target="_blank">View Site</a>'
+        f'<a href="/api/panel/{website_id}">Manage</a>'
+        f'<a href="/api/owner-analytics/{website_id}">Refresh</a>'
+        '</div></div>'
         '<div class="wrap">'
         '<div class="sg">'
         f'<div class="sc"><div class="si">\U0001f4c8</div><div class="sv">{v7}</div><div class="sl">Views (7d)</div></div>'
+        f'<div class="sc"><div class="si">\U0001f30d</div><div class="sv">{v30}</div><div class="sl">Views (30d)</div></div>'
         f'<div class="sc"><div class="si">\U0001f4de</div><div class="sv">{c30}</div><div class="sl">Calls (30d)</div></div>'
         f'<div class="sc"><div class="si">\U0001f4ac</div><div class="sv">{w30}</div><div class="sl">WhatsApp (30d)</div></div>'
-        f'<div class="sc"><div class="si">\U0001f4dd</div><div class="sv">{l30}</div><div class="sl">Leads (30d)</div></div>'
-        f'<div class="sc"><div class="si">\U0001f30d</div><div class="sv">{v30}</div><div class="sl">Total (30d)</div></div>'
         '</div>'
         f'<div class="cc"><h3>\U0001f4c5 Daily Visitors (Last 7 Days)</h3><div class="chart">{bars}</div></div>'
-        '<div class="ad"><p>\U0001f4e2 Promote your business here - Reach more customers</p></div>'
-        '<div class="acts">'
-        f'<a href="/api/daily/{website_id}" class="ab bp">\U0001f4f1 Daily Content</a>'
-        f'<a href="{site_url}" target="_blank" class="ab bg">\U0001f310 View Site</a>'
-        f'<a href="/api/panel/{website_id}" class="ab bb">\U0001f6e0 Manage</a>'
-        f'<a href="/api/owner-analytics/{website_id}" class="ab ba">\U0001f504 Refresh</a>'
         '</div>'
-        '<div class="tips"><h3>\U0001f4a1 Growth Tips</h3><ul>'
-        '<li>Share your website on WhatsApp status daily</li>'
-        '<li>Ask 3 happy customers to leave a Google review</li>'
-        '<li>Post your work on Instagram with location tag</li>'
-        '<li>Update Google Business Profile with photos</li>'
-        '<li>Reply to all Google reviews (positive & negative)</li>'
-        '</ul></div>'
-        '<div class="ad"><p>\U0001f381 Upgrade to Premium - AI Ads, Social Calendar, Competitor Analysis</p></div>'
-        '</div>'
-        '<div class="ft">Powered by <a href="https://city-maps.online" style="color:#a78bfa">City Maps</a> &bull; Made with \u2764\ufe0f by Kalpdev Digitals</div>'
+        '<div class="ft">Powered by <a href="https://city-maps.online">City Maps</a></div>'
         '</body></html>'
     )
     return HTMLResponse(content=html)
