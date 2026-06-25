@@ -200,71 +200,188 @@ def update_product(website_id: str, product_id: str, product: ProductCreate):
     return {"updated": True}
 
 
+STORE_MGR_TEMPLATE = r"""<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>Store Manager - __BIZNAME__</title>
+<meta name="theme-color" content="__PRIMARY__">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--p:__PRIMARY__;--ink:#0f172a;--mute:#64748b;--line:#e8edf3;--soft:#f6f8fb;--ok:#10b981;--bad:#ef4444}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#f0f3f8;color:var(--ink);padding-bottom:calc(90px + env(safe-area-inset-bottom));-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain}
+.appbar{position:sticky;top:0;z-index:50;background:linear-gradient(135deg,var(--p),color-mix(in srgb,var(--p) 70%,#000));color:#fff;padding:calc(14px + env(safe-area-inset-top)) 18px 14px;box-shadow:0 2px 12px rgba(0,0,0,.12)}
+.appbar h1{font-size:1.05rem;font-weight:800;display:flex;align-items:center;gap:8px}
+.appbar p{font-size:.72rem;opacity:.85;margin-top:2px}
+.appbar-actions{display:flex;gap:8px;margin-top:12px}
+.appbar-actions a{flex:1;text-align:center;padding:8px;background:rgba(255,255,255,.18);border-radius:10px;color:#fff;font-size:.72rem;font-weight:700;text-decoration:none;backdrop-filter:blur(6px)}
+.appbar-actions a:active{transform:scale(.96)}
+.wrap{max-width:640px;margin:0 auto;padding:16px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.stat{background:#fff;border-radius:14px;padding:14px 10px;text-align:center;border:1px solid var(--line)}
+.stat .n{font-size:1.4rem;font-weight:800;color:var(--p)}
+.stat .l{font-size:.62rem;color:var(--mute);margin-top:2px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.stat.g .n{color:var(--ok)}.stat.r .n{color:var(--bad)}
+.creds{background:#fffbeb;border:1px solid #fde68a;padding:12px 14px;border-radius:12px;font-size:.74rem;margin-bottom:16px;color:#92400e}
+.creds b{color:#78350f}
+.search{position:relative;margin-bottom:14px}
+.search input{width:100%;padding:12px 14px 12px 40px;border:1px solid var(--line);border-radius:12px;font-size:.88rem;background:#fff;outline:none}
+.search svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--mute)}
+.sec-title{font-size:.82rem;font-weight:800;color:var(--ink);margin-bottom:10px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.pcard{background:#fff;border-radius:16px;overflow:hidden;border:1px solid var(--line);position:relative}
+.pcard img{width:100%;aspect-ratio:1;object-fit:cover;background:var(--soft)}
+.pcard .body{padding:10px 12px 12px}
+.pcard .nm{font-size:.82rem;font-weight:700;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pcard .pr{font-size:.95rem;font-weight:800;color:var(--p)}
+.pcard .stk{position:absolute;top:8px;left:8px;font-size:.58rem;font-weight:700;padding:3px 8px;border-radius:50px;backdrop-filter:blur(4px)}
+.stk.in{background:rgba(16,185,129,.92);color:#fff}.stk.out{background:rgba(239,68,68,.92);color:#fff}
+.pacts{display:flex;gap:4px;margin-top:8px}
+.pacts button{flex:1;padding:7px;border:none;border-radius:8px;font-size:.66rem;font-weight:700;cursor:pointer}
+.b-edit{background:#eef2ff;color:#4f46e5}.b-del{background:#fef2f2;color:#ef4444}.b-tog{background:var(--soft);color:var(--mute)}
+.fab{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:var(--p);color:#fff;border:none;padding:14px 28px;border-radius:50px;font-size:.9rem;font-weight:800;box-shadow:0 6px 20px color-mix(in srgb,var(--p) 45%,transparent);cursor:pointer;z-index:60;display:flex;align-items:center;gap:8px}
+.fab:active{transform:translateX(-50%) scale(.95)}
+.sheet{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;display:none;align-items:flex-end;justify-content:center}
+.sheet.open{display:flex}
+.sheet-box{background:#fff;width:100%;max-width:640px;border-radius:22px 22px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom));max-height:90vh;overflow-y:auto;animation:slideUp .25s ease}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.sheet-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.sheet-h h2{font-size:1.05rem;font-weight:800}
+.sheet-h button{background:var(--soft);border:none;width:32px;height:32px;border-radius:50%;font-size:1.1rem;cursor:pointer;color:var(--mute)}
+label{display:block;font-size:.72rem;font-weight:700;color:var(--mute);margin-bottom:5px;margin-top:12px}
+input,textarea,select{width:100%;padding:12px;border:1px solid var(--line);border-radius:12px;font-size:.9rem;background:var(--soft);outline:none;transition:border .2s}
+input:focus,textarea:focus{border-color:var(--p);background:#fff}
+.img-prev{width:100%;height:140px;object-fit:cover;border-radius:12px;margin-top:8px;display:none;background:var(--soft)}
+.save-btn{width:100%;padding:14px;background:var(--p);color:#fff;border:none;border-radius:14px;font-size:.95rem;font-weight:800;cursor:pointer;margin-top:18px}
+.save-btn:active{transform:scale(.98)}
+.empty{text-align:center;padding:50px 20px;color:var(--mute)}.empty svg{opacity:.3;margin-bottom:12px}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:50px;font-size:.78rem;font-weight:600;z-index:200;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.show{opacity:1}
+</style></head><body>
+<div class="appbar">
+<h1>Store Manager</h1>
+<p>__BIZNAME__</p>
+<div class="appbar-actions">
+<a href="/api/store/__WID__/store-page" target="_blank">View Store</a>
+<a href="javascript:void(0)" onclick="shareStore()">Share</a>
+<a href="/api/panel/__WID__">Dashboard</a>
+</div>
+</div>
+<div class="wrap">
+<div class="stats">
+<div class="stat"><div class="n" id="st-total">__TOTAL__</div><div class="l">Products</div></div>
+<div class="stat g"><div class="n" id="st-in">__INSTOCK__</div><div class="l">In Stock</div></div>
+<div class="stat r"><div class="n" id="st-out">__OUTSTOCK__</div><div class="l">Out</div></div>
+</div>
+<div class="creds"><b>Login:</b> __PHONE__ &nbsp;|&nbsp; <b>Password:</b> __PASSWORD__</div>
+<div class="search">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+<input id="search" placeholder="Search products..." oninput="renderProducts()">
+</div>
+<div class="sec-title">Products</div>
+<div class="grid" id="pgrid"></div>
+</div>
+<button class="fab" onclick="openSheet()">+ Add Product</button>
+<div class="sheet" id="sheet"><div class="sheet-box">
+<div class="sheet-h"><h2 id="sheet-title">Add Product</h2><button onclick="closeSheet()">&times;</button></div>
+<form onsubmit="saveProduct(event)">
+<input type="hidden" id="f-id">
+<label>Product Name *</label><input id="f-name" placeholder="e.g. Margherita Pizza" required>
+<label>Price (Rs.) *</label><input id="f-price" placeholder="e.g. 299" required>
+<label>Description</label><textarea id="f-desc" rows="2" placeholder="Short description"></textarea>
+<label>Category</label><input id="f-cat" placeholder="e.g. Pizza, Beverages">
+<label>Image URL</label><input id="f-img" placeholder="https://..." oninput="previewImg()">
+<img id="img-prev" class="img-prev">
+<label>Availability</label><select id="f-stock"><option value="true">In Stock</option><option value="false">Out of Stock</option></select>
+<button type="submit" class="save-btn" id="save-btn">Save Product</button>
+</form></div></div>
+<div class="toast" id="toast"></div>
+<script>
+var WID="__WID__";
+var PRODUCTS=__PRODUCTS_JSON__;
+function toast(m){var t=document.getElementById("toast");t.textContent=m;t.classList.add("show");setTimeout(function(){t.classList.remove("show")},2200);}
+function updateStats(){var inS=PRODUCTS.filter(function(p){return p.in_stock}).length;document.getElementById("st-total").textContent=PRODUCTS.length;document.getElementById("st-in").textContent=inS;document.getElementById("st-out").textContent=PRODUCTS.length-inS;}
+function esc(s){return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");}
+function renderProducts(){
+var q=(document.getElementById("search").value||"").toLowerCase();
+var list=PRODUCTS.filter(function(p){return !q||(p.name||"").toLowerCase().indexOf(q)>=0||(p.category||"").toLowerCase().indexOf(q)>=0});
+var grid=document.getElementById("pgrid");
+if(!list.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1"><p>No products yet. Tap Add Product below.</p></div>';return;}
+grid.innerHTML=list.map(function(p){
+var img=p.image_url||"https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=300&h=300&fit=crop";
+var stk=p.in_stock?'<span class="stk in">In Stock</span>':'<span class="stk out">Out</span>';
+return '<div class="pcard">'+stk+'<img src="'+esc(img)+'" alt="">'+
+'<div class="body"><div class="nm">'+esc(p.name)+'</div><div class="pr">Rs. '+esc(p.price)+'</div>'+
+'<div class="pacts"><button class="b-edit" onclick="editProduct(\''+p.id+'\')">Edit</button>'+
+'<button class="b-tog" onclick="toggleStock(\''+p.id+'\')">'+(p.in_stock?"Hide":"Show")+'</button>'+
+'<button class="b-del" onclick="delProduct(\''+p.id+'\')">Del</button></div></div></div>';
+}).join("");
+}
+function openSheet(){document.getElementById("sheet-title").textContent="Add Product";["f-id","f-name","f-price","f-desc","f-cat","f-img"].forEach(function(i){document.getElementById(i).value="";});document.getElementById("f-stock").value="true";document.getElementById("img-prev").style.display="none";document.getElementById("sheet").classList.add("open");}
+function closeSheet(){document.getElementById("sheet").classList.remove("open");}
+function previewImg(){var u=document.getElementById("f-img").value;var p=document.getElementById("img-prev");if(u){p.src=u;p.style.display="block";}else{p.style.display="none";}}
+function editProduct(id){var p=PRODUCTS.find(function(x){return x.id===id});if(!p)return;document.getElementById("sheet-title").textContent="Edit Product";document.getElementById("f-id").value=p.id;document.getElementById("f-name").value=p.name||"";document.getElementById("f-price").value=p.price||"";document.getElementById("f-desc").value=p.description||"";document.getElementById("f-cat").value=p.category||"";document.getElementById("f-img").value=p.image_url||"";document.getElementById("f-stock").value=p.in_stock?"true":"false";previewImg();document.getElementById("sheet").classList.add("open");}
+async function saveProduct(e){e.preventDefault();
+var id=document.getElementById("f-id").value;
+var body={name:document.getElementById("f-name").value,price:document.getElementById("f-price").value,description:document.getElementById("f-desc").value,image_url:document.getElementById("f-img").value,category:document.getElementById("f-cat").value,in_stock:document.getElementById("f-stock").value==="true"};
+var btn=document.getElementById("save-btn");btn.disabled=true;btn.textContent="Saving...";
+try{
+var url=id?("/api/store/"+WID+"/products/"+id):("/api/store/"+WID+"/products");
+var r=await fetch(url,{method:id?"PATCH":"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+if(r.ok){var d=await r.json();
+if(id){var idx=PRODUCTS.findIndex(function(x){return x.id===id});if(idx>=0){body.id=id;PRODUCTS[idx]=body;}}
+else{var np=d.product||body;PRODUCTS.unshift(np);}
+closeSheet();renderProducts();updateStats();toast(id?"Updated":"Added");}
+else{toast("Failed to save");}
+}catch(err){toast("Error. Try again");}
+btn.disabled=false;btn.textContent="Save Product";
+}
+async function delProduct(id){if(!confirm("Delete this product?"))return;
+try{await fetch("/api/store/"+WID+"/products/"+id,{method:"DELETE"});PRODUCTS=PRODUCTS.filter(function(p){return p.id!==id});renderProducts();updateStats();toast("Deleted");}catch(e){toast("Failed");}}
+async function toggleStock(id){var p=PRODUCTS.find(function(x){return x.id===id});if(!p)return;var body={name:p.name,price:p.price,description:p.description||"",image_url:p.image_url||"",category:p.category||"",in_stock:!p.in_stock};
+try{var r=await fetch("/api/store/"+WID+"/products/"+id,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});if(r.ok){p.in_stock=!p.in_stock;renderProducts();updateStats();toast(p.in_stock?"Now visible":"Hidden");}}catch(e){toast("Failed");}}
+function shareStore(){var url=location.origin+"/api/store/"+WID+"/store-page";window.open("https://wa.me/?text="+encodeURIComponent("Check out our online store: "+url),"_blank");}
+document.getElementById("sheet").addEventListener("click",function(e){if(e.target===this)closeSheet();});
+renderProducts();
+</script>
+</body></html>"""
+
+
 @router.get("/{website_id}/manage", response_class=HTMLResponse)
 def store_manager(website_id: str):
-    """Owner management page for the store."""
+    """Owner management page for the store - app-style e-commerce admin."""
     service = WebsiteService()
     lead_service = LeadService()
     db = get_supabase()
-
     website = service.get(website_id)
     if not website:
         raise HTTPException(404, "Store not found")
-
     lead = lead_service.get(website["lead_id"]) if website.get("lead_id") else None
     business_name = lead.get("business_name", "Store") if lead else "Store"
     phone = lead.get("phone", "") if lead else ""
     password = _get_store_password(phone)
-
+    content = website.get("content", {}) or {}
+    colors = content.get("color_scheme", {}) or {}
+    primary = colors.get("primary", "#7C3AED")
     try:
         products = db.table("store_products").select("*").eq("website_id", website_id).order("created_at", desc=True).execute()
         product_list = products.data or []
     except Exception:
         product_list = []
-
-    rows = ""
-    for p in product_list:
-        stock = "In Stock" if p.get("in_stock") else "Out of Stock"
-        rows += f'<tr><td>{p.get("name","")}</td><td>Rs.{p.get("price","")}</td><td>{stock}</td><td><button onclick="deleteProduct(\'{p["id"]}\')">Delete</button></td></tr>'
-
-    html = f'''<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Store Manager - {business_name}</title>
-<style>*{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:system-ui,sans-serif;background:#f8fafc;padding:20px}}
-h1{{font-size:1.3rem;margin-bottom:4px}}p.sub{{font-size:.8rem;color:#64748b;margin-bottom:20px}}
-.card{{background:#fff;border-radius:12px;padding:20px;border:1px solid #e2e8f0;margin-bottom:16px}}
-.card h2{{font-size:1rem;margin-bottom:12px}}
-input,textarea{{width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;margin-bottom:8px;font-size:.9rem}}
-button{{padding:10px 16px;background:#7c3aed;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600}}
-table{{width:100%;border-collapse:collapse;font-size:.85rem}}th,td{{padding:8px;text-align:left;border-bottom:1px solid #e2e8f0}}
-.creds{{background:#fef3c7;padding:12px;border-radius:8px;font-size:.8rem;margin-bottom:16px}}
-</style></head><body>
-<h1>Store Manager</h1>
-<p class="sub">{business_name}</p>
-<div class="creds"><strong>Login Credentials:</strong><br>Phone: {phone}<br>Password: {password}</div>
-<div class="card"><h2>Add Product</h2>
-<form onsubmit="addProduct(event)">
-<input name="name" placeholder="Product Name" required>
-<input name="price" placeholder="Price (e.g., 599)" required>
-<textarea name="description" placeholder="Short description" rows="2"></textarea>
-<input name="image_url" placeholder="Image URL (optional)">
-<input name="category" placeholder="Category (optional)">
-<button type="submit">Add Product</button>
-</form></div>
-<div class="card"><h2>Products ({len(product_list)})</h2>
-<table><thead><tr><th>Name</th><th>Price</th><th>Stock</th><th>Action</th></tr></thead>
-<tbody>{rows}</tbody></table></div>
-<script>
-const WID="{website_id}";
-async function addProduct(e){{e.preventDefault();const f=new FormData(e.target);
-const body={{name:f.get("name"),price:f.get("price"),description:f.get("description"),image_url:f.get("image_url"),category:f.get("category"),in_stock:true}};
-const r=await fetch(`/api/store/${{WID}}/products`,{{method:"POST",headers:{{"Content-Type":"application/json"}},body:JSON.stringify(body)}});
-if(r.ok){{alert("Product added!");location.reload();}}else{{alert("Failed to add");}}}}
-async function deleteProduct(id){{if(!confirm("Delete?"))return;
-await fetch(`/api/store/${{WID}}/products/${{id}}`,{{method:"DELETE"}});location.reload();}}
-</script>
-</body></html>'''
+    total = len(product_list)
+    in_stock = sum(1 for p in product_list if p.get("in_stock"))
+    out_stock = total - in_stock
+    import json as _json
+    products_json = _json.dumps(product_list)
+    html = (STORE_MGR_TEMPLATE
+        .replace("__BIZNAME__", str(business_name))
+        .replace("__WID__", str(website_id))
+        .replace("__PRIMARY__", str(primary))
+        .replace("__PHONE__", str(phone))
+        .replace("__PASSWORD__", str(password))
+        .replace("__TOTAL__", str(total))
+        .replace("__INSTOCK__", str(in_stock))
+        .replace("__OUTSTOCK__", str(out_stock))
+        .replace("__PRODUCTS_JSON__", products_json))
     return HTMLResponse(content=html)
-
 
 @router.get("/{website_id}/store-page", response_class=HTMLResponse)
 def store_page(website_id: str):
