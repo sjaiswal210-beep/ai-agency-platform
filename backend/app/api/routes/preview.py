@@ -418,7 +418,7 @@ MOBILE_CSS = """
   .hero h1{font-size:1.7rem!important;font-weight:800!important;margin-bottom:8px!important;line-height:1.15!important}
   .hero p{font-size:.92rem!important;margin-bottom:14px!important}
   .hero-btns{flex-direction:row!important;gap:8px!important;align-items:center!important;justify-content:center!important}
-  .hero-btns .btn,.btn-white,.btn-glass{flex:1;text-align:center;justify-content:center;padding:9px 14px!important;font-size:.78rem!important;font-weight:600!important;border-radius:10px!important;opacity:.92;-webkit-tap-highlight-color:transparent}
+  .hero-btns .btn,.btn-white,.btn-glass{flex:1;text-align:center;justify-content:center;padding:7px 12px!important;font-size:.72rem!important;font-weight:500!important;border-radius:8px!important;opacity:.85;-webkit-tap-highlight-color:transparent}
   .stats-section .stats-grid,.stats-grid{grid-template-columns:repeat(2,1fr)!important;gap:12px!important;padding:0 16px}.stats-section{background-attachment:scroll!important;background-size:120% auto!important;background-position:center 50%!important}
   .stat-number{font-size:1.5rem!important}
   .section,.sec{padding:20px 12px!important}.products-section{order:-1!important}
