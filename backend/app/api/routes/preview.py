@@ -417,8 +417,8 @@ MOBILE_CSS = """
   .hero-content{padding:50px 14px 16px!important;margin:0!important}
   .hero h1{font-size:1.7rem!important;font-weight:800!important;margin-bottom:8px!important;line-height:1.15!important}
   .hero p{font-size:.92rem!important;margin-bottom:14px!important}
-  .hero-btns{flex-direction:column!important;gap:10px!important;align-items:stretch!important}
-  .hero-btns .btn,.btn-white,.btn-glass{text-align:center;justify-content:center;padding:14px 20px!important;font-size:.9rem!important;font-weight:700!important;border-radius:14px!important;min-height:48px!important;-webkit-tap-highlight-color:transparent}
+  .hero-btns{flex-direction:row!important;gap:8px!important;align-items:center!important;justify-content:center!important}
+  .hero-btns .btn,.btn-white,.btn-glass{flex:1;text-align:center;justify-content:center;padding:9px 14px!important;font-size:.78rem!important;font-weight:600!important;border-radius:10px!important;opacity:.92;-webkit-tap-highlight-color:transparent}
   .stats-section .stats-grid,.stats-grid{grid-template-columns:repeat(2,1fr)!important;gap:12px!important;padding:0 16px}.stats-section{background-attachment:scroll!important;background-size:120% auto!important;background-position:center 50%!important}
   .stat-number{font-size:1.5rem!important}
   .section,.sec{padding:20px 12px!important}.products-section{order:-1!important}
@@ -722,18 +722,18 @@ def generate_html(content: dict, template: str, lead: dict = None, website_id_ov
                     wa_msg = urllib.parse.quote(f"Hi, I want to buy {p.get('name','')} (Rs.{p.get('price','')})")
                     wa_link = f"https://wa.me/{whatsapp_num}?text={wa_msg}" if whatsapp_num else "#"
                     prod_cards += (
-                        f'<div class="product-item" data-aos="fade-up">'
-                        f'<img src="{p_img}" alt="{p.get("name","")}" style="width:100%;height:110px;object-fit:cover;border-radius:10px">'
-                        f'<h3 style="font-size:.9rem;font-weight:700;margin:10px 0 4px">{p.get("name","")}</h3>'
-                        f'<p style="font-size:.8rem;color:#64748b;margin-bottom:6px">{p.get("description","")[:50]}</p>'
-                        f'<p style="font-size:1rem;font-weight:800;color:var(--p);margin-bottom:8px">Rs. {p.get("price","")}</p>'
-                        f'<a href="{wa_link}" target="_blank" style="display:block;text-align:center;background:var(--p);color:#fff;padding:8px;border-radius:8px;font-size:.78rem;font-weight:700;text-decoration:none">Buy Now</a>'
+                        f'<div class="prod-card" data-aos="fade-up">'
+                        f'<img src="{p_img}" alt="{p.get("name","")}" class="prod-img">'
+                        f'<h3 class="prod-name">{p.get("name","")}</h3>'
+                        f'<p class="prod-desc">{p.get("description","")[:60]}</p>'
+                        f'<div class="prod-price">Rs. {p.get("price","")}</div>'
+                        f'<div class="prod-actions"><a href="{wa_link}" target="_blank" class="prod-buy">Buy Now</a><a href="{wa_link}" target="_blank" class="prod-enq">Enquire</a></div>'
                         f'</div>'
                     )
                 products_html = (
-                    '<section class="section" style="padding:60px 24px"><div style="max-width:1100px;margin:0 auto">'
+                    '<section class="section products-section" style="padding:48px 16px">' + '<style>.prod-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;max-width:700px;margin:0 auto}.prod-card{background:#fff;border-radius:14px;overflow:hidden;border:1px solid var(--line);transition:transform .2s,box-shadow .2s}.prod-card:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,.08)}.prod-img{width:100%;aspect-ratio:1;object-fit:cover}.prod-body{padding:12px}.prod-name{font-size:.9rem;font-weight:700;margin-bottom:4px;color:var(--ink)}.prod-desc{font-size:.74rem;color:var(--mute);margin-bottom:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.4}.prod-price{font-size:1.05rem;font-weight:800;color:var(--p);margin-bottom:10px}.prod-actions{display:flex;gap:6px}.prod-buy{flex:1;text-align:center;padding:9px;background:var(--p);color:#fff;border-radius:8px;font-size:.74rem;font-weight:700;text-decoration:none}.prod-enq{flex:1;text-align:center;padding:9px;background:var(--soft);color:var(--mute);border-radius:8px;font-size:.74rem;font-weight:700;text-decoration:none;border:1px solid var(--line)}</style>' + '<div style="max-width:1100px;margin:0 auto">'
                     '<div class="section-header" data-aos="fade-up"><h2>Our Products</h2></div>'
-                    f'<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px">{prod_cards}</div>'
+                    f'<div class="prod-grid">{prod_cards}</div>'
                     '</div></section>'
                 )
         except Exception:
