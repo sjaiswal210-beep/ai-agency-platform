@@ -453,6 +453,10 @@ input,select{{font-size:16px!important}}
 .checkout-btn{{width:100%;padding:14px;background:#25D366;color:#fff;border:none;border-radius:10px;font-weight:700;font-size:.9rem;cursor:pointer;margin-top:10px}}
 .addr-input{{width:100%;padding:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-size:14px;margin-top:8px;outline:none}}
 .empty{{text-align:center;padding:40px;color:#475569;font-size:.8rem}}
+.s-toast{{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:#10b981;color:#fff;padding:10px 20px;border-radius:50px;font-size:.78rem;font-weight:700;z-index:10000;opacity:0;transition:all .3s cubic-bezier(.4,0,.2,1);pointer-events:none;box-shadow:0 6px 20px rgba(16,185,129,.4);display:flex;align-items:center;gap:6px}}
+.s-toast.show{{opacity:1;transform:translateX(-50%) translateY(0)}}
+.add-btn.added{{background:rgba(16,185,129,.2)!important;border-color:rgba(16,185,129,.45)!important;color:#10b981!important}}
+.cart-float{{transition:transform .2s}}.cart-badge{{transition:transform .2s}}
 </style></head><body>
 
 <div class="hdr">
@@ -464,7 +468,8 @@ input,select{{font-size:16px!important}}
 <div class="cats" id="catBar"></div>
 <div class="grid" id="prodGrid"></div>
 
-<div class="cart-float" onclick="toggleCart()">
+<div class="s-toast" id="sToast">&#10003; Added to cart</div>
+<div class="cart-float" id="cartFloat" onclick="toggleCart()">
 <svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
 <div class="cart-badge" id="cartCount">0</div>
 </div>
@@ -520,10 +525,18 @@ function filterCat(cat){{
   filterProducts();
 }}
 
+function showToast(msg){{var t=document.getElementById("sToast");if(!t)return;t.innerHTML="&#10003; "+msg;t.classList.add("show");clearTimeout(window._tt);window._tt=setTimeout(function(){{t.classList.remove("show")}},1600);}}
 function addToCart(id){{
   cart[id]=(cart[id]||0)+1;
   localStorage.setItem('cart_{website_id}',JSON.stringify(cart));
   updateCartUI();
+  var cf=document.getElementById("cartFloat");
+  if(cf){{cf.classList.remove("bounce");void cf.offsetWidth;cf.classList.add("bounce");}}
+  var bd=document.getElementById("cartCount");
+  if(bd){{bd.classList.remove("pulse");void bd.offsetWidth;bd.classList.add("pulse");}}
+  var btn=document.querySelector('.add-btn[data-pid="'+id+'"]');
+  if(btn){{var orig=btn.textContent;btn.classList.add("added");btn.textContent="\u2713 Added";setTimeout(function(){{btn.classList.remove("added");btn.textContent=orig;}},1000);}}
+  showToast("Added to cart");
 }}
 
 function removeFromCart(id){{
@@ -536,7 +549,11 @@ function removeFromCart(id){{
 
 function updateCartUI(){{
   var count=Object.values(cart).reduce((a,b)=>a+b,0);
-  document.getElementById('cartCount').textContent=count;
+  var bd=document.getElementById('cartCount');
+  bd.textContent=count;
+  bd.style.display=count>0?"flex":"none";
+  var cf=document.getElementById("cartFloat");
+  if(cf)cf.style.opacity=count>0?"1":".6";
 }}
 
 function toggleCart(){{
