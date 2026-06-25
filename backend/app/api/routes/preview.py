@@ -1087,7 +1087,7 @@ body{{padding-bottom:70px}}
         f'<a href="javascript:void(0)" onclick="openDashLogin()" class="nav-cta" title="Business Dashboard"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></a></nav>'
         '<section class="hero"><div class="hero-bg"></div><div class="hero-overlay"></div><div class="hero-glow"></div>'
         f'<div class="hero-content"><div class="hero-pill">&#9733; Trusted by {max(lead.get("review_count", 100), 40) if lead and int(lead.get("review_count", 0) or 0) >= 30 else __import__("random").randint(40, 80)}+ customers</div><h1>{hero_title}</h1><p>{hero_subtitle}</p>' + (f'<div class="hero-offer">{hero_offer}</div>' if hero_offer else '') +
-        f'<div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center"><a href="#contact" class="btn btn-white">{cta_text}</a><a href="https://www.google.com/maps/dir/?api=1&destination={address.replace(" ", "+")}" target="_blank" class="btn btn-glass">&#128205; Get Directions</a></div></div></section>'
+        f'<div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center"><a href="#contact" class="btn btn-white">{cta_text}</a></div></div></section>'
         '<section class="section" id="about"><div class="about-grid">'
         f'<div class="about-img"><img src="{real_photos[1] if len(real_photos) > 1 else about_img}" alt="About"></div>'
         '<div><div class="section-header" style="text-align:left;margin-bottom:20px"><h2>About Us</h2></div>'
