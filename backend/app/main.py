@@ -84,6 +84,7 @@ from app.modules.documents.router import router as documents_router
 from app.modules.ai_employee.router import router as ai_employee_router
 from app.modules.voice_calling.router import router as voice_calling_router
 from app.modules.voice_calling.voice_blast import router as voice_blast_router
+from app.modules.voice_calling.owner_broadcast import router as owner_broadcast_router
 from app.api.routes.voice_blast_admin import router as voice_blast_admin_router
 from app.api.routes.voice_admin import router as voice_admin_router
 from app.api.routes.invoice_pdf import router as invoice_pdf_router
@@ -335,6 +336,7 @@ app.include_router(documents_router)
 app.include_router(ai_employee_router)
 app.include_router(voice_calling_router)
 app.include_router(voice_blast_router)
+app.include_router(owner_broadcast_router)
 app.include_router(voice_blast_admin_router)
 
 # Serve static audio files for voice blast
