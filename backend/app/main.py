@@ -196,6 +196,58 @@ async def rate_limit_middleware(request: Request, call_next):
     return response
 
 
+# Inject a floating "Back to Dashboard" button into business-dashboard tool pages.
+# The button only appears when the page was opened from the dashboard (window.opener
+# is set), so it never shows on the public customer-facing website.
+_BACK_DASH_SNIPPET = (
+    "<script>(function(){try{"
+    "var r=document.referrer||'';"
+    "if(!window.opener&&r.indexOf('/api/panel/')===-1)return;"
+    "if(document.getElementById('__backDash'))return;"
+    "var b=document.createElement('a');b.id='__backDash';b.href='#';"
+    "b.innerHTML='\u2190 Back to Dashboard';"
+    "b.style.cssText='position:fixed;top:10px;left:10px;z-index:2147483647;background:#6366f1;color:#fff;padding:8px 14px;border-radius:8px;font:600 13px/1 system-ui,-apple-system,sans-serif;text-decoration:none;box-shadow:0 4px 12px rgba(0,0,0,.3)';"
+    "b.onclick=function(e){e.preventDefault();window.close();setTimeout(function(){if(!window.closed){if(r){location.href=r;}else{history.back();}}},200);};"
+    "if(document.body){document.body.appendChild(b);}else{document.addEventListener('DOMContentLoaded',function(){document.body.appendChild(b);});}"
+    "}catch(e){}})();</script>"
+)
+
+def _is_tool_page(path: str) -> bool:
+    """Owner-facing tool pages that should show the Back-to-Dashboard button."""
+    if path.startswith("/api/panel/"):
+        # The dashboard root is /api/panel/{id} (3 slashes); tools have a sub-path.
+        return path.rstrip("/").count("/") >= 4
+    if path.startswith("/api/store/"):
+        return path.rstrip("/").endswith("/manage")
+    return path.startswith((
+        "/api/owner-broadcast/", "/api/owner-analytics/", "/api/daily/", "/api/offers/",
+        "/api/logo-gen/", "/api/qr/", "/api/google-profile/", "/api/org/", "/api/book/",
+        "/api/menu/", "/api/branding/", "/api/bookings/", "/api/photo/", "/api/reviews/",
+    ))
+
+@app.middleware("http")
+async def inject_back_button(request: Request, call_next):
+    response = await call_next(request)
+    try:
+        if request.method == "GET" and _is_tool_page(request.url.path):
+            ctype = response.headers.get("content-type", "")
+            if "text/html" in ctype.lower():
+                body = b""
+                async for chunk in response.body_iterator:
+                    body += chunk
+                text = body.decode("utf-8", "ignore")
+                if "</body>" in text:
+                    text = text.replace("</body>", _BACK_DASH_SNIPPET + "</body>", 1)
+                else:
+                    text += _BACK_DASH_SNIPPET
+                headers = dict(response.headers)
+                headers.pop("content-length", None)
+                return HTMLResponse(content=text, status_code=response.status_code, headers=headers)
+    except Exception:
+        pass
+    return response
+
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
