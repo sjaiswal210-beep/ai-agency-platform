@@ -38,22 +38,38 @@ class VersionRestore(BaseModel):
 # ============ AUTH ============
 
 _tokens = {}
+_TOKEN_TTL = 86400  # 24h
+
+def _purge_tokens():
+    """Drop expired admin sessions so the dict cannot grow unbounded."""
+    import time as _t
+    now = _t.time()
+    expired = [k for k, v in _tokens.items() if now - v.get("ts", 0) > _TOKEN_TTL]
+    for k in expired:
+        _tokens.pop(k, None)
 
 
 @router.post("/login")
 def admin_login(req: AdminLogin):
     """Admin login."""
     if req.email == ADMIN_EMAIL and hashlib.sha256(req.password.encode()).hexdigest() == ADMIN_PASSWORD_HASH:
+        import time as _t
+        _purge_tokens()
         token = secrets.token_urlsafe(32)
-        _tokens[token] = {"email": req.email, "role": "super_admin", "login_time": datetime.now().isoformat()}
+        _tokens[token] = {"email": req.email, "role": "super_admin", "login_time": datetime.now().isoformat(), "ts": _t.time()}
         return {"token": token, "role": "super_admin"}
     raise HTTPException(401, "Invalid credentials")
 
 
 def verify_admin(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    import time as _t
     if not credentials or credentials.credentials not in _tokens:
         raise HTTPException(401, "Not authenticated")
-    return _tokens[credentials.credentials]
+    tok = _tokens[credentials.credentials]
+    if _t.time() - tok.get("ts", 0) > _TOKEN_TTL:
+        _tokens.pop(credentials.credentials, None)
+        raise HTTPException(401, "Session expired")
+    return tok
 
 
 # ============ AI EDIT ENGINE ============

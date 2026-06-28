@@ -8,12 +8,12 @@ GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini
 GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 
 
-async def _call_gemini(contents: list, api_key: str) -> str:
+async def _call_gemini(contents: list, api_key: str, temperature: float = 0.9) -> str:
     """Try Gemini API."""
     async with httpx.AsyncClient() as client:
         resp = await client.post(
             f"{GEMINI_API_URL}?key={api_key}",
-            json={"contents": contents},
+            json={"contents": contents, "generationConfig": {"temperature": temperature, "topP": 0.95, "topK": 40}},
             timeout=120,
         )
         if resp.status_code == 429:
@@ -23,7 +23,7 @@ async def _call_gemini(contents: list, api_key: str) -> str:
         return data["candidates"][0]["content"]["parts"][0]["text"]
 
 
-async def _call_groq(messages: list[dict], api_key: str) -> str:
+async def _call_groq(messages: list[dict], api_key: str, temperature: float = 0.9) -> str:
     """Try Groq API (free Llama 3)."""
     # Trim messages to fit context - keep system short, trim user content
     trimmed = []
@@ -39,7 +39,7 @@ async def _call_groq(messages: list[dict], api_key: str) -> str:
             json={
                 "model": "llama-3.3-70b-versatile",
                 "messages": trimmed,
-                "temperature": 0.7,
+                "temperature": temperature,
                 "max_tokens": 4096,
             },
             headers={
@@ -55,7 +55,7 @@ async def _call_groq(messages: list[dict], api_key: str) -> str:
 
 
 
-async def _call_freellmapi(messages: list[dict], base_url: str, api_key: str = "") -> str:
+async def _call_freellmapi(messages: list[dict], base_url: str, api_key: str = "", temperature: float = 0.9) -> str:
     """Try FreeLLMAPI - OpenAI-compatible proxy with free tier providers."""
     # Trim messages to fit
     trimmed = []
@@ -75,7 +75,7 @@ async def _call_freellmapi(messages: list[dict], base_url: str, api_key: str = "
             json={
                 "model": "auto",
                 "messages": trimmed,
-                "temperature": 0.7,
+                "temperature": temperature,
                 "max_tokens": 4096,
             },
             headers=headers,
@@ -87,7 +87,7 @@ async def _call_freellmapi(messages: list[dict], base_url: str, api_key: str = "
         data = resp.json()
         return data["choices"][0]["message"]["content"]
 
-async def chat_completion(messages: list[dict], model: str | None = None) -> str:
+async def chat_completion(messages: list[dict], model: str | None = None, temperature: float = 0.9) -> str:
     """Call LLM - tries Gemini first, falls back to Groq if rate limited."""
     settings = get_settings()
 
@@ -103,7 +103,7 @@ async def chat_completion(messages: list[dict], model: str | None = None) -> str
     # Try Gemini first
     if settings.gemini_api_key:
         try:
-            return await _call_gemini(contents, settings.gemini_api_key)
+            return await _call_gemini(contents, settings.gemini_api_key, temperature)
         except Exception as e:
             if "RATE_LIMITED" in str(e) or "429" in str(e):
                 pass  # Fall through to Groq
@@ -111,7 +111,7 @@ async def chat_completion(messages: list[dict], model: str | None = None) -> str
                 # Try once more after short wait
                 await asyncio.sleep(3)
                 try:
-                    return await _call_gemini(contents, settings.gemini_api_key)
+                    return await _call_gemini(contents, settings.gemini_api_key, temperature)
                 except Exception:
                     pass  # Fall through to Groq
 
@@ -120,7 +120,7 @@ async def chat_completion(messages: list[dict], model: str | None = None) -> str
     freellm_key = getattr(settings, 'freellmapi_key', '') or ''
     if freellm_url:
         try:
-            result = await _call_freellmapi(messages, freellm_url, freellm_key)
+            result = await _call_freellmapi(messages, freellm_url, freellm_key, temperature)
             track_usage("freellmapi_chat")
             return result
         except Exception:
@@ -131,7 +131,7 @@ async def chat_completion(messages: list[dict], model: str | None = None) -> str
     groq_key = getattr(settings, 'groq_api_key', '') or ''
     if groq_key:
         try:
-            return await _call_groq(messages, groq_key)
+            return await _call_groq(messages, groq_key, temperature)
         except Exception as e:
             raise Exception(f"All LLM providers failed. Last error: {str(e)[:100]}")
 

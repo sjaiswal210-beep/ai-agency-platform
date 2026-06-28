@@ -13,6 +13,8 @@ from app.services.lead_service import LeadService
 from app.core.llm import chat_completion
 from app.core.logging import get_logger
 from app.services.usage_tracker import track_usage
+import random
+import time
 from fastapi import Request
 
 router = APIRouter(prefix="/video", tags=["video"])
@@ -46,16 +48,25 @@ async def generate_long_video(website_id: str, req: MultiClipRequest):
     category = lead.get("category", "business") if lead else "business"
 
     # Generate scene-by-scene prompts from the main prompt
-    scene_prompt = f"""Split this video concept into {req.clips} separate scenes (each 10 seconds).
-Each scene should be a different angle/moment that flows together as one video.
+    unique_seed = random.randint(1000, 9999)
+    scene_prompt = f"""Split this video concept into {req.clips} UNIQUE separate scenes (each 10 seconds).
+Each scene MUST be a distinctly different angle/moment/location that flows together as one video.
+IMPORTANT: Make each scene visually distinct. Vary camera angles, subjects, and compositions. (Seed: {unique_seed})
 
 Main concept: {req.prompt}
 Business: {business_name} ({category})
 
-Return ONLY a JSON array of scene descriptions. Example:
-["Scene 1 description...", "Scene 2 description...", "Scene 3 description..."]"""
+Rules:
+- Scene 1: Opening/establishing shot (different angle each time)
+- Middle scenes: Show different aspects (products, people, atmosphere, details)
+- Final scene: Strong closing/call-to-action moment
+- Each scene must have SPECIFIC visual details, not generic descriptions
+- Include camera movement in each description
 
-    scenes_raw = await chat_completion([{"role": "user", "content": scene_prompt}])
+Return ONLY a JSON array of {req.clips} scene descriptions:
+["Scene 1 description...", "Scene 2 description...", ...]"""
+
+    scenes_raw = await chat_completion([{"role": "user", "content": scene_prompt}], temperature=1.0)
     
     import json as _json
     cleaned = scenes_raw.strip()
@@ -80,6 +91,7 @@ Return ONLY a JSON array of scene descriptions. Example:
                 input={
                     "prompt": scene,
                     "duration": 10,
+                    "seed": random.randint(0, 2147483647),
                 }
             )
             if hasattr(output, "url"):
@@ -117,24 +129,27 @@ async def stitch_videos(clips: list, website_id: str, business_name: str = "", p
     temp_dir = tempfile.mkdtemp()
     clip_files = []
 
-    # Download each clip
+    # Download each clip - STREAM to disk (do not hold whole file in memory)
     async with _httpx.AsyncClient() as client:
         for i, clip in enumerate(clips):
             if not clip.get("url"):
                 continue
             try:
-                resp = await client.get(clip["url"], timeout=60)
-                if resp.status_code == 200:
-                    path = os.path.join(temp_dir, f"clip_{i}.mp4")
-                    with open(path, "wb") as f:
-                        f.write(resp.content)
-                    clip_files.append(path)
+                path = os.path.join(temp_dir, f"clip_{i}.mp4")
+                async with client.stream("GET", clip["url"], timeout=60) as resp:
+                    if resp.status_code == 200:
+                        with open(path, "wb") as out:
+                            async for chunk in resp.aiter_bytes(chunk_size=65536):
+                                out.write(chunk)
+                        clip_files.append(path)
             except Exception:
                 continue
 
     logger.info("Stitch: downloaded clips", count=len(clip_files))
     if len(clip_files) < 1:
         logger.warning("Stitch: no clips downloaded")
+        try: shutil.rmtree(temp_dir, ignore_errors=True)
+        except: pass
         return None
 
     output_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), "static", "videos")
@@ -166,6 +181,8 @@ async def stitch_videos(clips: list, website_id: str, business_name: str = "", p
             for f in clip_files:
                 try: os.remove(f)
                 except: pass
+            try: shutil.rmtree(temp_dir, ignore_errors=True)
+            except: pass
             return None
 
     # Add text overlay with business name, phone, and branding
@@ -213,6 +230,8 @@ async def stitch_videos(clips: list, website_id: str, business_name: str = "", p
         for f in clip_files:
             try: os.remove(f)
             except: pass
+        try: shutil.rmtree(temp_dir, ignore_errors=True)
+        except: pass
         return None
 
     logger.info("Stitch: combined video created", path=output_path, size=os.path.getsize(output_path))
@@ -222,6 +241,8 @@ async def stitch_videos(clips: list, website_id: str, business_name: str = "", p
         try: os.remove(f)
         except: pass
     try: os.remove(concat_path)
+    except: pass
+    try: shutil.rmtree(temp_dir, ignore_errors=True)
     except: pass
 
     from app.core.config import get_settings
@@ -244,20 +265,23 @@ async def generate_video(website_id: str, req: VideoRequest):
 
     # If no prompt provided, generate one using AI
     if not req.prompt:
-        prompt_gen = f"""Write a short, vivid video description for a promotional video for:
+        vid_styles = ["cinematic slow motion", "fast-paced energetic montage", "smooth tracking shot", "aerial overview", "intimate close-ups", "documentary style"]
+        vid_times = ["morning", "golden hour", "afternoon", "evening", "night"]
+        vid_focus = ["customers enjoying", "products in detail", "team at work", "atmosphere and ambiance", "the full experience", "behind the scenes"]
+        prompt_gen = f"""Write a UNIQUE, vivid video description for a promotional video for:
 Business: {business_name}
 Category: {category}
 
-The description should be 1-2 sentences describing what the video should show.
-Think: cinematic, professional, appealing to customers.
-Examples:
-- "A modern dental clinic with bright lighting, a dentist smiling at a patient, clean white interior, professional equipment"
-- "A busy restaurant kitchen with chefs cooking, flames on a pan, beautiful plated food, warm ambient lighting"
-- "A fitness gym with people working out, modern equipment, energetic atmosphere, motivational"
+Creative direction: {random.choice(vid_styles)}, shot during {random.choice(vid_times)}, focusing on {random.choice(vid_focus)}.
+Generation ID: {random.randint(100,999)}
+
+Write 1-2 sentences with SPECIFIC visual details. Be creative and different from typical descriptions.
+Include camera movement, lighting, and what specific things we see.
+DO NOT use generic descriptions. Be vivid and unique to this exact business type.
 
 Return ONLY the video description, nothing else."""
 
-        video_prompt = await chat_completion([{"role": "user", "content": prompt_gen}])
+        video_prompt = await chat_completion([{"role": "user", "content": prompt_gen}], temperature=1.0)
         video_prompt = video_prompt.strip().strip('"')
     else:
         video_prompt = req.prompt
@@ -271,7 +295,7 @@ Return ONLY the video description, nothing else."""
             "lightricks/ltx-2-distilled",
             input={
                 "prompt": video_prompt,
-                
+                "seed": random.randint(0, 2147483647),
             }
         )
 
@@ -341,7 +365,17 @@ async def generate_detailed_prompt(website_id: str, req: IdeaRequest):
     category = lead.get("category", "business") if lead else "business"
     address = lead.get("address", "") if lead else ""
 
-    prompt = f"""You are a professional video director creating a promotional video for a business.
+    # Random elements for unique generation every time
+    camera_styles = ["tracking shot", "slow dolly", "crane shot", "steadicam", "handheld", "drone aerial", "slider movement", "orbiting shot"]
+    lighting_moods = ["golden hour warmth", "bright natural daylight", "soft diffused morning light", "dramatic side lighting", "neon glow", "warm ambient", "cinematic blue hour", "backlit silhouette"]
+    color_grades = ["teal and orange", "warm golden tones", "cool blue hues", "vibrant saturated", "pastel soft", "high contrast noir", "earthy natural", "film emulation"]
+    random_style = random.choice(camera_styles)
+    random_light = random.choice(lighting_moods)
+    random_grade = random.choice(color_grades)
+    seed = random.randint(1000, 9999)
+
+    prompt = f"""You are a professional video director creating a UNIQUE promotional video for a business.
+IMPORTANT: Generate a completely FRESH and DIFFERENT concept every time. Never repeat previous ideas.
 
 BUSINESS:
 - Name: {business_name}
@@ -350,24 +384,30 @@ BUSINESS:
 
 USER'S IDEA: "{req.idea}"
 
-Create a DETAILED cinematic video prompt that a text-to-video AI model can use. Include:
-1. Scene description (what we see)
-2. Camera movement (pan, zoom, tracking shot, aerial, close-up)
-3. Lighting (golden hour, bright, moody, natural)
-4. Mood/atmosphere (energetic, calm, luxurious, warm)
-5. People/action (what people are doing)
-6. Colors and visual style
-7. Transitions between scenes if multiple
+CREATIVE DIRECTION (use these as inspiration, vary from them):
+- Camera style: {random_style}
+- Lighting mood: {random_light}  
+- Color grading: {random_grade}
+- Unique seed: #{seed}
 
-Make it vivid, specific, and cinematic. Think like a commercial director.
-The prompt should be 3-5 sentences, highly descriptive.
+Create a DETAILED cinematic video prompt. Include:
+1. Specific scene description (what we see - be creative and unique)
+2. Camera movement ({random_style} or similar)
+3. Lighting ({random_light} inspired)
+4. Mood/atmosphere (pick something fresh)
+5. People/action (specific and vivid)
+6. Color grading ({random_grade} inspired)
 
-Example output:
-"Cinematic tracking shot through a modern dental clinic, bright natural lighting streaming through floor-to-ceiling windows. A friendly dentist in a white coat smiles while explaining a procedure to a relaxed patient in a state-of-the-art chair. Close-up of gleaming dental equipment, then a wide shot of the welcoming reception area with warm wood accents and green plants. The camera slowly pulls back to reveal the clinic's modern exterior with the logo prominently displayed. Warm color grading with teal and orange tones."
+Rules:
+- Be DIFFERENT from generic descriptions
+- Include SPECIFIC visual details unique to this business
+- Vary camera angles and movements creatively
+- Make each generation feel like a new director's vision
+- 3-5 vivid sentences
 
 Return ONLY the video prompt, nothing else."""
 
-    result = await chat_completion([{"role": "user", "content": prompt}])
+    result = await chat_completion([{"role": "user", "content": prompt}], temperature=1.0)
     detailed_prompt = result.strip().strip('"')
 
     return {
@@ -429,18 +469,31 @@ async def generate_video_script(website_id: str, req: ScriptRequest):
     """Generate a 4-scene video script from a blurb/keywords."""
     import json as _json
     
-    prompt = f"""Create a 4-scene video script for a 20-second promotional video.
+    # Randomize creative direction for unique scripts every time
+    angles = ["wide establishing", "close-up detail", "low angle dramatic", "overhead bird's eye", "dutch angle", "tracking movement", "dolly zoom", "macro lens"]
+    moods = ["energetic upbeat", "calm sophisticated", "warm inviting", "bold dramatic", "playful vibrant", "luxurious premium", "fresh modern", "nostalgic emotional"]
+    random_angle = random.choice(angles)
+    random_mood = random.choice(moods)
+    unique_id = random.randint(100, 999)
+    
+    prompt = f"""Create a UNIQUE 4-scene video script for a 20-second promotional video.
+IMPORTANT: This must be COMPLETELY DIFFERENT from any previous script. Be creative! (ID: {unique_id})
+
 Business: {req.business_name}, Category: {req.category}
 Theme/Keywords: {req.blurb if req.blurb else req.category + ' business promotional'}
 
-Each scene is 5 seconds. Write vivid, cinematic visual descriptions.
-Focus on what the CAMERA sees - colors, movement, angles, people, products.
+Creative direction: {random_mood} mood, featuring {random_angle} shots.
+
+Each scene is 5 seconds. Write vivid, UNIQUE cinematic visual descriptions.
+Focus on what the CAMERA sees - specific colors, dynamic movement, creative angles, real people, actual products.
+DO NOT write generic descriptions. Be SPECIFIC to this business type.
+Each scene must be distinctly different from the others.
 
 Return ONLY a JSON array of 4 scene descriptions:
 ["Scene 1 visual description", "Scene 2...", "Scene 3...", "Scene 4..."]"""
 
     try:
-        result = await chat_completion([{"role": "user", "content": prompt}])
+        result = await chat_completion([{"role": "user", "content": prompt}], temperature=1.0)
         cleaned = result.strip()
         if "```json" in cleaned:
             cleaned = cleaned.split("```json")[1].split("```")[0].strip()
@@ -499,8 +552,9 @@ async def generate_free_video(website_id: str, req: HFVideoRequest, request: Req
 
     if len(scenes) < 3:
         try:
-            sp = f"Create 4 short scene descriptions for a {category} business video. Business: {business_name}. Return ONLY JSON array."
-            raw = await chat_completion([{"role": "user", "content": sp}])
+            _seed = random.randint(100, 999)
+            sp = f"Create 4 UNIQUE short scene descriptions for a {category} business video. Business: {business_name}. Be creative, specific, cinematic. Each scene MUST be different. ID:{_seed}. Return ONLY JSON array."
+            raw = await chat_completion([{"role": "user", "content": sp}], temperature=1.0)
             cleaned = raw.strip()
             if "```json" in cleaned: cleaned = cleaned.split("```json")[1].split("```")[0]
             elif "```" in cleaned: cleaned = cleaned.split("```")[1].split("```")[0]
@@ -516,7 +570,7 @@ async def generate_free_video(website_id: str, req: HFVideoRequest, request: Req
     clip_urls = []
     for scene in scenes[:4]:
         try:
-            output = rep_client.run("lightricks/ltx-2-distilled", input={"prompt": scene})
+            output = rep_client.run("lightricks/ltx-2-distilled", input={"prompt": scene, "seed": random.randint(0, 2147483647)})
             url = output.url if hasattr(output, "url") else str(output[0]) if isinstance(output, list) else str(output)
             if url and url.startswith("http"):
                 clip_urls.append(url)

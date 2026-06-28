@@ -17,8 +17,6 @@ CREATE TABLE IF NOT EXISTS voice_call_config (
     max_calls_per_day INTEGER DEFAULT 50,
     calls_made_today INTEGER DEFAULT 0,
     is_active BOOLEAN DEFAULT TRUE,
-    provider TEXT DEFAULT 'bolna' CHECK (provider IN ('bolna', 'dograh')),
-    dograh_base_url TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW(),
     UNIQUE(organization_id)

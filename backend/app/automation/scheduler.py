@@ -86,6 +86,27 @@ async def followup_automation():
 
 
 
+def cleanup_old_media():
+    """Delete static video/audio files older than 7 days to free disk + reduce bloat."""
+    import os, time
+    base = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "static")
+    cutoff = time.time() - 7 * 86400
+    removed = 0
+    for sub in ("videos", "audio"):
+        d = os.path.join(base, sub)
+        if not os.path.isdir(d):
+            continue
+        for fn in os.listdir(d):
+            fp = os.path.join(d, fn)
+            try:
+                if os.path.isfile(fp) and os.path.getmtime(fp) < cutoff:
+                    os.remove(fp)
+                    removed += 1
+            except Exception:
+                continue
+    logger.info("Cleaned old media files", removed=removed)
+
+
 def keep_alive_ping():
     """Ping self to prevent Render free tier from sleeping."""
     import httpx
@@ -115,6 +136,9 @@ def start_scheduler():
     )
 
     scheduler.add_job(keep_alive_ping, "interval", minutes=10, id="keep_alive", replace_existing=True)
+
+    # Media cleanup - every 12 hours (removes video/audio older than 7 days)
+    scheduler.add_job(cleanup_old_media, "interval", hours=12, id="cleanup_media", replace_existing=True)
 
     scheduler.start()
     logger.info("Automation scheduler started", jobs=["lead_processing (6h)", "followup (24h)"])

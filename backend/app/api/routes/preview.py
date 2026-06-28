@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import HTMLResponse
 from app.services.website_service import WebsiteService
@@ -573,6 +573,65 @@ def generate_html(content: dict, template: str, lead: dict = None, website_id_ov
     secondary = colors.get("secondary", "#e0e7ff")
     accent = colors.get("accent", "#F59E0B")
 
+    # --- Color Contrast Fix ---
+    def _hex_to_rgb(hex_color):
+        hex_color = hex_color.lstrip("#")
+        if len(hex_color) == 3:
+            hex_color = "".join(c * 2 for c in hex_color)
+        return tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
+
+    def _relative_luminance(r, g, b):
+        rs, gs, bs = r / 255.0, g / 255.0, b / 255.0
+        r_lin = rs / 12.92 if rs <= 0.03928 else ((rs + 0.055) / 1.055) ** 2.4
+        g_lin = gs / 12.92 if gs <= 0.03928 else ((gs + 0.055) / 1.055) ** 2.4
+        b_lin = bs / 12.92 if bs <= 0.03928 else ((bs + 0.055) / 1.055) ** 2.4
+        return 0.2126 * r_lin + 0.7152 * g_lin + 0.0722 * b_lin
+
+    def _contrast_ratio(hex1, hex2="#ffffff"):
+        r1, g1, b1 = _hex_to_rgb(hex1)
+        r2, g2, b2 = _hex_to_rgb(hex2)
+        l1 = _relative_luminance(r1, g1, b1)
+        l2 = _relative_luminance(r2, g2, b2)
+        lighter = max(l1, l2)
+        darker = min(l1, l2)
+        return (lighter + 0.05) / (darker + 0.05)
+
+    def _darken_color(hex_color, factor=0.5):
+        r, g, b = _hex_to_rgb(hex_color)
+        r = int(r * factor)
+        g = int(g * factor)
+        b = int(b * factor)
+        return f"#{r:02x}{g:02x}{b:02x}"
+
+    def _is_light_color(hex_color):
+        r, g, b = _hex_to_rgb(hex_color)
+        return _relative_luminance(r, g, b) > 0.4
+
+    # Fix primary: if too light on white, darken it
+    try:
+        if _contrast_ratio(primary, "#ffffff") < 3.0:
+            primary = _darken_color(primary, 0.45)
+    except Exception:
+        pass
+
+    # Fix accent similarly
+    try:
+        if _contrast_ratio(accent, "#ffffff") < 3.0:
+            accent = _darken_color(accent, 0.55)
+    except Exception:
+        pass
+
+    # Derive bg/text from color_scheme if provided
+    bg_color = colors.get("background", "#ffffff")
+    text_color = colors.get("text", "#0f172a")
+    # If both bg and primary are light, force darker primary
+    try:
+        if _is_light_color(bg_color) and _is_light_color(primary):
+            primary = _darken_color(primary, 0.35)
+    except Exception:
+        pass
+    # --- End Color Contrast Fix ---
+
     category = (lead.get("category", "") if lead else "") or template
     logo_url = content.get("logo_url", "") if isinstance(content, dict) else ""
 
@@ -856,7 +915,7 @@ def generate_html(content: dict, template: str, lead: dict = None, website_id_ov
 
 
     css = f"""<style>
-:root{{--p:{primary};--ps:{secondary};--ac:{accent};--ink:#0f172a;--mute:#64748b;--line:#e2e8f0;--bg:#fff;--soft:#f8fafc}}
+:root{{--p:{primary};--ps:{secondary};--ac:{accent};--ink:{text_color};--mute:#64748b;--line:#e2e8f0;--bg:{bg_color};--soft:#f8fafc}}
 *{{margin:0;padding:0;box-sizing:border-box}}
 html{{scroll-behavior:smooth}}
 body{{font-family:'Plus Jakarta Sans',Inter,system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;-webkit-tap-highlight-color:transparent}}

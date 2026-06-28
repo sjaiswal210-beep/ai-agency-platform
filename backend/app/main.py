@@ -147,11 +147,24 @@ def _check_ai_rate_limit(ip: str) -> bool:
     _ai_rate_limits[ip].append(now)
     return True
 
+_last_rl_cleanup = [_time.time()]
+
+def _purge_rate_limits(now: float):
+    """Remove IPs with no recent activity so the dicts do not grow unbounded."""
+    if now - _last_rl_cleanup[0] < 300:
+        return
+    _last_rl_cleanup[0] = now
+    for bucket, window in ((_rate_limits, 60), (_ai_rate_limits, 3600)):
+        stale = [ip for ip, ts in bucket.items() if not ts or now - ts[-1] > window]
+        for ip in stale:
+            bucket.pop(ip, None)
+
 @app.middleware("http")
 async def rate_limit_middleware(request: Request, call_next):
     """Basic rate limiting - 100 requests per minute per IP."""
     ip = request.client.host if request.client else "unknown"
     now = _time.time()
+    _purge_rate_limits(now)
     _rate_limits[ip] = [t for t in _rate_limits[ip] if now - t < 60]
     if len(_rate_limits[ip]) > 100:
         return JSONResponse(status_code=429, content={"detail": "Too many requests"})
@@ -355,6 +368,7 @@ app.include_router(admin_ui_router)
 app.include_router(overview_router)
 app.include_router(migration_router)
 app.include_router(panel_tools_admin_router)
+app.include_router(mobile_auth_router)
 
 
 # Mount static files
@@ -363,8 +377,6 @@ _static_dir = _os.path.join(_os.path.dirname(_os.path.dirname(_os.path.abspath(_
 if _os.path.isdir(_static_dir):
     app.mount('/static', StaticFiles(directory=_static_dir), name='static')
 
-# Replay attack prevention: track used nonces
-_used_nonces = {}
 
 @app.post("/api/dashboard-access")
 async def dashboard_access(request: Request):

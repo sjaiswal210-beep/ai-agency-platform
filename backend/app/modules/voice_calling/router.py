@@ -14,23 +14,13 @@ BOLNA_API_BASE = "https://api.bolna.ai"
 # ============ HELPERS ============
 
 def get_provider_config(config: dict) -> dict:
-    """Get API base URL and headers based on provider."""
-    provider = config.get("provider", "bolna")
+    """Get Bolna API base URL and headers."""
     api_key = config.get("bolna_api_key", "")
-    
-    if provider == "dograh":
-        base_url = config.get("dograh_base_url", "https://app.dograh.com").rstrip("/")
-        return {
-            "base_url": f"{base_url}/api/v1",
-            "headers": {"X-API-Key": api_key, "Content-Type": "application/json"},
-            "provider": "dograh"
-        }
-    else:
-        return {
-            "base_url": BOLNA_API_BASE,
-            "headers": {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
-            "provider": "bolna"
-        }
+    return {
+        "base_url": BOLNA_API_BASE,
+        "headers": {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+        "provider": "bolna"
+    }
 
 
 async def get_voice_config(org_id: str = None):
@@ -42,15 +32,7 @@ async def get_voice_config(org_id: str = None):
     if not result.data:
         raise HTTPException(404, "Voice calling not configured. Add API key first.")
     config = result.data
-    # Auto-detect Dograh provider if column missing or not set
-    if not config.get("provider"):
-        if config.get("bolna_api_key", "").startswith("dograh_"):
-            config["provider"] = "dograh"
-            config["dograh_base_url"] = "https://voice.city-maps.online"
-        else:
-            config["provider"] = "bolna"
-    elif config.get("provider") == "dograh" and not config.get("dograh_base_url"):
-        config["dograh_base_url"] = "https://voice.city-maps.online"
+    config["provider"] = "bolna"
     return config
 
 
@@ -73,29 +55,18 @@ async def send_whatsapp_after_call(org_id: str, phone: str, name: str, business_
 
 
 async def make_provider_call(config: dict, phone: str, user_data: dict) -> dict:
-    """Make a call using the configured provider (Bolna or Dograh)."""
+    """Make a call using Bolna."""
     prov = get_provider_config(config)
     clean_number = clean_phone(phone)
-    
-    if prov["provider"] == "dograh":
-        # Dograh API format - uses workflow UUID in URL path
-        agent_id = config.get("bolna_agent_id", "")
-        call_payload = {
-            "phone_number": clean_number,
-            "initial_context": user_data,
-        }
-        # Use the agent/workflow UUID endpoint
-        endpoint = f"{prov['base_url']}/public/agent/workflow/{agent_id}"
-    else:
-        # Bolna API format
-        call_payload = {
-            "agent_id": config.get("bolna_agent_id", ""),
-            "recipient_phone_number": clean_number,
-            "user_data": user_data,
-        }
-        if config.get("from_phone_number"):
-            call_payload["from_phone_number"] = config["from_phone_number"]
-        endpoint = f"{prov['base_url']}/call"
+
+    call_payload = {
+        "agent_id": config.get("bolna_agent_id", ""),
+        "recipient_phone_number": clean_number,
+        "user_data": user_data,
+    }
+    if config.get("from_phone_number"):
+        call_payload["from_phone_number"] = config["from_phone_number"]
+    endpoint = f"{prov['base_url']}/call"
     
     try:
         async with httpx.AsyncClient(timeout=30) as client:
@@ -110,19 +81,15 @@ async def make_provider_call(config: dict, phone: str, user_data: dict) -> dict:
     except Exception as e:
         raise HTTPException(500, f"Call failed: {str(e)[:200]}")
     
-    # Normalize response - Dograh returns workflow_run_id and status
+    # Normalize response
     execution_id = (
         result.get("execution_id") or 
-        result.get("workflow_run_id") or 
         result.get("call_id") or 
         result.get("id")
     )
     status = result.get("status", "queued")
-    # Map Dograh status to our internal format
     if status == "pending":
         status = "queued"
-    elif status == "in_progress":
-        status = "in_progress"
     return {"execution_id": str(execution_id) if execution_id else None, "status": status}
 
 
@@ -131,7 +98,7 @@ async def make_provider_call(config: dict, phone: str, user_data: dict) -> dict:
 @router.get("/config")
 async def get_config(org_id: Optional[str] = None):
     db = get_supabase()
-    query = db.table("voice_call_config").select("id, organization_id, bolna_agent_id, from_phone_number, language, auto_call_enabled, auto_call_delay_minutes, call_start_hour, call_end_hour, max_calls_per_day, calls_made_today, is_active, provider, dograh_base_url, created_at")
+    query = db.table("voice_call_config").select("id, organization_id, bolna_agent_id, from_phone_number, language, auto_call_enabled, auto_call_delay_minutes, call_start_hour, call_end_hour, max_calls_per_day, calls_made_today, is_active, created_at")
     if org_id:
         query = query.eq("organization_id", org_id)
     result = query.limit(1).execute()
@@ -149,8 +116,6 @@ async def save_config(data: dict):
         "bolna_agent_id": data.get("bolna_agent_id"),
         "from_phone_number": data.get("from_phone_number"),
         "language": data.get("language", "hi"),
-        "provider": data.get("provider", "bolna"),
-        "dograh_base_url": data.get("dograh_base_url", ""),
         "auto_call_enabled": data.get("auto_call_enabled", False),
         "auto_call_delay_minutes": data.get("auto_call_delay_minutes", 30),
         "call_start_hour": data.get("call_start_hour", 10),
@@ -174,7 +139,7 @@ async def toggle_auto_calling(data: dict):
 
 @router.post("/call")
 async def make_call(data: dict, background_tasks: BackgroundTasks):
-    """Make a single voice call to a lead via Bolna or Dograh."""
+    """Make a single voice call to a lead via Bolna."""
     db = get_supabase()
     config = await get_voice_config(data.get("organization_id"))
     
@@ -291,16 +256,15 @@ async def batch_call(data: dict):
     
     return {"batch_id": batch_id, "total": len(lead_ids), "queued": results["queued"], "failed": results["failed"], "errors": results["errors"][:10]}
 
-# ============ WEBHOOK (Both Bolna and Dograh post here) ============
+# ============ WEBHOOK (Bolna posts here) ============
 
 @router.post("/webhook")
 async def voice_webhook(request: Request):
-    """Webhook endpoint - receives call results from Bolna or Dograh."""
+    """Webhook endpoint - receives call results from Bolna."""
     db = get_supabase()
     payload = await request.json()
     
-    execution_id = payload.get("execution_id") or payload.get("workflow_run_id") or payload.get("call_id") or payload.get("id")
-    # Convert to string for matching (Dograh returns int workflow_run_id)
+    execution_id = payload.get("execution_id") or payload.get("call_id") or payload.get("id")
     if execution_id is not None:
         execution_id = str(execution_id)
     if not execution_id:
@@ -558,7 +522,7 @@ async def voice_dashboard(org_id: Optional[str] = None):
     whatsapp_sent = sum(1 for c in all_calls if c.get("whatsapp_sent"))
     avg_duration = sum(c.get("call_duration_seconds", 0) for c in all_calls if c.get("call_status") == "completed") / max(completed, 1)
     
-    config_query = db.table("voice_call_config").select("auto_call_enabled, calls_made_today, max_calls_per_day, language, provider")
+    config_query = db.table("voice_call_config").select("auto_call_enabled, calls_made_today, max_calls_per_day, language")
     if org_id:
         config_query = config_query.eq("organization_id", org_id)
     config = config_query.limit(1).execute()

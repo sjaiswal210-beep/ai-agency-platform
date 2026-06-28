@@ -48,7 +48,7 @@ Apply the user's requested changes to the website content. Return the COMPLETE u
 RULES:
 - Return ONLY valid JSON (no markdown, no explanation)
 - Preserve all existing fields that weren't mentioned
-- If user asks to change colors, update color_scheme
+- If user asks to change colors, update color_scheme. IMPORTANT: primary color MUST be dark enough to read on white background (never use light yellow, light pink, or pastel colors as primary). Use saturated, medium-dark colors only.
 - If user asks to change text, update the relevant text fields
 - If user asks to add/remove sections, modify the relevant arrays
 - Use emoji characters for icons (not font awesome names)

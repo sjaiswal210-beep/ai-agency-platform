@@ -1223,7 +1223,7 @@ def edit_site_page(website_id: str):
     html += '<div class="card"><h2>AI Quick Edit</h2><p style="font-size:.62rem;color:#64748b;margin-bottom:6px">e.g. "translate entire site to Hindi" or "add new service Catering"</p><textarea id="aiCmd" rows="2" placeholder="Type command..."></textarea><button class="btn btn-primary" onclick="aiEdit()">Apply with AI</button><p id="aiStatus" style="font-size:.65rem;color:#94a3b8;margin-top:4px"></p></div>'
 
     # Tabs
-    html += '<div class="tabs"><div class="tab active" onclick="showTab(\'hero\')">Hero</div><div class="tab" onclick="showTab(\'about\')">About</div><div class="tab" onclick="showTab(\'services\')">Services</div><div class="tab" onclick="showTab(\'testimonials\')">Reviews</div><div class="tab" onclick="showTab(\'contact\')">Contact</div><div class="tab" onclick="showTab(\'faq\')">FAQ</div><div class="tab" onclick="showTab(\'seo\')">SEO</div></div>'
+    html += '<div class="tabs"><div class="tab active" onclick="showTab(\'hero\')">Hero</div><div class="tab" onclick="showTab(\'about\')">About</div><div class="tab" onclick="showTab(\'services\')">Services</div><div class="tab" onclick="showTab(\'images\')">Images</div><div class="tab" onclick="showTab(\'theme\')">Theme</div><div class="tab" onclick="showTab(\'testimonials\')">Reviews</div><div class="tab" onclick="showTab(\'contact\')">Contact</div><div class="tab" onclick="showTab(\'faq\')">FAQ</div><div class="tab" onclick="showTab(\'seo\')">SEO</div></div>'
 
     # Sections will be rendered by JS from the content JSON
     html += '<div id="editor"></div>'
@@ -1232,7 +1232,7 @@ def edit_site_page(website_id: str):
 
     html += '<script>var WID="' + website_id + '";var siteContent=' + content_json + ';var activeTab="hero";'
     html += r'''
-function showTab(t){activeTab=t;document.querySelectorAll(".tab").forEach(function(el){el.classList.remove("active")});event.target.classList.add("active");renderEditor()}
+function showTab(t){collectData();activeTab=t;document.querySelectorAll(".tab").forEach(function(el){el.classList.remove("active")});event.currentTarget.classList.add("active");renderEditor()}
 
 function renderEditor(){
   var c=siteContent;var h="";
@@ -1289,11 +1289,80 @@ function renderEditor(){
     });
     h+='<button class="btn btn-primary" style="margin-top:6px;padding:8px;font-size:.72rem" onclick="addFaq()">+ Add FAQ</button></div>';
   }
+  else if(activeTab==="theme"){
+    var cs=c.color_scheme||{};
+    h+='<div class="card"><h2>Website Theme</h2>';
+    h+='<p style="font-size:.62rem;color:#64748b;margin-bottom:10px">Pick a pre-built theme or customize colors below</p>';
+    h+='<div id="themeGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">';
+    var themes=[
+      {id:"modern-indigo",name:"Modern Indigo",p:"#6366f1",s:"#e0e7ff",a:"#10b981"},
+      {id:"ocean-blue",name:"Ocean Blue",p:"#0891b2",s:"#ecfeff",a:"#06b6d4"},
+      {id:"bold-red",name:"Bold Red",p:"#dc2626",s:"#fef2f2",a:"#f97316"},
+      {id:"elegant-gold",name:"Elegant Gold",p:"#b45309",s:"#fffbeb",a:"#d97706"},
+      {id:"nature-green",name:"Nature Green",p:"#16a34a",s:"#f0fdf4",a:"#22c55e"},
+      {id:"purple-haze",name:"Purple Haze",p:"#7c3aed",s:"#faf5ff",a:"#a78bfa"},
+      {id:"midnight",name:"Midnight",p:"#1e40af",s:"#172554",a:"#3b82f6"},
+      {id:"sunset-warm",name:"Sunset Warm",p:"#e11d48",s:"#fff1f2",a:"#f43f5e"}
+    ];
+    for(var ti=0;ti<themes.length;ti++){
+      var th=themes[ti];
+      var isActive=(cs.primary===th.p)?"border:2px solid #fff":"border:1px solid rgba(255,255,255,.1)";
+      h+="<button onclick=\"applyTheme('"+th.p+"','"+th.s+"','"+th.a+"')\" style=\"padding:10px;border-radius:10px;background:rgba(255,255,255,.03);cursor:pointer;"+isActive+"\">";
+      h+="<div style=\"display:flex;gap:4px;margin-bottom:4px\"><div style=\"width:16px;height:16px;border-radius:50%;background:"+th.p+"\"></div><div style=\"width:16px;height:16px;border-radius:50%;background:"+th.a+"\"></div><div style=\"width:16px;height:16px;border-radius:50%;background:"+th.s+";border:1px solid rgba(255,255,255,.2)\"></div></div>";
+      h+="<div style=\"font-size:.65rem;color:#e2e8f0;font-weight:600\">"+th.name+"</div></button>";
+    }
+    h+='</div></div>';
+    h+='<div class="card"><h2>Custom Colors</h2>';
+    h+='<p style="font-size:.62rem;color:#64748b;margin-bottom:8px">Or set your own brand colors</p>';
+    h+='<div class="row" style="grid-template-columns:1fr 1fr 1fr;gap:8px">';
+    h+='<div><label>Primary</label><input type="color" id="clr_primary" value="'+(cs.primary||"#6366f1")+'" style="width:100%;height:36px;padding:2px;cursor:pointer"></div>';
+    h+='<div><label>Secondary</label><input type="color" id="clr_secondary" value="'+(cs.secondary||"#e0e7ff")+'" style="width:100%;height:36px;padding:2px;cursor:pointer"></div>';
+    h+='<div><label>Accent</label><input type="color" id="clr_accent" value="'+(cs.accent||"#10b981")+'" style="width:100%;height:36px;padding:2px;cursor:pointer"></div>';
+    h+='</div>';
+    h+='<button class="btn btn-primary" style="margin-top:10px" onclick="applyCustomColors()">Apply Custom Colors</button>';
+    h+='<p id="themeStatus" style="font-size:.65rem;color:#94a3b8;margin-top:4px"></p>';
+    h+='</div>';
+  }
+  else if(activeTab==="images"){
+    h+='<div class="card"><h2>Hero Image</h2>';
+    h+='<p style="font-size:.62rem;color:#64748b;margin-bottom:6px">Paste image URL for your hero/banner section</p>';
+    var heroImgs=c.real_photos||[];
+    h+='<label>Hero Image URL</label><input id="img_hero" value="'+(heroImgs[0]||"").replace(/"/g,"&quot;")+'" placeholder="https://...">';
+    if(heroImgs[0]){h+='<img src="'+heroImgs[0]+'" style="width:100%;height:120px;object-fit:cover;border-radius:8px;margin:6px 0">';}
+    h+='</div>';
+    h+='<div class="card"><h2>Gallery Photos ('+(heroImgs.length||0)+')</h2>';
+    h+='<p style="font-size:.62rem;color:#64748b;margin-bottom:6px">Add image URLs for your gallery. Use Google Photos, Imgur, or any image host.</p>';
+    h+='<div id="galleryList">';
+    for(var gi=0;gi<Math.max(heroImgs.length,1);gi++){
+      h+='<div style="display:flex;gap:6px;margin-bottom:6px;align-items:center"><input class="gal-url" value="'+(heroImgs[gi]||"").replace(/"/g,"&quot;")+'" placeholder="Image URL '+(gi+1)+'" style="flex:1">';
+      if(heroImgs[gi]){h+='<img src="'+heroImgs[gi]+'" style="width:40px;height:40px;object-fit:cover;border-radius:6px;flex-shrink:0">';}
+      h+='<button onclick="delGalleryImg('+gi+')" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:1rem;flex-shrink:0">x</button></div>';
+    }
+    h+='</div>';
+    h+='<button class="btn btn-primary" style="margin-top:6px;padding:8px;font-size:.72rem" onclick="addGalleryImg()">+ Add Image</button>';
+    h+='</div>';
+    h+='<div class="card"><h2>Custom Gallery</h2>';
+    h+='<p style="font-size:.62rem;color:#64748b;margin-bottom:6px">Add extra showcase images (Instagram/portfolio photos)</p>';
+    var customGal=c.custom_gallery||[];
+    h+='<div id="customGalList">';
+    for(var ci2=0;ci2<customGal.length;ci2++){
+      h+='<div style="display:flex;gap:6px;margin-bottom:6px;align-items:center"><input class="cgal-url" value="'+(customGal[ci2]||"").replace(/"/g,"&quot;")+'" placeholder="Image URL" style="flex:1">';
+      if(customGal[ci2]){h+='<img src="'+customGal[ci2]+'" style="width:40px;height:40px;object-fit:cover;border-radius:6px;flex-shrink:0">';}
+      h+='<button onclick="delCustomImg('+ci2+')" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:1rem;flex-shrink:0">x</button></div>';
+    }
+    h+='</div>';
+    h+='<button class="btn btn-primary" style="margin-top:6px;padding:8px;font-size:.72rem" onclick="addCustomImg()">+ Add Image</button>';
+    h+='</div>';
+  }
   else if(activeTab==="seo"){
     h+='<div class="card"><h2>SEO Settings</h2>';
-    h+='<label>SEO Title</label><input id="seo_title" value="'+(c.seo_title||"").replace(/"/g,"&quot;")+'">';
-    h+='<label>SEO Description</label><textarea id="seo_description" rows="2">'+(c.seo_description||"")+'</textarea>';
-    h+='<label>SEO Keywords</label><input id="seo_keywords" value="'+(c.seo_keywords||"").replace(/"/g,"&quot;")+'">';
+    h+='<p style="font-size:.62rem;color:#64748b;margin-bottom:6px">Optimize your website for search engines</p>';
+    h+='<label>SEO Title (shown in Google)</label><input id="seo_title" value="'+(c.seo_title||"").replace(/"/g,"&quot;")+'" placeholder="Your Business - Best Service in City">';
+    h+='<label>SEO Description (shown under title in Google)</label><textarea id="seo_description" rows="3" placeholder="Describe your business in 155 characters...">'+(c.seo_description||"")+'</textarea>';
+    h+='<label>SEO Keywords (comma separated)</label><input id="seo_keywords" value="'+((Array.isArray(c.seo_keywords)?c.seo_keywords.join(", "):c.seo_keywords)||"").replace(/"/g,"&quot;")+'" placeholder="service, city, business type">';
+    h+='<label>H1 Heading</label><input id="seo_h1" value="'+(c.seo_h1||"").replace(/"/g,"&quot;")+'" placeholder="Main heading with primary keyword">';
+    h+='<button class="btn btn-primary" style="margin-top:8px;padding:8px;font-size:.72rem" onclick="autoSeo()">Auto-Generate SEO with AI</button>';
+    h+='<p id="seoStatus" style="font-size:.65rem;color:#94a3b8;margin-top:4px"></p>';
     h+='</div>';
   }
   document.getElementById("editor").innerHTML=h;
@@ -1329,10 +1398,25 @@ function collectData(){
     var as2=document.querySelectorAll(".faq-a");
     c.faq=[];
     for(var i=0;i<qs.length;i++){c.faq.push({question:qs[i].value,answer:as2[i].value});}
+  }else if(activeTab==="theme"){
+    var pc=document.getElementById("clr_primary");
+    var sc=document.getElementById("clr_secondary");
+    var ac=document.getElementById("clr_accent");
+    if(pc&&sc&&ac){c.color_scheme={primary:pc.value,secondary:sc.value,accent:ac.value};}
+  }else if(activeTab==="images"){
+    var galUrls=document.querySelectorAll(".gal-url");
+    var imgs=[];
+    for(var i=0;i<galUrls.length;i++){if(galUrls[i].value.trim())imgs.push(galUrls[i].value.trim());}
+    c.real_photos=imgs;
+    var cgalUrls=document.querySelectorAll(".cgal-url");
+    var cimgs=[];
+    for(var i=0;i<cgalUrls.length;i++){if(cgalUrls[i].value.trim())cimgs.push(cgalUrls[i].value.trim());}
+    c.custom_gallery=cimgs;
   }else if(activeTab==="seo"){
-    c.seo_title=document.getElementById("seo_title").value;
-    c.seo_description=document.getElementById("seo_description").value;
-    c.seo_keywords=document.getElementById("seo_keywords").value;
+    c.seo_title=document.getElementById("seo_title")?document.getElementById("seo_title").value:c.seo_title;
+    c.seo_description=document.getElementById("seo_description")?document.getElementById("seo_description").value:c.seo_description;
+    c.seo_keywords=document.getElementById("seo_keywords")?document.getElementById("seo_keywords").value:c.seo_keywords;
+    c.seo_h1=document.getElementById("seo_h1")?document.getElementById("seo_h1").value:c.seo_h1;
   }
   siteContent=c;
 }
@@ -1343,6 +1427,38 @@ function addTestimonial(){collectData();siteContent.testimonials=siteContent.tes
 function delTestimonial(i){collectData();siteContent.testimonials.splice(i,1);renderEditor()}
 function addFaq(){collectData();siteContent.faq=siteContent.faq||[];siteContent.faq.push({question:"",answer:""});renderEditor()}
 function delFaq(i){collectData();siteContent.faq.splice(i,1);renderEditor()}
+function addGalleryImg(){collectData();siteContent.real_photos=siteContent.real_photos||[];siteContent.real_photos.push("");renderEditor()}
+function delGalleryImg(i){collectData();siteContent.real_photos.splice(i,1);renderEditor()}
+function addCustomImg(){collectData();siteContent.custom_gallery=siteContent.custom_gallery||[];siteContent.custom_gallery.push("");renderEditor()}
+function delCustomImg(i){collectData();siteContent.custom_gallery.splice(i,1);renderEditor()}
+async function autoSeo(){
+  document.getElementById("seoStatus").textContent="Generating SEO...";
+  try{
+    var r=await fetch("/api/panel/"+WID+"/ai-edit-full",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({command:"Generate optimal SEO title (under 60 chars with primary keyword and city), SEO description (under 155 chars with keyword + location + USP), and 5-7 SEO keywords. Make them highly optimized for local search.",content:siteContent})});
+    var d=await r.json();
+    if(d.status==="updated"&&d.content){
+      siteContent.seo_title=d.content.seo_title||siteContent.seo_title;
+      siteContent.seo_description=d.content.seo_description||siteContent.seo_description;
+      siteContent.seo_keywords=d.content.seo_keywords||siteContent.seo_keywords;
+      siteContent.seo_h1=d.content.seo_h1||siteContent.seo_h1;
+      renderEditor();
+      document.getElementById("seoStatus").innerHTML='<span style="color:#22c55e">SEO generated! Review and Save.</span>';
+    }else{document.getElementById("seoStatus").innerHTML='<span style="color:#ef4444">Failed</span>';}
+  }catch(e){document.getElementById("seoStatus").innerHTML='<span style="color:#ef4444">Error</span>';}
+}
+function applyTheme(p,s,a){
+  siteContent.color_scheme={primary:p,secondary:s,accent:a};
+  renderEditor();
+  document.getElementById("themeStatus").innerHTML='<span style="color:#22c55e">Theme applied! Click Save All to keep changes.</span>';
+}
+function applyCustomColors(){
+  var p=document.getElementById("clr_primary").value;
+  var s=document.getElementById("clr_secondary").value;
+  var a=document.getElementById("clr_accent").value;
+  siteContent.color_scheme={primary:p,secondary:s,accent:a};
+  renderEditor();
+  document.getElementById("themeStatus").innerHTML='<span style="color:#22c55e">Custom colors applied! Click Save All.</span>';
+}
 
 async function saveAll(){
   collectData();
@@ -1356,13 +1472,20 @@ async function saveAll(){
 
 async function aiEdit(){
   var cmd=document.getElementById("aiCmd").value;if(!cmd)return;
-  document.getElementById("aiStatus").textContent="Applying AI edit to entire site...";
+  document.getElementById("aiStatus").textContent="Applying AI edit...";
   try{
     var r=await fetch("/api/panel/"+WID+"/ai-edit-full",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({command:cmd,content:siteContent})});
     var d=await r.json();
-    if(d.status==="updated"&&d.content){siteContent=d.content;renderEditor();document.getElementById("aiStatus").innerHTML='<span style="color:#22c55e">Done! Review changes and click Save.</span>';}
-    else{document.getElementById("aiStatus").innerHTML='<span style="color:#ef4444">Failed</span>';}
-  }catch(e){document.getElementById("aiStatus").innerHTML='<span style="color:#ef4444">Error</span>';}
+    if(d.status==="updated"&&d.content){
+      siteContent=d.content;renderEditor();
+      document.getElementById("aiStatus").textContent="Saving...";
+      var sr=await fetch("/api/panel/"+WID+"/save-full",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({content:siteContent})});
+      var sd=await sr.json();
+      if(sd.status==="saved"){document.getElementById("aiStatus").innerHTML='<span style="color:#22c55e">Applied & Saved! Refresh website to see changes.</span>';document.getElementById("aiCmd").value="";}
+      else{document.getElementById("aiStatus").innerHTML='<span style="color:#f59e0b">AI applied but save failed. Click Save All below.</span>';}
+    }
+    else{document.getElementById("aiStatus").innerHTML='<span style="color:#ef4444">AI could not process. Try rephrasing.</span>';}
+  }catch(e){document.getElementById("aiStatus").innerHTML='<span style="color:#ef4444">Error: '+e.message+'</span>';}
 }
 
 renderEditor();

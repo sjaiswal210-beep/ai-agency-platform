@@ -1,12 +1,32 @@
-"use client";
+﻿"use client";
 
 const API_BASE = "https://ai-agency-platform.onrender.com";
 
 import { useEffect, useState } from "react";
 import { api, Website } from "@/lib/api";
-import { Bot, ArrowLeft, Send, RefreshCw, ExternalLink, Palette, Image, MessageSquare } from "lucide-react";
+import { Bot, ArrowLeft, Send, RefreshCw, ExternalLink, Palette, Image, MessageSquare, Sparkles } from "lucide-react";
 
-type Tab = "edit" | "logo" | "social" | "video";
+type Tab = "edit" | "theme" | "logo" | "social" | "video";
+
+interface ThemeOption {
+  id: string;
+  name: string;
+  description: string;
+  colors: { primary: string; secondary: string; accent: string; background: string; text: string };
+  style: string;
+}
+
+const THEMES: ThemeOption[] = [
+  { id: "modern-dark", name: "Modern Dark", description: "Sleek dark UI with vibrant accents", colors: { primary: "#6366f1", secondary: "#1e1b4b", accent: "#818cf8", background: "#0f172a", text: "#f8fafc" }, style: "modern" },
+  { id: "clean-light", name: "Clean Light", description: "Bright, minimal, and professional", colors: { primary: "#2563eb", secondary: "#eff6ff", accent: "#3b82f6", background: "#ffffff", text: "#1e293b" }, style: "minimal" },
+  { id: "bold-vibrant", name: "Bold & Vibrant", description: "Eye-catching colors with strong contrast", colors: { primary: "#dc2626", secondary: "#fef2f2", accent: "#f97316", background: "#ffffff", text: "#111827" }, style: "bold" },
+  { id: "elegant-gold", name: "Elegant Gold", description: "Luxury feel with gold accents", colors: { primary: "#b45309", secondary: "#1c1917", accent: "#d97706", background: "#0c0a09", text: "#fafaf9" }, style: "elegant" },
+  { id: "nature-green", name: "Nature Green", description: "Fresh and organic feel", colors: { primary: "#16a34a", secondary: "#f0fdf4", accent: "#22c55e", background: "#ffffff", text: "#14532d" }, style: "modern" },
+  { id: "ocean-blue", name: "Ocean Blue", description: "Calm and trustworthy", colors: { primary: "#0891b2", secondary: "#ecfeff", accent: "#06b6d4", background: "#ffffff", text: "#164e63" }, style: "minimal" },
+  { id: "sunset-warm", name: "Sunset Warm", description: "Warm gradient tones", colors: { primary: "#e11d48", secondary: "#fff1f2", accent: "#f43f5e", background: "#ffffff", text: "#1f2937" }, style: "playful" },
+  { id: "purple-haze", name: "Purple Haze", description: "Creative and modern purple theme", colors: { primary: "#7c3aed", secondary: "#faf5ff", accent: "#a78bfa", background: "#ffffff", text: "#1e1b4b" }, style: "modern" },
+  { id: "midnight", name: "Midnight", description: "Deep dark with cool blue tones", colors: { primary: "#3b82f6", secondary: "#172554", accent: "#60a5fa", background: "#020617", text: "#e2e8f0" }, style: "modern" },
+];
 
 export default function EditorPage() {
   const [websites, setWebsites] = useState<Website[]>([]);
@@ -28,6 +48,7 @@ export default function EditorPage() {
   const [videoLoading, setVideoLoading] = useState(false);
   const [videoClips, setVideoClips] = useState<any[]>([]);
   const [numClips, setNumClips] = useState(3);
+  const [selectedTheme, setSelectedTheme] = useState<string>("");
 
   useEffect(() => {
     api.websites.list().then(setWebsites).catch(console.error);
@@ -58,6 +79,29 @@ export default function EditorPage() {
         setMessage(`Error: ${err.detail || "Failed"}`);
       }
     } catch (e: any) { setMessage(e?.name === "AbortError" ? "Error: Video generation timed out (>3min). Try fewer clips." : "Error: Server unreachable. Try again."); }
+    finally { setLoading(false); }
+  };
+
+  const handleThemeApply = async (theme: ThemeOption) => {
+    if (!selected) return;
+    setLoading(true);
+    setMessage("");
+    setSelectedTheme(theme.id);
+    try {
+      const themePrompt = `Change the website theme to "${theme.name}" style. Update the color_scheme to use these colors: primary color ${theme.colors.primary}, secondary color ${theme.colors.secondary}, accent color ${theme.colors.accent}, background color ${theme.colors.background}, text color ${theme.colors.text}. The overall style should be ${theme.style} and ${theme.description.toLowerCase()}.`;
+      const res = await fetch(`${API_BASE}/api/editor/${selected}/edit`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: themePrompt }),
+      });
+      if (res.ok) {
+        setMessage(`Theme "${theme.name}" applied!`);
+        setRefreshKey((k) => k + 1);
+      } else {
+        const err = await res.json();
+        setMessage(`Error: ${err.detail || "Failed to apply theme"}`);
+      }
+    } catch (e: any) { setMessage("Error: Server unreachable. Try again."); }
     finally { setLoading(false); }
   };
 
@@ -155,6 +199,10 @@ export default function EditorPage() {
                 className={`flex-1 flex items-center justify-center gap-1 py-2 rounded-md text-xs font-medium transition ${tab === "edit" ? "bg-white shadow text-primary" : "text-slate-300"}`}>
                 <Send className="w-3 h-3" /> Edit
               </button>
+              <button onClick={() => setTab("theme")}
+                className={`flex-1 flex items-center justify-center gap-1 py-2 rounded-md text-xs font-medium transition ${tab === "theme" ? "bg-white shadow text-primary" : "text-slate-300"}`}>
+                <Sparkles className="w-3 h-3" /> Theme
+              </button>
               <button onClick={() => setTab("logo")}
                 className={`flex-1 flex items-center justify-center gap-1 py-2 rounded-md text-xs font-medium transition ${tab === "logo" ? "bg-white shadow text-primary" : "text-slate-300"}`}>
                 <Palette className="w-3 h-3" /> Logo
@@ -170,7 +218,7 @@ export default function EditorPage() {
             </div>
 
             {/* Tab content */}
-            <div className="bg-white/[0.03] backdrop-blur-xl border-white/[0.06] rounded-xl shadow-lg shadow-black/10 border border-white/5 p-4 flex-1 flex flex-col">
+            <div className="bg-white/[0.03] backdrop-blur-xl border-white/[0.06] rounded-xl shadow-lg shadow-black/10 border border-white/5 p-4 flex-1 flex flex-col overflow-hidden">
               {tab === "edit" && (
                 <>
                   <label className="text-xs font-medium text-slate-300 mb-1">What do you want to change?</label>
@@ -181,6 +229,42 @@ export default function EditorPage() {
                     className="mt-2 w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-primary text-white rounded-lg text-sm font-medium disabled:opacity-50 hover:bg-primary-dark transition">
                     {loading ? <><RefreshCw className="w-3 h-3 animate-spin" /> Updating...</> : <><Send className="w-3 h-3" /> Apply Changes</>}
                   </button>
+                </>
+              )}
+
+              {tab === "theme" && (
+                <>
+                  <label className="text-xs font-medium text-slate-300 mb-2">Choose a Theme</label>
+                  <div className="flex-1 overflow-y-auto space-y-2 pr-1">
+                    {THEMES.map((theme) => (
+                      <button
+                        key={theme.id}
+                        onClick={() => handleThemeApply(theme)}
+                        disabled={loading || !selected}
+                        className={`w-full text-left p-3 rounded-lg border transition hover:border-primary/50 disabled:opacity-50 ${
+                          selectedTheme === theme.id ? "border-primary bg-primary/10" : "border-white/10 bg-white/[0.02]"
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          {/* Color preview dots */}
+                          <div className="flex gap-1 shrink-0">
+                            <div className="w-4 h-4 rounded-full border border-white/20" style={{ background: theme.colors.primary }} />
+                            <div className="w-4 h-4 rounded-full border border-white/20" style={{ background: theme.colors.accent }} />
+                            <div className="w-4 h-4 rounded-full border border-white/20" style={{ background: theme.colors.background }} />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-sm font-medium text-white truncate">{theme.name}</p>
+                            <p className="text-xs text-slate-400 truncate">{theme.description}</p>
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                  {loading && (
+                    <div className="mt-2 flex items-center justify-center gap-2 text-xs text-slate-300">
+                      <RefreshCw className="w-3 h-3 animate-spin" /> Applying theme...
+                    </div>
+                  )}
                 </>
               )}
 

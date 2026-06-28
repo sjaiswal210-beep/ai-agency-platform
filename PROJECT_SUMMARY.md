@@ -7,7 +7,6 @@ Last Updated: June 24, 2026
 - Backend: https://ai-agency-platform.onrender.com (FastAPI, Python)
 - Admin Frontend: https://ai-agency-platform-blush.vercel.app (Next.js)
 - Business Sites: *.city-maps.online (dynamic subdomains)
-- Voice Agent VPS: https://voice.city-maps.online (Dograh, Contabo 147.93.169.183)
 - DNS: Cloudflare | Database: Supabase (PostgreSQL)
 - Pricing: Rs.29/month (Growth) / Rs.39/month (Premium)
 - GitHub: sjaiswal210-beep/ai-agency-platform
@@ -15,7 +14,6 @@ Last Updated: June 24, 2026
 ## QUICK ACCESS LINKS
 - Admin Dashboard: https://ai-agency-platform-blush.vercel.app
 - Voice Blast: https://ai-agency-platform.onrender.com/api/admin/voice-blast?pwd=kalpdev2024
-- Dograh Dashboard: https://voice.city-maps.online
 
 ## TECH STACK
 Frontend: Next.js 14, Tailwind, TypeScript | Backend: FastAPI, Python 3.11
@@ -35,9 +33,6 @@ Flow: Script > Sarvam TTS > MP3 > Vobiz Call > Play Audio > Hangup
 Cost: Rs.0.50/call | Admin: /api/admin/voice-blast?pwd=kalpdev2024
 Features: Script editor, speed, voice selection, language, preview
 
-## DOGRAH (Testing)
-VPS: 147.93.169.183 | Domain: voice.city-maps.online | Version: 1.37.0
-Phone: +918071579115 | Status: Audio stream issue with Vobiz WebSocket
 
 ## WHATSAPP
 Provider: Meta Cloud API | Phone ID: 1202589086266794

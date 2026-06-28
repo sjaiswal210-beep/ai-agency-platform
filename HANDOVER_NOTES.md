@@ -107,10 +107,6 @@ VOICE BLAST
 - Script -> Sarvam TTS -> MP3 -> Vobiz dials -> plays audio
 - Cost: Rs.0.50/call
 
-VOICE AGENT (Dograh)
-- VPS: 147.93.169.183 | voice.city-maps.online
-- Phone: +918071579115 | ISSUE: Audio stream broken with Vobiz WebSocket
-
 BUSINESS DASHBOARD (/dashboard/[orgSlug]/)
 - Each client has own dashboard with only their enabled modules
 - Modules: CRM, Billing, Booking, Website, WhatsApp, Analytics, AI Employee
@@ -129,7 +125,6 @@ ADMIN PORTAL (/admin)
 
 1. WhatsApp permanent token (get from Meta Business Manager)
 2. Razorpay payment integration for subscriptions
-3. Dograh + Vobiz audio stream fix
 4. Phase 2: Browser Use scraping, OpenHands code gen, LangGraph memory
 
 ---
@@ -180,7 +175,7 @@ Do NOT say AI in customer content - use automation/smart/digital.
 Pricing: Rs.29/month Growth, Rs.39/month Premium.
 Features: Lead discovery (Google Maps), website generation, WhatsApp outreach,
 Voice blast, CRM per business, Admin module control.
-Pending: WhatsApp permanent token, Razorpay payments, Dograh audio fix.
+Pending: WhatsApp permanent token, Razorpay payments.
 See HANDOVER_NOTES.md for full details.
 
 ---

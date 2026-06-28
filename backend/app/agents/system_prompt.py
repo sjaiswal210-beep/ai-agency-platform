@@ -81,7 +81,7 @@ CONTENT_GENERATION_FIELDS = """{
     "cta_text": "Urgent action (e.g., 'Book Free Consultation', 'Get Quote Now')",
     "cta_secondary": "Lower commitment (e.g., 'View Our Work', 'See Pricing')",
     "contact_info": {"phone": "", "email": "", "address": "", "hours": ""},
-    "color_scheme": {"primary": "#hex fitting category", "secondary": "#hex lighter", "accent": "#hex bold CTA color"},
+    "color_scheme": {"primary": "#hex fitting category (MUST be dark enough to read on white - contrast ratio 4.5:1 minimum, NEVER use light yellow/light colors as primary)", "secondary": "#hex lighter shade for backgrounds", "accent": "#hex bold CTA color (must be dark/saturated enough to read on white)"},
     "seo_title": "Primary Keyword in City - Business Name (under 60 chars)",
     "seo_description": "Include keyword + location + USP + CTA (under 155 chars)",
     "seo_keywords": ["primary keyword", "location + service", "near me variant"],
