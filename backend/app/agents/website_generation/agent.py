@@ -329,8 +329,40 @@ RULES:
         existing_prods = db_p.table("store_products").select("id").eq("website_id", website["id"]).limit(1).execute()
         if not existing_prods.data:
             category = lead.get("category", "general") if lead else "general"
+            biz_name = lead.get("business_name", "Business") if lead else "Business"
             cat_lower = category.lower()
-            # Category-specific products with images
+            prods = None
+            # 1. Try AI to generate products that actually suit this business
+            try:
+                ai_prompt = (
+                    f'Generate exactly 4 realistic products/services for a business named "{biz_name}" '
+                    f'in the "{category}" category (located in India). '
+                    'Return ONLY a JSON array, no markdown. Each item must have: '
+                    '"name" (specific to this business type), "description" (one short line), '
+                    '"price" (integer in INR, realistic for India), "category" (short group label). '
+                    'Example: [{"name":"...","description":"...","price":299,"category":"..."}]'
+                )
+                ai_raw = await chat_completion([{"role": "user", "content": ai_prompt}], temperature=0.9)
+                cleaned = ai_raw.strip()
+                if "```json" in cleaned:
+                    cleaned = cleaned.split("```json")[1].split("```")[0].strip()
+                elif "```" in cleaned:
+                    cleaned = cleaned.split("```")[1].split("```")[0].strip()
+                ai_prods = json.loads(cleaned)
+                if isinstance(ai_prods, list) and len(ai_prods) >= 2:
+                    prods = [
+                        {
+                            "name": p.get("name", "Product"),
+                            "price": int(p.get("price", 299)) if str(p.get("price", "")).strip().isdigit() else 299,
+                            "category": p.get("category", "General"),
+                            "description": p.get("description", ""),
+                            "image_url": f"https://image.pollinations.ai/prompt/{(category + ' ' + str(p.get('name',''))).replace(' ', '%20')}?width=300&height=200&nologo=true",
+                        }
+                        for p in ai_prods[:4]
+                    ]
+            except Exception as _e:
+                logger.warning("AI product generation failed, using category fallback", error=str(_e))
+            # 2. Fallback: category-specific products with images
             product_sets = {
                 "salon": [
                     {"name": "Haircut & Styling", "price": 299, "category": "Hair", "image_url": "https://images.unsplash.com/photo-1560066984-138dadb4c035?w=300&h=200&fit=crop"},
@@ -344,10 +376,29 @@ RULES:
                     {"name": "Paneer Butter Masala", "price": 199, "category": "Main Course", "image_url": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=300&h=200&fit=crop"},
                     {"name": "Fresh Juice", "price": 79, "category": "Drinks", "image_url": "https://images.unsplash.com/photo-1534353473418-4cfa6c56fd38?w=300&h=200&fit=crop"},
                 ],
+                "cafe": [
+                    {"name": "Cappuccino", "price": 149, "category": "Coffee", "image_url": "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=300&h=200&fit=crop"},
+                    {"name": "Grilled Sandwich", "price": 129, "category": "Snacks", "image_url": "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=300&h=200&fit=crop"},
+                    {"name": "Chocolate Brownie", "price": 99, "category": "Desserts", "image_url": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=300&h=200&fit=crop"},
+                    {"name": "Cold Coffee", "price": 119, "category": "Beverages", "image_url": "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=300&h=200&fit=crop"},
+                ],
                 "gym": [
                     {"name": "Monthly Membership", "price": 999, "category": "Membership", "image_url": "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=300&h=200&fit=crop"},
                     {"name": "Personal Training", "price": 4999, "category": "Training", "image_url": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=200&fit=crop"},
                     {"name": "Yoga Classes", "price": 1499, "category": "Classes", "image_url": "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=300&h=200&fit=crop"},
+                    {"name": "Diet Plan", "price": 799, "category": "Nutrition", "image_url": "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=300&h=200&fit=crop"},
+                ],
+                "clinic": [
+                    {"name": "General Consultation", "price": 300, "category": "Consultation", "image_url": "https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?w=300&h=200&fit=crop"},
+                    {"name": "Blood Test Package", "price": 799, "category": "Lab", "image_url": "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=300&h=200&fit=crop"},
+                    {"name": "Dental Cleaning", "price": 500, "category": "Dental", "image_url": "https://images.unsplash.com/photo-1606265752439-1f18756aa5fc?w=300&h=200&fit=crop"},
+                    {"name": "Full Body Checkup", "price": 1999, "category": "Packages", "image_url": "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=300&h=200&fit=crop"},
+                ],
+                "store": [
+                    {"name": "New Collection", "price": 599, "category": "New", "image_url": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=300&h=200&fit=crop"},
+                    {"name": "Best Seller", "price": 499, "category": "Popular", "image_url": "https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=300&h=200&fit=crop"},
+                    {"name": "Budget Range", "price": 299, "category": "Budget", "image_url": "https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?w=300&h=200&fit=crop"},
+                    {"name": "Premium Item", "price": 1299, "category": "Premium", "image_url": "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=300&h=200&fit=crop"},
                 ],
                 "default": [
                     {"name": "Service Package 1", "price": 499, "category": "Services", "image_url": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=300&h=200&fit=crop"},
@@ -356,12 +407,12 @@ RULES:
                     {"name": "Special Offer", "price": 199, "category": "Offers", "image_url": "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=300&h=200&fit=crop"},
                 ],
             }
-            # Find matching products
-            prods = product_sets.get("default")
-            for key in product_sets:
-                if key in cat_lower or cat_lower in key:
-                    prods = product_sets[key]
-                    break
+            if not prods:
+                prods = product_sets.get("default")
+                for key in product_sets:
+                    if key in cat_lower or cat_lower in key:
+                        prods = product_sets[key]
+                        break
             # Insert products
             for p in prods:
                 db_p.table("store_products").insert({
@@ -370,7 +421,7 @@ RULES:
                     "price": p["price"],
                     "category": p.get("category", "General"),
                     "image_url": p.get("image_url", ""),
-                    "description": "",
+                    "description": p.get("description", ""),
                     "in_stock": True,
                     "stock_qty": 99,
                 }).execute()
