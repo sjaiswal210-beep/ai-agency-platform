@@ -1163,7 +1163,7 @@ body{{padding-bottom:70px}}
         f'<div class="gallery-grid">{gallery_html}</div></section>'
         ''
         f'{products_html}'
-        f'<div style="text-align:center;padding:20px 24px"><a href="/api/store/{website_id}/store-page" style="display:inline-block;padding:12px 28px;background:var(--p);color:#fff;border-radius:10px;font-weight:700;font-size:.9rem;text-decoration:none;box-shadow:0 4px 14px color-mix(in srgb,var(--p) 40%,transparent)">&#128722; Visit Our Store</a></div>'
+        f'<div style="text-align:center;padding:20px 24px"><a href="/api/store/{website_id}/store-page" style="display:inline-flex;align-items:center;gap:8px;padding:12px 28px;background:var(--p);color:#fff;border-radius:10px;font-weight:700;font-size:.9rem;text-decoration:none;box-shadow:0 4px 14px color-mix(in srgb,var(--p) 40%,transparent)"><svg width="18" height="18" viewBox="0 0 24 24" fill="#fff" style="flex-shrink:0"><path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>Visit Our Store</a></div>'
         '<section class="section"><div class="section-header"><h2>What People Say</h2></div>'
         f'<div class="testimonials-grid">{testimonials_html}</div></section>'
         f'{hiw_html}{benefits_html}{faq_html}{maps_section}'
