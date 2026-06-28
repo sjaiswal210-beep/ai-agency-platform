@@ -697,7 +697,7 @@ function ask(preset){{
 
 @router.post("/{website_id}/assistant-ask")
 async def assistant_ask(website_id: str, data: dict):
-    """Business assistant - answer questions using AI."""
+    """Premium business assistant - Hinglish, context-aware AI advisor."""
     from app.core.llm import chat_completion
     service = WebsiteService()
     lead_service = LeadService()
@@ -705,19 +705,44 @@ async def assistant_ask(website_id: str, data: dict):
     lead = lead_service.get(website["lead_id"]) if website and website.get("lead_id") else None
     business_name = lead.get("business_name", "Business") if lead else "Business"
     category = lead.get("category", "business") if lead else "business"
+    address = lead.get("address", "") if lead else ""
+    phone = lead.get("phone", "") if lead else ""
     question = data.get("question", "")
+    history = data.get("history", []) or []
 
-    prompt = f"""You are a business growth assistant for {business_name} ({category}).
-Answer the following request helpfully and concisely. If asked to create content (posts, offers, messages), write it ready to use.
-Keep responses short (under 200 words). Use emojis where appropriate.
+    # Build compact conversation context (last 6 turns)
+    convo = ""
+    for m in history[-6:]:
+        role = "Owner" if m.get("role") == "user" else "Assistant"
+        txt = str(m.get("text", ""))[:500]
+        if txt:
+            convo += f"{role}: {txt}\n"
 
-Request: {question}"""
+    system = (
+        f"Tum '{business_name}' ({category}" + (f", {address}" if address else "") + ") ke liye ek "
+        "EXPERT business growth consultant ho - jaise ek smart dost jo marketing, sales aur "
+        "social media achhe se samajhta hai.\n\n"
+        "REPLY RULES:\n"
+        "- HINGLISH mein reply karo (Roman script: Hindi + English mix), natural aur friendly tone.\n"
+        "- Practical aur actionable salah do - generic baatein nahi.\n"
+        "- Agar content maange (Instagram/Facebook post, WhatsApp message, offer, caption, reply) "
+        "to READY-TO-USE likho jo seedha copy-paste ho sake, with emojis aur hashtags.\n"
+        "- Numbers/points mein likho jab list ho. Short rakho (250 words max).\n"
+        "- Prices INR (Rs.) mein. India ke context mein sochо.\n"
+        + (f"- Business ka phone: {phone}. Jahan zaroori ho contact include karo.\n" if phone else "")
+        + "- Festivals (Diwali, Holi, Ganesh Chaturthi, Eid, etc.) ke hisaab se ideas do jab relevant ho.\n"
+    )
+
+    prompt = system
+    if convo:
+        prompt += "\nPICHLI BAATCHEET:\n" + convo
+    prompt += f"\nOwner ka naya sawaal/request: {question}\n\nAb best Hinglish jawab do:"
 
     try:
-        answer = await chat_completion([{"role": "user", "content": prompt}])
-        return {"answer": answer}
+        answer = await chat_completion([{"role": "user", "content": prompt}], temperature=0.85)
+        return {"answer": answer.strip()}
     except Exception as e:
-        return {"answer": f"Sorry, I could not process that. Please try again. ({str(e)[:50]})"}
+        return {"answer": f"Sorry yaar, abhi process nahi ho paya. Thodi der baad try karo. ({str(e)[:50]})"}
 
 
 @router.get("/{website_id}/wa-growth", response_class=HTMLResponse)

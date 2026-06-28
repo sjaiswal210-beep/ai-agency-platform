@@ -1,0 +1,23 @@
+{
+  "expo": {
+    "name": "City Maps Business",
+    "slug": "citymaps-business",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "backgroundColor": "#020817"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#020817"
+      },
+      "package": "com.citymaps.business"
+    },
+    "plugins": [
+      "expo-secure-store",
+      "expo-notifications"
+    ]
+  }
+}
