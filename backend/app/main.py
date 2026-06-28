@@ -214,7 +214,6 @@ _BACK_DASH_SNIPPET = (
     "b.ontouchstart=function(){b.style.opacity='1'};"
     "b.onclick=function(e){e.preventDefault();window.close();setTimeout(function(){if(!window.closed){if(r){location.href=r;}else{history.back();}}},200);};"
     "document.body.appendChild(b);"
-    "var pad=parseInt(getComputedStyle(document.body).paddingTop)||0;document.body.style.paddingTop=(pad+40)+'px';"
     "}"
     "if(document.body){add();}else{document.addEventListener('DOMContentLoaded',add);}"
     "}catch(e){}})();</script>"
