@@ -665,7 +665,9 @@ async def generate_free_video(website_id: str, req: HFVideoRequest, request: Req
     shutil.rmtree(temp_dir, ignore_errors=True)
 
     if os.path.exists(final_path) and os.path.getsize(final_path) > 5000:
-        video_url = f"/static/videos/{website_id}_promo.mp4"
+        # Cache-bust: same filename is overwritten each run, so vary the URL
+        # to stop the browser/CDN from showing the previously generated video.
+        video_url = f"/static/videos/{website_id}_promo.mp4?t={int(time.time())}"
     else:
         video_url = clip_urls[0]
 
