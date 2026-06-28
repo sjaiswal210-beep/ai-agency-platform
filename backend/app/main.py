@@ -206,6 +206,7 @@ _BACK_DASH_SNIPPET = (
     "if(document.getElementById('__backDash'))return;"
     "function add(){"
     "if(document.getElementById('__backDash'))return;"
+    "var st=document.createElement('style');st.textContent='h1{text-align:center}';document.head.appendChild(st);"
     "var b=document.createElement('a');b.id='__backDash';b.href='#';"
     "b.innerHTML='\u2190';"
     "b.style.cssText='position:fixed;top:8px;left:8px;z-index:2147483647;background:#6366f1;color:#fff;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:50%;font:700 16px/1 system-ui,-apple-system,sans-serif;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.25);opacity:.4;transition:opacity .2s';"
