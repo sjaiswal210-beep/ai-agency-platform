@@ -76,7 +76,7 @@ export default function BusinessDashboard() {
             className="w-full py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-indigo-500/25 transition-all disabled:opacity-50">
             {submitting ? "Opening..." : "Open Dashboard"}
           </button>
-          <p className="text-[11px] text-slate-500 text-center mt-4">Your number is used to manage your dashboard access.</p>
+          <p className="text-[11px] text-slate-500 text-center mt-4">By continuing, you agree to receive WhatsApp messages and calls about your business, and accept our <a href="https://city-maps.online/terms" target="_blank" className="underline">Terms</a> &amp; <a href="https://city-maps.online/privacy" target="_blank" className="underline">Privacy Policy</a>. Reply STOP anytime to opt out.</p>
         </div>
       </div>
     );
