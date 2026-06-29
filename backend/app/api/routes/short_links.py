@@ -47,7 +47,7 @@ async def follow_short_link(code: str):
     return RedirectResponse(url=row["target_url"], status_code=302)
 
 # Fixed APK download page (Expo internal-distribution install page) as fallback
-_APK_FALLBACK = "https://expo.dev/accounts/city-maps/projects/city-maps-online/builds/f3131551-4aef-4fcc-a405-514b27b0b99b"
+_APK_FALLBACK = "https://expo.dev/artifacts/eas/6drwwEA7uFSyT-QQOIrW57tNxSfmcDR6sow69lVEYJU.apk"
 
 
 @router.get("/api/app/download")
