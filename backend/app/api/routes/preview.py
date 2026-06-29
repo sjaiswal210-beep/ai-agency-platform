@@ -776,8 +776,8 @@ def generate_html(content: dict, template: str, lead: dict = None, website_id_ov
             _pr = _pdb().table("store_products").select("*").eq("website_id", website_id).eq("in_stock", True).limit(6).execute()
             if _pr.data:
                 prod_cards = ""
-                # Reliable image pool: real Google photos first, then curated category images
-                _fallback_imgs = list(real_photos or []) + list(images.get("gallery", []))
+                # Product images from open-source curated category set (NOT the business map/location photos)
+                _fallback_imgs = list(images.get("gallery", []))
                 if not _fallback_imgs:
                     _fallback_imgs = [images.get("hero", "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500&h=500&fit=crop")]
                 for _i, p in enumerate(_pr.data):
