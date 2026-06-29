@@ -117,7 +117,7 @@ async def send_site_created_message(business_name: str, phone: str, slug: str) -
     24h window. During testing, routed to LEAD_NOTIFY_OVERRIDE instead of the owner.
     """
     site_url = f"https://{slug}.city-maps.online"
-    dashboard_url = f"https://city-maps.online/dashboard/{slug}"
+    dashboard_url = f"https://{slug}.city-maps.online/dashboard"
 
     # Schedule an automated follow-up voice call ~10 min later
     try:
