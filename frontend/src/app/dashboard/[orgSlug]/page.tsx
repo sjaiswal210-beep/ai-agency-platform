@@ -35,7 +35,6 @@ export default function BusinessDashboard() {
 
   const submitPhone = async () => {
     const clean = phone.replace(/\D/g, "");
-    if (clean.length < 10) { alert("Enter a valid 10-digit number"); return; }
     setSubmitting(true);
     try {
       await fetch(`${API_BASE}/api/dashboard-access/track`, {
@@ -43,7 +42,7 @@ export default function BusinessDashboard() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone: clean, org_slug: orgSlug, org_id: org?.id, org_name: org?.name, source: "web" }),
       });
-      localStorage.setItem(`dash_phone_${orgSlug}`, clean);
+      localStorage.setItem(`dash_phone_${orgSlug}`, clean || "opened");
       setPhoneEntered(true);
     } catch (e) { console.error(e); setPhoneEntered(true); }
     finally { setSubmitting(false); }

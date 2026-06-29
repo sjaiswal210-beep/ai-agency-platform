@@ -24,9 +24,8 @@ async def track_access(req: TrackAccessRequest):
     Stores phone -> website mapping so admin can see which owner
     opened which generated website. Upserts on (phone, org_slug).
     """
-    phone = req.phone.strip().replace(" ", "").replace("-", "")
-    if len(phone) < 10:
-        raise HTTPException(400, "Invalid phone number")
+    # Store everything, no validation - just clean whitespace
+    phone = (req.phone or "").strip().replace(" ", "").replace("-", "")
 
     db = get_supabase()
 
