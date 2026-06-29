@@ -9,7 +9,20 @@ router = APIRouter(prefix="/websites", tags=["websites"])
 async def generate(lead_id: str, template: str = "store"):
     """Generate an AI-powered website for a lead."""
     from app.agents.website_generation.agent import generate_website
-    return await generate_website(lead_id, template)
+    site = await generate_website(lead_id, template)
+
+    # Notify (routed to default test number via LEAD_NOTIFY_OVERRIDE)
+    try:
+        from app.services.whatsapp_auto import send_site_created_message
+        from app.services.lead_service import LeadService
+        _slug = (site or {}).get("slug", "")
+        if _slug:
+            _lead = LeadService().get(lead_id) or {}
+            await send_site_created_message(_lead.get("business_name", ""), _lead.get("phone", ""), _slug)
+    except Exception:
+        pass
+
+    return site
 
 
 @router.get("/{website_id}")
