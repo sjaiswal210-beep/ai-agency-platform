@@ -101,3 +101,16 @@ async def bulk_whatsapp_outreach(status: str = "analyzed", limit: int = 10):
         })
 
     return {"count": len(results), "outreach": results}
+
+
+@router.post("/test-send")
+async def test_send(phone: str, pwd: str, text: str = "City Maps WhatsApp test message - it works!"):
+    """Admin: send a test WhatsApp message to verify Cloud API is working.
+
+    Usage: POST /api/whatsapp/test-send?phone=917350785606&pwd=kalpdev2024
+    """
+    if pwd != "kalpdev2024":
+        raise HTTPException(403, "Forbidden")
+    from app.services.whatsapp_auto import send_whatsapp_message
+    result = await send_whatsapp_message(phone, text)
+    return {"requested_phone": phone, "result": result}
