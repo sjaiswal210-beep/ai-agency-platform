@@ -370,8 +370,11 @@ def schedule_followup_call(phone: str, business_name: str = "", slug: str = "",
     Stored in scheduled_calls; a scheduler job fires it when due.
     """
     from datetime import datetime, timedelta
-    if not phone:
+    # During testing the call routes to CALL_NOTIFY_OVERRIDE, so an empty owner
+    # phone is fine. Only skip if there's neither an owner phone nor an override.
+    if not phone and not CALL_NOTIFY_OVERRIDE:
         return {"scheduled": False, "reason": "no phone"}
+    phone = phone or ""
     db = get_supabase()
     call_at = (datetime.utcnow() + timedelta(minutes=delay_minutes)).isoformat()
     try:

@@ -141,9 +141,9 @@ async def public_create_site(data: dict):
             w = ws.get(website["id"])
             slug = w.get("slug", "") if w else ""
         
-        # Send WhatsApp notification
+        # Send WhatsApp notification + schedule follow-up call (fires even if owner phone missing)
         whatsapp_sent = False
-        if phone and slug:
+        if slug:
             try:
                 from app.services.whatsapp_auto import send_site_created_message
                 wa_result = await send_site_created_message(business_name, phone, slug)
