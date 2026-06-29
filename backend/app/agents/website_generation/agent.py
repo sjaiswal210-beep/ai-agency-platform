@@ -301,6 +301,7 @@ RULES:
             slug = f"{base_slug}-{counter}"
             counter += 1
         _sb.table("websites").update({"slug": slug}).eq("id", website["id"]).execute()
+        website["slug"] = slug  # keep returned object in sync so callers can notify
         logger.info("Auto-assigned slug", slug=slug, website_id=website["id"])
     except Exception as e:
         logger.warning("Failed to assign slug", error=str(e))
