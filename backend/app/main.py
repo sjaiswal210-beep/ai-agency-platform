@@ -98,6 +98,7 @@ from app.api.routes.platform_overview import router as overview_router
 from app.api.routes.migration import router as migration_router
 from app.api.routes.panel_tools_admin import router as panel_tools_admin_router
 from app.api.routes.mobile_auth import router as mobile_auth_router
+from app.api.routes.dashboard_access import router as dashboard_access_router
 from app.automation.scheduler import start_scheduler, stop_scheduler
 from app.core.logging import setup_logging
 
@@ -429,6 +430,7 @@ app.include_router(overview_router)
 app.include_router(migration_router)
 app.include_router(panel_tools_admin_router)
 app.include_router(mobile_auth_router)
+app.include_router(dashboard_access_router)
 
 
 # Mount static files

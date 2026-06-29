@@ -130,6 +130,9 @@ export default function AdminPage() {
             <a href="https://ai-agency-platform.onrender.com/api/admin/voice-calls?pwd=kalpdev2024" target="_blank" className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-600 text-white rounded-lg text-xs font-medium hover:bg-purple-700 transition">
               Voice Calls
             </a>
+            <a href="/admin/visitors" className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-xs font-medium hover:bg-emerald-700 transition">
+              Visitors
+            </a>
             <a href="/admin/create" className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 text-white rounded-lg text-xs font-medium hover:bg-indigo-700 transition">
               <Plus className="w-3.5 h-3.5" /> New Organization
             </a>
