@@ -1,6 +1,6 @@
 """
 Owner Voice Broadcast - Business owners can send scripted voice calls to their customers.
-Free: 5 calls/day per business. After that: Rs.1/call (deducted from credits).
+Free: 5 calls LIFETIME per business (no renewal). After that: Rs.1/call (deducted from credits).
 Calls are max 30 seconds (short informational messages).
 """
 from fastapi import APIRouter, HTTPException
@@ -15,11 +15,11 @@ import os
 
 router = APIRouter(prefix="/api/owner-broadcast", tags=["owner-broadcast"])
 
-FREE_CALLS_PER_DAY = 5
+FREE_CALLS_LIFETIME = 5  # lifetime free calls per business (NO daily/auto renewal)
 COST_PER_CALL = 1  # Rs.1 per call after free tier
 
 
-def _get_today_calls(db, website_id: str) -> int:
+def _get_total_calls(db, website_id: str) -> int:
     """Count calls made today by this business."""
     today = date.today().isoformat()
     try:
@@ -105,9 +105,9 @@ def broadcast_page(website_id: str):
     lead = lead_service.get(website["lead_id"]) if website.get("lead_id") else None
     business_name = lead.get("business_name", "Business") if lead else "Business"
 
-    today_calls = _get_today_calls(db, website_id)
+    used_calls = _get_total_calls(db, website_id)
     credits = _get_credits(db, website_id)
-    remaining_free = max(0, FREE_CALLS_PER_DAY - today_calls)
+    remaining_free = max(0, FREE_CALLS_LIFETIME - used_calls)
     content = website.get("content", {}) or {}
     colors = content.get("color_scheme", {}) or {}
     primary = colors.get("primary", "#7C3AED")
@@ -146,10 +146,10 @@ textarea{{min-height:80px;resize:vertical}}
 <div class="wrap">
 <div class="stats">
 <div class="stat"><div class="n" id="s-free">{remaining_free}</div><div class="l">Free Left</div></div>
-<div class="stat"><div class="n" id="s-today">{today_calls}</div><div class="l">Today</div></div>
+<div class="stat"><div class="n" id="s-used">{used_calls}</div><div class="l">Used</div></div>
 <div class="stat"><div class="n" id="s-cred">Rs.{credits:.0f}</div><div class="l">Credits</div></div>
 </div>
-<div class="info">Free: {FREE_CALLS_PER_DAY} calls/day. After that Rs.{COST_PER_CALL}/call (max 30 sec each). <a href="/api/panel/{website_id}" style="color:#7c3aed;font-weight:700">Buy Credits</a></div>
+<div class="info">Free: {FREE_CALLS_LIFETIME} calls lifetime (one-time). After that Rs.{COST_PER_CALL}/call (max 30 sec each). <a href="/api/panel/{website_id}" style="color:#7c3aed;font-weight:700">Buy Credits</a></div>
 <div class="card">
 <h3>Send Voice Message</h3>
 <label>Message Script (Hindi/English)</label>
@@ -178,7 +178,7 @@ async function makeCall(){{
   try{{
     var r=await fetch(API+"/api/owner-broadcast/"+WID+"/call",{{method:"POST",headers:{{"Content-Type":"application/json"}},body:JSON.stringify({{script:script,phone:phone,lang:lang}})}});
     var d=await r.json();
-    if(r.ok){{toast("Call initiated!");document.getElementById("s-today").textContent=parseInt(document.getElementById("s-today").textContent)+1;var fr=parseInt(document.getElementById("s-free").textContent);if(fr>0)document.getElementById("s-free").textContent=fr-1;}}
+    if(r.ok){{toast("Call initiated!");document.getElementById("s-used").textContent=parseInt(document.getElementById("s-used").textContent)+1;var fr=parseInt(document.getElementById("s-free").textContent);if(fr>0)document.getElementById("s-free").textContent=fr-1;}}
     else{{toast(d.detail||"Failed");}}
   }}catch(e){{toast("Error. Try again");}}
   btn.disabled=false;btn.textContent="Call Now";
@@ -201,15 +201,15 @@ async def owner_make_call(website_id: str, data: dict):
         raise HTTPException(400, "Script too long (max 500 chars for 30 sec)")
 
     # Check limits
-    today_calls = _get_today_calls(db, website_id)
-    if today_calls < FREE_CALLS_PER_DAY:
+    used_calls = _get_total_calls(db, website_id)
+    if used_calls < FREE_CALLS_LIFETIME:
         # Free call
         pass
     else:
         # Check credits
         credits = _get_credits(db, website_id)
         if credits < COST_PER_CALL:
-            raise HTTPException(402, f"No credits. Buy credits to make more calls. Free limit: {FREE_CALLS_PER_DAY}/day reached.")
+            raise HTTPException(402, f"No credits. Buy credits to make more calls. Your {FREE_CALLS_LIFETIME} lifetime free calls are used.")
         _deduct_credit(db, website_id, COST_PER_CALL)
 
     # Generate audio
@@ -225,9 +225,9 @@ async def owner_make_call(website_id: str, data: dict):
             "phone": phone,
             "script": script[:200],
             "call_id": result.get("request_uuid", ""),
-            "cost": 0 if today_calls < FREE_CALLS_PER_DAY else COST_PER_CALL,
+            "cost": 0 if used_calls < FREE_CALLS_LIFETIME else COST_PER_CALL,
         }).execute()
     except Exception:
         pass
 
-    return {"message": "Call initiated", "call_id": result.get("request_uuid", ""), "free_remaining": max(0, FREE_CALLS_PER_DAY - today_calls - 1)}
+    return {"message": "Call initiated", "call_id": result.get("request_uuid", ""), "free_remaining": max(0, FREE_CALLS_LIFETIME - used_calls - 1)}
