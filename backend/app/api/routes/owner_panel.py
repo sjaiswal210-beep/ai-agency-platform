@@ -405,7 +405,7 @@ body{{font-family:Inter,sans-serif;background:#0f172a;color:#fff;padding:16px;ma
 
 <div id="step4" class="step hidden">
 <h2><span class="step-num">4</span>Generate Video</h2>
-<button class="gen-btn" id="genBtn" onclick="generateVideo()">&#127916; Create Video</button>
+<button class="gen-btn" id="genBtn" onclick="generateVideo()">&#127916; Create Video &mdash; Rs.5</button>
 <div class="progress hidden" id="progressWrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
 <p id="statusText" class="note"></p>
 </div>
@@ -513,13 +513,13 @@ async function generateVideo(){{
       var vurl=data.video_url||(data.clips&&data.clips[0])||'';
       if(gp)gp.innerHTML='<div style="background:#1e293b;border:1px solid #334155;border-radius:16px;padding:16px;max-width:400px;width:92%;max-height:90vh;overflow-y:auto;position:relative;text-align:center"><button onclick="this.parentNode.parentNode.remove()" style="position:absolute;top:8px;right:12px;background:none;border:none;color:#94a3b8;font-size:1.3rem;cursor:pointer">&times;</button><p style="font-size:.9rem;font-weight:700;color:#fff;margin:8px 0 12px">Video Ready!</p><video src="'+vurl+'" controls autoplay playsinline style="width:100%;border-radius:10px;margin-bottom:10px"></video><p style="font-size:.68rem;color:#94a3b8;margin-bottom:10px">'+(data.total_duration||'30 sec')+'</p><a href="'+vurl+'" download style="display:block;padding:12px;background:#22c55e;border-radius:10px;color:#fff;font-weight:700;font-size:.85rem;text-decoration:none">Download Video</a></div>';
     }}else{{
-      if(gp)gp.innerHTML='<div style="background:#1e293b;border:1px solid #334155;border-radius:16px;padding:20px;max-width:300px;width:90%;text-align:center"><p style="color:#ef4444;font-size:.85rem;font-weight:600;margin-bottom:8px">Generation Failed</p><p style="font-size:.72rem;color:#94a3b8">'+(data.message||'Please try again')+'</p><button onclick="this.parentNode.parentNode.remove()" style="margin-top:12px;padding:8px 16px;background:#334155;border:none;border-radius:8px;color:#fff;font-size:.75rem;cursor:pointer">Close</button></div>';
+      if(gp)gp.innerHTML='<div style="background:#1e293b;border:1px solid #334155;border-radius:16px;padding:20px;max-width:300px;width:90%;text-align:center"><p style="color:#ef4444;font-size:.85rem;font-weight:600;margin-bottom:8px">Generation Failed</p><p style="font-size:.72rem;color:#94a3b8">'+(data.detail||data.message||'Please try again')+'</p><button onclick="this.parentNode.parentNode.remove()" style="margin-top:12px;padding:8px 16px;background:#334155;border:none;border-radius:8px;color:#fff;font-size:.75rem;cursor:pointer">Close</button></div>';
     }}
   }}catch(e){{
     var gp=document.getElementById('genPopup');
     if(gp)gp.innerHTML='<div style="background:#1e293b;border:1px solid #334155;border-radius:16px;padding:20px;max-width:300px;width:90%;text-align:center"><p style="color:#ef4444;font-size:.85rem">Error: '+e.message+'</p><button onclick="this.parentNode.parentNode.remove()" style="margin-top:12px;padding:8px 16px;background:#334155;border:none;border-radius:8px;color:#fff;font-size:.75rem;cursor:pointer">Close</button></div>';
   }}
-  btn.disabled=false;btn.textContent='Generate 20-sec Video';
+  btn.disabled=false;btn.textContent='Generate Video - Rs.5';
 }}
 
 </script><div id="toolModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9999;align-items:center;justify-content:center;padding:10px"><div style="background:#fff;border-radius:16px;width:100%;max-width:480px;height:85vh;position:relative;overflow:hidden"><button onclick="closeTool()" style="position:absolute;top:8px;right:12px;background:rgba(0,0,0,.6);color:#fff;border:none;width:28px;height:28px;border-radius:50%;font-size:1rem;cursor:pointer;z-index:10">&times;</button><iframe id="toolFrame" style="width:100%;height:100%;border:none;border-radius:16px" src=""></iframe></div></div></body></html>'''
@@ -594,7 +594,7 @@ textarea{{width:100%;padding:10px;border:1px solid #334155;border-radius:8px;bac
 <p style="margin-top:6px;font-size:.6rem;color:#475569">Business name added automatically</p>
 </div>
 
-<button class="btn btn-green" id="genBtn" onclick="genVideo()">Generate 20-sec Video</button>
+<button class="btn btn-green" id="genBtn" onclick="genVideo()">Generate Video &mdash; Rs.5</button>
 <p class="note">Creates 4 scenes. Takes 2-3 minutes.</p>
 
 <script>window._wid="{website_id}";window._bname="{business_name}";window._cat="{category}";</script>

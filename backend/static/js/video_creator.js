@@ -1,4 +1,4 @@
-﻿function genScript(){
+function genScript(){
   var b=document.getElementById("blurb");
   var btn=document.getElementById("scriptBtn");
   var kw=b.value.trim()||window._cat;
@@ -31,7 +31,7 @@ function genVideo(){
       var vurl=d.video_url||(d.clips&&d.clips[0])||"";
       ov2.innerHTML='<div style="background:#1e293b;border-radius:16px;padding:16px;max-width:380px;width:92%;text-align:center;position:relative"><button onclick="this.parentNode.parentNode.remove()" style="position:absolute;top:8px;right:12px;background:none;border:none;color:#94a3b8;font-size:1.2rem;cursor:pointer">&times;</button><p style="font-size:.9rem;font-weight:700;color:#fff;margin:8px 0 10px">Video Ready!</p><video src="'+vurl+'" controls autoplay playsinline style="width:100%;border-radius:10px;margin-bottom:10px"></video><a href="'+vurl+'" download style="display:block;padding:12px;background:#22c55e;border-radius:10px;color:#fff;font-weight:700;text-decoration:none">Download Video</a></div>';
     }else{
-      ov2.innerHTML='<div style="background:#1e293b;border-radius:16px;padding:20px;max-width:280px;width:90%;text-align:center"><p style="color:#ef4444;font-weight:600">Failed</p><p style="font-size:.72rem;color:#94a3b8;margin:8px 0">'+(d.message||"Try again")+'</p><button onclick="this.parentNode.parentNode.remove()" style="padding:8px 16px;background:#334155;border:none;border-radius:8px;color:#fff;cursor:pointer">Close</button></div>';
+      ov2.innerHTML='<div style="background:#1e293b;border-radius:16px;padding:20px;max-width:280px;width:90%;text-align:center"><p style="color:#ef4444;font-weight:600">Failed</p><p style="font-size:.72rem;color:#94a3b8;margin:8px 0">'+(d.detail||d.message||"Try again")+'</p><button onclick="this.parentNode.parentNode.remove()" style="padding:8px 16px;background:#334155;border:none;border-radius:8px;color:#fff;cursor:pointer">Close</button></div>';
     }
     btn.disabled=false;btn.textContent="Generate 30-sec Video";
   }).catch(function(e){

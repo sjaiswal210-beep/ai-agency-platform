@@ -22,6 +22,7 @@ logger = get_logger(__name__)
 
 REPLICATE_TOKEN = os.environ.get("REPLICATE_TOKEN", "")
 MAX_PROMPT_LENGTH = 2000  # Max characters for video prompts
+VIDEO_COST = 5  # Rs.5 per AI video, charged to business credits
 
 
 class VideoRequest(BaseModel):
@@ -537,6 +538,10 @@ async def generate_free_video(website_id: str, req: HFVideoRequest, request: Req
     category = lead.get("category", "business") if lead else "business"
     slug = website.get("slug", "")
     site_url = f"{slug}.city-maps.online" if slug else "city-maps.online"
+    # Charge check: Rs.5 per video
+    from app.services.credits import get_credits as _gc, deduct_credit as _dc
+    if _gc(website_id) < VIDEO_COST:
+        raise HTTPException(402, f"Video costs Rs.{VIDEO_COST}. Not enough credits. Please buy credits.")
     custom_text = req.custom_text if hasattr(req, "custom_text") and req.custom_text else ""
 
     # Validate prompt length
@@ -580,6 +585,9 @@ async def generate_free_video(website_id: str, req: HFVideoRequest, request: Req
 
     if not clip_urls:
         return {"status": "failed", "message": "Video generation failed. Try again."}
+
+    # Clips generated successfully - charge Rs.5
+    _dc(website_id, VIDEO_COST)
 
     # Download and stitch with ffmpeg
     temp_dir = tempfile.mkdtemp()
