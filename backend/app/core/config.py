@@ -15,6 +15,8 @@ class Settings(BaseSettings):
     whatsapp_site_template: str = "site_ready"
     whatsapp_site_lang: str = "en"
     app_apk_url: str = ""  # direct APK download URL (set after EAS build)
+    razorpay_key_id: str = ""
+    razorpay_key_secret: str = ""
     openrouter_api_key: str = ""
     groq_api_key: str = ""
     freellmapi_url: str = ""
