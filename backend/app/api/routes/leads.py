@@ -471,19 +471,9 @@ def _auto_generate_websites_sync(lead_ids: list):
         
         for lead_id in batch:
             try:
-                site = loop.run_until_complete(generate_website(lead_id))
+                loop.run_until_complete(generate_website(lead_id))
                 done += 1
                 logger.info("Auto-generated website", lead_id=lead_id, progress=f"{done}/{total}")
-                # Notify (routed to default test number via LEAD_NOTIFY_OVERRIDE)
-                try:
-                    from app.services.whatsapp_auto import send_site_created_message
-                    from app.services.lead_service import LeadService
-                    _lead = LeadService().get(lead_id) or {}
-                    _slug = (site or {}).get("slug", "")
-                    if _slug:
-                        loop.run_until_complete(send_site_created_message(_lead.get("business_name", ""), _lead.get("phone", ""), _slug))
-                except Exception as _e:
-                    logger.warning("Auto-gen notify failed", lead_id=lead_id, error=str(_e))
             except Exception as e:
                 logger.warning("Auto-gen failed", lead_id=lead_id, error=str(e))
         
