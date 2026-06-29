@@ -106,6 +106,7 @@ body{{padding-bottom:60px}}
 
 <div style="margin-bottom:12px"><a href="/api/auth/google/login?website_id={website_id}" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;text-decoration:none;color:#fff;font-size:.75rem;font-weight:600"><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" style="width:16px;height:16px"> Connect Google (Reviews & Calendar)</a></div>
 
+<div style="margin-bottom:12px"><a href="/api/app/download" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;background:linear-gradient(135deg,#22c55e,#16a34a);border-radius:12px;text-decoration:none;color:#fff;font-size:.85rem;font-weight:800;box-shadow:0 4px 16px rgba(34,197,94,.3)">&#128241; Download Android App</a></div>
 <div class="section-title">Manage Your Business</div>
 <div class="tools">
 <a href="https://city-maps.online/api/store/{website_id}/manage" target="_blank" class="tool"><div class="emoji">&#128722;</div><div class="name">Store Manager</div><div class="desc">Products & Stock</div></a>

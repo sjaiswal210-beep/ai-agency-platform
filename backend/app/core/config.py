@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     whatsapp_otp_lang: str = "en"
     whatsapp_site_template: str = "site_ready"
     whatsapp_site_lang: str = "en"
+    app_apk_url: str = ""  # direct APK download URL (set after EAS build)
     openrouter_api_key: str = ""
     groq_api_key: str = ""
     freellmapi_url: str = ""

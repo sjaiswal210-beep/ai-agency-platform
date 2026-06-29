@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "City Maps Business",
-    "slug": "citymaps-business",
+    "slug": "city-maps-online",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -22,6 +22,12 @@
     },
     "plugins": [
       "expo-secure-store"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "a560f6a4-abfd-44e0-a41f-d44af0e7bd15"
+      }
+    },
+    "owner": "city-maps"
   }
 }
