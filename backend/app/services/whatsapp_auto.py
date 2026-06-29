@@ -55,8 +55,26 @@ async def send_whatsapp_message(phone: str, message: str) -> dict:
     return {"sent": False, "method": "link", "link": link, "phone": clean}
 
 
+# TEMP: route all lead/site-created notifications to this number instead of the
+# business owner (testing mode). Set to "" to send directly to owners.
+LEAD_NOTIFY_OVERRIDE = "917450785606"
+
+
 async def send_site_created_message(business_name: str, phone: str, slug: str) -> dict:
-    """Send automated message when a website is created."""
+    """Send notification when a website is created.
+
+    During testing, messages are routed to LEAD_NOTIFY_OVERRIDE instead of the
+    business owner. The owner's number is included in the text for reference.
+    """
+    if LEAD_NOTIFY_OVERRIDE:
+        message = (
+            f"New website generated\n\n"
+            f"Business: {business_name}\n"
+            f"Owner phone: {phone}\n"
+            f"Live site: https://{slug}.city-maps.online"
+        )
+        return await send_whatsapp_message(LEAD_NOTIFY_OVERRIDE, message)
+
     message = (
         f"Hi {business_name}!\n\n"
         f"Your free business website is now live:\n"
