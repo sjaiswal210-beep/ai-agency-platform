@@ -60,25 +60,84 @@ async def send_whatsapp_message(phone: str, message: str) -> dict:
 LEAD_NOTIFY_OVERRIDE = "917350785606"
 
 
+async def send_site_ready_template(phone: str, business_name: str, site_url: str) -> dict:
+    """Send the approved 'site_ready' utility template (works outside 24h window)."""
+    settings = get_settings()
+    clean = phone.replace(" ", "").replace("-", "").replace("+", "")
+    if not clean.startswith("91") and len(clean) == 10:
+        clean = "91" + clean
+
+    wa_token = getattr(settings, "whatsapp_token", "") or ""
+    wa_phone_id = getattr(settings, "whatsapp_phone_id", "") or ""
+    template_name = getattr(settings, "whatsapp_site_template", "") or "site_ready"
+    template_lang = getattr(settings, "whatsapp_site_lang", "") or "en"
+
+    if not (wa_token and wa_phone_id):
+        return {"sent": False, "method": "no_config"}
+
+    try:
+        async with httpx.AsyncClient() as client:
+            resp = await client.post(
+                f"{WA_API_URL}/{wa_phone_id}/messages",
+                headers={"Authorization": f"Bearer {wa_token}", "Content-Type": "application/json"},
+                json={
+                    "messaging_product": "whatsapp",
+                    "to": clean,
+                    "type": "template",
+                    "template": {
+                        "name": template_name,
+                        "language": {"code": template_lang},
+                        "components": [
+                            {
+                                "type": "body",
+                                "parameters": [
+                                    {"type": "text", "text": business_name or "there"},
+                                    {"type": "text", "text": site_url},
+                                ],
+                            }
+                        ],
+                    },
+                },
+                timeout=15,
+            )
+            if resp.status_code == 200:
+                logger.info("site_ready template sent", phone=clean)
+                return {"sent": True, "method": "template", "phone": clean}
+            logger.warning("site_ready template failed", status=resp.status_code, body=resp.text[:300])
+            return {"sent": False, "method": "template_failed", "status": resp.status_code, "body": resp.text[:300]}
+    except Exception as e:
+        logger.warning("site_ready template error", error=str(e))
+        return {"sent": False, "method": "error", "error": str(e)[:200]}
+
+
 async def send_site_created_message(business_name: str, phone: str, slug: str) -> dict:
     """Send notification when a website is created.
 
-    During testing, messages are routed to LEAD_NOTIFY_OVERRIDE instead of the
-    business owner. The owner's number is included in the text for reference.
+    Uses the approved 'site_ready' template so it reaches owners even outside the
+    24h window. During testing, routed to LEAD_NOTIFY_OVERRIDE instead of the owner.
     """
+    site_url = f"https://{slug}.city-maps.online"
+    recipient = LEAD_NOTIFY_OVERRIDE or phone
+
+    # Try the approved template first (works for cold contacts)
+    result = await send_site_ready_template(recipient, business_name, site_url)
+    if result.get("sent"):
+        return result
+
+    # Fallback: plain text (only delivers inside 24h window)
     if LEAD_NOTIFY_OVERRIDE:
         message = (
             f"New website generated\n\n"
             f"Business: {business_name}\n"
             f"Owner phone: {phone}\n"
-            f"Live site: https://{slug}.city-maps.online"
+            f"Live site: {site_url}"
         )
         return await send_whatsapp_message(LEAD_NOTIFY_OVERRIDE, message)
 
     message = (
         f"Hi {business_name}!\n\n"
         f"Your free business website is now live:\n"
-        f"https://{slug}.city-maps.online\n\n"
+        f"{site_url}\n\n"
         f"Share it with your customers!\n"
         f"Powered by City Maps"
     )

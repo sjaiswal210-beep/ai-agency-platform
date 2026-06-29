@@ -12,6 +12,8 @@ class Settings(BaseSettings):
     whatsapp_phone_id: str = ""
     whatsapp_otp_template: str = "login_otp"
     whatsapp_otp_lang: str = "en"
+    whatsapp_site_template: str = "site_ready"
+    whatsapp_site_lang: str = "en"
     openrouter_api_key: str = ""
     groq_api_key: str = ""
     freellmapi_url: str = ""
