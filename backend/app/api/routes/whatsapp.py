@@ -114,3 +114,47 @@ async def test_send(phone: str, pwd: str, text: str = "City Maps WhatsApp test m
     from app.services.whatsapp_auto import send_whatsapp_message
     result = await send_whatsapp_message(phone, text)
     return {"requested_phone": phone, "result": result}
+
+@router.get("/diag")
+async def whatsapp_diag(pwd: str, phone: str = "917350785606"):
+    """Admin: diagnose WhatsApp Cloud API config and show raw Meta response.
+
+    Usage: GET /api/whatsapp/diag?pwd=kalpdev2024
+    """
+    if pwd != "kalpdev2024":
+        raise HTTPException(403, "Forbidden")
+    import httpx
+    from app.core.config import get_settings
+    settings = get_settings()
+    wa_token = getattr(settings, "whatsapp_token", "") or ""
+    wa_phone_id = getattr(settings, "whatsapp_phone_id", "") or ""
+
+    diag = {
+        "token_set": bool(wa_token),
+        "token_length": len(wa_token),
+        "phone_id_set": bool(wa_phone_id),
+        "phone_id_value": wa_phone_id,
+    }
+
+    if not wa_token or not wa_phone_id:
+        diag["verdict"] = "Missing WHATSAPP_TOKEN or WHATSAPP_PHONE_ID on the server (check Render env vars + redeploy)"
+        return diag
+
+    clean = phone.replace("+", "").replace(" ", "").replace("-", "")
+    if not clean.startswith("91") and len(clean) == 10:
+        clean = "91" + clean
+    try:
+        async with httpx.AsyncClient() as client:
+            resp = await client.post(
+                f"https://graph.facebook.com/v18.0/{wa_phone_id}/messages",
+                headers={"Authorization": f"Bearer {wa_token}", "Content-Type": "application/json"},
+                json={"messaging_product": "whatsapp", "to": clean, "type": "text", "text": {"body": "City Maps diag test"}},
+                timeout=15,
+            )
+            diag["meta_status"] = resp.status_code
+            diag["meta_response"] = resp.text[:500]
+            diag["verdict"] = "OK - message sent" if resp.status_code == 200 else "Meta rejected the request - see meta_response"
+    except Exception as e:
+        diag["error"] = str(e)[:300]
+        diag["verdict"] = "Request to Meta failed"
+    return diag
