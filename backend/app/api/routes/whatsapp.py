@@ -192,3 +192,38 @@ async def whatsapp_register(pwd: str, pin: str):
             }
     except Exception as e:
         raise HTTPException(500, f"Register failed: {str(e)[:200]}")
+
+@router.get("/templates")
+async def list_templates(pwd: str, waba_id: str = "978292804821298"):
+    """Admin: list WhatsApp message templates and their approval status.
+
+    Usage: GET /api/whatsapp/templates?pwd=kalpdev2024
+    """
+    if pwd != "kalpdev2024":
+        raise HTTPException(403, "Forbidden")
+    import httpx
+    from app.core.config import get_settings
+    settings = get_settings()
+    wa_token = getattr(settings, "whatsapp_token", "") or ""
+    if not wa_token:
+        raise HTTPException(400, "Token not set on server")
+    try:
+        async with httpx.AsyncClient() as client:
+            resp = await client.get(
+                f"https://graph.facebook.com/v18.0/{waba_id}/message_templates",
+                params={"access_token": wa_token, "limit": 50},
+                timeout=15,
+            )
+            data = resp.json()
+            templates = [
+                {
+                    "name": t.get("name"),
+                    "status": t.get("status"),
+                    "category": t.get("category"),
+                    "language": t.get("language"),
+                }
+                for t in data.get("data", [])
+            ]
+            return {"status_code": resp.status_code, "templates": templates}
+    except Exception as e:
+        raise HTTPException(500, f"Failed: {str(e)[:200]}")
