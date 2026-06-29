@@ -203,6 +203,14 @@ async def discover_leads(
             await analyze_website(first_lead["id"])
             site = await generate_website(first_lead["id"], category)
             auto_processed = {"lead": first_lead["business_name"], "website_id": site["id"]}
+            # Notify (routed to default test number via LEAD_NOTIFY_OVERRIDE)
+            try:
+                from app.services.whatsapp_auto import send_site_created_message
+                _slug = (site or {}).get("slug", "")
+                if _slug:
+                    await send_site_created_message(first_lead.get("business_name", ""), first_lead.get("phone", ""), _slug)
+            except Exception:
+                pass
         except Exception:
             pass
 
