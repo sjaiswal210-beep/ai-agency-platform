@@ -776,22 +776,31 @@ def generate_html(content: dict, template: str, lead: dict = None, website_id_ov
             _pr = _pdb().table("store_products").select("*").eq("website_id", website_id).eq("in_stock", True).limit(6).execute()
             if _pr.data:
                 prod_cards = ""
-                # Product images from open-source curated category set (NOT the business map/location photos)
-                _fallback_imgs = list(images.get("gallery", []))
-                if not _fallback_imgs:
-                    _fallback_imgs = [images.get("hero", "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500&h=500&fit=crop")]
+                # Curated open-source category images (verified working) used as steady fallback
+                _cat_imgs = list(images.get("gallery", []))
+                for _k in ("hero", "about"):
+                    if images.get(_k):
+                        _cat_imgs.append(images[_k])
+                if not _cat_imgs:
+                    _cat_imgs = ["https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500&h=500&fit=crop"]
                 for _i, p in enumerate(_pr.data):
                     _raw = (p.get("image_url") or "").strip()
-                    # Replace empty / unreliable AI-generated image URLs with working images
+                    # Replace empty / unreliable AI-generated image URLs with open-source images
                     if (not _raw) or ("unsplash.com" in _raw) or ("pollinations" in _raw) or ("example.com" in _raw):
-                        p_img = _fallback_imgs[_i % len(_fallback_imgs)]
+                        # Open-source, product-relevant image keyed to the product name (always loads, varied)
+                        _kw = (p.get("name") or p.get("category") or category or "product").strip().split(",")[0]
+                        _kw = urllib.parse.quote(_kw[:30]) or "product"
+                        p_img = f"https://loremflickr.com/500/500/{_kw}?lock={_i + 1}"
+                        # keep a curated fallback in case the keyword image is unavailable
+                        _alt = _cat_imgs[_i % len(_cat_imgs)]
                     else:
                         p_img = _raw
+                        _alt = _raw
                     wa_msg = urllib.parse.quote(f"Hi, I want to buy {p.get('name','')} (Rs.{p.get('price','')})")
                     wa_link = f"https://wa.me/{whatsapp_num}?text={wa_msg}" if whatsapp_num else "#"
                     prod_cards += (
                         f'<div class="prod-card" data-aos="fade-up">'
-                        f'<img src="{p_img}" alt="{p.get("name","")}" class="prod-img">'
+                        f'<img src="{p_img}" alt="{p.get("name","")}" class="prod-img" loading="lazy" onerror="this.onerror=null;this.src=&#39;{_alt}&#39;">'
                         f'<h3 class="prod-name">{p.get("name","")}</h3>'
                         f'<p class="prod-desc">{p.get("description","")[:60]}</p>'
                         f'<div class="prod-price">Rs. {p.get("price","")}</div>'
