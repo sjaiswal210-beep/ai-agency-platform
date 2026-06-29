@@ -143,3 +143,30 @@ GO-LIVE SWITCHES (currently in testing):
 - [ ] follow-up call delay back to 10 min
 - [ ] site_ready WhatsApp template APPROVED
 - [ ] run scripts/fix_voice_prices.sql in Supabase
+
+==================================================================
+## PART F - OVERNIGHT PROGRESS LOG (auto-completed, safe changes)
+==================================================================
+
+DONE (committed & pushed, nothing charges/breaks until you activate):
+- Legal pages created on marketing site: /refund, /shipping,
+  upgraded /privacy (DPDP Act), upgraded /terms. Footer now links them
+  + has company identity placeholders.
+- Razorpay "Buy Credits" flow scaffolded:
+  * Backend: /api/credits/create-order, /api/credits/verify (HMAC),
+    /api/credits/{website_id}/buy (checkout page).
+  * Inert until you set RAZORPAY_KEY_ID + RAZORPAY_KEY_SECRET on Render.
+  * "Buy Credits" buttons (logo + video) now point to the buy page.
+  * SQL: scripts/credit_purchases.sql (run in Supabase).
+- Consent + Terms/Privacy notice added to the phone-capture gate
+  (DPDP/TRAI compliance). Includes STOP-to-opt-out wording.
+- Rate limit on OTP send (max 5 / phone / 10 min) to prevent abuse.
+
+NEEDS YOU (cannot do without your keys/decisions):
+- Fill [COMPANY LEGAL NAME] / [REGISTERED ADDRESS] / [GSTIN] /
+  [GRIEVANCE OFFICER NAME] / [CITY, STATE] in legal pages + footer.
+- Add Razorpay live keys to Render; run credit_purchases.sql; test Rs.1.
+- Approve site_ready WhatsApp template; run fix_voice_prices.sql.
+- Decide: security hardening of admin (URL password -> session token).
+- Flip go-live switches (LEAD_NOTIFY_OVERRIDE / CALL_NOTIFY_OVERRIDE = "",
+  call delay 10 min) when ready for real owners.

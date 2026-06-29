@@ -12,6 +12,7 @@ logger = get_logger(__name__)
 
 # In-memory OTP store (use Redis in production)
 otp_store: dict = {}
+_otp_rate: dict = {}  # phone -> [timestamps] for rate limiting
 
 
 class SendOTPRequest(BaseModel):
@@ -86,6 +87,19 @@ async def send_otp(req: SendOTPRequest):
     phone = req.phone.strip().replace(" ", "")
     if not phone or len(phone) < 10:
         raise HTTPException(400, "Invalid phone number")
+
+    # Rate limit: max 5 OTP requests per phone per 10 minutes (fail-open)
+    try:
+        now = time.time()
+        hits = [t for t in _otp_rate.get(phone, []) if now - t < 600]
+        if len(hits) >= 5:
+            raise HTTPException(429, "Too many OTP requests. Try again in a few minutes.")
+        hits.append(now)
+        _otp_rate[phone] = hits
+    except HTTPException:
+        raise
+    except Exception:
+        pass
 
     db = get_supabase()
     business = _resolve_business(db, phone)
