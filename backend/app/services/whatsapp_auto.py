@@ -57,7 +57,7 @@ async def send_whatsapp_message(phone: str, message: str) -> dict:
 
 # TEMP: route all lead/site-created notifications to this number instead of the
 # business owner (testing mode). Set to "" to send directly to owners.
-LEAD_NOTIFY_OVERRIDE = "917450785606"
+LEAD_NOTIFY_OVERRIDE = "917350785606"
 
 
 async def send_site_created_message(business_name: str, phone: str, slug: str) -> dict:
