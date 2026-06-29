@@ -223,19 +223,14 @@ a:hover {{ text-decoration: underline; }}
 
 <div class="pricing">
 <div class="price-card">
-<div class="plan">Starter</div>
-<div class="amount">&#8377;79<small>/mo</small></div>
-<ul class="modules"><li>CRM (basic)</li><li>Billing</li><li>Website</li><li>Analytics</li><li>4 modules</li></ul>
+<div class="plan">Growth</div>
+<div class="amount">&#8377;29<small>/mo</small></div>
+<ul class="modules"><li>Professional Website</li><li>Product Catalog</li><li>Analytics Dashboard</li><li>Social Media Posts</li><li>QR Code & Daily Content</li><li>Google Business Setup</li></ul>
 </div>
 <div class="price-card featured">
-<div class="plan">Pro (Popular)</div>
-<div class="amount">&#8377;299<small>/mo</small></div>
-<ul class="modules"><li>Everything in Starter</li><li>Booking / Subscriptions</li><li>Job Cards / Custom Orders</li><li>Inventory / WhatsApp</li><li>Catalog + Public Pages</li><li>12+ modules</li></ul>
-</div>
-<div class="price-card">
-<div class="plan">Enterprise</div>
-<div class="amount">&#8377;999<small>/mo</small></div>
-<ul class="modules"><li>All 22 modules</li><li>Clinic / Students</li><li>Events / Fleet</li><li>Photographer toolkit</li><li>AI Employee</li><li>Priority support</li></ul>
+<div class="plan">Premium (Popular)</div>
+<div class="amount">&#8377;39<small>/mo</small></div>
+<ul class="modules"><li>Everything in Growth</li><li>WhatsApp Commerce</li><li>Bookings / CRM / Invoices</li><li>Custom Domain</li><li>Video Creator</li><li>Priority Support</li></ul>
 </div>
 </div>
 </div>
