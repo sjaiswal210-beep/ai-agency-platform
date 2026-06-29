@@ -158,3 +158,37 @@ async def whatsapp_diag(pwd: str, phone: str = "917350785606"):
         diag["error"] = str(e)[:300]
         diag["verdict"] = "Request to Meta failed"
     return diag
+
+@router.post("/register")
+async def whatsapp_register(pwd: str, pin: str):
+    """Admin: register the phone number with WhatsApp Cloud API (fixes error 133010).
+
+    pin = a 6-digit two-step verification PIN of your choice (remember it).
+    Usage: POST /api/whatsapp/register?pwd=kalpdev2024&pin=123456
+    """
+    if pwd != "kalpdev2024":
+        raise HTTPException(403, "Forbidden")
+    if not (pin.isdigit() and len(pin) == 6):
+        raise HTTPException(400, "PIN must be exactly 6 digits")
+    import httpx
+    from app.core.config import get_settings
+    settings = get_settings()
+    wa_token = getattr(settings, "whatsapp_token", "") or ""
+    wa_phone_id = getattr(settings, "whatsapp_phone_id", "") or ""
+    if not wa_token or not wa_phone_id:
+        raise HTTPException(400, "Token or phone ID not set on server")
+    try:
+        async with httpx.AsyncClient() as client:
+            resp = await client.post(
+                f"https://graph.facebook.com/v18.0/{wa_phone_id}/register",
+                headers={"Authorization": f"Bearer {wa_token}", "Content-Type": "application/json"},
+                json={"messaging_product": "whatsapp", "pin": pin},
+                timeout=20,
+            )
+            return {
+                "status_code": resp.status_code,
+                "response": resp.text[:500],
+                "verdict": "Registered - now try test-send" if resp.status_code == 200 else "See response for error",
+            }
+    except Exception as e:
+        raise HTTPException(500, f"Register failed: {str(e)[:200]}")
