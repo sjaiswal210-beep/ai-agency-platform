@@ -117,28 +117,31 @@ async def send_site_created_message(business_name: str, phone: str, slug: str) -
     24h window. During testing, routed to LEAD_NOTIFY_OVERRIDE instead of the owner.
     """
     site_url = f"https://{slug}.city-maps.online"
-    recipient = LEAD_NOTIFY_OVERRIDE or phone
+    dashboard_url = f"https://ai-agency-platform-blush.vercel.app/dashboard/{slug}"
 
-    # Try the approved template first (works for cold contacts)
-    result = await send_site_ready_template(recipient, business_name, site_url)
-    if result.get("sent"):
-        return result
-
-    # Fallback: plain text (only delivers inside 24h window)
+    # TESTING: send a detailed plain-text message to the override number.
+    # (Requires the 24h window open on that number, which it is for our test phone.)
     if LEAD_NOTIFY_OVERRIDE:
         message = (
             f"New website generated\n\n"
             f"Business: {business_name}\n"
             f"Owner phone: {phone}\n"
-            f"Live site: {site_url}"
+            f"Live site: {site_url}\n"
+            f"Dashboard: {dashboard_url}"
         )
         return await send_whatsapp_message(LEAD_NOTIFY_OVERRIDE, message)
 
+    # PRODUCTION: send the approved template to the real owner (works cold).
+    result = await send_site_ready_template(phone, business_name, site_url)
+    if result.get("sent"):
+        return result
+
+    # Fallback if template not yet approved: plain text (24h window only)
     message = (
         f"Hi {business_name}!\n\n"
         f"Your free business website is now live:\n"
         f"{site_url}\n\n"
-        f"Share it with your customers!\n"
+        f"Manage it here: {dashboard_url}\n\n"
         f"Powered by City Maps"
     )
     return await send_whatsapp_message(phone, message)
