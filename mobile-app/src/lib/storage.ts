@@ -1,21 +1,21 @@
 import * as SecureStore from "expo-secure-store";
 
 const TOKEN_KEY = "auth_token";
-const ORG_KEY = "org_data";
+const BIZ_KEY = "business_data";
 
-export async function saveAuth(token: string, orgData: any) {
+export async function saveAuth(token: string, business: any) {
   await SecureStore.setItemAsync(TOKEN_KEY, token);
-  await SecureStore.setItemAsync(ORG_KEY, JSON.stringify(orgData));
+  await SecureStore.setItemAsync(BIZ_KEY, JSON.stringify(business || {}));
 }
 
 export async function getAuth() {
   const token = await SecureStore.getItemAsync(TOKEN_KEY);
-  const orgStr = await SecureStore.getItemAsync(ORG_KEY);
-  if (!token || !orgStr) return null;
-  return { token, org: JSON.parse(orgStr) };
+  const bizStr = await SecureStore.getItemAsync(BIZ_KEY);
+  if (!token) return null;
+  return { token, business: bizStr ? JSON.parse(bizStr) : {} };
 }
 
 export async function clearAuth() {
   await SecureStore.deleteItemAsync(TOKEN_KEY);
-  await SecureStore.deleteItemAsync(ORG_KEY);
+  await SecureStore.deleteItemAsync(BIZ_KEY);
 }

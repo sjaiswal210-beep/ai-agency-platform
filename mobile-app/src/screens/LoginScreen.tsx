@@ -10,18 +10,16 @@ export default function LoginScreen({ onLogin }: { onLogin: () => void }) {
   const [loading, setLoading] = useState(false);
 
   const handleSendOTP = async () => {
-    if (phone.length < 10) {
-      Alert.alert("Error", "Enter a valid phone number");
+    const clean = phone.replace(/\D/g, "");
+    if (clean.length < 10 || clean.length > 13) {
+      Alert.alert("Error", "Enter a valid number (10-13 digits)");
       return;
     }
     setLoading(true);
     try {
-      const result = await sendOTP(phone);
+      const result = await sendOTP(clean);
       setStep("otp");
-      // Dev mode: show OTP
-      if (result.dev_otp) {
-        Alert.alert("Dev OTP", result.dev_otp);
-      }
+      if (result.dev_otp) Alert.alert("Dev OTP", result.dev_otp);
     } catch (err: any) {
       Alert.alert("Error", err.message);
     } finally {
@@ -36,13 +34,10 @@ export default function LoginScreen({ onLogin }: { onLogin: () => void }) {
     }
     setLoading(true);
     try {
-      const result = await verifyOTP(phone, otp);
-      await saveAuth(result.token, {
-        org_id: result.org_id,
-        org_name: result.org_name,
-        org_slug: result.org_slug,
-        plan: result.plan,
-      });
+      const clean = phone.replace(/\D/g, "");
+      const result = await verifyOTP(clean, otp);
+      // result contains: token, website_id/slug/panel_url OR org_id, business_name
+      await saveAuth(result.token, result);
       onLogin();
     } catch (err: any) {
       Alert.alert("Error", err.message);
@@ -57,20 +52,13 @@ export default function LoginScreen({ onLogin }: { onLogin: () => void }) {
         <Text style={styles.logo}>City Maps</Text>
         <Text style={styles.subtitle}>Business Dashboard</Text>
       </View>
-
       <View style={styles.card}>
         {step === "phone" ? (
           <>
             <Text style={styles.label}>Enter your registered phone number</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="9876543210"
-              placeholderTextColor="#666"
-              keyboardType="phone-pad"
-              maxLength={13}
-              value={phone}
-              onChangeText={setPhone}
-            />
+            <TextInput style={styles.input} placeholder="9876543210" placeholderTextColor="#666"
+              keyboardType="phone-pad" maxLength={13} value={phone}
+              onChangeText={(t) => setPhone(t.replace(/\D/g, "").slice(0, 13))} />
             <TouchableOpacity style={styles.button} onPress={handleSendOTP} disabled={loading}>
               {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Send OTP</Text>}
             </TouchableOpacity>
@@ -78,15 +66,8 @@ export default function LoginScreen({ onLogin }: { onLogin: () => void }) {
         ) : (
           <>
             <Text style={styles.label}>Enter OTP sent to {phone}</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="000000"
-              placeholderTextColor="#666"
-              keyboardType="number-pad"
-              maxLength={6}
-              value={otp}
-              onChangeText={setOtp}
-            />
+            <TextInput style={styles.input} placeholder="000000" placeholderTextColor="#666"
+              keyboardType="number-pad" maxLength={6} value={otp} onChangeText={setOtp} />
             <TouchableOpacity style={styles.button} onPress={handleVerifyOTP} disabled={loading}>
               {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Verify & Login</Text>}
             </TouchableOpacity>
