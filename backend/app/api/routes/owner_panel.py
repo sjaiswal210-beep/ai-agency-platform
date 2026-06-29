@@ -124,9 +124,9 @@ body{{padding-bottom:60px}}
 <div class="section-title">Growth Tools</div>
 <div class="tools">
 <a href="/api/panel/{website_id}/reviews" target="_blank" class="tool"><div class="emoji">&#11088;</div><div class="name">Reviews</div><div class="desc">Get reviews</div></a>
-<a href="/api/panel/{website_id}/assistant" target="_blank" class="tool"><div class="emoji">&#128172;</div><div class="name">Business Assistant</div><div class="desc">Ask anything</div></a>
 <a href="/api/panel/{website_id}/wa-growth" target="_blank" class="tool"><div class="emoji">&#128232;</div><div class="name">Templates</div><div class="desc">Messages</div></a>
 <a href="/api/panel/{website_id}/competitors" target="_blank" class="tool"><div class="emoji">&#128200;</div><div class="name">Competitors</div><div class="desc">Insights</div></a>
+<a href="/api/panel/{website_id}/assistant" target="_blank" class="tool"><div class="emoji" style="color:#ef4444">&#128488;&#65038;</div><div class="name">Business Assistant</div><div class="desc">Ask anything</div></a>
 </div>
 
 ''' + (f"""<div class="section-title">Business Modules</div>
