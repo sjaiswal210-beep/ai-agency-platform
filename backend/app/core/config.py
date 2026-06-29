@@ -10,6 +10,8 @@ class Settings(BaseSettings):
     google_places_key: str = ""
     whatsapp_token: str = ""
     whatsapp_phone_id: str = ""
+    whatsapp_otp_template: str = "login_otp"
+    whatsapp_otp_lang: str = "en"
     openrouter_api_key: str = ""
     groq_api_key: str = ""
     freellmapi_url: str = ""

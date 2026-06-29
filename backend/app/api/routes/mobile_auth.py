@@ -43,14 +43,9 @@ async def send_otp(req: SendOTPRequest):
     otp = str(random.randint(100000, 999999))
     otp_store[phone] = {"otp": otp, "expires": time.time() + 300}  # 5 min expiry
 
-    # Send OTP via WhatsApp (Meta Cloud API)
-    from app.services.whatsapp_auto import send_whatsapp_message
-    message = (
-        f"Your City Maps login code is: {otp}\n\n"
-        f"This code expires in 5 minutes.\n"
-        f"Do not share it with anyone."
-    )
-    send_result = await send_whatsapp_message(phone, message)
+    # Send OTP via WhatsApp (Authentication template, falls back to plain text)
+    from app.services.whatsapp_auto import send_whatsapp_otp
+    send_result = await send_whatsapp_otp(phone, otp)
     logger.info(f"OTP send for {phone}: {send_result.get('method')}")
 
     # If WhatsApp not configured, return OTP in response (dev fallback)

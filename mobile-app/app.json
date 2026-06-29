@@ -4,13 +4,19 @@
     "slug": "citymaps-business",
     "version": "1.0.0",
     "orientation": "portrait",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
     "splash": {
+      "image": "./assets/splash.png",
       "backgroundColor": "#020817",
       "resizeMode": "contain"
     },
     "assetBundlePatterns": ["**/*"],
     "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#020817"
+      },
       "package": "com.citymaps.business",
       "versionCode": 1
     },

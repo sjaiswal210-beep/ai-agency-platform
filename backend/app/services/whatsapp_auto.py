@@ -74,3 +74,70 @@ async def send_bulk_message(phones: list, message: str) -> list:
         result = await send_whatsapp_message(phone, message)
         results.append(result)
     return results
+
+async def send_whatsapp_otp(phone: str, otp: str) -> dict:
+    """Send OTP via WhatsApp Authentication template (with plain-text fallback).
+
+    Meta requires business-initiated messages (cold OTP) to use an approved
+    Authentication template. Falls back to plain text if template send fails
+    (works only inside the 24h customer service window) and finally to a wa.me link.
+    """
+    settings = get_settings()
+
+    clean = phone.replace(" ", "").replace("-", "").replace("+", "")
+    if not clean.startswith("91") and len(clean) == 10:
+        clean = "91" + clean
+
+    wa_token = getattr(settings, "whatsapp_token", "") or ""
+    wa_phone_id = getattr(settings, "whatsapp_phone_id", "") or ""
+    template_name = getattr(settings, "whatsapp_otp_template", "") or "login_otp"
+    template_lang = getattr(settings, "whatsapp_otp_lang", "") or "en"
+
+    if wa_token and wa_phone_id:
+        # Try Authentication template first (required for cold sends)
+        try:
+            async with httpx.AsyncClient() as client:
+                resp = await client.post(
+                    f"{WA_API_URL}/{wa_phone_id}/messages",
+                    headers={
+                        "Authorization": f"Bearer {wa_token}",
+                        "Content-Type": "application/json",
+                    },
+                    json={
+                        "messaging_product": "whatsapp",
+                        "to": clean,
+                        "type": "template",
+                        "template": {
+                            "name": template_name,
+                            "language": {"code": template_lang},
+                            "components": [
+                                {
+                                    "type": "body",
+                                    "parameters": [{"type": "text", "text": otp}],
+                                },
+                                {
+                                    "type": "button",
+                                    "sub_type": "url",
+                                    "index": "0",
+                                    "parameters": [{"type": "text", "text": otp}],
+                                },
+                            ],
+                        },
+                    },
+                    timeout=15,
+                )
+                if resp.status_code == 200:
+                    logger.info("OTP sent via WhatsApp template", phone=clean)
+                    return {"sent": True, "method": "template", "phone": clean}
+                else:
+                    logger.warning("WhatsApp template send failed", status=resp.status_code, body=resp.text[:300])
+        except Exception as e:
+            logger.warning("WhatsApp template send error", error=str(e))
+
+    # Fallback: plain text (only delivers inside 24h window)
+    message = (
+        f"Your City Maps login code is: {otp}\n\n"
+        f"This code expires in 5 minutes.\n"
+        f"Do not share it with anyone."
+    )
+    return await send_whatsapp_message(phone, message)
