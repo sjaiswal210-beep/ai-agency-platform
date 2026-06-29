@@ -35,6 +35,7 @@ export default function BusinessDashboard() {
 
   const submitPhone = async () => {
     const clean = phone.replace(/\D/g, "");
+    if (clean.length < 10 || clean.length > 13) { alert("Enter a valid number (10 to 13 digits)"); return; }
     setSubmitting(true);
     try {
       await fetch(`${API_BASE}/api/dashboard-access/track`, {
@@ -65,8 +66,9 @@ export default function BusinessDashboard() {
             type="tel"
             inputMode="numeric"
             value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 13))}
             onKeyDown={(e) => e.key === "Enter" && submitPhone()}
+            maxLength={13}
             placeholder="9876543210"
             className="w-full px-4 py-3 bg-slate-800 border border-white/10 rounded-xl text-white text-center text-lg tracking-wider focus:outline-none focus:ring-2 focus:ring-indigo-500/50 mb-4"
           />

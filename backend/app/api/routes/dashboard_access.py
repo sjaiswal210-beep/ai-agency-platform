@@ -24,8 +24,10 @@ async def track_access(req: TrackAccessRequest):
     Stores phone -> website mapping so admin can see which owner
     opened which generated website. Upserts on (phone, org_slug).
     """
-    # Store everything, no validation - just clean whitespace
-    phone = (req.phone or "").strip().replace(" ", "").replace("-", "")
+    # Clean to digits only, validate length
+    phone = "".join(ch for ch in (req.phone or "") if ch.isdigit())
+    if not phone.isdigit() or len(phone) < 10 or len(phone) > 13:
+        raise HTTPException(400, "Phone must be a number with 10 to 13 digits")
 
     db = get_supabase()
 
