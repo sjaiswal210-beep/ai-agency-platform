@@ -18,6 +18,39 @@ logger = get_logger(__name__)
 
 REPLICATE_TOKEN = os.environ.get("REPLICATE_TOKEN", "")
 
+LOGO_COST = 5  # Rs.5 per AI logo, charged to the business credits
+
+
+def _get_credits(website_id: str) -> float:
+    from app.core.supabase import get_supabase
+    try:
+        r = get_supabase().table("owner_credits").select("balance").eq("website_id", website_id).limit(1).execute()
+        return float(r.data[0]["balance"]) if r.data else 0.0
+    except Exception:
+        return 0.0
+
+
+def _deduct_credit(website_id: str, amount: float):
+    from app.core.supabase import get_supabase
+    db = get_supabase()
+    bal = _get_credits(website_id)
+    new_bal = max(0, bal - amount)
+    try:
+        existing = db.table("owner_credits").select("id").eq("website_id", website_id).limit(1).execute()
+        if existing.data:
+            db.table("owner_credits").update({"balance": new_bal}).eq("website_id", website_id).execute()
+        else:
+            db.table("owner_credits").insert({"website_id": website_id, "balance": new_bal}).execute()
+    except Exception:
+        pass
+
+
+async def _pollinations_logo(prompt: str) -> str:
+    """Free AI image logo via Pollinations (no API key)."""
+    import urllib.parse
+    enc = urllib.parse.quote(prompt[:300])
+    return f"https://image.pollinations.ai/prompt/{enc}?width=900&height=300&nologo=true"
+
 
 class LogoGenRequest(BaseModel):
     style: str = "modern"  # modern, minimal, vintage, playful, luxury, bold
@@ -136,7 +169,7 @@ h1{{font-size:1.5rem;margin-bottom:8px}}
 .loading{{color:#6366f1;text-align:center;padding:40px}}
 </style></head><body>
 <h1>AI Logo Generator</h1>
-<p class="subtitle">{business_name}</p>
+<p class="subtitle">{business_name} &middot; Credits: Rs.{credits:.0f} &middot; <b style="color:#10b981">Rs.5 per logo</b></p>
 
 <div class="styles" id="styles">
 <div class="style-btn active" data-style="modern"><span>ðŸŽ¯</span><p>Modern</p></div>
@@ -147,7 +180,7 @@ h1{{font-size:1.5rem;margin-bottom:8px}}
 <div class="style-btn" data-style="bold"><span>ðŸ’ª</span><p>Bold</p></div>
 </div>
 
-<button class="generate-btn" id="genBtn" onclick="generateLogo()">Generate Logo (~5 seconds)</button>
+<button class="generate-btn" id="genBtn" onclick="generateLogo()">Generate AI Logo &mdash; Rs.5</button>
 
 <div class="result" id="result"></div>
 
@@ -189,7 +222,7 @@ async function generateLogo() {{
         result.innerHTML = '<p style="color:#ef4444">Error generating logo</p>';
     }}
     btn.disabled = false;
-    btn.textContent = 'Generate Another';
+    btn.textContent = 'Generate Another \u2014 Rs.5';
 }}
 </script>
 </body></html>"""
