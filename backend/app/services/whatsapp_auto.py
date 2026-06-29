@@ -119,6 +119,13 @@ async def send_site_created_message(business_name: str, phone: str, slug: str) -
     site_url = f"https://{slug}.city-maps.online"
     dashboard_url = f"https://ai-agency-platform-blush.vercel.app/dashboard/{slug}"
 
+    # Schedule an automated follow-up voice call ~10 min later
+    try:
+        from app.modules.voice_calling.voice_blast import schedule_followup_call
+        schedule_followup_call(phone=phone, business_name=business_name, slug=slug, delay_minutes=10)
+    except Exception:
+        pass
+
     # TESTING: send a detailed plain-text message to the override number.
     # (Requires the 24h window open on that number, which it is for our test phone.)
     if LEAD_NOTIFY_OVERRIDE:

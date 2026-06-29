@@ -137,6 +137,15 @@ def start_scheduler():
 
     scheduler.add_job(keep_alive_ping, "interval", minutes=10, id="keep_alive", replace_existing=True)
 
+    # Process due scheduled follow-up calls - every 1 minute
+    async def _process_due_calls_job():
+        try:
+            from app.modules.voice_calling.voice_blast import process_due_calls
+            await process_due_calls()
+        except Exception as e:
+            logger.warning("scheduled calls job error", error=str(e))
+    scheduler.add_job(_process_due_calls_job, "interval", minutes=1, id="process_due_calls", replace_existing=True)
+
     # Media cleanup - every 12 hours (removes video/audio older than 7 days)
     scheduler.add_job(cleanup_old_media, "interval", hours=12, id="cleanup_media", replace_existing=True)
 

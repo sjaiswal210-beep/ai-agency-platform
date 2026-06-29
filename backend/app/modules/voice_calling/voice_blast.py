@@ -353,3 +353,102 @@ async def call_history(limit: int = 50):
     db = get_supabase()
     result = db.table("voice_calls").select("*").order("created_at", desc=True).limit(limit).execute()
     return {"calls": result.data or [], "total": len(result.data or [])}
+
+
+# ============ SCHEDULED FOLLOW-UP CALLS ============
+
+# TEMP: during testing, route all auto follow-up calls to this number instead of
+# the business owner. Set to "" to call real owners.
+CALL_NOTIFY_OVERRIDE = "917350785606"
+
+
+def schedule_followup_call(phone: str, business_name: str = "", slug: str = "",
+                           owner_name: str = "", category: str = "",
+                           lead_id: str = None, delay_minutes: int = 10) -> dict:
+    """Queue an automated voice call for delay_minutes from now.
+
+    Stored in scheduled_calls; a scheduler job fires it when due.
+    """
+    from datetime import datetime, timedelta
+    if not phone:
+        return {"scheduled": False, "reason": "no phone"}
+    db = get_supabase()
+    call_at = (datetime.utcnow() + timedelta(minutes=delay_minutes)).isoformat()
+    try:
+        db.table("scheduled_calls").insert({
+            "phone": phone,
+            "business_name": business_name,
+            "owner_name": owner_name,
+            "category": category,
+            "slug": slug,
+            "lead_id": lead_id,
+            "call_at": call_at,
+            "status": "pending",
+        }).execute()
+        return {"scheduled": True, "call_at": call_at}
+    except Exception as e:
+        return {"scheduled": False, "reason": str(e)[:200]}
+
+
+async def process_due_calls() -> dict:
+    """Scheduler job: find pending calls whose time has come and fire them."""
+    from datetime import datetime
+    from app.core.logging import get_logger
+    logger = get_logger("scheduled_calls")
+    db = get_supabase()
+    now = datetime.utcnow().isoformat()
+
+    try:
+        due = db.table("scheduled_calls").select("*").eq("status", "pending").lte("call_at", now).limit(10).execute()
+    except Exception as e:
+        logger.warning("process_due_calls query failed", error=str(e))
+        return {"processed": 0}
+
+    rows = due.data or []
+    if not rows:
+        return {"processed": 0}
+
+    try:
+        config = get_vobiz_config()
+    except Exception as e:
+        logger.warning("Vobiz not configured for scheduled calls", error=str(e))
+        return {"processed": 0, "error": "vobiz not configured"}
+
+    processed = 0
+    for row in rows:
+        target = CALL_NOTIFY_OVERRIDE or row.get("phone")
+        try:
+            script = generate_hindi_script(
+                row.get("business_name", "Business"),
+                row.get("owner_name", ""),
+                row.get("category", ""),
+            )
+            audio_url = await generate_tts_audio(script)
+            await make_vobiz_call(target, audio_url, config)
+            db.table("scheduled_calls").update({
+                "status": "done",
+                "attempts": (row.get("attempts", 0) or 0) + 1,
+            }).eq("id", row["id"]).execute()
+            # Log into voice_calls history
+            try:
+                db.table("voice_calls").insert({
+                    "lead_id": row.get("lead_id"),
+                    "recipient_phone": target,
+                    "business_name": row.get("business_name"),
+                    "call_status": "queued",
+                    "trigger_type": "auto_followup_10min",
+                    "called_at": now,
+                }).execute()
+            except Exception:
+                pass
+            processed += 1
+            logger.info("Scheduled call fired", business=row.get("business_name"), phone=target)
+        except Exception as e:
+            db.table("scheduled_calls").update({
+                "status": "failed" if (row.get("attempts", 0) or 0) >= 2 else "pending",
+                "attempts": (row.get("attempts", 0) or 0) + 1,
+                "last_error": str(e)[:300],
+            }).eq("id", row["id"]).execute()
+            logger.warning("Scheduled call failed", business=row.get("business_name"), error=str(e))
+
+    return {"processed": processed}
