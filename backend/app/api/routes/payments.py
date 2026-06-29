@@ -99,7 +99,7 @@ h1{{font-size:1.5rem;font-weight:700;margin-bottom:4px}}
 <div class="logo">AI</div>
 <h1>Start Your Digital Presence</h1>
 <p class="subtitle">Everything {business_name} needs to grow online</p>
-<div class="price">&#8377;79 <span>/month</span></div>
+<div class="price">&#8377;29 <span>/month</span></div>
 <ul class="features">
 <li>Professional AI-powered website</li>
 <li>AI Receptionist (24/7 chat support)</li>
@@ -110,7 +110,7 @@ h1{{font-size:1.5rem;font-weight:700;margin-bottom:4px}}
 <li>Google Maps integration</li>
 <li>Monthly performance reports</li>
 </ul>
-<button class="btn" onclick="alert('Razorpay integration pending. Contact us to subscribe.')">Subscribe Now - &#8377;79/month</button>
+<button class="btn" onclick="alert('Razorpay integration pending. Contact us to subscribe.')">Subscribe Now - &#8377;29/month</button>
 <p class="secure">&#128274; Secure payment via Razorpay. Cancel anytime.</p>
 </div>
 </body></html>"""
