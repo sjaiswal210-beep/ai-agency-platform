@@ -455,3 +455,26 @@ async def process_due_calls() -> dict:
             logger.warning("Scheduled call failed", business=row.get("business_name"), error=str(e))
 
     return {"processed": processed}
+
+@router.get("/scheduled")
+async def list_scheduled_calls(pwd: str, limit: int = 30):
+    """Admin: view the scheduled follow-up call queue.
+
+    Usage: GET /api/voice-blast/scheduled?pwd=kalpdev2024
+    """
+    if pwd != "kalpdev2024":
+        raise HTTPException(403, "Forbidden")
+    db = get_supabase()
+    result = db.table("scheduled_calls").select("*").order("created_at", desc=True).limit(limit).execute()
+    return {"calls": result.data or [], "count": len(result.data or [])}
+
+
+@router.post("/run-due")
+async def run_due_now(pwd: str):
+    """Admin: manually trigger processing of due scheduled calls (for testing).
+
+    Usage: POST /api/voice-blast/run-due?pwd=kalpdev2024
+    """
+    if pwd != "kalpdev2024":
+        raise HTTPException(403, "Forbidden")
+    return await process_due_calls()
