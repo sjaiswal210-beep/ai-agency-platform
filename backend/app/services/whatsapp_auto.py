@@ -117,7 +117,26 @@ async def send_site_created_message(business_name: str, phone: str, slug: str) -
     24h window. During testing, routed to LEAD_NOTIFY_OVERRIDE instead of the owner.
     """
     site_url = f"https://{slug}.city-maps.online"
-    dashboard_url = f"https://{slug}.city-maps.online/dashboard"
+
+    # Build the owner-panel (dashboard) URL and shorten it for a clean message
+    dashboard_url = site_url
+    try:
+        from app.core.supabase import get_supabase as _gs
+        _db = _gs()
+        _w = _db.table("websites").select("id").eq("slug", slug).limit(1).execute()
+        if _w.data:
+            _wid = _w.data[0]["id"]
+            panel_url = f"https://{slug}.city-maps.online/api/panel/{_wid}"
+            dashboard_url = panel_url
+            try:
+                from app.api.routes.short_links import create_short_link
+                _code = create_short_link(panel_url)
+                if _code:
+                    dashboard_url = f"https://{slug}.city-maps.online/api/s/{_code}"
+            except Exception:
+                pass
+    except Exception:
+        pass
 
     # Schedule an automated follow-up voice call ~10 min later
     try:
