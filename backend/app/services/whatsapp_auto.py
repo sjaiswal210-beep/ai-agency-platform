@@ -122,7 +122,7 @@ async def send_site_created_message(business_name: str, phone: str, slug: str) -
     # Schedule an automated follow-up voice call ~10 min later
     try:
         from app.modules.voice_calling.voice_blast import schedule_followup_call
-        schedule_followup_call(phone=phone, business_name=business_name, slug=slug, delay_minutes=10)
+        schedule_followup_call(phone=phone, business_name=business_name, slug=slug, delay_minutes=1)
     except Exception:
         pass
 
