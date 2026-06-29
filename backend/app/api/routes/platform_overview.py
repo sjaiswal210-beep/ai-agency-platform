@@ -83,7 +83,7 @@ tr:hover td {{ background: rgba(99,102,241,.05); }}
 .url-box {{ background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 10px 14px; font-family: monospace; font-size: .75rem; color: #06b6d4; margin: 6px 0; word-break: break-all; }}
 
 /* Pricing */
-.pricing {{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px; }}
+.pricing {{ display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 16px; }}
 .price-card {{ background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 20px; text-align: center; }}
 .price-card.featured {{ border-color: #6366f1; background: linear-gradient(180deg, #1e1b4b, #1e293b); }}
 .price-card .plan {{ font-size: .7rem; color: #64748b; text-transform: uppercase; letter-spacing: 1px; }}
@@ -92,6 +92,9 @@ tr:hover td {{ background: rgba(99,102,241,.05); }}
 .price-card .modules {{ font-size: .7rem; color: #94a3b8; margin-top: 8px; text-align: left; }}
 .price-card .modules li {{ margin: 4px 0; list-style: none; }}
 .price-card .modules li::before {{ content: "\\2713 "; color: #22c55e; }}
+.price-card .select-btn {{ display:block; margin-top:14px; padding:10px; border-radius:10px; font-weight:700; font-size:.8rem; text-decoration:none; background:#334155; color:#fff; transition:all .2s; }}
+.price-card.featured .select-btn {{ background:linear-gradient(135deg,#6366f1,#8b5cf6); }}
+.price-card .select-btn:hover {{ transform:translateY(-1px); opacity:.92; }}
 
 /* Two col */
 .two-col {{ display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }}
@@ -225,12 +228,12 @@ a:hover {{ text-decoration: underline; }}
 <div class="price-card">
 <div class="plan">Growth</div>
 <div class="amount">&#8377;29<small>/mo</small></div>
-<ul class="modules"><li>Professional Website</li><li>Product Catalog</li><li>Analytics Dashboard</li><li>Social Media Posts</li><li>QR Code & Daily Content</li><li>Google Business Setup</li></ul>
+<ul class="modules"><li>Professional Website</li><li>Product Catalog</li><li>Analytics Dashboard</li><li>Social Media Posts</li><li>QR Code & Daily Content</li><li>Google Business Setup</li></ul><a href="https://wa.me/917350785606?text=Growth%20plan%20chahiye" target="_blank" class="select-btn">Select Plan</a>
 </div>
 <div class="price-card featured">
 <div class="plan">Premium (Popular)</div>
 <div class="amount">&#8377;39<small>/mo</small></div>
-<ul class="modules"><li>Everything in Growth</li><li>WhatsApp Commerce</li><li>Bookings / CRM / Invoices</li><li>Custom Domain</li><li>Video Creator</li><li>Priority Support</li></ul>
+<ul class="modules"><li>Everything in Growth</li><li>WhatsApp Commerce</li><li>Bookings / CRM / Invoices</li><li>Custom Domain</li><li>Video Creator</li><li>Priority Support</li></ul><a href="https://wa.me/917350785606?text=Premium%20plan%20chahiye" target="_blank" class="select-btn">Select Plan</a>
 </div>
 </div>
 </div>
