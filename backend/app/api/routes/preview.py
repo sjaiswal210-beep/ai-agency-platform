@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import HTMLResponse
 from app.services.website_service import WebsiteService
@@ -776,8 +776,17 @@ def generate_html(content: dict, template: str, lead: dict = None, website_id_ov
             _pr = _pdb().table("store_products").select("*").eq("website_id", website_id).eq("in_stock", True).limit(6).execute()
             if _pr.data:
                 prod_cards = ""
-                for p in _pr.data:
-                    p_img = p.get("image_url") or f"https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=300&h=300&fit=crop"
+                # Reliable image pool: real Google photos first, then curated category images
+                _fallback_imgs = list(real_photos or []) + list(images.get("gallery", []))
+                if not _fallback_imgs:
+                    _fallback_imgs = [images.get("hero", "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500&h=500&fit=crop")]
+                for _i, p in enumerate(_pr.data):
+                    _raw = (p.get("image_url") or "").strip()
+                    # Replace empty / unreliable AI-generated image URLs with working images
+                    if (not _raw) or ("unsplash.com" in _raw) or ("pollinations" in _raw) or ("example.com" in _raw):
+                        p_img = _fallback_imgs[_i % len(_fallback_imgs)]
+                    else:
+                        p_img = _raw
                     wa_msg = urllib.parse.quote(f"Hi, I want to buy {p.get('name','')} (Rs.{p.get('price','')})")
                     wa_link = f"https://wa.me/{whatsapp_num}?text={wa_msg}" if whatsapp_num else "#"
                     prod_cards += (
