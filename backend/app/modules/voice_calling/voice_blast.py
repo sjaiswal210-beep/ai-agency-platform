@@ -426,7 +426,7 @@ async def process_due_calls() -> dict:
                 row.get("owner_name", ""),
                 row.get("category", ""),
             )
-            audio_url = await generate_tts_audio(script)
+            audio_url = await generate_tts_audio(script, speed=1.5)
             await make_vobiz_call(target, audio_url, config)
             db.table("scheduled_calls").update({
                 "status": "done",
