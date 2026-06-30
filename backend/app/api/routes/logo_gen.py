@@ -149,117 +149,101 @@ Return ONLY the image generation prompt, 1-2 sentences. No explanation."""
 
 @router.get("/{website_id}/preview", response_class=HTMLResponse)
 async def preview_logos(website_id: str):
-    """Preview page showing logo generation options."""
+    """AI logo maker page."""
     service = WebsiteService()
     lead_service = LeadService()
     website = service.get(website_id)
     if not website:
         raise HTTPException(404, "Website not found")
-
     lead = lead_service.get(website["lead_id"]) if website.get("lead_id") else None
     business_name = lead.get("business_name", "Business") if lead else "Business"
     credits = _get_credits(website_id)
 
     html = f"""<!DOCTYPE html>
 <html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Logo Generator - {business_name}</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>AI Logo Maker - {business_name}</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <style>
-body{{font-family:Inter,sans-serif;background:#0f172a;color:#fff;margin:0;padding:40px;min-height:100vh}}
-h1{{font-size:1.5rem;margin-bottom:8px}}
-.subtitle{{color:#94a3b8;font-size:.9rem;margin-bottom:32px}}
-.styles{{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:24px}}
-.style-btn{{background:#1e293b;border:2px solid #334155;border-radius:12px;padding:16px;text-align:center;cursor:pointer;transition:all .2s}}
-.style-btn:hover,.style-btn.active{{border-color:#6366f1;background:#1e293b}}
-.style-btn span{{display:block;font-size:1.5rem;margin-bottom:4px}}
-.style-btn p{{font-size:.8rem;color:#94a3b8;margin:0}}
-.generate-btn{{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border:none;padding:14px 32px;border-radius:10px;font-size:.95rem;font-weight:600;cursor:pointer;width:100%;margin-bottom:24px}}
-.generate-btn:disabled{{opacity:.5}}
-.result{{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}}
-.logo-card{{background:#1e293b;border-radius:12px;padding:16px;text-align:center}}
-.logo-card img{{width:280px;height:100px;border-radius:8px;object-fit:contain;background:#fff;padding:8px}}
-.loading{{color:#6366f1;text-align:center;padding:40px}}
+*{{margin:0;padding:0;box-sizing:border-box}}
+body{{font-family:Inter,sans-serif;background:#020817;color:#fff;padding:20px;max-width:560px;margin:0 auto;min-height:100vh}}
+.hero{{text-align:center;margin-bottom:18px}}
+.hero h1{{font-size:1.45rem;font-weight:800;background:linear-gradient(135deg,#a78bfa,#22d3ee);-webkit-background-clip:text;-webkit-text-fill-color:transparent}}
+.hero p{{font-size:.8rem;color:#94a3b8;margin-top:4px}}
+.pill{{display:inline-block;margin-top:10px;background:rgba(34,197,94,.12);color:#22c55e;border:1px solid rgba(34,197,94,.3);padding:5px 14px;border-radius:999px;font-size:.72rem;font-weight:700}}
+.label{{font-size:.68rem;font-weight:800;color:#7c8aa5;text-transform:uppercase;letter-spacing:.1em;margin:20px 0 10px}}
+.styles{{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}}
+.style-btn{{background:rgba(255,255,255,.03);border:1.5px solid rgba(255,255,255,.08);border-radius:16px;padding:16px 8px;text-align:center;cursor:pointer;transition:all .2s}}
+.style-btn:hover{{border-color:rgba(124,58,237,.5)}}
+.style-btn.active{{border-color:#7c3aed;background:rgba(124,58,237,.14);box-shadow:0 0 20px rgba(124,58,237,.18)}}
+.style-btn .ic{{font-size:1.6rem;display:block;margin-bottom:6px}}
+.style-btn .nm{{font-size:.72rem;font-weight:600;color:#e2e8f0}}
+.gen-btn{{width:100%;margin-top:22px;padding:16px;background:linear-gradient(135deg,#7c3aed,#6366f1);border:none;border-radius:14px;color:#fff;font-size:.95rem;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(124,58,237,.3)}}
+.gen-btn:disabled{{opacity:.6}}
+#result{{margin-top:24px}}
+.logo-card{{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:16px;text-align:center}}
+.logo-card img{{width:100%;max-width:380px;height:auto;border-radius:12px;background:#fff;padding:10px}}
+.use-btn{{margin-top:14px;display:inline-block;background:#10b981;color:#fff;border:none;padding:12px 28px;border-radius:10px;font-size:.85rem;font-weight:700;cursor:pointer;text-decoration:none}}
+.loading{{text-align:center;color:#a78bfa;padding:34px;font-size:.85rem}}
+.spin{{width:38px;height:38px;border:3px solid rgba(124,58,237,.2);border-top:3px solid #7c3aed;border-radius:50%;animation:sp 1s linear infinite;margin:0 auto 12px}}
+@keyframes sp{{to{{transform:rotate(360deg)}}}}
 </style></head><body>
-<h1>AI Logo Generator</h1>
-<p class="subtitle">{business_name} &middot; Credits: Rs.{credits:.0f} &middot; <b style="color:#10b981">Rs.5 per logo</b></p>
-
-<div class="styles" id="styles">
-<div class="style-btn active" data-style="modern"><span>ðŸŽ¯</span><p>Modern</p></div>
-<div class="style-btn" data-style="minimal"><span>â—»ï¸</span><p>Minimal</p></div>
-<div class="style-btn" data-style="vintage"><span>ðŸ›ï¸</span><p>Vintage</p></div>
-<div class="style-btn" data-style="playful"><span>ðŸŽ¨</span><p>Playful</p></div>
-<div class="style-btn" data-style="luxury"><span>ðŸ‘‘</span><p>Luxury</p></div>
-<div class="style-btn" data-style="bold"><span>ðŸ’ª</span><p>Bold</p></div>
+<div class="hero">
+<h1>AI Logo Maker</h1>
+<p>{business_name}</p>
+<span class="pill">&#9889; Rs.5 per logo</span>
 </div>
-
-<button class="generate-btn" id="genBtn" onclick="generateLogo()">Generate AI Logo &mdash; Rs.5</button>
-
-<div class="result" id="result"></div>
-
+<div class="label">Choose a style</div>
+<div class="styles" id="styles">
+<div class="style-btn active" data-style="modern"><span class="ic">&#127919;</span><span class="nm">Modern</span></div>
+<div class="style-btn" data-style="minimal"><span class="ic">&#9633;</span><span class="nm">Minimal</span></div>
+<div class="style-btn" data-style="vintage"><span class="ic">&#127963;</span><span class="nm">Vintage</span></div>
+<div class="style-btn" data-style="playful"><span class="ic">&#127912;</span><span class="nm">Playful</span></div>
+<div class="style-btn" data-style="luxury"><span class="ic">&#128081;</span><span class="nm">Luxury</span></div>
+<div class="style-btn" data-style="bold"><span class="ic">&#128170;</span><span class="nm">Bold</span></div>
+</div>
+<button class="gen-btn" id="genBtn" onclick="generateLogo()">Generate AI Logo &mdash; Rs.5</button>
+<div id="result"></div>
 <script>
-let selectedStyle = 'modern';
-document.querySelectorAll('.style-btn').forEach(btn => {{
-    btn.onclick = () => {{
-        document.querySelectorAll('.style-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        selectedStyle = btn.dataset.style;
-    }};
-}});
-
-async function useLogo(url) {{
-    const res = await fetch('/api/logo-gen/{website_id}/set-logo?logo_url=' + encodeURIComponent(url), {{method:'POST'}});
-    if(res.ok) {{ alert('Logo applied to your website!'); }} else {{ alert('Error applying logo'); }}
+let selectedStyle='modern';
+document.querySelectorAll('.style-btn').forEach(function(b){{b.onclick=function(){{document.querySelectorAll('.style-btn').forEach(function(x){{x.classList.remove('active')}});b.classList.add('active');selectedStyle=b.dataset.style;}}}});
+async function useLogo(url){{
+  const res=await fetch('/api/logo-gen/{website_id}/set-logo?logo_url='+encodeURIComponent(url),{{method:'POST'}});
+  if(res.ok){{alert('Logo applied to your website!');}}else{{alert('Error applying logo');}}
 }}
-
-async function generateLogo() {{
-    const btn = document.getElementById('genBtn');
-    btn.disabled = true; btn.textContent = 'Starting payment...';
-    try {{
-        const r = await fetch('/api/credits/create-order', {{method:'POST',headers:{{'Content-Type':'application/json'}},body: JSON.stringify({{website_id:'{website_id}',amount:5}})}});
-        if (r.status === 503) {{ doGenerateLogo(); return; }}
-        const o = await r.json();
-        if (!o.order_id) {{ alert(o.detail || 'Could not start payment'); btn.disabled=false; btn.textContent='Generate AI Logo \u2014 Rs.5'; return; }}
-        if (typeof Razorpay === 'undefined') {{ alert('Payment not ready. Refresh and try again.'); btn.disabled=false; btn.textContent='Generate AI Logo \u2014 Rs.5'; return; }}
-        const rzp = new Razorpay({{
-            key:o.key_id, amount:o.amount, currency:'INR', name:'City Maps', description:'AI Logo (Rs.5)', order_id:o.order_id,
-            handler:function(resp){{
-                btn.textContent='Verifying...';
-                fetch('/api/credits/verify',{{method:'POST',headers:{{'Content-Type':'application/json'}},body:JSON.stringify({{website_id:'{website_id}',amount:5,razorpay_order_id:resp.razorpay_order_id,razorpay_payment_id:resp.razorpay_payment_id,razorpay_signature:resp.razorpay_signature}})}}).then(function(v){{return v.json()}}).then(function(d){{
-                    if(d.status==='success'){{doGenerateLogo();}} else {{alert('Payment verification failed.');btn.disabled=false;btn.textContent='Generate AI Logo \u2014 Rs.5';}}
-                }});
-            }},
-            modal:{{ondismiss:function(){{btn.disabled=false;btn.textContent='Generate AI Logo \u2014 Rs.5';}}}},
-            theme:{{color:'#6366f1'}}
-        }});
-        rzp.open();
-    }} catch(e) {{ alert('Error starting payment'); btn.disabled=false; btn.textContent='Generate AI Logo \u2014 Rs.5'; }}
+async function generateLogo(){{
+  const btn=document.getElementById('genBtn');
+  btn.disabled=true;btn.textContent='Starting payment...';
+  try{{
+    const r=await fetch('/api/credits/create-order',{{method:'POST',headers:{{'Content-Type':'application/json'}},body:JSON.stringify({{website_id:'{website_id}',amount:5}})}});
+    if(r.status===503){{doGenerateLogo();return;}}
+    const o=await r.json();
+    if(!o.order_id){{alert(o.detail||'Could not start payment');btn.disabled=false;btn.textContent='Generate AI Logo \u2014 Rs.5';return;}}
+    if(typeof Razorpay==='undefined'){{alert('Payment not ready. Refresh and try again.');btn.disabled=false;btn.textContent='Generate AI Logo \u2014 Rs.5';return;}}
+    const rzp=new Razorpay({{key:o.key_id,amount:o.amount,currency:'INR',name:'City Maps',description:'AI Logo (Rs.5)',order_id:o.order_id,
+      handler:function(resp){{btn.textContent='Verifying...';fetch('/api/credits/verify',{{method:'POST',headers:{{'Content-Type':'application/json'}},body:JSON.stringify({{website_id:'{website_id}',amount:5,razorpay_order_id:resp.razorpay_order_id,razorpay_payment_id:resp.razorpay_payment_id,razorpay_signature:resp.razorpay_signature}})}}).then(function(v){{return v.json()}}).then(function(d){{if(d.status==='success'){{doGenerateLogo();}}else{{alert('Payment verification failed.');btn.disabled=false;btn.textContent='Generate AI Logo \u2014 Rs.5';}}}});}},
+      modal:{{ondismiss:function(){{btn.disabled=false;btn.textContent='Generate AI Logo \u2014 Rs.5';}}}},theme:{{color:'#7c3aed'}}}});
+    rzp.open();
+  }}catch(e){{alert('Error starting payment');btn.disabled=false;btn.textContent='Generate AI Logo \u2014 Rs.5';}}
 }}
-
-async function doGenerateLogo() {{
-    const btn = document.getElementById('genBtn');
-    const result = document.getElementById('result');
-    btn.disabled = true; btn.textContent = 'Generating...';
-    result.innerHTML = '<div class="loading">Creating your logo...</div>';
-    try {{
-        const res = await fetch('/api/logo-gen/{website_id}/generate', {{method:'POST',headers:{{'Content-Type':'application/json'}},body: JSON.stringify({{style: selectedStyle}})}});
-        const data = await res.json();
-        if (data.logo_url) {{
-            result.innerHTML = '<div class="logo-card"><img src="' + data.logo_url + '" alt="Logo"><p style="margin-top:8px;font-size:.8rem;color:#94a3b8">' + selectedStyle + ' style</p><button onclick="useLogo(\\'' + data.logo_url + '\\')" style="margin-top:12px;background:#10b981;color:#fff;border:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">Use This Logo</button></div>';
-        }} else {{
-            result.innerHTML = '<p style="color:#ef4444">Error: ' + (data.detail || 'Failed') + '</p>';
-        }}
-    }} catch(e) {{
-        result.innerHTML = '<p style="color:#ef4444">Error generating logo</p>';
+async function doGenerateLogo(){{
+  const btn=document.getElementById('genBtn');const result=document.getElementById('result');
+  btn.disabled=true;btn.textContent='Generating...';
+  result.innerHTML='<div class="loading"><div class="spin"></div>Creating your logo...</div>';
+  try{{
+    const res=await fetch('/api/logo-gen/{website_id}/generate',{{method:'POST',headers:{{'Content-Type':'application/json'}},body:JSON.stringify({{style:selectedStyle}})}});
+    const data=await res.json();
+    if(data.logo_url){{
+      result.innerHTML='<div class="logo-card"><img src="'+data.logo_url+'" alt="Logo"><div style="margin-top:8px;font-size:.72rem;color:#94a3b8;text-transform:capitalize">'+selectedStyle+' style</div><button class="use-btn" onclick="useLogo(\\''+data.logo_url+'\\')">Use This Logo</button></div>';
+    }}else{{
+      result.innerHTML='<p style="color:#ef4444;text-align:center">'+(data.detail||'Failed')+'</p>';
     }}
-    btn.disabled = false;
-    btn.textContent = 'Generate Another \u2014 Rs.5';
+  }}catch(e){{result.innerHTML='<p style="color:#ef4444;text-align:center">Error generating logo</p>';}}
+  btn.disabled=false;btn.textContent='Generate Another \u2014 Rs.5';
 }}
 </script>
 </body></html>"""
     return HTMLResponse(content=html)
-
-
 
 @router.post("/{website_id}/set-logo")
 async def set_logo(website_id: str, logo_url: str):
