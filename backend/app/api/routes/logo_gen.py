@@ -106,34 +106,45 @@ Return ONLY the image generation prompt, 1-2 sentences. No explanation."""
 
     logger.info("Generating logo", business=business_name, style=req.style)
 
-    try:
-        client = replicate.Client(api_token=REPLICATE_TOKEN)
-        output = client.run(
-            "black-forest-labs/flux-schnell",
-            input={
-                "prompt": full_prompt,
-                "num_outputs": 1,
-                "aspect_ratio": "3:1",
-                "output_format": "png",
-            }
-        )
+    # Charge Rs.5 only when payments are live (Razorpay configured). Pre-launch: free.
+    from app.core.config import get_settings as _gs
+    _payments_live = bool(getattr(_gs(), "razorpay_key_id", ""))
+    if _payments_live and _get_credits(website_id) < LOGO_COST:
+        raise HTTPException(402, f"Logo costs Rs.{LOGO_COST}. Please buy credits.")
 
-        if isinstance(output, list) and len(output) > 0:
-            logo_url = str(output[0])
-        elif hasattr(output, "url"):
-            logo_url = output.url
-        else:
-            logo_url = str(output)
+    logo_url = ""
+    # 1. Try Replicate FLUX (premium) if configured
+    if REPLICATE_TOKEN and replicate is not None:
+        try:
+            client = replicate.Client(api_token=REPLICATE_TOKEN)
+            output = client.run(
+                "black-forest-labs/flux-schnell",
+                input={"prompt": full_prompt, "num_outputs": 1, "aspect_ratio": "3:1", "output_format": "png"},
+            )
+            if isinstance(output, list) and len(output) > 0:
+                logo_url = str(output[0])
+            elif hasattr(output, "url"):
+                logo_url = output.url
+            else:
+                logo_url = str(output)
+        except Exception as e:
+            logger.warning(f"FLUX failed, using free fallback: {e}")
 
-        return {
-            "logo_url": logo_url,
-            "prompt": full_prompt,
-            "business": business_name,
-            "style": req.style,
-        }
+    # 2. Free fallback: Pollinations AI (always works, no key, no admin cost)
+    if not logo_url:
+        logo_url = await _pollinations_logo(full_prompt)
 
-    except Exception as e:
-        raise HTTPException(500, f"Logo generation failed: {str(e)}")
+    # Deduct only when payments are live
+    if _payments_live:
+        _deduct_credit(website_id, LOGO_COST)
+
+    return {
+        "logo_url": logo_url,
+        "prompt": full_prompt,
+        "business": business_name,
+        "style": req.style,
+        "credits_left": _get_credits(website_id),
+    }
 
 
 @router.get("/{website_id}/preview", response_class=HTMLResponse)
