@@ -112,6 +112,7 @@ def broadcast_page(website_id: str):
     colors = content.get("color_scheme", {}) or {}
     primary = colors.get("primary", "#7C3AED")
 
+    biz_js = business_name.replace(chr(39), "").replace(chr(34), "")
     html = f'''<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
 <title>Voice Broadcast - {business_name}</title>
 <meta name="theme-color" content="{primary}">
@@ -138,6 +139,7 @@ textarea{{min-height:80px;resize:vertical}}
 .info{{background:#fffbeb;border:1px solid #fde68a;padding:12px;border-radius:12px;font-size:.74rem;color:#92400e;margin-bottom:14px}}
 .toast{{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#0f172a;color:#fff;padding:10px 20px;border-radius:50px;font-size:.78rem;font-weight:600;z-index:200;opacity:0;transition:all .3s;pointer-events:none}}
 .toast.show{{opacity:1;transform:translateX(-50%) translateY(0)}}
+.chips{{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 2px}}.chip{{padding:7px 12px;background:#f1f5ff;border:1px solid #d9e2f5;border-radius:999px;font-size:.72rem;font-weight:700;color:var(--p);cursor:pointer}}.chip:active{{transform:scale(.96)}}
 </style></head><body>
 <div class="appbar">
 <h1>Voice Broadcast</h1>
@@ -152,6 +154,15 @@ textarea{{min-height:80px;resize:vertical}}
 <div class="info">Free: {FREE_CALLS_LIFETIME} calls lifetime (one-time). After that Rs.{COST_PER_CALL}/call (max 30 sec each). <a href="/api/panel/{website_id}" style="color:#7c3aed;font-weight:700">Buy Credits</a></div>
 <div class="card">
 <h3>Send Voice Message</h3>
+<label>Quick scripts (tap to fill, then edit)</label>
+<div class="chips">
+<button type="button" class="chip" onclick="setScript('offer')">Discount Offer</button>
+<button type="button" class="chip" onclick="setScript('arrival')">New Arrival</button>
+<button type="button" class="chip" onclick="setScript('festival')">Festival Wish</button>
+<button type="button" class="chip" onclick="setScript('reminder')">Appt Reminder</button>
+<button type="button" class="chip" onclick="setScript('comeback')">Come Back</button>
+<button type="button" class="chip" onclick="setScript('thanks')">Thank You</button>
+</div>
 <label>Message Script (Hindi/English)</label>
 <textarea id="script" placeholder="e.g. Namaste! Aaj hamare yahan 20% discount hai sabhi items pe. Jaldi aayein!">{business_name} ki taraf se ek khaas message: </textarea>
 <label>Customer Phone Number</label>
@@ -166,6 +177,9 @@ textarea{{min-height:80px;resize:vertical}}
 <div class="toast" id="toast"></div>
 <script>
 var WID="{website_id}";
+var BIZ="{biz_js}";
+var TEMPLATES={{offer:"Namaste! "+BIZ+" mein aaj special discount chal raha hai. Jaldi aaiye aur is offer ka poora fayda uthaaiye!",arrival:"Namaste! "+BIZ+" mein naye products aur services aa gaye hain. Ek baar zaroor visit kijiye!",festival:"Namaste! "+BIZ+" ki taraf se aapko aur aapke parivaar ko festival ki dher saari shubhkamnaayein!",reminder:"Namaste! Yeh "+BIZ+" se ek reminder hai. Apna appointment yaad rakhiye, hum aapka intezaar kar rahe hain!",comeback:"Namaste! Bahut din ho gaye! "+BIZ+" mein dobara aaiye, aapke liye ek khaas offer ready hai!",thanks:"Namaste! "+BIZ+" ko choose karne ke liye dhanyavaad. Hum aapki dobara seva karna chahte hain!"}};
+function setScript(k){{var el=document.getElementById("script");el.value=TEMPLATES[k];el.focus();}}
 var API="https://ai-agency-platform.onrender.com";
 function toast(m){{var t=document.getElementById("toast");t.textContent=m;t.classList.add("show");setTimeout(function(){{t.classList.remove("show")}},2500);}}
 async function makeCall(){{
