@@ -214,6 +214,9 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#f0f3f8;col
 .appbar-actions{display:flex;gap:8px;margin-top:12px}
 .appbar-actions a{flex:1;text-align:center;padding:8px;background:rgba(255,255,255,.18);border-radius:10px;color:#fff;font-size:.72rem;font-weight:700;text-decoration:none;backdrop-filter:blur(6px)}
 .appbar-actions a:active{transform:scale(.96)}
+.appbar-actions a.share-btn{background:#25D366;color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 3px 14px rgba(37,211,102,.55);animation:sharePulse 1.8s infinite}
+.appbar-actions a.share-btn svg{width:16px;height:16px;flex-shrink:0}
+@keyframes sharePulse{0%,100%{box-shadow:0 2px 10px rgba(37,211,102,.40)}50%{box-shadow:0 5px 22px rgba(37,211,102,.85)}}
 .wrap{max-width:640px;margin:0 auto;padding:16px}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
 .stat{background:#fff;border-radius:14px;padding:14px 10px;text-align:center;border:1px solid var(--line)}
@@ -261,7 +264,7 @@ input:focus,textarea:focus{border-color:var(--p);background:#fff}
 <p>__BIZNAME__</p>
 <div class="appbar-actions">
 <a href="/api/store/__WID__/store-page" target="_blank">View Store</a>
-<a href="javascript:void(0)" onclick="shareStore()">Share</a>
+<a href="javascript:void(0)" onclick="shareStore()" class="share-btn"><svg viewBox="0 0 24 24" fill="#fff"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38c1.45.79 3.08 1.21 4.79 1.21h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0012.04 2zm5.52 11.99c-.25.7-1.24 1.28-1.72 1.35-.44.07-.98.1-1.57-.1-.36-.11-.82-.26-1.41-.52-2.48-1.07-4.11-3.57-4.23-3.74-.12-.16-1.01-1.34-1.01-2.56 0-1.22.63-1.82.86-2.07.23-.25.49-.31.66-.31h.48c.16.01.36-.05.56.43.2.5.7 1.72.76 1.84.06.12.1.26.02.43-.08.16-.13.27-.25.41-.12.14-.26.32-.37.43-.13.13-.25.26-.11.51.15.25.64 1.06 1.38 1.72.94.84 1.74 1.11 1.99 1.23.25.13.4.11.54-.06.15-.16.62-.72.79-.97.17-.24.33-.2.56-.12.22.09 1.44.69 1.69.81.25.12.41.18.47.29.07.11.07.6-.14 1.18z"/></svg>Share Store</a>
 <a href="/api/panel/__WID__">Dashboard</a>
 </div>
 </div>
