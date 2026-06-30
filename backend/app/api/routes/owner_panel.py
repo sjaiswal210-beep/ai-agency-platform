@@ -598,7 +598,7 @@ textarea{{width:100%;padding:10px;border:1px solid #334155;border-radius:8px;bac
 <p class="note">Creates 4 scenes. Takes 2-3 minutes.</p>
 
 <script>window._wid="{website_id}";window._bname="{business_name}";window._cat="{category}";</script>
-<script src="/static/js/video_creator.js?v=3"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script><script src="/static/js/video_creator.js?v=3"></script>
 </body></html>'''
     return HTMLResponse(content=html)
 
