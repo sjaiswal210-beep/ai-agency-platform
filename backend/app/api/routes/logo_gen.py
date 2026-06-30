@@ -158,6 +158,7 @@ async def preview_logos(website_id: str):
 
     lead = lead_service.get(website["lead_id"]) if website.get("lead_id") else None
     business_name = lead.get("business_name", "Business") if lead else "Business"
+    credits = _get_credits(website_id)
 
     html = f"""<!DOCTYPE html>
 <html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
