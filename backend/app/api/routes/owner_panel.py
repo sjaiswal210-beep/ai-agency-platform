@@ -1,5 +1,5 @@
 from __future__ import annotations
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from app.services.website_service import WebsiteService
 from app.services.lead_service import LeadService
@@ -9,7 +9,7 @@ router = APIRouter(prefix="/panel", tags=["owner-panel"])
 
 
 @router.get("/{website_id}", response_class=HTMLResponse)
-def owner_panel(website_id: str):
+def owner_panel(website_id: str, request: Request):
     """Simple business dashboard for owners."""
     service = WebsiteService()
     lead_service = LeadService()
@@ -104,7 +104,7 @@ body{{padding-bottom:60px}}
 <div class="stat"><div class="n">{qr_scans}</div><div class="l">QR Scans</div></div>
 </div>
 
-<div style="display:flex;gap:8px;margin-bottom:12px"><a href="/api/auth/google/login?website_id={website_id}" style="flex:1;display:flex;align-items:center;justify-content:center;gap:5px;padding:7px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:9px;text-decoration:none;color:#fff;font-size:.66rem;font-weight:600"><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" style="width:13px;height:13px"> Connect Google</a><a href="/api/app/download" target="_blank" style="flex:1;display:flex;align-items:center;justify-content:center;gap:5px;padding:7px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:9px;text-decoration:none;color:#fff;font-size:.66rem;font-weight:600"><img src="https://www.gstatic.com/images/branding/product/1x/play_prism_64dp.png" style="width:14px;height:14px"> Download App</a></div>
+<div style="display:flex;gap:8px;margin-bottom:12px"><a href="/api/auth/google/login?website_id={website_id}" style="flex:1;display:flex;align-items:center;justify-content:center;gap:5px;padding:7px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:9px;text-decoration:none;color:#fff;font-size:.66rem;font-weight:600"><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" style="width:13px;height:13px"> Connect Google</a>{download_btn}</div>
 
 <div class="section-title">Manage Your Business</div>
 <div class="tools">
