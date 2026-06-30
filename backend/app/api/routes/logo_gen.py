@@ -234,7 +234,7 @@ async function doGenerateLogo(){{
     const res=await fetch('/api/logo-gen/{website_id}/generate',{{method:'POST',headers:{{'Content-Type':'application/json'}},body:JSON.stringify({{style:selectedStyle}})}});
     const data=await res.json();
     if(data.logo_url){{
-      result.innerHTML='<div class="logo-card"><img src="'+data.logo_url+'" alt="Logo"><div style="margin-top:8px;font-size:.72rem;color:#94a3b8;text-transform:capitalize">'+selectedStyle+' style</div><button class="use-btn" onclick="useLogo(\\''+data.logo_url+'\\')">Use This Logo</button></div>';
+      result.innerHTML='<div class="logo-card"><img src="'+data.logo_url+'" alt="Logo"><div style="margin-top:8px;font-size:.72rem;color:#94a3b8;text-transform:capitalize">'+selectedStyle+' style</div><a class="use-btn" href="'+data.logo_url+'" download style="background:#6366f1;margin-right:8px">Download</a><button class="use-btn" onclick="useLogo(\\''+data.logo_url+'\\')">Use This Logo</button></div>';
     }}else{{
       result.innerHTML='<p style="color:#ef4444;text-align:center">'+(data.detail||'Failed')+'</p>';
     }}
