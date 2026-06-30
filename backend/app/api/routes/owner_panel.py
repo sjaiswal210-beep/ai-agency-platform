@@ -131,19 +131,19 @@ body{{padding-bottom:60px}}
 
 ''' + (f"""<div class="section-title">Business Modules</div>
 <div class="tools">
-{('<a href="/api/org/' + org_id + '/crm" target="_blank" class="tool"><div class="emoji">&#128101;</div><div class="name">CRM</div></a>' if 'crm' in enabled_bos_modules and org_id else '')}
-{('<a href="/api/org/' + org_id + '/billing" target="_blank" class="tool"><div class="emoji">&#129534;</div><div class="name">Billing</div></a>' if 'billing' in enabled_bos_modules and org_id else '')}
+{('<a href="https://ai-agency-platform-blush.vercel.app/dashboard/' + slug + '/crm" target="_blank" class="tool"><div class="emoji">&#128101;</div><div class="name">CRM</div></a>' if 'crm' in enabled_bos_modules and org_id else '')}
+{('<a href="https://ai-agency-platform-blush.vercel.app/dashboard/' + slug + '/billing" target="_blank" class="tool"><div class="emoji">&#129534;</div><div class="name">Billing</div></a>' if 'billing' in enabled_bos_modules and org_id else '')}
 {('<a href="/api/book/' + slug + '" target="_blank" class="tool"><div class="emoji">&#128197;</div><div class="name">Booking</div></a>' if 'booking' in enabled_bos_modules and org_id else '')}
-{('<a href="/api/org/' + org_id + '/subscriptions" target="_blank" class="tool"><div class="emoji">&#128257;</div><div class="name">Subscriptions</div></a>' if 'subscriptions' in enabled_bos_modules and org_id else '')}
-{('<a href="/api/org/' + org_id + '/job_cards" target="_blank" class="tool"><div class="emoji">&#128295;</div><div class="name">Job Cards</div></a>' if 'job_cards' in enabled_bos_modules and org_id else '')}
-{('<a href="/api/org/' + org_id + '/custom_orders" target="_blank" class="tool"><div class="emoji">&#128203;</div><div class="name">Custom Orders</div></a>' if 'custom_orders' in enabled_bos_modules and org_id else '')}
+{('<a href="https://ai-agency-platform-blush.vercel.app/dashboard/' + slug + '/subscriptions" target="_blank" class="tool"><div class="emoji">&#128257;</div><div class="name">Subscriptions</div></a>' if 'subscriptions' in enabled_bos_modules and org_id else '')}
+{('<a href="https://ai-agency-platform-blush.vercel.app/dashboard/' + slug + '/job_cards" target="_blank" class="tool"><div class="emoji">&#128295;</div><div class="name">Job Cards</div></a>' if 'job_cards' in enabled_bos_modules and org_id else '')}
+{('<a href="https://ai-agency-platform-blush.vercel.app/dashboard/' + slug + '/custom_orders" target="_blank" class="tool"><div class="emoji">&#128203;</div><div class="name">Custom Orders</div></a>' if 'custom_orders' in enabled_bos_modules and org_id else '')}
 {('<a href="/api/menu/' + slug + '" target="_blank" class="tool"><div class="emoji">&#128722;</div><div class="name">Catalog</div></a>' if 'catalog' in enabled_bos_modules and org_id else '')}
-{('<a href="/api/org/' + org_id + '/clinic" target="_blank" class="tool"><div class="emoji">&#129657;</div><div class="name">Clinic</div></a>' if 'clinic' in enabled_bos_modules and org_id else '')}
-{('<a href="/api/org/' + org_id + '/students" target="_blank" class="tool"><div class="emoji">&#127891;</div><div class="name">Students</div></a>' if 'students' in enabled_bos_modules and org_id else '')}
-{('<a href="/api/org/' + org_id + '/events" target="_blank" class="tool"><div class="emoji">&#127881;</div><div class="name">Events</div></a>' if 'events' in enabled_bos_modules and org_id else '')}
-{('<a href="/api/org/' + org_id + '/fleet" target="_blank" class="tool"><div class="emoji">&#128663;</div><div class="name">Fleet</div></a>' if 'fleet' in enabled_bos_modules and org_id else '')}
-{('<a href="/api/org/' + org_id + '/reminders" target="_blank" class="tool"><div class="emoji">&#128276;</div><div class="name">Reminders</div></a>' if 'reminders' in enabled_bos_modules and org_id else '')}
-{('<a href="/api/org/' + org_id + '/inventory" target="_blank" class="tool"><div class="emoji">&#128230;</div><div class="name">Inventory</div></a>' if 'inventory' in enabled_bos_modules and org_id else '')}
+{('<a href="https://ai-agency-platform-blush.vercel.app/dashboard/' + slug + '/clinic" target="_blank" class="tool"><div class="emoji">&#129657;</div><div class="name">Clinic</div></a>' if 'clinic' in enabled_bos_modules and org_id else '')}
+{('<a href="https://ai-agency-platform-blush.vercel.app/dashboard/' + slug + '/students" target="_blank" class="tool"><div class="emoji">&#127891;</div><div class="name">Students</div></a>' if 'students' in enabled_bos_modules and org_id else '')}
+{('<a href="https://ai-agency-platform-blush.vercel.app/dashboard/' + slug + '/events" target="_blank" class="tool"><div class="emoji">&#127881;</div><div class="name">Events</div></a>' if 'events' in enabled_bos_modules and org_id else '')}
+{('<a href="https://ai-agency-platform-blush.vercel.app/dashboard/' + slug + '/fleet" target="_blank" class="tool"><div class="emoji">&#128663;</div><div class="name">Fleet</div></a>' if 'fleet' in enabled_bos_modules and org_id else '')}
+{('<a href="https://ai-agency-platform-blush.vercel.app/dashboard/' + slug + '/reminders" target="_blank" class="tool"><div class="emoji">&#128276;</div><div class="name">Reminders</div></a>' if 'reminders' in enabled_bos_modules and org_id else '')}
+{('<a href="https://ai-agency-platform-blush.vercel.app/dashboard/' + slug + '/inventory" target="_blank" class="tool"><div class="emoji">&#128230;</div><div class="name">Inventory</div></a>' if 'inventory' in enabled_bos_modules and org_id else '')}
 {('<a href="/api/photo/{website_id}/dashboard" target="_blank" class="tool"><div class="emoji">&#128248;</div><div class="name">Photography</div></a>' if 'photographer' in enabled_bos_modules or (lead and lead.get('category','').lower() in ['photographer','photography','videographer']) else '')}
 </div>""" if enabled_bos_modules else '') + '''
 

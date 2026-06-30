@@ -164,6 +164,7 @@ async def preview_logos(website_id: str):
 <html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Logo Generator - {business_name}</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <style>
 body{{font-family:Inter,sans-serif;background:#0f172a;color:#fff;margin:0;padding:40px;min-height:100vh}}
 h1{{font-size:1.5rem;margin-bottom:8px}}
@@ -213,17 +214,35 @@ async function useLogo(url) {{
 
 async function generateLogo() {{
     const btn = document.getElementById('genBtn');
-    const result = document.getElementById('result');
-    btn.disabled = true;
-    btn.textContent = 'Generating...';
-    result.innerHTML = '<div class="loading">Creating your logo...</div>';
-
+    btn.disabled = true; btn.textContent = 'Starting payment...';
     try {{
-        const res = await fetch('/api/logo-gen/{website_id}/generate', {{
-            method: 'POST',
-            headers: {{'Content-Type': 'application/json'}},
-            body: JSON.stringify({{style: selectedStyle}})
+        const r = await fetch('/api/credits/create-order', {{method:'POST',headers:{{'Content-Type':'application/json'}},body: JSON.stringify({{website_id:'{website_id}',amount:5}})}});
+        if (r.status === 503) {{ doGenerateLogo(); return; }}
+        const o = await r.json();
+        if (!o.order_id) {{ alert(o.detail || 'Could not start payment'); btn.disabled=false; btn.textContent='Generate AI Logo \u2014 Rs.5'; return; }}
+        if (typeof Razorpay === 'undefined') {{ alert('Payment not ready. Refresh and try again.'); btn.disabled=false; btn.textContent='Generate AI Logo \u2014 Rs.5'; return; }}
+        const rzp = new Razorpay({{
+            key:o.key_id, amount:o.amount, currency:'INR', name:'City Maps', description:'AI Logo (Rs.5)', order_id:o.order_id,
+            handler:function(resp){{
+                btn.textContent='Verifying...';
+                fetch('/api/credits/verify',{{method:'POST',headers:{{'Content-Type':'application/json'}},body:JSON.stringify({{website_id:'{website_id}',amount:5,razorpay_order_id:resp.razorpay_order_id,razorpay_payment_id:resp.razorpay_payment_id,razorpay_signature:resp.razorpay_signature}})}}).then(function(v){{return v.json()}}).then(function(d){{
+                    if(d.status==='success'){{doGenerateLogo();}} else {{alert('Payment verification failed.');btn.disabled=false;btn.textContent='Generate AI Logo \u2014 Rs.5';}}
+                }});
+            }},
+            modal:{{ondismiss:function(){{btn.disabled=false;btn.textContent='Generate AI Logo \u2014 Rs.5';}}}},
+            theme:{{color:'#6366f1'}}
         }});
+        rzp.open();
+    }} catch(e) {{ alert('Error starting payment'); btn.disabled=false; btn.textContent='Generate AI Logo \u2014 Rs.5'; }}
+}}
+
+async function doGenerateLogo() {{
+    const btn = document.getElementById('genBtn');
+    const result = document.getElementById('result');
+    btn.disabled = true; btn.textContent = 'Generating...';
+    result.innerHTML = '<div class="loading">Creating your logo...</div>';
+    try {{
+        const res = await fetch('/api/logo-gen/{website_id}/generate', {{method:'POST',headers:{{'Content-Type':'application/json'}},body: JSON.stringify({{style: selectedStyle}})}});
         const data = await res.json();
         if (data.logo_url) {{
             result.innerHTML = '<div class="logo-card"><img src="' + data.logo_url + '" alt="Logo"><p style="margin-top:8px;font-size:.8rem;color:#94a3b8">' + selectedStyle + ' style</p><button onclick="useLogo(\\'' + data.logo_url + '\\')" style="margin-top:12px;background:#10b981;color:#fff;border:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">Use This Logo</button></div>';
